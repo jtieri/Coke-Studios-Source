@@ -1,0 +1,249 @@
+property pTarget, pScrollbar, pCounter, pStatus, pParent, pDecal, pmodel
+
+on new me, mytarget, myscrollbar, myparent
+  [  0] getparam 1 .............................. <mytarget>
+  [  2] setprop 570 ............................. pTarget = mytarget
+  [  5] getparam 2 .............................. <myscrollbar>
+  [  7] setprop 573 ............................. pScrollbar = myscrollbar
+  [ 10] pushsymb 441 ............................ <#idle>
+  [ 13] setprop 426 ............................. pStatus = #idle
+  [ 16] getparam 3 .............................. <myparent>
+  [ 18] setprop 574 ............................. pParent = myparent
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] extcall 78 .............................. return me
+  [ 27] ret
+end
+
+on exitFrame me
+  [  0] getprop 570 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 87 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [418] ............................ if voidp(pTarget) = 0 then
+  [ 12] getprop 426 ............................. <pStatus>
+  [ 15] pushsymb 441 ............................ <#idle>
+  [ 18] eq ...................................... <pStatus = #idle>
+  [ 19] getprop 574 ............................. <pParent>
+  [ 22] pushsymb 250 ............................ <#pSpritelist>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] pusharglist 3 ........................... <pParent, #pSpritelist, 1>
+  [ 28] objcall 108 ............................. <pParent.pSpritelist[1]>
+  [ 30] pusharglist 1 ........................... <pParent.pSpritelist[1]>
+  [ 32] extcall 177 ............................. <sprite(pParent.pSpritelist[1])>
+  [ 34] getobjprop 426 .......................... <sprite(pParent.pSpritelist[1]).pStatus>
+  [ 37] pushsymb 452 ............................ <#drag>
+  [ 40] nteq .................................... <sprite(pParent.pSpritelist[1]).pStatus <> #drag>
+  [ 41] and ..................................... <(pStatus = #idle) and (sprite(pParent.pSpritelist[1]).pStatus <> #drag)>
+  [ 42] jmpifz [184] ............................ if (pStatus = #idle) and (sprite(pParent.pSpritelist[1]).pStatus <> #drag) then / else
+  [ 45] getprop 570 ............................. <pTarget>
+  [ 48] getobjprop 472 .......................... <pTarget.pTotalLines>
+  [ 51] getprop 570 ............................. <pTarget>
+  [ 54] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [ 57] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 58] jmpifz [159] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then / else
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 429 .......................... <me.spriteNum>
+  [ 66] pusharglist 1 ........................... <me.spriteNum>
+  [ 68] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 70] getprop 572 ............................. <pmodel>
+  [ 73] pushcons 0 .............................. <".scroll.lift.active">
+  [ 75] joinstr ................................. <pmodel & ".scroll.lift.active">
+  [ 76] pusharglist 1 ........................... <pmodel & ".scroll.lift.active">
+  [ 78] extcall 101 ............................. <member(pmodel & ".scroll.lift.active")>
+  [ 80] setobjprop 101 .......................... sprite(me.spriteNum).member = member(pmodel & ".scroll.lift.active")
+  [ 82] getparam 0 .............................. <me>
+  [ 84] getobjprop 429 .......................... <me.spriteNum>
+  [ 87] pusharglist 1 ........................... <me.spriteNum>
+  [ 89] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 91] getprop 573 ............................. <pScrollbar>
+  [ 94] pusharglist 1 ........................... <pScrollbar>
+  [ 96] extcall 177 ............................. <sprite(pScrollbar)>
+  [ 98] getobjprop 447 .......................... <sprite(pScrollbar).top>
+  [101] getprop 573 ............................. <pScrollbar>
+  [104] pusharglist 1 ........................... <pScrollbar>
+  [106] extcall 177 ............................. <sprite(pScrollbar)>
+  [108] getobjprop 460 .......................... <sprite(pScrollbar).height>
+  [111] getparam 0 .............................. <me>
+  [113] getobjprop 429 .......................... <me.spriteNum>
+  [116] pusharglist 1 ........................... <me.spriteNum>
+  [118] extcall 177 ............................. <sprite(me.spriteNum)>
+  [120] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [123] sub ..................................... <sprite(pScrollbar).height - sprite(me.spriteNum).height>
+  [124] getprop 570 ............................. <pTarget>
+  [127] getobjprop 472 .......................... <pTarget.pTotalLines>
+  [130] getprop 570 ............................. <pTarget>
+  [133] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [136] sub ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [137] pusharglist 1 ........................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [139] extcall 577 ............................. <float(pTarget.pTotalLines - pTarget.pDisplayLines)>
+  [142] div ..................................... <(sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines)>
+  [143] getprop 570 ............................. <pTarget>
+  [146] getobjprop 110 .......................... <pTarget.pScrollIndex>
+  [148] pushint8 1 .............................. <1>
+  [150] sub ..................................... <pTarget.pScrollIndex - 1>
+  [151] mul ..................................... <(sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines) * (pTarget.pScrollIndex - 1)>
+  [152] add ..................................... <sprite(pScrollbar).top + ((sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines) * (pTarget.pScrollIndex - 1))>
+  [153] setobjprop 459 .......................... sprite(me.spriteNum).locV = sprite(pScrollbar).top + ((sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines) * (pTarget.pScrollIndex - 1))
+  [156] jmp [181]
+  [159] getparam 0 .............................. <me>
+  [161] getobjprop 429 .......................... <me.spriteNum>
+  [164] pusharglist 1 ........................... <me.spriteNum>
+  [166] extcall 177 ............................. <sprite(me.spriteNum)>
+  [168] getprop 573 ............................. <pScrollbar>
+  [171] pusharglist 1 ........................... <pScrollbar>
+  [173] extcall 177 ............................. <sprite(pScrollbar)>
+  [175] getobjprop 447 .......................... <sprite(pScrollbar).top>
+  [178] setobjprop 459 .......................... sprite(me.spriteNum).locV = sprite(pScrollbar).top
+  [181] jmp [418]
+  [184] getprop 426 ............................. <pStatus>
+  [187] pushsymb 452 ............................ <#drag>
+  [190] eq ...................................... <pStatus = #drag>
+  [191] jmpifz [418] ............................ if pStatus = #drag then
+  [194] getparam 0 .............................. <me>
+  [196] getobjprop 429 .......................... <me.spriteNum>
+  [199] pusharglist 1 ........................... <me.spriteNum>
+  [201] extcall 177 ............................. <sprite(me.spriteNum)>
+  [203] getprop 572 ............................. <pmodel>
+  [206] pushcons 1 .............................. <".scroll.lift.pressed">
+  [208] joinstr ................................. <pmodel & ".scroll.lift.pressed">
+  [209] pusharglist 1 ........................... <pmodel & ".scroll.lift.pressed">
+  [211] extcall 101 ............................. <member(pmodel & ".scroll.lift.pressed")>
+  [213] setobjprop 101 .......................... sprite(me.spriteNum).member = member(pmodel & ".scroll.lift.pressed")
+  [215] pusharglist 0 ........................... <>
+  [217] thebuiltin 578 .......................... <the mouseV>
+  [220] getprop 579 ............................. <pDecal>
+  [223] add ..................................... <the mouseV + pDecal>
+  [224] setlocal 0 .............................. myloc = the mouseV + pDecal
+  [226] getprop 573 ............................. <pScrollbar>
+  [229] pusharglist 1 ........................... <pScrollbar>
+  [231] extcall 177 ............................. <sprite(pScrollbar)>
+  [233] getobjprop 447 .......................... <sprite(pScrollbar).top>
+  [236] getlocal 0 .............................. <myloc>
+  [238] pusharglist 2 ........................... <sprite(pScrollbar).top, myloc>
+  [240] extcall 580 ............................. <max(sprite(pScrollbar).top, myloc)>
+  [243] setlocal 0 .............................. myloc = max(sprite(pScrollbar).top, myloc)
+  [245] getprop 573 ............................. <pScrollbar>
+  [248] pusharglist 1 ........................... <pScrollbar>
+  [250] extcall 177 ............................. <sprite(pScrollbar)>
+  [252] getobjprop 582 .......................... <sprite(pScrollbar).bottom>
+  [255] getparam 0 .............................. <me>
+  [257] getobjprop 429 .......................... <me.spriteNum>
+  [260] pusharglist 1 ........................... <me.spriteNum>
+  [262] extcall 177 ............................. <sprite(me.spriteNum)>
+  [264] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [267] sub ..................................... <sprite(pScrollbar).bottom - sprite(me.spriteNum).height>
+  [268] getlocal 0 .............................. <myloc>
+  [270] pusharglist 2 ........................... <sprite(pScrollbar).bottom - sprite(me.spriteNum).height, myloc>
+  [272] extcall 581 ............................. <min(sprite(pScrollbar).bottom - sprite(me.spriteNum).height, myloc)>
+  [275] setlocal 0 .............................. myloc = min(sprite(pScrollbar).bottom - sprite(me.spriteNum).height, myloc)
+  [277] getparam 0 .............................. <me>
+  [279] getobjprop 429 .......................... <me.spriteNum>
+  [282] pusharglist 1 ........................... <me.spriteNum>
+  [284] extcall 177 ............................. <sprite(me.spriteNum)>
+  [286] getlocal 0 .............................. <myloc>
+  [288] setobjprop 459 .......................... sprite(me.spriteNum).locV = myloc
+  [291] pusharglist 0 ........................... <>
+  [293] thebuiltin 578 .......................... <the mouseV>
+  [296] getprop 579 ............................. <pDecal>
+  [299] add ..................................... <the mouseV + pDecal>
+  [300] getprop 573 ............................. <pScrollbar>
+  [303] pusharglist 1 ........................... <pScrollbar>
+  [305] extcall 177 ............................. <sprite(pScrollbar)>
+  [307] getobjprop 447 .......................... <sprite(pScrollbar).top>
+  [310] sub ..................................... <the mouseV + pDecal - sprite(pScrollbar).top>
+  [311] getprop 573 ............................. <pScrollbar>
+  [314] pusharglist 1 ........................... <pScrollbar>
+  [316] extcall 177 ............................. <sprite(pScrollbar)>
+  [318] getobjprop 460 .......................... <sprite(pScrollbar).height>
+  [321] getparam 0 .............................. <me>
+  [323] getobjprop 429 .......................... <me.spriteNum>
+  [326] pusharglist 1 ........................... <me.spriteNum>
+  [328] extcall 177 ............................. <sprite(me.spriteNum)>
+  [330] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [333] sub ..................................... <sprite(pScrollbar).height - sprite(me.spriteNum).height>
+  [334] getprop 570 ............................. <pTarget>
+  [337] getobjprop 472 .......................... <pTarget.pTotalLines>
+  [340] getprop 570 ............................. <pTarget>
+  [343] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [346] sub ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [347] pusharglist 1 ........................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [349] extcall 577 ............................. <float(pTarget.pTotalLines - pTarget.pDisplayLines)>
+  [352] div ..................................... <(sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines)>
+  [353] div ..................................... <(the mouseV + pDecal - sprite(pScrollbar).top) / ((sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines))>
+  [354] pushint8 1 .............................. <1>
+  [356] add ..................................... <((the mouseV + pDecal - sprite(pScrollbar).top) / ((sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines))) + 1>
+  [357] setlocal 1 .............................. myindex = ((the mouseV + pDecal - sprite(pScrollbar).top) / ((sprite(pScrollbar).height - sprite(me.spriteNum).height) / float(pTarget.pTotalLines - pTarget.pDisplayLines))) + 1
+  [359] getlocal 1 .............................. <myindex>
+  [361] pusharglist 1 ........................... <myindex>
+  [363] extcall 507 ............................. <integer(myindex)>
+  [366] setlocal 1 .............................. myindex = integer(myindex)
+  [368] pushint8 1 .............................. <1>
+  [370] getlocal 1 .............................. <myindex>
+  [372] pusharglist 2 ........................... <1, myindex>
+  [374] extcall 580 ............................. <max(1, myindex)>
+  [377] setlocal 1 .............................. myindex = max(1, myindex)
+  [379] getprop 570 ............................. <pTarget>
+  [382] getobjprop 472 .......................... <pTarget.pTotalLines>
+  [385] getprop 570 ............................. <pTarget>
+  [388] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [391] sub ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [392] pushint8 1 .............................. <1>
+  [394] add ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines + 1>
+  [395] getlocal 1 .............................. <myindex>
+  [397] pusharglist 2 ........................... <pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex>
+  [399] extcall 581 ............................. <min(pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex)>
+  [402] setlocal 1 .............................. myindex = min(pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex)
+  [404] getprop 570 ............................. <pTarget>
+  [407] getlocal 1 .............................. <myindex>
+  [409] setobjprop 110 .......................... pTarget.pScrollIndex = myindex
+  [411] getprop 570 ............................. <pTarget>
+  [414] pusharglistnoret 1 ...................... <pTarget>
+  [416] objcall 111 ............................. pTarget.updatecontent()
+  [418] ret
+end
+
+on mouseDown me
+  [  0] getprop 570 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 87 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [ 62] ............................ if voidp(pTarget) = 0 then
+  [ 12] getprop 570 ............................. <pTarget>
+  [ 15] getobjprop 472 .......................... <pTarget.pTotalLines>
+  [ 18] getprop 570 ............................. <pTarget>
+  [ 21] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [ 24] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 25] jmpifz [ 62] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then
+  [ 28] pushzero ................................ <0>
+  [ 29] setprop 432 ............................. pCounter = 0
+  [ 32] pushsymb 452 ............................ <#drag>
+  [ 35] setprop 426 ............................. pStatus = #drag
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getobjprop 429 .......................... <me.spriteNum>
+  [ 43] pusharglist 1 ........................... <me.spriteNum>
+  [ 45] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 47] getobjprop 459 .......................... <sprite(me.spriteNum).locV>
+  [ 50] pusharglist 0 ........................... <>
+  [ 52] thebuiltin 444 .......................... <the clickLoc>
+  [ 55] getobjprop 459 .......................... <(the clickLoc).locV>
+  [ 58] sub ..................................... <sprite(me.spriteNum).locV - (the clickLoc).locV>
+  [ 59] setprop 579 ............................. pDecal = sprite(me.spriteNum).locV - (the clickLoc).locV
+  [ 62] pusharglistnoret 0 ...................... <>
+  [ 64] extcall 430 ............................. stopEvent()
+  [ 67] ret
+end
+
+on mouseUp me
+  [  0] pushsymb 441 ............................ <#idle>
+  [  3] setprop 426 ............................. pStatus = #idle
+  [  6] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushsymb 441 ............................ <#idle>
+  [  3] setprop 426 ............................. pStatus = #idle
+  [  6] ret
+end

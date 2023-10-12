@@ -1,0 +1,421 @@
+global gMembersToDelete, sLanguageSetting, oIsoScene, bPreloadCasts, gCLOSING, oSession, ElementMgr, oStudioManager, oStudioMap, oDenizenManager
+
+on prepareMovie
+  [  0] pushcons 0 .............................. <"Tip">
+  [  2] pusharglist 1 ........................... <"Tip">
+  [  4] extcall 54 .............................. <member("Tip")>
+  [  6] pushcons 1 .............................. <EMPTY>
+  [  8] setobjprop 140 .......................... member("Tip").text = EMPTY
+  [ 10] pusharglistnoret 0 ...................... <>
+  [ 12] extcall 36 .............................. clearGlobals()
+  [ 14] getmovieprop 41 ......................... <the runMode>
+  [ 16] pushcons 2 .............................. <"author">
+  [ 18] eq ...................................... <the runMode = "author">
+  [ 19] jmpifz [110] ............................ if the runMode = "author" then
+  [ 22] pushcons 3 .............................. <"internal">
+  [ 24] pushcons 4 .............................. <"entry">
+  [ 26] pushcons 5 .............................. <"cc_interface[1]">
+  [ 28] pushcons 6 .............................. <"cc_navigator[1]">
+  [ 30] pushcons 7 .............................. <"sf_gateway">
+  [ 32] pushcons 8 .............................. <"chatengine">
+  [ 34] pushcons 9 .............................. <"cc_room">
+  [ 36] pushcons 10 ............................. <"cc_furniture_small">
+  [ 38] pushcons 11 ............................. <"cc_catalogue[1]">
+  [ 40] pushcons 12 ............................. <"cc_messenger[1]">
+  [ 42] pushcons 13 ............................. <"avatarengine">
+  [ 44] pushcons 14 ............................. <"cc_furniture[1]">
+  [ 46] pushcons 15 ............................. <"isoengine">
+  [ 48] pushcons 16 ............................. <"soundlibrary">
+  [ 50] pushcons 17 ............................. <"people">
+  [ 52] pushcons 18 ............................. <"cc_items[1]">
+  [ 54] pushcons 19 ............................. <"sequencer">
+  [ 56] pushcons 20 ............................. <"mixer">
+  [ 58] pusharglist 18 .......................... <["internal", "entry", "cc_interface[1]", "cc_navigator[1]", "sf_gateway", "chatengine", "cc_room", "cc_furniture_small", "cc_catalogue[1]", "cc_messenger[1]", "avatarengine", "cc_furniture[1]", "isoengine", "soundlibrary", "people", "cc_items[1]", "sequencer", "mixer"]>
+  [ 60] pushlist ................................ <["internal", "entry", "cc_interface[1]", "cc_navigator[1]", "sf_gateway", "chatengine", "cc_room", "cc_furniture_small", "cc_catalogue[1]", "cc_messenger[1]", "avatarengine", "cc_furniture[1]", "isoengine", "soundlibrary", "people", "cc_items[1]", "sequencer", "mixer"]>
+  [ 61] setlocal 0 .............................. castlist = ["internal", "entry", "cc_interface[1]", "cc_navigator[1]", "sf_gateway", "chatengine", "cc_room", "cc_furniture_small", "cc_catalogue[1]", "cc_messenger[1]", "avatarengine", "cc_furniture[1]", "isoengine", "soundlibrary", "people", "cc_items[1]", "sequencer", "mixer"]
+  [ 63] pushint8 2 .............................. <2>
+  [ 65] setlocal 1
+  [ 67] getlocal 1
+  [ 69] getlocal 0 .............................. <castlist>
+  [ 71] pusharglist 1 ........................... <castlist>
+  [ 73] extcall 51 .............................. <count(castlist)>
+  [ 75] lteq
+  [ 76] jmpifz [110] ............................ repeat with n = 2 to count(castlist)
+  [ 79] getlocal 1 .............................. <n>
+  [ 81] pusharglist 1 ........................... <n>
+  [ 83] extcall 61 .............................. <castLib(n)>
+  [ 85] getmovieprop 15 ......................... <the moviePath>
+  [ 87] getlocal 0 .............................. <castlist>
+  [ 89] getlocal 1 .............................. <n>
+  [ 91] pusharglist 2 ........................... <castlist, n>
+  [ 93] objcall 52 .............................. <castlist[n]>
+  [ 95] joinstr ................................. <the moviePath & castlist[n]>
+  [ 96] pushcons 21 ............................. <".cst">
+  [ 98] joinstr ................................. <the moviePath & castlist[n] & ".cst">
+  [ 99] setobjprop 63 ........................... castLib(n).fileName = the moviePath & castlist[n] & ".cst"
+  [101] pushint8 1
+  [103] getlocal 1
+  [105] add
+  [106] setlocal 1
+  [108] endrepeat [ 67]
+  [110] pusharglist 0 ........................... <[]>
+  [112] pushlist ................................ <[]>
+  [113] setmovieprop 37 ......................... the actorList = []
+  [115] pushcons 22 ............................. <"English">
+  [117] setglobal 38 ............................ sLanguageSetting = "English"
+  [119] pusharglist 0 ........................... <[]>
+  [121] pushlist ................................ <[]>
+  [122] setglobal 39 ............................ gMembersToDelete = []
+  [124] pushint8 1 .............................. <1>
+  [126] setglobal 10 ............................ bPreloadCasts = 1
+  [128] pushzero ................................ <0>
+  [129] setglobal 40 ............................ gCLOSING = 0
+  [131] getmovieprop 41 ......................... <the runMode>
+  [133] pushcons 2 .............................. <"author">
+  [135] nteq .................................... <the runMode <> "author">
+  [136] jmpifz [148] ............................ if the runMode <> "author" then
+  [139] pushcons 23 ............................. <"SystemError">
+  [141] pusharglist 1 ........................... <"SystemError">
+  [143] extcall 12 .............................. <script("SystemError")>
+  [145] setmovieprop 341 ........................ the alertHook = script("SystemError")
+  [148] pushint8 1 .............................. <1>
+  [150] pushint8 8 .............................. <8>
+  [152] set 7 ................................... set the exitLock to 1
+  [154] ret
+end
+
+on startMovie
+  [  0] ret
+end
+
+on stopMovie
+  [  0] getglobal 43 ............................ <oDenizenManager>
+  [  2] pusharglist 1 ........................... <oDenizenManager>
+  [  4] extcall 42 .............................. <voidp(oDenizenManager)>
+  [  6] not ..................................... <not voidp(oDenizenManager)>
+  [  7] jmpifz [ 22] ............................ if not voidp(oDenizenManager) then
+  [ 10] getglobal 43 ............................ <oDenizenManager>
+  [ 12] getglobal 43 ............................ <oDenizenManager>
+  [ 14] pusharglist 1 ........................... <oDenizenManager>
+  [ 16] objcall 44 .............................. <oDenizenManager.getScreenName()>
+  [ 18] pusharglistnoret 2 ...................... <oDenizenManager, oDenizenManager.getScreenName()>
+  [ 20] objcall 45 .............................. oDenizenManager.logoutDenizen(oDenizenManager.getScreenName())
+  [ 22] getglobal 46 ............................ <oSession>
+  [ 24] pusharglist 1 ........................... <oSession>
+  [ 26] extcall 42 .............................. <voidp(oSession)>
+  [ 28] not ..................................... <not voidp(oSession)>
+  [ 29] jmpifz [ 47] ............................ if not voidp(oSession) then
+  [ 32] getglobal 46 ............................ <oSession>
+  [ 34] pusharglist 1 ........................... <oSession>
+  [ 36] objcall 47 .............................. <oSession.getConnected()>
+  [ 38] jmpifz [ 47] ............................ if oSession.getConnected() then
+  [ 41] getglobal 46 ............................ <oSession>
+  [ 43] pusharglistnoret 1 ...................... <oSession>
+  [ 45] objcall 48 .............................. oSession.disconnect()
+  [ 47] getmovieprop 41 ......................... <the runMode>
+  [ 49] pushcons 24 ............................. <"Author">
+  [ 51] eq ...................................... <the runMode = "Author">
+  [ 52] jmpifz [175] ............................ if the runMode = "Author" then
+  [ 55] pushint8 1 .............................. <1>
+  [ 57] setlocal 0
+  [ 59] getlocal 0
+  [ 61] getmovieprop 49 ......................... <the lastChannel>
+  [ 63] lteq
+  [ 64] jmpifz [ 83] ............................ repeat with i = 1 to the lastChannel
+  [ 67] getlocal 0 .............................. <i>
+  [ 69] pushzero ................................ <0>
+  [ 70] pusharglistnoret 2 ...................... <i, 0>
+  [ 72] extcall 50 .............................. puppetSprite(i, 0)
+  [ 74] pushint8 1
+  [ 76] getlocal 0
+  [ 78] add
+  [ 79] setlocal 0
+  [ 81] endrepeat [ 59]
+  [ 83] getglobal 39 ............................ <gMembersToDelete>
+  [ 85] pusharglist 1 ........................... <gMembersToDelete>
+  [ 87] extcall 42 .............................. <voidp(gMembersToDelete)>
+  [ 89] pushzero ................................ <0>
+  [ 90] eq ...................................... <voidp(gMembersToDelete) = 0>
+  [ 91] jmpifz [139] ............................ if voidp(gMembersToDelete) = 0 then
+  [ 94] getglobal 39 ............................ <gMembersToDelete>
+  [ 96] peek 0
+  [ 98] pusharglist 1
+  [100] extcall 51
+  [102] pushint8 1
+  [104] peek 0
+  [106] peek 2
+  [108] lteq
+  [109] jmpifz [137] ............................ repeat with n in gMembersToDelete
+  [112] peek 2
+  [114] peek 1
+  [116] pusharglist 2
+  [118] extcall 52
+  [120] setlocal 1
+  [122] getlocal 1 .............................. <n>
+  [124] pusharglist 1 ........................... <n>
+  [126] extcall 54 .............................. <member(n)>
+  [128] pusharglistnoret 1 ...................... <member(n)>
+  [130] extcall 53 .............................. erase(member(n))
+  [132] pushint8 1
+  [134] add
+  [135] endrepeat [104]
+  [137] pop 3
+  [139] pushint8 2 .............................. <2>
+  [141] setlocal 1
+  [143] getlocal 1
+  [145] pushint8 4 .............................. <4>
+  [147] get 8 ................................... <the number of castLibs>
+  [149] lteq
+  [150] jmpifz [175] ............................ repeat with n = 2 to the number of castLibs
+  [153] getlocal 1 .............................. <n>
+  [155] pusharglist 1 ........................... <n>
+  [157] extcall 61 .............................. <castLib(n)>
+  [159] getmovieprop 15 ......................... <the moviePath>
+  [161] pushcons 25 ............................. <"Empty.cst">
+  [163] joinstr ................................. <the moviePath & "Empty.cst">
+  [164] setobjprop 63 ........................... castLib(n).fileName = the moviePath & "Empty.cst"
+  [166] pushint8 1
+  [168] getlocal 1
+  [170] add
+  [171] setlocal 1
+  [173] endrepeat [143]
+  [175] pusharglistnoret 0 ...................... <>
+  [177] extcall 36 .............................. clearGlobals()
+  [179] pusharglist 0 ........................... <[]>
+  [181] pushlist ................................ <[]>
+  [182] setmovieprop 37 ......................... the actorList = []
+  [184] pusharglistnoret 0 ...................... <>
+  [186] extcall 55 .............................. pass()
+  [188] ret
+end
+
+on eraseMembers
+  [  0] getmovieprop 41 ......................... <the runMode>
+  [  2] pushcons 24 ............................. <"Author">
+  [  4] eq ...................................... <the runMode = "Author">
+  [  5] jmpifz [ 64] ............................ if the runMode = "Author" then
+  [  8] getglobal 39 ............................ <gMembersToDelete>
+  [ 10] pusharglist 1 ........................... <gMembersToDelete>
+  [ 12] extcall 42 .............................. <voidp(gMembersToDelete)>
+  [ 14] pushzero ................................ <0>
+  [ 15] eq ...................................... <voidp(gMembersToDelete) = 0>
+  [ 16] jmpifz [ 64] ............................ if voidp(gMembersToDelete) = 0 then
+  [ 19] getglobal 39 ............................ <gMembersToDelete>
+  [ 21] peek 0
+  [ 23] pusharglist 1
+  [ 25] extcall 51
+  [ 27] pushint8 1
+  [ 29] peek 0
+  [ 31] peek 2
+  [ 33] lteq
+  [ 34] jmpifz [ 62] ............................ repeat with n in gMembersToDelete
+  [ 37] peek 2
+  [ 39] peek 1
+  [ 41] pusharglist 2
+  [ 43] extcall 52
+  [ 45] setlocal 0
+  [ 47] getlocal 0 .............................. <n>
+  [ 49] pusharglist 1 ........................... <n>
+  [ 51] extcall 54 .............................. <member(n)>
+  [ 53] pusharglistnoret 1 ...................... <member(n)>
+  [ 55] extcall 53 .............................. erase(member(n))
+  [ 57] pushint8 1
+  [ 59] add
+  [ 60] endrepeat [ 29]
+  [ 62] pop 3
+  [ 64] ret
+end
+
+on getLoader
+  [  0] getglobal 58 ............................ <oLoader>
+  [  2] pusharglist 1 ........................... <oLoader>
+  [  4] extcall 42 .............................. <voidp(oLoader)>
+  [  6] jmpifz [ 21] ............................ if voidp(oLoader) then
+  [  9] pushcons 26 ............................. <"_LOADER_">
+  [ 11] pusharglist 1 ........................... <"_LOADER_">
+  [ 13] extcall 12 .............................. <script("_LOADER_")>
+  [ 15] pusharglist 1 ........................... <script("_LOADER_")>
+  [ 17] objcall 13 .............................. <script("_LOADER_").new()>
+  [ 19] setglobal 58 ............................ oLoader = script("_LOADER_").new()
+  [ 21] getglobal 58 ............................ <oLoader>
+  [ 23] pusharglistnoret 1 ...................... <oLoader>
+  [ 25] extcall 59 .............................. return oLoader
+  [ 27] ret
+end
+
+on resetCasts bForce
+  [  0] getmovieprop 41 ......................... <the runMode>
+  [  2] pushcons 24 ............................. <"Author">
+  [  4] eq ...................................... <the runMode = "Author">
+  [  5] pusharglist 0 ........................... <>
+  [  7] thebuiltin 60 ........................... <the shiftDown>
+  [  9] not ..................................... <not (the shiftDown)>
+  [ 10] and ..................................... <(the runMode = "Author") and not (the shiftDown)>
+  [ 11] jmpifz [121] ............................ if (the runMode = "Author") and not (the shiftDown) then
+  [ 14] getmovieprop 15 ......................... <the moviePath>
+  [ 16] pushcons 25 ............................. <"Empty.cst">
+  [ 18] joinstr ................................. <the moviePath & "Empty.cst">
+  [ 19] setlocal 0 .............................. sEmpty = the moviePath & "Empty.cst"
+  [ 21] pushint8 4 .............................. <4>
+  [ 23] get 8 ................................... <the number of castLibs>
+  [ 25] setlocal 1 .............................. iLength = the number of castLibs
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setlocal 2
+  [ 31] getlocal 2
+  [ 33] getlocal 1 .............................. <iLength>
+  [ 35] lteq
+  [ 36] jmpifz [121] ............................ repeat with i = 1 to iLength
+  [ 39] getlocal 2 .............................. <i>
+  [ 41] pusharglist 1 ........................... <i>
+  [ 43] extcall 61 .............................. <castLib(i)>
+  [ 45] setlocal 3 .............................. oCastLib = castLib(i)
+  [ 47] getparam 0 .............................. <bForce>
+  [ 49] pusharglist 1 ........................... <bForce>
+  [ 51] extcall 42 .............................. <voidp(bForce)>
+  [ 53] jmpifz [ 93] ............................ if voidp(bForce) then
+  [ 56] getlocal 3 .............................. <oCastLib>
+  [ 58] getobjprop 62 ........................... <oCastLib.name>
+  [ 60] pushcons 27 ............................. <"Entry">
+  [ 62] eq ...................................... <oCastLib.name = "Entry">
+  [ 63] getlocal 3 .............................. <oCastLib>
+  [ 65] getobjprop 62 ........................... <oCastLib.name>
+  [ 67] pushcons 28 ............................. <"Gateway">
+  [ 69] eq ...................................... <oCastLib.name = "Gateway">
+  [ 70] or ...................................... <(oCastLib.name = "Entry") or (oCastLib.name = "Gateway")>
+  [ 71] getlocal 3 .............................. <oCastLib>
+  [ 73] getobjprop 62 ........................... <oCastLib.name>
+  [ 75] pushcons 29 ............................. <"IsoEngine">
+  [ 77] eq ...................................... <oCastLib.name = "IsoEngine">
+  [ 78] or ...................................... <(oCastLib.name = "Entry") or (oCastLib.name = "Gateway") or (oCastLib.name = "IsoEngine")>
+  [ 79] getlocal 3 .............................. <oCastLib>
+  [ 81] getobjprop 62 ........................... <oCastLib.name>
+  [ 83] pushcons 30 ............................. <"Messenger">
+  [ 85] eq ...................................... <oCastLib.name = "Messenger">
+  [ 86] or ...................................... <(oCastLib.name = "Entry") or (oCastLib.name = "Gateway") or (oCastLib.name = "IsoEngine") or (oCastLib.name = "Messenger")>
+  [ 87] jmpifz [ 93] ............................ if (oCastLib.name = "Entry") or (oCastLib.name = "Gateway") or (oCastLib.name = "IsoEngine") or (oCastLib.name = "Messenger") then
+  [ 90] jmp [112] ............................... next repeat
+  [ 93] getlocal 3 .............................. <oCastLib>
+  [ 95] getobjprop 62 ........................... <oCastLib.name>
+  [ 97] pushcons 31 ............................. <"Internal">
+  [ 99] eq ...................................... <oCastLib.name = "Internal">
+  [100] jmpifz [106] ............................ if oCastLib.name = "Internal" then
+  [103] jmp [112] ............................... next repeat
+  [106] getlocal 3 .............................. <oCastLib>
+  [108] getlocal 0 .............................. <sEmpty>
+  [110] setobjprop 63 ........................... oCastLib.fileName = sEmpty
+  [112] pushint8 1
+  [114] getlocal 2
+  [116] add
+  [117] setlocal 2
+  [119] endrepeat [ 31]
+  [121] ret
+end
+
+on goToStudio sStudioID
+  [  0] getglobal 43 ............................ <oDenizenManager>
+  [  2] getchainedprop 741 ...................... <oDenizenManager.foDenizenManager>
+  [  5] pusharglistnoret 1 ...................... <oDenizenManager.foDenizenManager>
+  [  7] objcall 742 ............................. oDenizenManager.foDenizenManager.getTip()
+  [ 10] getglobal 67 ............................ <ElementMgr>
+  [ 12] pusharglistnoret 1 ...................... <ElementMgr>
+  [ 14] objcall 68 .............................. ElementMgr.closeAllWindows()
+  [ 16] getglobal 69 ............................ <oIsoScene>
+  [ 18] pusharglist 1 ........................... <oIsoScene>
+  [ 20] extcall 42 .............................. <voidp(oIsoScene)>
+  [ 22] not ..................................... <not voidp(oIsoScene)>
+  [ 23] jmpifz [ 32] ............................ if not voidp(oIsoScene) then
+  [ 26] getglobal 69 ............................ <oIsoScene>
+  [ 28] pusharglistnoret 1 ...................... <oIsoScene>
+  [ 30] objcall 70 .............................. oIsoScene.destroyScene()
+  [ 32] getglobal 25 ............................ <oStudioManager>
+  [ 34] getparam 0 .............................. <sStudioID>
+  [ 36] pusharglist 2 ........................... <oStudioManager, sStudioID>
+  [ 38] objcall 71 .............................. <oStudioManager.getStudioLocation(sStudioID)>
+  [ 40] setlocal 0 .............................. iLocation = oStudioManager.getStudioLocation(sStudioID)
+  [ 42] getglobal 25 ............................ <oStudioManager>
+  [ 44] getparam 0 .............................. <sStudioID>
+  [ 46] getlocal 0 .............................. <iLocation>
+  [ 48] pusharglist 3 ........................... <oStudioManager, sStudioID, iLocation>
+  [ 50] objcall 72 .............................. <oStudioManager.getStudioLayout(sStudioID, iLocation)>
+  [ 52] setlocal 1 .............................. iLayout = oStudioManager.getStudioLayout(sStudioID, iLocation)
+  [ 54] getglobal 25 ............................ <oStudioManager>
+  [ 56] getparam 0 .............................. <sStudioID>
+  [ 58] pusharglist 2 ........................... <oStudioManager, sStudioID>
+  [ 60] objcall 11 .............................. <oStudioManager.getStudioName(sStudioID)>
+  [ 62] setlocal 2 .............................. sStudioName = oStudioManager.getStudioName(sStudioID)
+  [ 64] getparam 0 .............................. <sStudioID>
+  [ 66] pushcons 32 ............................. <"$SYSTEM$">
+  [ 68] contains0str ............................ <sStudioID starts "$SYSTEM$">
+  [ 69] jmpifz [104] ............................ if sStudioID starts "$SYSTEM$" then
+  [ 72] pushcons 33 ............................. <"calling doTrackingCokeStudios in Browser">
+  [ 74] pusharglistnoret 1 ...................... <"calling doTrackingCokeStudios in Browser">
+  [ 76] extcall 17 .............................. put "calling doTrackingCokeStudios in Browser"
+  [ 78] pushcons 34 ............................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '">
+  [ 80] getparam 0 .............................. <sStudioID>
+  [ 82] joinstr ................................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioID>
+  [ 83] pushcons 35 ............................. <"')">
+  [ 85] joinstr ................................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioID & "')">
+  [ 86] setlocal 3 .............................. sParamString = "javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioID & "')"
+  [ 88] pushcons 36 ............................. <"sParamString: ">
+  [ 90] getlocal 3 .............................. <sParamString>
+  [ 92] joinstr ................................. <"sParamString: " & sParamString>
+  [ 93] pusharglistnoret 1 ...................... <"sParamString: " & sParamString>
+  [ 95] extcall 17 .............................. put "sParamString: " & sParamString
+  [ 97] getlocal 3 .............................. <sParamString>
+  [ 99] pusharglistnoret 1 ...................... <sParamString>
+  [101] extcall 653 ............................. gotoNetPage(sParamString)
+  [104] pushcons 37 ............................. <"StudioMap">
+  [106] pusharglist 1 ........................... <"StudioMap">
+  [108] extcall 12 .............................. <script("StudioMap")>
+  [110] getlocal 0 .............................. <iLocation>
+  [112] getlocal 1 .............................. <iLayout>
+  [114] getparam 0 .............................. <sStudioID>
+  [116] getlocal 2 .............................. <sStudioName>
+  [118] pusharglist 5 ........................... <script("StudioMap"), iLocation, iLayout, sStudioID, sStudioName>
+  [120] objcall 13 .............................. <script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)>
+  [122] setglobal 8 ............................. oStudioMap = script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)
+  [124] pushcons 38 ............................. <"EnterStudio">
+  [126] pusharglistnoret 1 ...................... <"EnterStudio">
+  [128] extcall 21 .............................. go("EnterStudio")
+  [130] ret
+end
+
+on gotoEntry
+  [  0] getglobal 43 ............................ <oDenizenManager>
+  [  2] getchainedprop 741 ...................... <oDenizenManager.foDenizenManager>
+  [  5] pusharglistnoret 1 ...................... <oDenizenManager.foDenizenManager>
+  [  7] objcall 742 ............................. oDenizenManager.foDenizenManager.getTip()
+  [ 10] getglobal 67 ............................ <ElementMgr>
+  [ 12] pusharglistnoret 1 ...................... <ElementMgr>
+  [ 14] objcall 68 .............................. ElementMgr.closeAllWindows()
+  [ 16] getglobal 69 ............................ <oIsoScene>
+  [ 18] pusharglist 1 ........................... <oIsoScene>
+  [ 20] extcall 42 .............................. <voidp(oIsoScene)>
+  [ 22] not ..................................... <not voidp(oIsoScene)>
+  [ 23] jmpifz [ 32] ............................ if not voidp(oIsoScene) then
+  [ 26] getglobal 69 ............................ <oIsoScene>
+  [ 28] pusharglistnoret 1 ...................... <oIsoScene>
+  [ 30] objcall 70 .............................. oIsoScene.destroyScene()
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] setlocal 0 .............................. iLocation = 1
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] setlocal 1 .............................. iLayout = 1
+  [ 40] pushcons 39 ............................. <"$LOBBY$">
+  [ 42] setlocal 2 .............................. sStudioID = "$LOBBY$"
+  [ 44] pushcons 40 ............................. <"Front Door">
+  [ 46] setlocal 3 .............................. sStudioName = "Front Door"
+  [ 48] pushcons 37 ............................. <"StudioMap">
+  [ 50] pusharglist 1 ........................... <"StudioMap">
+  [ 52] extcall 12 .............................. <script("StudioMap")>
+  [ 54] getlocal 0 .............................. <iLocation>
+  [ 56] getlocal 1 .............................. <iLayout>
+  [ 58] getlocal 2 .............................. <sStudioID>
+  [ 60] getlocal 3 .............................. <sStudioName>
+  [ 62] pusharglist 5 ........................... <script("StudioMap"), iLocation, iLayout, sStudioID, sStudioName>
+  [ 64] objcall 13 .............................. <script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)>
+  [ 66] setglobal 8 ............................. oStudioMap = script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)
+  [ 68] pushcons 41 ............................. <"EnterLobby">
+  [ 70] pusharglistnoret 1 ...................... <"EnterLobby">
+  [ 72] extcall 21 .............................. go("EnterLobby")
+  [ 74] ret
+end

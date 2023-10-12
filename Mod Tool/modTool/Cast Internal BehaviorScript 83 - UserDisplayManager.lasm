@@ -1,0 +1,460 @@
+property pSprite, pPublicStudioData, pSelected, pItemNum, pScrolltop, pStudioID, pUserData, pDenizenName, pStudioName, pStudioOwner, pSearch, pSearchText, bDebug
+global oUserDisplayManager, oDenizenManager, oSearchUser, ElementMgr, oStudioManager, oCallAlertDisplayManager
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getprop 11 .............................. <pSprite>
+  [ 12] getchainedprop 14 ....................... <pSprite.member>
+  [ 14] pushcons 0 .............................. <"Loading...">
+  [ 16] setobjprop 15 ........................... pSprite.member.text = "Loading..."
+  [ 18] getparam 0 .............................. <me>
+  [ 20] setglobal 52 ............................ oUserDisplayManager = me
+  [ 22] pushsymb 261 ............................ <#error>
+  [ 25] pushzero ................................ <0>
+  [ 26] pushsymb 262 ............................ <#denizenName>
+  [ 29] pushcons 1 .............................. <EMPTY>
+  [ 31] pushsymb 265 ............................ <#mission>
+  [ 34] pushcons 1 .............................. <EMPTY>
+  [ 36] pushsymb 67 ............................. <#studioId>
+  [ 38] pushcons 1 .............................. <EMPTY>
+  [ 40] pushsymb 47 ............................. <#studioName>
+  [ 42] pushcons 2 .............................. <"studioName">
+  [ 44] pushsymb 230 ............................ <#owner>
+  [ 46] pushcons 3 .............................. <"studioOwner">
+  [ 48] pushsymb 264 ............................ <#lastAccess>
+  [ 51] pushcons 4 .............................. <"Date">
+  [ 53] pusharglist 1 ........................... <"Date">
+  [ 55] extcall 354 ............................. <newObject("Date")>
+  [ 58] pushsymb 284 ............................ <#denizenLevel>
+  [ 61] pusharglist 0 ........................... <[:]>
+  [ 63] pushproplist ............................ <[:]>
+  [ 64] pushsymb 285 ............................ <#bought>
+  [ 67] pushcons 1 .............................. <EMPTY>
+  [ 69] pushsymb 286 ............................ <#owned>
+  [ 72] pushcons 1 .............................. <EMPTY>
+  [ 74] pushsymb 287 ............................ <#onHand>
+  [ 77] pushcons 1 .............................. <EMPTY>
+  [ 79] pushsymb 288 ............................ <#influencer>
+  [ 82] pushcons 1 .............................. <EMPTY>
+  [ 84] pushsymb 289 ............................ <#logInTotal>
+  [ 87] pushcons 1 .............................. <EMPTY>
+  [ 89] pushsymb 268 ............................ <#exists>
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] pushsymb 267 ............................ <#online>
+  [ 97] pushint8 1 .............................. <1>
+  [ 99] pusharglist 30 .......................... <[#error: 0, #denizenName: EMPTY, #mission: EMPTY, #studioId: EMPTY, #studioName: "studioName", #owner: "studioOwner", #lastAccess: newObject("Date"), #denizenLevel: [:], #bought: EMPTY, #owned: EMPTY, #onHand: EMPTY, #influencer: EMPTY, #logInTotal: EMPTY, #exists: 1, #online: 1]>
+  [101] pushproplist ............................ <[#error: 0, #denizenName: EMPTY, #mission: EMPTY, #studioId: EMPTY, #studioName: "studioName", #owner: "studioOwner", #lastAccess: newObject("Date"), #denizenLevel: [:], #bought: EMPTY, #owned: EMPTY, #onHand: EMPTY, #influencer: EMPTY, #logInTotal: EMPTY, #exists: 1, #online: 1]>
+  [102] setlocal 0 .............................. aDefaultUserData = [#error: 0, #denizenName: EMPTY, #mission: EMPTY, #studioId: EMPTY, #studioName: "studioName", #owner: "studioOwner", #lastAccess: newObject("Date"), #denizenLevel: [:], #bought: EMPTY, #owned: EMPTY, #onHand: EMPTY, #influencer: EMPTY, #logInTotal: EMPTY, #exists: 1, #online: 1]
+  [104] getparam 0 .............................. <me>
+  [106] getlocal 0 .............................. <aDefaultUserData>
+  [108] pusharglistnoret 2 ...................... <me, aDefaultUserData>
+  [110] localcall 5 ............................. displayUser(me, aDefaultUserData)
+  [112] getprop 11 .............................. <pSprite>
+  [114] getchainedprop 14 ....................... <pSprite.member>
+  [116] getobjprop 113 .......................... <pSprite.member.scrollTop>
+  [118] setprop 210 ............................. pScrolltop = pSprite.member.scrollTop
+  [120] getparam 0 .............................. <me>
+  [122] pushzero ................................ <0>
+  [123] setobjprop 10 ........................... me.bDebug = 0
+  [125] pushcons 1 .............................. <EMPTY>
+  [127] setprop 355 ............................. pDenizenName = EMPTY
+  [130] pushcons 1 .............................. <EMPTY>
+  [132] setprop 228 ............................. pStudioName = EMPTY
+  [134] pushcons 1 .............................. <EMPTY>
+  [136] setprop 229 ............................. pStudioOwner = EMPTY
+  [138] pushzero ................................ <0>
+  [139] setprop 333 ............................. pSearch = 0
+  [142] pushcons 1 .............................. <EMPTY>
+  [144] setprop 334 ............................. pSearchText = EMPTY
+  [147] pusharglist 0 ........................... <[]>
+  [149] pushlist ................................ <[]>
+  [150] setprop 356 ............................. pUserData = []
+  [153] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 5 .............................. <"oUserDisplayManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oUserDisplayManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oUserDisplayManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oUserDisplayManager: " & sMessage
+  [ 19] ret
+end
+
+on callAlertHilite me, bCallAlertState
+  [  0] getparam 1 .............................. <bCallAlertState>
+  [  2] jmpifz [ 31] ............................ if bCallAlertState then / else
+  [  5] pushzero ................................ <0>
+  [  6] setprop 333 ............................. pSearch = 0
+  [  9] pushcons 6 .............................. <"searchUser">
+  [ 11] pusharglist 1 ........................... <"searchUser">
+  [ 13] extcall 14 .............................. <member("searchUser")>
+  [ 15] pushzero ................................ <0>
+  [ 16] setobjprop 136 .......................... member("searchUser").hilite = 0
+  [ 18] pushcons 7 .............................. <"callAlert">
+  [ 20] pusharglist 1 ........................... <"callAlert">
+  [ 22] extcall 14 .............................. <member("callAlert")>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] setobjprop 136 .......................... member("callAlert").hilite = 1
+  [ 28] jmp [ 55]
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] setprop 333 ............................. pSearch = 1
+  [ 36] pushcons 6 .............................. <"searchUser">
+  [ 38] pusharglist 1 ........................... <"searchUser">
+  [ 40] extcall 14 .............................. <member("searchUser")>
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] setobjprop 136 .......................... member("searchUser").hilite = 1
+  [ 46] pushcons 7 .............................. <"callAlert">
+  [ 48] pusharglist 1 ........................... <"callAlert">
+  [ 50] extcall 14 .............................. <member("callAlert")>
+  [ 52] pushzero ................................ <0>
+  [ 53] setobjprop 136 .......................... member("callAlert").hilite = 0
+  [ 55] ret
+end
+
+on displayExtendedUserInfo me, sDenizenName, sStudioName, sStudioOwner, bIsCallAlert
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 8 .............................. <"displayExtendedUserInfo:sDenizenName:">
+  [  4] getparam 1 .............................. <sDenizenName>
+  [  6] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName>
+  [  7] pushcons 9 .............................. <"sStudioName:">
+  [  9] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:">
+  [ 10] getparam 2 .............................. <sStudioName>
+  [ 12] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName>
+  [ 13] pushcons 10 ............................. <"sStudioOwner:">
+  [ 15] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:">
+  [ 16] getparam 3 .............................. <sStudioOwner>
+  [ 18] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:" && sStudioOwner>
+  [ 19] pushcons 11 ............................. <"bIsCallAlert:">
+  [ 21] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:" && sStudioOwner && "bIsCallAlert:">
+  [ 22] getparam 4 .............................. <bIsCallAlert>
+  [ 24] joinpadstr .............................. <"displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:" && sStudioOwner && "bIsCallAlert:" && bIsCallAlert>
+  [ 25] pusharglistnoret 2 ...................... <me, "displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:" && sStudioOwner && "bIsCallAlert:" && bIsCallAlert>
+  [ 27] objcall 4 ............................... me.debug("displayExtendedUserInfo:sDenizenName:" && sDenizenName && "sStudioName:" && sStudioName && "sStudioOwner:" && sStudioOwner && "bIsCallAlert:" && bIsCallAlert)
+  [ 29] getparam 4 .............................. <bIsCallAlert>
+  [ 31] jmpifz [ 60] ............................ if bIsCallAlert then / else
+  [ 34] pushzero ................................ <0>
+  [ 35] setprop 333 ............................. pSearch = 0
+  [ 38] pushcons 6 .............................. <"searchUser">
+  [ 40] pusharglist 1 ........................... <"searchUser">
+  [ 42] extcall 14 .............................. <member("searchUser")>
+  [ 44] pushzero ................................ <0>
+  [ 45] setobjprop 136 .......................... member("searchUser").hilite = 0
+  [ 47] pushcons 7 .............................. <"callAlert">
+  [ 49] pusharglist 1 ........................... <"callAlert">
+  [ 51] extcall 14 .............................. <member("callAlert")>
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] setobjprop 136 .......................... member("callAlert").hilite = 1
+  [ 57] jmp [ 84]
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] setprop 333 ............................. pSearch = 1
+  [ 65] pushcons 6 .............................. <"searchUser">
+  [ 67] pusharglist 1 ........................... <"searchUser">
+  [ 69] extcall 14 .............................. <member("searchUser")>
+  [ 71] pushint8 1 .............................. <1>
+  [ 73] setobjprop 136 .......................... member("searchUser").hilite = 1
+  [ 75] pushcons 7 .............................. <"callAlert">
+  [ 77] pusharglist 1 ........................... <"callAlert">
+  [ 79] extcall 14 .............................. <member("callAlert")>
+  [ 81] pushzero ................................ <0>
+  [ 82] setobjprop 136 .......................... member("callAlert").hilite = 0
+  [ 84] getparam 1 .............................. <sDenizenName>
+  [ 86] setprop 355 ............................. pDenizenName = sDenizenName
+  [ 89] getglobal 319 ........................... <oSearchUser>
+  [ 92] getchainedprop 11 ....................... <oSearchUser.pSprite>
+  [ 94] getchainedprop 14 ....................... <oSearchUser.pSprite.member>
+  [ 96] getprop 355 ............................. <pDenizenName>
+  [ 99] setobjprop 15 ........................... oSearchUser.pSprite.member.text = pDenizenName
+  [101] getparam 2 .............................. <sStudioName>
+  [103] setprop 228 ............................. pStudioName = sStudioName
+  [105] getparam 3 .............................. <sStudioOwner>
+  [107] setprop 229 ............................. pStudioOwner = sStudioOwner
+  [109] getglobal 69 ............................ <oDenizenManager>
+  [111] getprop 355 ............................. <pDenizenName>
+  [114] pusharglistnoret 2 ...................... <oDenizenManager, pDenizenName>
+  [116] objcall 70 .............................. oDenizenManager.getDenizenByScreenName(pDenizenName)
+  [118] ret
+end
+
+on receiveGetByStudioId_Result me, sOwnerName
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 12 ............................. <"receiveGetByStudioId_Result:sOwnerName:">
+  [  4] getparam 1 .............................. <sOwnerName>
+  [  6] joinpadstr .............................. <"receiveGetByStudioId_Result:sOwnerName:" && sOwnerName>
+  [  7] pusharglistnoret 2 ...................... <me, "receiveGetByStudioId_Result:sOwnerName:" && sOwnerName>
+  [  9] objcall 4 ............................... me.debug("receiveGetByStudioId_Result:sOwnerName:" && sOwnerName)
+  [ 11] getprop 356 ............................. <pUserData>
+  [ 14] pusharglist 1 ........................... <pUserData>
+  [ 16] extcall 26 .............................. <voidp(pUserData)>
+  [ 18] jmpifz [ 22] ............................ if voidp(pUserData) then
+  [ 21] ret ..................................... exit
+  [ 22] getprop 356 ............................. <pUserData>
+  [ 25] getparam 1 .............................. <sOwnerName>
+  [ 27] setobjprop 230 .......................... pUserData.owner = sOwnerName
+  [ 29] getprop 356 ............................. <pUserData>
+  [ 32] getobjprop 47 ........................... <pUserData.studioName>
+  [ 34] pushcons 13 ............................. <"[">
+  [ 36] joinpadstr .............................. <pUserData.studioName && "[">
+  [ 37] getprop 356 ............................. <pUserData>
+  [ 40] getobjprop 230 .......................... <pUserData.owner>
+  [ 42] joinstr ................................. <pUserData.studioName && "[" & pUserData.owner>
+  [ 43] pushcons 14 ............................. <"]">
+  [ 45] joinstr ................................. <pUserData.studioName && "[" & pUserData.owner & "]">
+  [ 46] setlocal 0 .............................. sStudioNameOwnerString = pUserData.studioName && "[" & pUserData.owner & "]"
+  [ 48] pushcons 15 ............................. <"Name: ">
+  [ 50] getprop 356 ............................. <pUserData>
+  [ 53] getobjprop 262 .......................... <pUserData.denizenName>
+  [ 56] joinstr ................................. <"Name: " & pUserData.denizenName>
+  [ 57] pushcons 16 ............................. <RETURN>
+  [ 59] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN>
+  [ 60] pushcons 17 ............................. <"Mission: ">
+  [ 62] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: ">
+  [ 63] getprop 356 ............................. <pUserData>
+  [ 66] getobjprop 265 .......................... <pUserData.mission>
+  [ 69] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission>
+  [ 70] pushcons 16 ............................. <RETURN>
+  [ 72] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN>
+  [ 73] pushcons 18 ............................. <"Studio: ">
+  [ 75] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: ">
+  [ 76] getlocal 0 .............................. <sStudioNameOwnerString>
+  [ 78] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString>
+  [ 79] pushcons 16 ............................. <RETURN>
+  [ 81] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN>
+  [ 82] pushcons 19 ............................. <"Last Access: ">
+  [ 84] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: ">
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getprop 356 ............................. <pUserData>
+  [ 90] getobjprop 264 .......................... <pUserData.lastAccess>
+  [ 93] pusharglist 2 ........................... <me, pUserData.lastAccess>
+  [ 95] localcall 6 ............................. <getDateString(me, pUserData.lastAccess)>
+  [ 97] joinstr ................................. <"Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: " & getDateString(me, pUserData.lastAccess)>
+  [ 98] setlocal 1 .............................. sUserString = "Name: " & pUserData.denizenName & RETURN & "Mission: " & pUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: " & getDateString(me, pUserData.lastAccess)
+  [100] getprop 11 .............................. <pSprite>
+  [102] getchainedprop 14 ....................... <pSprite.member>
+  [104] getlocal 1 .............................. <sUserString>
+  [106] setobjprop 15 ........................... pSprite.member.text = sUserString
+  [108] ret
+end
+
+on displayUser me, aUserData, oCaller
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 20 ............................. <"displayUser:aUserData:">
+  [  4] getparam 1 .............................. <aUserData>
+  [  6] joinpadstr .............................. <"displayUser:aUserData:" && aUserData>
+  [  7] pushcons 21 ............................. <"oCaller:">
+  [  9] joinpadstr .............................. <"displayUser:aUserData:" && aUserData && "oCaller:">
+  [ 10] getparam 2 .............................. <oCaller>
+  [ 12] joinpadstr .............................. <"displayUser:aUserData:" && aUserData && "oCaller:" && oCaller>
+  [ 13] pusharglistnoret 2 ...................... <me, "displayUser:aUserData:" && aUserData && "oCaller:" && oCaller>
+  [ 15] objcall 4 ............................... me.debug("displayUser:aUserData:" && aUserData && "oCaller:" && oCaller)
+  [ 17] getparam 1 .............................. <aUserData>
+  [ 19] getobjprop 261 .......................... <aUserData.error>
+  [ 22] pushzero ................................ <0>
+  [ 23] nteq .................................... <aUserData.error <> 0>
+  [ 24] jmpifz [ 47] ............................ if aUserData.error <> 0 then / else
+  [ 27] pushcons 22 ............................. <"User not found: ">
+  [ 29] getprop 355 ............................. <pDenizenName>
+  [ 32] joinstr ................................. <"User not found: " & pDenizenName>
+  [ 33] setlocal 0 .............................. sUserString = "User not found: " & pDenizenName
+  [ 35] getprop 11 .............................. <pSprite>
+  [ 37] getchainedprop 14 ....................... <pSprite.member>
+  [ 39] getlocal 0 .............................. <sUserString>
+  [ 41] setobjprop 15 ........................... pSprite.member.text = sUserString
+  [ 43] ret ..................................... exit
+  [ 44] jmp [188]
+  [ 47] getparam 1 .............................. <aUserData>
+  [ 49] getobjprop 268 .......................... <aUserData.exists>
+  [ 52] not ..................................... <not aUserData.exists>
+  [ 53] getparam 1 .............................. <aUserData>
+  [ 55] getobjprop 268 .......................... <aUserData.exists>
+  [ 58] pushcons 1 .............................. <EMPTY>
+  [ 60] eq ...................................... <aUserData.exists = EMPTY>
+  [ 61] or ...................................... <not aUserData.exists or (aUserData.exists = EMPTY)>
+  [ 62] jmpifz [ 85] ............................ if not aUserData.exists or (aUserData.exists = EMPTY) then / else
+  [ 65] pushcons 22 ............................. <"User not found: ">
+  [ 67] getprop 355 ............................. <pDenizenName>
+  [ 70] joinstr ................................. <"User not found: " & pDenizenName>
+  [ 71] setlocal 0 .............................. sUserString = "User not found: " & pDenizenName
+  [ 73] getprop 11 .............................. <pSprite>
+  [ 75] getchainedprop 14 ....................... <pSprite.member>
+  [ 77] getlocal 0 .............................. <sUserString>
+  [ 79] setobjprop 15 ........................... pSprite.member.text = sUserString
+  [ 81] ret ..................................... exit
+  [ 82] jmp [188]
+  [ 85] getparam 1 .............................. <aUserData>
+  [ 87] getobjprop 267 .......................... <aUserData.online>
+  [ 90] not ..................................... <not aUserData.online>
+  [ 91] getparam 1 .............................. <aUserData>
+  [ 93] getobjprop 267 .......................... <aUserData.online>
+  [ 96] pushcons 1 .............................. <EMPTY>
+  [ 98] eq ...................................... <aUserData.online = EMPTY>
+  [ 99] or ...................................... <not aUserData.online or (aUserData.online = EMPTY)>
+  [100] jmpifz [110] ............................ if not aUserData.online or (aUserData.online = EMPTY) then / else
+  [103] pushcons 23 ............................. <"User not on-line.">
+  [105] setlocal 1 .............................. sStudioNameOwnerString = "User not on-line."
+  [107] jmp [188]
+  [110] getparam 1 .............................. <aUserData>
+  [112] getobjprop 67 ........................... <aUserData.studioId>
+  [114] pushcons 1 .............................. <EMPTY>
+  [116] nteq .................................... <aUserData.studioId <> EMPTY>
+  [117] jmpifz [188] ............................ if aUserData.studioId <> EMPTY then
+  [120] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [122] getparam 1 .............................. <aUserData>
+  [124] getobjprop 67 ........................... <aUserData.studioId>
+  [126] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, aUserData.studioId>
+  [128] objcall 8 ............................... oCallAlertDisplayManager.receiveStudioID(aUserData.studioId)
+  [130] getparam 1 .............................. <aUserData>
+  [132] getchainedprop 67 ....................... <aUserData.studioId>
+  [134] pushsymb 65 ............................. <#char>
+  [136] pushint8 1 .............................. <1>
+  [138] pusharglist 3 ........................... <aUserData.studioId, #char, 1>
+  [140] objcall 66 .............................. <aUserData.studioId.char[1]>
+  [142] pushcons 24 ............................. <"$">
+  [144] eq ...................................... <aUserData.studioId.char[1] = "$">
+  [145] jmpifz [160] ............................ if aUserData.studioId.char[1] = "$" then / else
+  [148] getparam 1 .............................. <aUserData>
+  [150] getobjprop 47 ........................... <aUserData.studioName>
+  [152] pushcons 25 ............................. <"[public]">
+  [154] joinpadstr .............................. <aUserData.studioName && "[public]">
+  [155] setlocal 1 .............................. sStudioNameOwnerString = aUserData.studioName && "[public]"
+  [157] jmp [188]
+  [160] getglobal 80 ............................ <oStudioManager>
+  [162] getparam 1 .............................. <aUserData>
+  [164] getobjprop 67 ........................... <aUserData.studioId>
+  [166] pusharglistnoret 2 ...................... <oStudioManager, aUserData.studioId>
+  [168] objcall 363 ............................. oStudioManager.getByStudioID(aUserData.studioId)
+  [171] getparam 1 .............................. <aUserData>
+  [173] getobjprop 47 ........................... <aUserData.studioName>
+  [175] pushcons 13 ............................. <"[">
+  [177] joinpadstr .............................. <aUserData.studioName && "[">
+  [178] getparam 1 .............................. <aUserData>
+  [180] getobjprop 230 .......................... <aUserData.owner>
+  [182] joinstr ................................. <aUserData.studioName && "[" & aUserData.owner>
+  [183] pushcons 14 ............................. <"]">
+  [185] joinstr ................................. <aUserData.studioName && "[" & aUserData.owner & "]">
+  [186] setlocal 1 .............................. sStudioNameOwnerString = aUserData.studioName && "[" & aUserData.owner & "]"
+  [188] pushcons 15 ............................. <"Name: ">
+  [190] getparam 1 .............................. <aUserData>
+  [192] getobjprop 262 .......................... <aUserData.denizenName>
+  [195] joinstr ................................. <"Name: " & aUserData.denizenName>
+  [196] pushcons 16 ............................. <RETURN>
+  [198] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN>
+  [199] pushcons 17 ............................. <"Mission: ">
+  [201] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: ">
+  [202] getparam 1 .............................. <aUserData>
+  [204] getobjprop 265 .......................... <aUserData.mission>
+  [207] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission>
+  [208] pushcons 16 ............................. <RETURN>
+  [210] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN>
+  [211] pushcons 18 ............................. <"Studio: ">
+  [213] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: ">
+  [214] getlocal 1 .............................. <sStudioNameOwnerString>
+  [216] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString>
+  [217] pushcons 16 ............................. <RETURN>
+  [219] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN>
+  [220] pushcons 19 ............................. <"Last Access: ">
+  [222] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: ">
+  [223] getparam 0 .............................. <me>
+  [225] getparam 1 .............................. <aUserData>
+  [227] getobjprop 264 .......................... <aUserData.lastAccess>
+  [230] pusharglist 2 ........................... <me, aUserData.lastAccess>
+  [232] localcall 6 ............................. <getDateString(me, aUserData.lastAccess)>
+  [234] joinstr ................................. <"Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: " & getDateString(me, aUserData.lastAccess)>
+  [235] setlocal 0 .............................. sUserString = "Name: " & aUserData.denizenName & RETURN & "Mission: " & aUserData.mission & RETURN & "Studio: " & sStudioNameOwnerString & RETURN & "Last Access: " & getDateString(me, aUserData.lastAccess)
+  [237] getprop 11 .............................. <pSprite>
+  [239] getchainedprop 14 ....................... <pSprite.member>
+  [241] getlocal 0 .............................. <sUserString>
+  [243] setobjprop 15 ........................... pSprite.member.text = sUserString
+  [245] getparam 1 .............................. <aUserData>
+  [247] setprop 356 ............................. pUserData = aUserData
+  [250] ret
+end
+
+on getDateString me, oLastAccess
+  [  0] getparam 1 .............................. <oLastAccess>
+  [  2] pusharglist 1 ........................... <oLastAccess>
+  [  4] objcall 198 ............................. <oLastAccess.toString()>
+  [  6] setlocal 0 .............................. sString = oLastAccess.toString()
+  [  8] getlocal 0 .............................. <sString>
+  [ 10] pusharglistnoret 1 ...................... <sString>
+  [ 12] extcall 31 .............................. return sString
+  [ 14] ret
+end
+
+on parseList me, aList
+  [  0] pushcons 1 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sString = EMPTY
+  [  4] pushint8 1 .............................. <1>
+  [  6] setlocal 1
+  [  8] getlocal 1
+  [ 10] getparam 1 .............................. <aList>
+  [ 12] getobjprop 32 ........................... <aList.count>
+  [ 14] lteq
+  [ 15] jmpifz [ 65] ............................ repeat with i = 1 to aList.count
+  [ 18] getlocal 1 .............................. <i>
+  [ 20] getparam 1 .............................. <aList>
+  [ 22] getobjprop 32 ........................... <aList.count>
+  [ 24] nteq .................................... <i <> aList.count>
+  [ 25] jmpifz [ 45] ............................ if i <> aList.count then
+  [ 28] getparam 1 .............................. <aList>
+  [ 30] getlocal 1 .............................. <i>
+  [ 32] pusharglist 2 ........................... <aList, i>
+  [ 34] objcall 33 .............................. <aList[i]>
+  [ 36] pushcons 26 ............................. <",">
+  [ 38] joinstr ................................. <aList[i] & ",">
+  [ 39] pushzero ................................ <0>
+  [ 40] put 37 .................................. put aList[i] & "," after sString
+  [ 42] jmp [ 56] ............................... next repeat
+  [ 45] getparam 1 .............................. <aList>
+  [ 47] getlocal 1 .............................. <i>
+  [ 49] pusharglist 2 ........................... <aList, i>
+  [ 51] objcall 33 .............................. <aList[i]>
+  [ 53] pushzero ................................ <0>
+  [ 54] put 37 .................................. put aList[i] after sString
+  [ 56] pushint8 1
+  [ 58] getlocal 1
+  [ 60] add
+  [ 61] setlocal 1
+  [ 63] endrepeat [  8]
+  [ 65] getlocal 0 .............................. <sString>
+  [ 67] pusharglistnoret 1 ...................... <sString>
+  [ 69] extcall 31 .............................. return sString
+  [ 71] ret
+end
+
+on booleanToYesNoString me, bBoolean
+  [  0] getparam 1 .............................. <bBoolean>
+  [  2] peek 0 .................................. case bBoolean of
+  [  4] pushint8 1 .............................. <1>
+  [  6] eq
+  [  7] jmpifz [ 21] ............................ (case) 1:
+  [ 10] pop 1
+  [ 12] pushcons 27 ............................. <"Y">
+  [ 14] pusharglistnoret 1 ...................... <"Y">
+  [ 16] extcall 31 .............................. return "Y"
+  [ 18] jmp [ 47]
+  [ 21] peek 0
+  [ 23] pushzero ................................ <0>
+  [ 24] eq
+  [ 25] jmpifz [ 39] ............................ (case) 0:
+  [ 28] pop 1
+  [ 30] pushcons 28 ............................. <"N">
+  [ 32] pusharglistnoret 1 ...................... <"N">
+  [ 34] extcall 31 .............................. return "N"
+  [ 36] jmp [ 47] ............................... (case) otherwise:
+  [ 39] pop 1
+  [ 41] pushcons 1 .............................. <EMPTY>
+  [ 43] pusharglistnoret 1 ...................... <EMPTY>
+  [ 45] extcall 31 .............................. return EMPTY
+  [ 47] pop 1 ................................... end case
+  [ 49] ret
+end

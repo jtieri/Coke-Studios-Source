@@ -1,0 +1,119 @@
+property sID, iPercentage, bInit
+global oDenizenManager, ElementMgr
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 6 ............................ me.bInit = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 0 .............................. <"Loading Coke Studios">
+  [  9] setobjprop 122 .......................... me.sID = "Loading Coke Studios"
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushint8 100 ............................ <100>
+  [ 15] setobjprop 87 ........................... me.iPercentage = 100
+  [ 17] ret
+end
+
+on Init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 118 ............................. me.openLoader()
+  [  6] pushcons 1 .............................. <"sw1">
+  [  8] pusharglist 1 ........................... <"sw1">
+  [ 10] extcall 185 ............................. <externalParamValue("sw1")>
+  [ 12] setlocal 0 .............................. sEncodedScreenName = externalParamValue("sw1")
+  [ 14] pushcons 2 .............................. <EMPTY>
+  [ 16] setlocal 1 .............................. sKey = EMPTY
+  [ 18] pushcons 3 .............................. <"sw2">
+  [ 20] pusharglist 1 ........................... <"sw2">
+  [ 22] extcall 185 ............................. <externalParamValue("sw2")>
+  [ 24] setlocal 2 .............................. sSessionID = externalParamValue("sw2")
+  [ 26] getglobal 43 ............................ <oDenizenManager>
+  [ 28] getlocal 0 .............................. <sEncodedScreenName>
+  [ 30] pusharglist 2 ........................... <oDenizenManager, sEncodedScreenName>
+  [ 32] objcall 344 ............................. <oDenizenManager.decodeString(sEncodedScreenName)>
+  [ 35] setlocal 3 .............................. sDecodedScreenName = oDenizenManager.decodeString(sEncodedScreenName)
+  [ 37] pushcons 4 .............................. <"sEncodedScreenName: ">
+  [ 39] getlocal 0 .............................. <sEncodedScreenName>
+  [ 41] joinstr ................................. <"sEncodedScreenName: " & sEncodedScreenName>
+  [ 42] pusharglistnoret 1 ...................... <"sEncodedScreenName: " & sEncodedScreenName>
+  [ 44] extcall 17 .............................. put "sEncodedScreenName: " & sEncodedScreenName
+  [ 46] pushcons 5 .............................. <"sDecodedScreenName: ">
+  [ 48] getlocal 3 .............................. <sDecodedScreenName>
+  [ 50] joinstr ................................. <"sDecodedScreenName: " & sDecodedScreenName>
+  [ 51] pusharglistnoret 1 ...................... <"sDecodedScreenName: " & sDecodedScreenName>
+  [ 53] extcall 17 .............................. put "sDecodedScreenName: " & sDecodedScreenName
+  [ 55] pushcons 6 .............................. <"sKey: ">
+  [ 57] getlocal 1 .............................. <sKey>
+  [ 59] joinstr ................................. <"sKey: " & sKey>
+  [ 60] pusharglistnoret 1 ...................... <"sKey: " & sKey>
+  [ 62] extcall 17 .............................. put "sKey: " & sKey
+  [ 64] pushcons 5 .............................. <"sDecodedScreenName: ">
+  [ 66] getlocal 3 .............................. <sDecodedScreenName>
+  [ 68] joinstr ................................. <"sDecodedScreenName: " & sDecodedScreenName>
+  [ 69] pusharglistnoret 1 ...................... <"sDecodedScreenName: " & sDecodedScreenName>
+  [ 71] extcall 17 .............................. put "sDecodedScreenName: " & sDecodedScreenName
+  [ 73] pushcons 7 .............................. <"sSessionID: ">
+  [ 75] getlocal 2 .............................. <sSessionID>
+  [ 77] joinstr ................................. <"sSessionID: " & sSessionID>
+  [ 78] pusharglistnoret 1 ...................... <"sSessionID: " & sSessionID>
+  [ 80] extcall 17 .............................. put "sSessionID: " & sSessionID
+  [ 82] getglobal 43 ............................ <oDenizenManager>
+  [ 84] getlocal 3 .............................. <sDecodedScreenName>
+  [ 86] pusharglistnoret 2 ...................... <oDenizenManager, sDecodedScreenName>
+  [ 88] objcall 241 ............................. oDenizenManager.setScreenName(sDecodedScreenName)
+  [ 90] getglobal 43 ............................ <oDenizenManager>
+  [ 92] getlocal 2 .............................. <sSessionID>
+  [ 94] pusharglistnoret 2 ...................... <oDenizenManager, sSessionID>
+  [ 96] objcall 242 ............................. oDenizenManager.loginDenizen(sSessionID)
+  [ 98] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 6 ............................ <me.bInit>
+  [  4] not ..................................... <not me.bInit>
+  [  5] jmpifz [ 20] ............................ if not me.bInit then
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 6 ............................ me.bInit = 1
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1 ............................... me.Init()
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] thebuiltin 20 ........................... <the frame>
+  [ 24] pusharglistnoret 1 ...................... <the frame>
+  [ 26] extcall 21 .............................. go(the frame)
+  [ 28] ret
+end
+
+on openLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 130 ............................. getLoader().openWindow()
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] objcall 120 ............................. me.updateLoader()
+  [ 14] ret
+end
+
+on closeLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 77 .............................. getLoader().closeWindow()
+  [  8] ret
+end
+
+on updateLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 122 .......................... <me.sID>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 87 ........................... <me.iPercentage>
+  [ 12] pusharglistnoret 3 ...................... <getLoader(), me.sID, me.iPercentage>
+  [ 14] objcall 131 ............................. getLoader().displayStatus(me.sID, me.iPercentage)
+  [ 16] ret
+end

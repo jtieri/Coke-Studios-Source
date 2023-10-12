@@ -1,0 +1,537 @@
+property pScrollIndex, pTotalLines, pDisplayLines, pUserData, pScrollImg, pwidth, pheight, pLineSpace
+
+on new me, numwidth, numheight
+  [  0] pushint8 14 ............................. <14>
+  [  2] setprop 468 ............................. pLineSpace = 14
+  [  5] getparam 1 .............................. <numwidth>
+  [  7] setprop 469 ............................. pwidth = numwidth
+  [ 10] getparam 2 .............................. <numheight>
+  [ 12] setprop 470 ............................. pheight = numheight
+  [ 15] getparam 1 .............................. <numwidth>
+  [ 17] getparam 2 .............................. <numheight>
+  [ 19] pushint8 8 .............................. <8>
+  [ 21] pusharglist 3 ........................... <numwidth, numheight, 8>
+  [ 23] extcall 214 ............................. <image(numwidth, numheight, 8)>
+  [ 25] setprop 471 ............................. pScrollImg = image(numwidth, numheight, 8)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pusharglistnoret 1 ...................... <me>
+  [ 32] localcall 1 ............................. displayloading(me)
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglistnoret 1 ...................... <me>
+  [ 38] extcall 78 .............................. return me
+  [ 40] ret
+end
+
+on displayloading me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setprop 109 ............................. pUserData = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setprop 110 ............................. pScrollIndex = 1
+  [  9] getprop 109 ............................. <pUserData>
+  [ 11] pusharglist 1 ........................... <pUserData>
+  [ 13] objcall 104 ............................. <pUserData.count()>
+  [ 15] setprop 472 ............................. pTotalLines = pUserData.count()
+  [ 18] getprop 470 ............................. <pheight>
+  [ 21] getprop 468 ............................. <pLineSpace>
+  [ 24] div ..................................... <pheight / pLineSpace>
+  [ 25] setprop 473 ............................. pDisplayLines = pheight / pLineSpace
+  [ 28] pushcons 0 .............................. <"peopleList">
+  [ 30] pusharglist 1 ........................... <"peopleList">
+  [ 32] extcall 101 ............................. <member("peopleList")>
+  [ 34] getobjprop 102 .......................... <member("peopleList").memberNum>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] lt ...................................... <member("peopleList").memberNum < 1>
+  [ 39] jmpifz [ 67] ............................ if member("peopleList").memberNum < 1 then / else
+  [ 42] pushsymb 129 ............................ <#text>
+  [ 44] pusharglist 1 ........................... <#text>
+  [ 46] extcall 0 ............................... <new(#text)>
+  [ 48] setlocal 0 .............................. listmember = new(#text)
+  [ 50] getlocal 0 .............................. <listmember>
+  [ 52] pushcons 0 .............................. <"peopleList">
+  [ 54] setobjprop 90 ........................... listmember.name = "peopleList"
+  [ 56] getglobal 203 ........................... <gMembersToDelete>
+  [ 58] getlocal 0 .............................. <listmember>
+  [ 60] pusharglistnoret 2 ...................... <gMembersToDelete, listmember>
+  [ 62] extcall 190 ............................. append(gMembersToDelete, listmember)
+  [ 64] jmp [ 75]
+  [ 67] pushcons 0 .............................. <"peopleList">
+  [ 69] pusharglist 1 ........................... <"peopleList">
+  [ 71] extcall 101 ............................. <member("peopleList")>
+  [ 73] setlocal 0 .............................. listmember = member("peopleList")
+  [ 75] getlocal 0 .............................. <listmember>
+  [ 77] pushsymb 478 ............................ <#fixed>
+  [ 80] setobjprop 479 .......................... listmember.boxType = #fixed
+  [ 83] getlocal 0 .............................. <listmember>
+  [ 85] pushcons 1 .............................. <"#6C472D">
+  [ 87] pusharglist 1 ........................... <"#6C472D">
+  [ 89] extcall 480 ............................. <rgb("#6C472D")>
+  [ 92] setobjprop 358 .......................... listmember.color = rgb("#6C472D")
+  [ 95] getlocal 0 .............................. <listmember>
+  [ 97] pushint8 10 ............................. <10>
+  [ 99] setobjprop 481 .......................... listmember.fontSize = 10
+  [102] getlocal 0 .............................. <listmember>
+  [104] pushsymb 482 ............................ <#bold>
+  [107] pusharglist 1 ........................... <[#bold]>
+  [109] pushlist ................................ <[#bold]>
+  [110] setobjprop 483 .......................... listmember.fontStyle = [#bold]
+  [113] getlocal 0 .............................. <listmember>
+  [115] pushzero ................................ <0>
+  [116] pushzero ................................ <0>
+  [117] getprop 469 ............................. <pwidth>
+  [120] getprop 470 ............................. <pheight>
+  [123] pusharglist 4 ........................... <0, 0, pwidth, pheight>
+  [125] extcall 88 .............................. <rect(0, 0, pwidth, pheight)>
+  [127] setobjprop 88 ........................... listmember.rect = rect(0, 0, pwidth, pheight)
+  [129] getlocal 0 .............................. <listmember>
+  [131] pushcons 2 .............................. <"verdana">
+  [133] setobjprop 484 .......................... listmember.font = "verdana"
+  [136] getlocal 0 .............................. <listmember>
+  [138] pushsymb 497 ............................ <#center>
+  [141] setobjprop 498 .......................... listmember.alignment = #center
+  [144] pushcons 3 .............................. <EMPTY>
+  [146] setlocal 1 .............................. mytext = EMPTY
+  [148] pushint8 1 .............................. <1>
+  [150] setlocal 2
+  [152] getlocal 2
+  [154] getprop 473 ............................. <pDisplayLines>
+  [157] pushint8 2 .............................. <2>
+  [159] div ..................................... <pDisplayLines / 2>
+  [160] lteq
+  [161] jmpifz [180] ............................ repeat with n = 1 to pDisplayLines / 2
+  [164] getlocal 1 .............................. <mytext>
+  [166] pushcons 4 .............................. <RETURN>
+  [168] joinstr ................................. <mytext & RETURN>
+  [169] setlocal 1 .............................. mytext = mytext & RETURN
+  [171] pushint8 1
+  [173] getlocal 2
+  [175] add
+  [176] setlocal 2
+  [178] endrepeat [152]
+  [180] getlocal 1 .............................. <mytext>
+  [182] getglobal 178 ........................... <TextMgr>
+  [184] pushcons 5 .............................. <"LOADING">
+  [186] pusharglist 2 ........................... <TextMgr, "LOADING">
+  [188] objcall 179 ............................. <TextMgr.GetRefText("LOADING")>
+  [190] joinstr ................................. <mytext & TextMgr.GetRefText("LOADING")>
+  [191] setlocal 1 .............................. mytext = mytext & TextMgr.GetRefText("LOADING")
+  [193] getlocal 0 .............................. <listmember>
+  [195] getlocal 1 .............................. <mytext>
+  [197] setobjprop 129 .......................... listmember.text = mytext
+  [199] ret
+end
+
+on updatecontent me
+  [  0] getprop 109 ............................. <pUserData>
+  [  2] pusharglist 1 ........................... <pUserData>
+  [  4] objcall 104 ............................. <pUserData.count()>
+  [  6] setprop 472 ............................. pTotalLines = pUserData.count()
+  [  9] pushcons 0 .............................. <"peopleList">
+  [ 11] pusharglist 1 ........................... <"peopleList">
+  [ 13] extcall 101 ............................. <member("peopleList")>
+  [ 15] setlocal 0 .............................. listmember = member("peopleList")
+  [ 17] getlocal 0 .............................. <listmember>
+  [ 19] pushsymb 488 ............................ <#plain>
+  [ 22] pusharglist 1 ........................... <[#plain]>
+  [ 24] pushlist ................................ <[#plain]>
+  [ 25] setobjprop 483 .......................... listmember.fontStyle = [#plain]
+  [ 28] getlocal 0 .............................. <listmember>
+  [ 30] pushsymb 446 ............................ <#left>
+  [ 33] setobjprop 498 .......................... listmember.alignment = #left
+  [ 36] getlocal 0 .............................. <listmember>
+  [ 38] pushcons 3 .............................. <EMPTY>
+  [ 40] setobjprop 129 .......................... listmember.text = EMPTY
+  [ 42] getlocal 0 .............................. <listmember>
+  [ 44] pushzero ................................ <0>
+  [ 45] setobjprop 502 .......................... listmember.charSpacing = 0
+  [ 48] getlocal 0 .............................. <listmember>
+  [ 50] getprop 468 ............................. <pLineSpace>
+  [ 53] setobjprop 503 .......................... listmember.fixedLineSpace = pLineSpace
+  [ 56] getprop 109 ............................. <pUserData>
+  [ 58] pushcons 3 .............................. <EMPTY>
+  [ 60] pusharglist 1 ........................... <[EMPTY]>
+  [ 62] pushlist ................................ <[EMPTY]>
+  [ 63] eq ...................................... <pUserData = [EMPTY]>
+  [ 64] getprop 109 ............................. <pUserData>
+  [ 66] pusharglist 0 ........................... <[]>
+  [ 68] pushlist ................................ <[]>
+  [ 69] eq ...................................... <pUserData = []>
+  [ 70] or ...................................... <(pUserData = [EMPTY]) or (pUserData = [])>
+  [ 71] jmpifz [145] ............................ if (pUserData = [EMPTY]) or (pUserData = []) then / else
+  [ 74] pushcons 3 .............................. <EMPTY>
+  [ 76] setlocal 1 .............................. mytext = EMPTY
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] setlocal 2
+  [ 82] getlocal 2
+  [ 84] getprop 473 ............................. <pDisplayLines>
+  [ 87] pushint8 2 .............................. <2>
+  [ 89] div ..................................... <pDisplayLines / 2>
+  [ 90] lteq
+  [ 91] jmpifz [110] ............................ repeat with n = 1 to pDisplayLines / 2
+  [ 94] getlocal 1 .............................. <mytext>
+  [ 96] pushcons 4 .............................. <RETURN>
+  [ 98] joinstr ................................. <mytext & RETURN>
+  [ 99] setlocal 1 .............................. mytext = mytext & RETURN
+  [101] pushint8 1
+  [103] getlocal 2
+  [105] add
+  [106] setlocal 2
+  [108] endrepeat [ 82]
+  [110] getlocal 1 .............................. <mytext>
+  [112] pushcons 6 .............................. <"Nobody">
+  [114] joinstr ................................. <mytext & "Nobody">
+  [115] setlocal 1 .............................. mytext = mytext & "Nobody"
+  [117] getlocal 0 .............................. <listmember>
+  [119] getlocal 1 .............................. <mytext>
+  [121] setobjprop 129 .......................... listmember.text = mytext
+  [123] getlocal 0 .............................. <listmember>
+  [125] pushsymb 497 ............................ <#center>
+  [128] setobjprop 498 .......................... listmember.alignment = #center
+  [131] getlocal 0 .............................. <listmember>
+  [133] pushsymb 602 ............................ <#italic>
+  [136] pusharglist 1 ........................... <[#italic]>
+  [138] pushlist ................................ <[#italic]>
+  [139] setobjprop 483 .......................... listmember.fontStyle = [#italic]
+  [142] jmp [498]
+  [145] getprop 473 ............................. <pDisplayLines>
+  [148] getprop 109 ............................. <pUserData>
+  [150] pusharglist 1 ........................... <pUserData>
+  [152] objcall 104 ............................. <pUserData.count()>
+  [154] pusharglist 2 ........................... <pDisplayLines, pUserData.count()>
+  [156] extcall 581 ............................. <min(pDisplayLines, pUserData.count())>
+  [159] setlocal 3 .............................. maxlimit = min(pDisplayLines, pUserData.count())
+  [161] pushint8 1 .............................. <1>
+  [163] setlocal 2
+  [165] getlocal 2
+  [167] getlocal 3 .............................. <maxlimit>
+  [169] lteq
+  [170] jmpifz [212] ............................ repeat with n = 1 to maxlimit
+  [173] getprop 109 ............................. <pUserData>
+  [175] getlocal 2 .............................. <n>
+  [177] getprop 110 ............................. <pScrollIndex>
+  [179] add ..................................... <n + pScrollIndex>
+  [180] pushint8 1 .............................. <1>
+  [182] sub ..................................... <n + pScrollIndex - 1>
+  [183] pusharglist 2 ........................... <pUserData, n + pScrollIndex - 1>
+  [185] objcall 95 .............................. <pUserData[n + pScrollIndex - 1]>
+  [187] setlocal 4 .............................. myuser = pUserData[n + pScrollIndex - 1]
+  [189] getlocal 0 .............................. <listmember>
+  [191] getlocal 0 .............................. <listmember>
+  [193] getobjprop 129 .......................... <listmember.text>
+  [195] getlocal 4 .............................. <myuser>
+  [197] joinstr ................................. <listmember.text & myuser>
+  [198] pushcons 4 .............................. <RETURN>
+  [200] joinstr ................................. <listmember.text & myuser & RETURN>
+  [201] setobjprop 129 .......................... listmember.text = listmember.text & myuser & RETURN
+  [203] pushint8 1
+  [205] getlocal 2
+  [207] add
+  [208] setlocal 2
+  [210] endrepeat [165]
+  [212] getlocal 0 .............................. <listmember>
+  [214] getlocal 0 .............................. <listmember>
+  [216] getchainedprop 129 ...................... <listmember.text>
+  [218] pushsymb 107 ............................ <#line>
+  [220] pushint8 1 .............................. <1>
+  [222] getlocal 0 .............................. <listmember>
+  [224] getchainedprop 129 ...................... <listmember.text>
+  [226] pushsymb 107 ............................ <#line>
+  [228] pusharglist 2 ........................... <listmember.text, #line>
+  [230] objcall 104 ............................. <listmember.text.line.count>
+  [232] pushint8 1 .............................. <1>
+  [234] sub ..................................... <listmember.text.line.count - 1>
+  [235] pusharglist 4 ........................... <listmember.text, #line, 1, listmember.text.line.count - 1>
+  [237] objcall 108 ............................. <listmember.text.line[1..listmember.text.line.count - 1]>
+  [239] setobjprop 129 .......................... listmember.text = listmember.text.line[1..listmember.text.line.count - 1]
+  [241] pushint8 1 .............................. <1>
+  [243] setlocal 2
+  [245] getlocal 2
+  [247] getlocal 0 .............................. <listmember>
+  [249] getchainedprop 129 ...................... <listmember.text>
+  [251] pushsymb 107 ............................ <#line>
+  [253] pusharglist 2 ........................... <listmember.text, #line>
+  [255] objcall 104 ............................. <listmember.text.line.count>
+  [257] lteq
+  [258] jmpifz [326] ............................ repeat with n = 1 to listmember.text.line.count
+  [261] pushcons 7 .............................. <TAB>
+  [263] getlocal 0 .............................. <listmember>
+  [265] getchainedprop 129 ...................... <listmember.text>
+  [267] pushsymb 107 ............................ <#line>
+  [269] getlocal 2 .............................. <n>
+  [271] pusharglist 3 ........................... <listmember.text, #line, n>
+  [273] objcall 108 ............................. <listmember.text.line[n]>
+  [275] pusharglist 2 ........................... <TAB, listmember.text.line[n]>
+  [277] extcall 163 ............................. <offset(TAB, listmember.text.line[n])>
+  [279] setlocal 5 .............................. mychar = offset(TAB, listmember.text.line[n])
+  [281] getlocal 5 .............................. <mychar>
+  [283] pushzero ................................ <0>
+  [284] gt ...................................... <mychar > 0>
+  [285] jmpifz [317] ............................ if mychar > 0 then
+  [288] getlocal 0 .............................. <listmember>
+  [290] pushsymb 107 ............................ <#line>
+  [292] getlocal 2 .............................. <n>
+  [294] pusharglist 3 ........................... <listmember, #line, n>
+  [296] objcall 265 ............................. <listmember.line[n]>
+  [299] pushsymb 164 ............................ <#char>
+  [301] getlocal 5 .............................. <mychar>
+  [303] pusharglist 3 ........................... <listmember.line[n], #char, mychar>
+  [305] objcall 265 ............................. <listmember.line[n].char[mychar]>
+  [308] pushsymb 488 ............................ <#plain>
+  [311] pusharglist 1 ........................... <[#plain]>
+  [313] pushlist ................................ <[#plain]>
+  [314] setobjprop 483 .......................... listmember.line[n].char[mychar].fontStyle = [#plain]
+  [317] pushint8 1
+  [319] getlocal 2
+  [321] add
+  [322] setlocal 2
+  [324] endrepeat [245]
+  [326] getlocal 0 .............................. <listmember>
+  [328] getchainedprop 88 ....................... <listmember.rect>
+  [330] getobjprop 460 .......................... <listmember.rect.height>
+  [333] getlocal 0 .............................. <listmember>
+  [335] getchainedprop 129 ...................... <listmember.text>
+  [337] pushsymb 107 ............................ <#line>
+  [339] pusharglist 2 ........................... <listmember.text, #line>
+  [341] objcall 104 ............................. <listmember.text.line.count>
+  [343] getprop 468 ............................. <pLineSpace>
+  [346] mul ..................................... <listmember.text.line.count * pLineSpace>
+  [347] gt ...................................... <listmember.rect.height > (listmember.text.line.count * pLineSpace)>
+  [348] jmpifz [498] ............................ if listmember.rect.height > (listmember.text.line.count * pLineSpace) then
+  [351] pushcons 7 .............................. <TAB>
+  [353] setmovieprop 135 ........................ the itemDelimiter = TAB
+  [355] pushint8 1 .............................. <1>
+  [357] setlocal 2
+  [359] getlocal 2
+  [361] getlocal 0 .............................. <listmember>
+  [363] getchainedprop 129 ...................... <listmember.text>
+  [365] pushsymb 107 ............................ <#line>
+  [367] pusharglist 2 ........................... <listmember.text, #line>
+  [369] objcall 104 ............................. <listmember.text.line.count>
+  [371] lteq
+  [372] jmpifz [494] ............................ repeat with n = 1 to listmember.text.line.count
+  [375] getlocal 0 .............................. <listmember>
+  [377] pushsymb 107 ............................ <#line>
+  [379] getlocal 2 .............................. <n>
+  [381] pusharglist 3 ........................... <listmember, #line, n>
+  [383] objcall 265 ............................. <listmember.line[n]>
+  [386] getchainedprop 510 ...................... <listmember.line[n].ref>
+  [389] getobjprop 511 .......................... <listmember.line[n].ref.range>
+  [392] setlocal 6 .............................. myref = listmember.line[n].ref.range
+  [394] getlocal 0 .............................. <listmember>
+  [396] getlocal 6 .............................. <myref>
+  [398] pushint8 2 .............................. <2>
+  [400] pusharglist 2 ........................... <myref, 2>
+  [402] objcall 95 .............................. <myref[2]>
+  [404] pusharglist 2 ........................... <listmember, myref[2]>
+  [406] extcall 512 ............................. <charPosToLoc(listmember, myref[2])>
+  [409] getobjprop 459 .......................... <charPosToLoc(listmember, myref[2]).locV>
+  [412] getlocal 0 .............................. <listmember>
+  [414] getlocal 6 .............................. <myref>
+  [416] pushint8 1 .............................. <1>
+  [418] pusharglist 2 ........................... <myref, 1>
+  [420] objcall 95 .............................. <myref[1]>
+  [422] pusharglist 2 ........................... <listmember, myref[1]>
+  [424] extcall 512 ............................. <charPosToLoc(listmember, myref[1])>
+  [427] getobjprop 459 .......................... <charPosToLoc(listmember, myref[1]).locV>
+  [430] nteq .................................... <charPosToLoc(listmember, myref[2]).locV <> charPosToLoc(listmember, myref[1]).locV>
+  [431] jmpifz [485] ............................ repeat while charPosToLoc(listmember, myref[2]).locV <> charPosToLoc(listmember, myref[1]).locV
+  [434] getlocal 0 .............................. <listmember>
+  [436] pushsymb 107 ............................ <#line>
+  [438] getlocal 2 .............................. <n>
+  [440] pusharglist 3 ........................... <listmember, #line, n>
+  [442] objcall 265 ............................. <listmember.line[n]>
+  [445] pushsymb 137 ............................ <#item>
+  [447] pushint8 1 .............................. <1>
+  [449] pusharglist 3 ........................... <listmember.line[n], #item, 1>
+  [451] objcall 265 ............................. <listmember.line[n].item[1]>
+  [454] getlocal 0 .............................. <listmember>
+  [456] pushsymb 107 ............................ <#line>
+  [458] getlocal 2 .............................. <n>
+  [460] pusharglist 3 ........................... <listmember, #line, n>
+  [462] objcall 265 ............................. <listmember.line[n]>
+  [465] pushsymb 137 ............................ <#item>
+  [467] pushint8 1 .............................. <1>
+  [469] pusharglist 3 ........................... <listmember.line[n], #item, 1>
+  [471] objcall 265 ............................. <listmember.line[n].item[1]>
+  [474] getobjprop 502 .......................... <listmember.line[n].item[1].charSpacing>
+  [477] pushint8 1 .............................. <1>
+  [479] sub ..................................... <listmember.line[n].item[1].charSpacing - 1>
+  [480] setobjprop 502 .......................... listmember.line[n].item[1].charSpacing = listmember.line[n].item[1].charSpacing - 1
+  [483] endrepeat [394]
+  [485] pushint8 1
+  [487] getlocal 2
+  [489] add
+  [490] setlocal 2
+  [492] endrepeat [359]
+  [494] pushcons 8 .............................. <",">
+  [496] setmovieprop 135 ........................ the itemDelimiter = ","
+  [498] ret
+end
+
+on roomclicked me, whichnum
+  [  0] getparam 1 .............................. <whichnum>
+  [  2] getprop 109 ............................. <pUserData>
+  [  4] pusharglist 1 ........................... <pUserData>
+  [  6] extcall 104 ............................. <count(pUserData)>
+  [  8] lteq .................................... <whichnum <= count(pUserData)>
+  [  9] jmpifz [334] ............................ if whichnum <= count(pUserData) then
+  [ 12] getprop 109 ............................. <pUserData>
+  [ 14] getparam 1 .............................. <whichnum>
+  [ 16] pusharglist 2 ........................... <pUserData, whichnum>
+  [ 18] objcall 95 .............................. <pUserData[whichnum]>
+  [ 20] getobjprop 114 .......................... <pUserData[whichnum].studioId>
+  [ 22] setlocal 0 .............................. sRoomId = pUserData[whichnum].studioId
+  [ 24] getglobal 99 ............................ <oStudioManager>
+  [ 26] getlocal 0 .............................. <sRoomId>
+  [ 28] pusharglistnoret 2 ...................... <oStudioManager, sRoomId>
+  [ 30] objcall 534 ............................. oStudioManager.getPublicStudioDetail(sRoomId)
+  [ 33] pushcons 9 .............................. <"lingooutput">
+  [ 35] pusharglist 1 ........................... <"lingooutput">
+  [ 37] extcall 101 ............................. <member("lingooutput")>
+  [ 39] getobjprop 129 .......................... <member("lingooutput").text>
+  [ 41] pusharglist 1 ........................... <member("lingooutput").text>
+  [ 43] extcall 106 ............................. <value(member("lingooutput").text)>
+  [ 45] setlocal 1 .............................. roomdetail = value(member("lingooutput").text)
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] setmovieprop 596 ........................ the updateLock = 1
+  [ 52] getglobal 86 ............................ <ElementMgr>
+  [ 54] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 56] pushcons 10 ............................. <"nav_public_start">
+  [ 58] pusharglist 2 ........................... <ElementMgr.pOpenWindows, "nav_public_start">
+  [ 60] extcall 89 .............................. <getaProp(ElementMgr.pOpenWindows, "nav_public_start")>
+  [ 62] pusharglist 1 ........................... <getaProp(ElementMgr.pOpenWindows, "nav_public_start")>
+  [ 64] extcall 87 .............................. <voidp(getaProp(ElementMgr.pOpenWindows, "nav_public_start"))>
+  [ 66] pushzero ................................ <0>
+  [ 67] eq ...................................... <voidp(getaProp(ElementMgr.pOpenWindows, "nav_public_start")) = 0>
+  [ 68] jmpifz [177] ............................ if voidp(getaProp(ElementMgr.pOpenWindows, "nav_public_start")) = 0 then
+  [ 71] getglobal 86 ............................ <ElementMgr>
+  [ 73] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 75] pushcons 10 ............................. <"nav_public_start">
+  [ 77] pusharglist 2 ........................... <ElementMgr.pOpenWindows, "nav_public_start">
+  [ 79] extcall 89 .............................. <getaProp(ElementMgr.pOpenWindows, "nav_public_start")>
+  [ 81] getobjprop 196 .......................... <getaProp(ElementMgr.pOpenWindows, "nav_public_start").prect>
+  [ 83] setlocal 2 .............................. myRect = getaProp(ElementMgr.pOpenWindows, "nav_public_start").prect
+  [ 85] getglobal 86 ............................ <ElementMgr>
+  [ 87] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 89] pushcons 10 ............................. <"nav_public_start">
+  [ 91] pusharglist 2 ........................... <ElementMgr.pOpenWindows, "nav_public_start">
+  [ 93] extcall 89 .............................. <getaProp(ElementMgr.pOpenWindows, "nav_public_start")>
+  [ 95] pusharglistnoret 1 ...................... <getaProp(ElementMgr.pOpenWindows, "nav_public_start")>
+  [ 97] objcall 180 ............................. getaProp(ElementMgr.pOpenWindows, "nav_public_start").closeWindow()
+  [ 99] getglobal 86 ............................ <ElementMgr>
+  [101] pushcons 11 ............................. <"nav_public_info.window">
+  [103] getlocal 2 .............................. <myRect>
+  [105] pusharglistnoret 3 ...................... <ElementMgr, "nav_public_info.window", myRect>
+  [107] objcall 2 ............................... ElementMgr.newwindow("nav_public_info.window", myRect)
+  [109] getglobal 86 ............................ <ElementMgr>
+  [111] getchainedprop 76 ....................... <ElementMgr.pOpenWindows>
+  [113] getchainedprop 605 ...................... <ElementMgr.pOpenWindows.nav_public_info>
+  [116] getchainedprop 96 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists>
+  [118] getchainedprop 97 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist>
+  [120] getprop 109 ............................. <pUserData>
+  [122] setobjprop 109 .......................... ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist.pUserData = pUserData
+  [124] getglobal 86 ............................ <ElementMgr>
+  [126] getchainedprop 76 ....................... <ElementMgr.pOpenWindows>
+  [128] getchainedprop 605 ...................... <ElementMgr.pOpenWindows.nav_public_info>
+  [131] getchainedprop 96 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists>
+  [133] getchainedprop 97 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist>
+  [135] getprop 110 ............................. <pScrollIndex>
+  [137] setobjprop 110 .......................... ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist.pScrollIndex = pScrollIndex
+  [139] getglobal 86 ............................ <ElementMgr>
+  [141] getchainedprop 76 ....................... <ElementMgr.pOpenWindows>
+  [143] getchainedprop 605 ...................... <ElementMgr.pOpenWindows.nav_public_info>
+  [146] getchainedprop 96 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists>
+  [148] getchainedprop 97 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist>
+  [150] getprop 472 ............................. <pTotalLines>
+  [153] setobjprop 472 .......................... ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist.pTotalLines = pTotalLines
+  [156] getglobal 86 ............................ <ElementMgr>
+  [158] getchainedprop 76 ....................... <ElementMgr.pOpenWindows>
+  [160] getchainedprop 605 ...................... <ElementMgr.pOpenWindows.nav_public_info>
+  [163] getchainedprop 96 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists>
+  [165] getchainedprop 97 ....................... <ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist>
+  [167] getprop 473 ............................. <pDisplayLines>
+  [170] setobjprop 473 .......................... ElementMgr.pOpenWindows.nav_public_info.pScrollingLists.roomlist.pDisplayLines = pDisplayLines
+  [173] pusharglistnoret 0 ...................... <>
+  [175] extcall 187 ............................. updateStage()
+  [177] pushcons 12 ............................. <"nav_help_title_public">
+  [179] pusharglist 1 ........................... <"nav_help_title_public">
+  [181] extcall 101 ............................. <member("nav_help_title_public")>
+  [183] getlocal 1 .............................. <roomdetail>
+  [185] getobjprop 90 ........................... <roomdetail.name>
+  [187] pushcons 13 ............................. <"(">
+  [189] joinpadstr .............................. <roomdetail.name && "(">
+  [190] getlocal 1 .............................. <roomdetail>
+  [192] getobjprop 508 .......................... <roomdetail.userCount>
+  [195] joinstr ................................. <roomdetail.name && "(" & roomdetail.userCount>
+  [196] pushcons 14 ............................. <"/">
+  [198] joinstr ................................. <roomdetail.name && "(" & roomdetail.userCount & "/">
+  [199] getlocal 1 .............................. <roomdetail>
+  [201] getobjprop 509 .......................... <roomdetail.capacity>
+  [204] joinstr ................................. <roomdetail.name && "(" & roomdetail.userCount & "/" & roomdetail.capacity>
+  [205] pushcons 15 ............................. <")">
+  [207] joinstr ................................. <roomdetail.name && "(" & roomdetail.userCount & "/" & roomdetail.capacity & ")">
+  [208] setobjprop 129 .......................... member("nav_help_title_public").text = roomdetail.name && "(" & roomdetail.userCount & "/" & roomdetail.capacity & ")"
+  [210] pushcons 16 ............................. <"nav_helptext">
+  [212] pusharglist 1 ........................... <"nav_helptext">
+  [214] extcall 101 ............................. <member("nav_helptext")>
+  [216] getlocal 1 .............................. <roomdetail>
+  [218] getobjprop 123 .......................... <roomdetail.description>
+  [220] setobjprop 129 .......................... member("nav_helptext").text = roomdetail.description
+  [222] pushcons 17 ............................. <"london">
+  [224] pushcons 18 ............................. <"miami">
+  [226] pushcons 19 ............................. <"mombasa">
+  [228] pushcons 20 ............................. <"newyork">
+  [230] pushcons 21 ............................. <"rio">
+  [232] pushcons 22 ............................. <"seattle">
+  [234] pushcons 23 ............................. <"sydney">
+  [236] pushcons 24 ............................. <"tokyo">
+  [238] pushcons 25 ............................. <"goa">
+  [240] pushcons 26 ............................. <"alaska">
+  [242] pushcons 27 ............................. <"moscow">
+  [244] pushcons 28 ............................. <"redroom">
+  [246] pusharglist 12 .......................... <["london", "miami", "mombasa", "newyork", "rio", "seattle", "sydney", "tokyo", "goa", "alaska", "moscow", "redroom"]>
+  [248] pushlist ................................ <["london", "miami", "mombasa", "newyork", "rio", "seattle", "sydney", "tokyo", "goa", "alaska", "moscow", "redroom"]>
+  [249] setlocal 3 .............................. mylocs = ["london", "miami", "mombasa", "newyork", "rio", "seattle", "sydney", "tokyo", "goa", "alaska", "moscow", "redroom"]
+  [251] getlocal 3 .............................. <mylocs>
+  [253] getlocal 1 .............................. <roomdetail>
+  [255] getobjprop 563 .......................... <roomdetail.location>
+  [258] pusharglist 2 ........................... <mylocs, roomdetail.location>
+  [260] extcall 448 ............................. <getPos(mylocs, roomdetail.location)>
+  [263] setlocal 4 .............................. MyNum = getPos(mylocs, roomdetail.location)
+  [265] getlocal 4 .............................. <MyNum>
+  [267] pushint8 10 ............................. <10>
+  [269] lt ...................................... <MyNum < 10>
+  [270] jmpifz [283] ............................ if MyNum < 10 then / else
+  [273] pushcons 29 ............................. <"00">
+  [275] getlocal 4 .............................. <MyNum>
+  [277] joinstr ................................. <"00" & MyNum>
+  [278] setlocal 4 .............................. MyNum = "00" & MyNum
+  [280] jmp [290]
+  [283] pushcons 30 ............................. <"0">
+  [285] getlocal 4 .............................. <MyNum>
+  [287] joinstr ................................. <"0" & MyNum>
+  [288] setlocal 4 .............................. MyNum = "0" & MyNum
+  [290] pushcons 31 ............................. <"cc_nav_roomico">
+  [292] pusharglist 1 ........................... <"cc_nav_roomico">
+  [294] extcall 101 ............................. <member("cc_nav_roomico")>
+  [296] pushcons 32 ............................. <"nav_icon_unit">
+  [298] getlocal 4 .............................. <MyNum>
+  [300] joinstr ................................. <"nav_icon_unit" & MyNum>
+  [301] pusharglist 1 ........................... <"nav_icon_unit" & MyNum>
+  [303] extcall 101 ............................. <member("nav_icon_unit" & MyNum)>
+  [305] getchainedprop 214 ...................... <member("nav_icon_unit" & MyNum).image>
+  [307] pusharglist 1 ........................... <member("nav_icon_unit" & MyNum).image>
+  [309] objcall 477 ............................. <member("nav_icon_unit" & MyNum).image.duplicate()>
+  [312] setobjprop 214 .......................... member("cc_nav_roomico").image = member("nav_icon_unit" & MyNum).image.duplicate()
+  [314] pushcons 31 ............................. <"cc_nav_roomico">
+  [316] pusharglist 1 ........................... <"cc_nav_roomico">
+  [318] extcall 101 ............................. <member("cc_nav_roomico")>
+  [320] pushzero ................................ <0>
+  [321] pushzero ................................ <0>
+  [322] pusharglist 2 ........................... <0, 0>
+  [324] extcall 445 ............................. <point(0, 0)>
+  [327] setobjprop 487 .......................... member("cc_nav_roomico").regPoint = point(0, 0)
+  [330] pushzero ................................ <0>
+  [331] setmovieprop 596 ........................ the updateLock = 0
+  [334] ret
+end

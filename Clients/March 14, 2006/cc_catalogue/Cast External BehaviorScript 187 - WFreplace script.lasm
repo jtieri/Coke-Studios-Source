@@ -1,0 +1,685 @@
+property iWallPatternIndex, iWallColorIndex, iFloorPatternIndex, iFloorColorIndex, aWallPatterns, aFloorPatterns, sAssetCast
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 207 .......................... me.iFloorPatternIndex = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setobjprop 208 .......................... me.iFloorColorIndex = 1
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setobjprop 209 .......................... me.iWallPatternIndex = 1
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] setobjprop 210 .......................... me.iWallColorIndex = 1
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pushcons 0 .............................. <"Catalogue">
+  [ 28] setobjprop 44 ........................... me.sAssetCast = "Catalogue"
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pusharglist 1 ........................... <me>
+  [ 36] objcall 205 ............................. <me.loadwallPatterns()>
+  [ 38] setobjprop 64 ........................... me.aWallPatterns = me.loadwallPatterns()
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglist 1 ........................... <me>
+  [ 46] objcall 206 ............................. <me.loadfloorPatterns()>
+  [ 48] setobjprop 94 ........................... me.aFloorPatterns = me.loadfloorPatterns()
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pusharglistnoret 1 ...................... <me>
+  [ 54] extcall 2 ............................... return me
+  [ 56] ret
+end
+
+on loadwallPatterns me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setprop 64 .............................. aWallPatterns = [:]
+  [  5] pushcons 1 .............................. <"cat_wallpattern_patterns_index">
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 44 ........................... <me.sAssetCast>
+  [ 11] pusharglist 2 ........................... <"cat_wallpattern_patterns_index", me.sAssetCast>
+  [ 13] extcall 52 .............................. <member("cat_wallpattern_patterns_index", me.sAssetCast)>
+  [ 15] setlocal 0 .............................. oPatternMember = member("cat_wallpattern_patterns_index", me.sAssetCast)
+  [ 17] getlocal 0 .............................. <oPatternMember>
+  [ 19] getobjprop 53 ........................... <oPatternMember.text>
+  [ 21] setlocal 1 .............................. sPatternText = oPatternMember.text
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setlocal 2
+  [ 27] getlocal 2
+  [ 29] getlocal 1 .............................. <sPatternText>
+  [ 31] pushsymb 54 ............................. <#lines>
+  [ 33] pusharglist 2 ........................... <sPatternText, #lines>
+  [ 35] objcall 55 .............................. <sPatternText.lines.count>
+  [ 37] lteq
+  [ 38] jmpifz [170] ............................ repeat with i = 1 to sPatternText.lines.count
+  [ 41] getlocal 1 .............................. <sPatternText>
+  [ 43] pushsymb 56 ............................. <#line>
+  [ 45] getlocal 2 .............................. <i>
+  [ 47] pusharglist 3 ........................... <sPatternText, #line, i>
+  [ 49] objcall 57 .............................. <sPatternText.line[i]>
+  [ 51] setlocal 3 .............................. sPatternLine = sPatternText.line[i]
+  [ 53] getlocal 3 .............................. <sPatternLine>
+  [ 55] pusharglist 1 ........................... <sPatternLine>
+  [ 57] extcall 58 .............................. <value(sPatternLine)>
+  [ 59] setlocal 4 .............................. aPatternList = value(sPatternLine)
+  [ 61] getlocal 4 .............................. <aPatternList>
+  [ 63] getobjprop 59 ........................... <aPatternList.name>
+  [ 65] setlocal 5 .............................. sPatternName = aPatternList.name
+  [ 67] getlocal 4 .............................. <aPatternList>
+  [ 69] getobjprop 60 ........................... <aPatternList.field>
+  [ 71] setlocal 6 .............................. sColorField = aPatternList.field
+  [ 73] pusharglist 0 ........................... <[]>
+  [ 75] pushlist ................................ <[]>
+  [ 76] setlocal 7 .............................. aColors = []
+  [ 78] getlocal 6 .............................. <sColorField>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 44 ........................... <me.sAssetCast>
+  [ 84] pusharglist 2 ........................... <sColorField, me.sAssetCast>
+  [ 86] extcall 52 .............................. <member(sColorField, me.sAssetCast)>
+  [ 88] setlocal 8 .............................. oColorsMember = member(sColorField, me.sAssetCast)
+  [ 90] getlocal 8 .............................. <oColorsMember>
+  [ 92] getobjprop 53 ........................... <oColorsMember.text>
+  [ 94] setlocal 9 .............................. sColorsText = oColorsMember.text
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] setlocal 10
+  [100] getlocal 10
+  [102] getlocal 9 .............................. <sColorsText>
+  [104] pushsymb 54 ............................. <#lines>
+  [106] pusharglist 2 ........................... <sColorsText, #lines>
+  [108] objcall 55 .............................. <sColorsText.lines.count>
+  [110] lteq
+  [111] jmpifz [151] ............................ repeat with ii = 1 to sColorsText.lines.count
+  [114] getlocal 9 .............................. <sColorsText>
+  [116] pushsymb 56 ............................. <#line>
+  [118] getlocal 10 ............................. <ii>
+  [120] pusharglist 3 ........................... <sColorsText, #line, ii>
+  [122] objcall 57 .............................. <sColorsText.line[ii]>
+  [124] setlocal 11 ............................. sColorLine = sColorsText.line[ii]
+  [126] getlocal 11 ............................. <sColorLine>
+  [128] pusharglist 1 ........................... <sColorLine>
+  [130] extcall 58 .............................. <value(sColorLine)>
+  [132] setlocal 12 ............................. aColorsList = value(sColorLine)
+  [134] getlocal 7 .............................. <aColors>
+  [136] getlocal 12 ............................. <aColorsList>
+  [138] pusharglistnoret 2 ...................... <aColors, aColorsList>
+  [140] objcall 61 .............................. aColors.add(aColorsList)
+  [142] pushint8 1
+  [144] getlocal 10
+  [146] add
+  [147] setlocal 10
+  [149] endrepeat [100]
+  [151] getprop 64 .............................. <aWallPatterns>
+  [153] getlocal 5 .............................. <sPatternName>
+  [155] getlocal 7 .............................. <aColors>
+  [157] pusharglistnoret 3 ...................... <aWallPatterns, sPatternName, aColors>
+  [159] objcall 62 .............................. aWallPatterns.addProp(sPatternName, aColors)
+  [161] pushint8 1
+  [163] getlocal 2
+  [165] add
+  [166] setlocal 2
+  [168] endrepeat [ 27]
+  [170] getprop 64 .............................. <aWallPatterns>
+  [172] pusharglistnoret 1 ...................... <aWallPatterns>
+  [174] extcall 2 ............................... return aWallPatterns
+  [176] ret
+end
+
+on loadfloorPatterns me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setprop 94 .............................. aFloorPatterns = [:]
+  [  5] pushcons 2 .............................. <"cat_floorpattern_patterns_index">
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 44 ........................... <me.sAssetCast>
+  [ 11] pusharglist 2 ........................... <"cat_floorpattern_patterns_index", me.sAssetCast>
+  [ 13] extcall 52 .............................. <member("cat_floorpattern_patterns_index", me.sAssetCast)>
+  [ 15] setlocal 0 .............................. oPatternMember = member("cat_floorpattern_patterns_index", me.sAssetCast)
+  [ 17] getlocal 0 .............................. <oPatternMember>
+  [ 19] getobjprop 53 ........................... <oPatternMember.text>
+  [ 21] setlocal 1 .............................. sPatternText = oPatternMember.text
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setlocal 2
+  [ 27] getlocal 2
+  [ 29] getlocal 1 .............................. <sPatternText>
+  [ 31] pushsymb 54 ............................. <#lines>
+  [ 33] pusharglist 2 ........................... <sPatternText, #lines>
+  [ 35] objcall 55 .............................. <sPatternText.lines.count>
+  [ 37] lteq
+  [ 38] jmpifz [170] ............................ repeat with i = 1 to sPatternText.lines.count
+  [ 41] getlocal 1 .............................. <sPatternText>
+  [ 43] pushsymb 56 ............................. <#line>
+  [ 45] getlocal 2 .............................. <i>
+  [ 47] pusharglist 3 ........................... <sPatternText, #line, i>
+  [ 49] objcall 57 .............................. <sPatternText.line[i]>
+  [ 51] setlocal 3 .............................. sPatternLine = sPatternText.line[i]
+  [ 53] getlocal 3 .............................. <sPatternLine>
+  [ 55] pusharglist 1 ........................... <sPatternLine>
+  [ 57] extcall 58 .............................. <value(sPatternLine)>
+  [ 59] setlocal 4 .............................. aPatternList = value(sPatternLine)
+  [ 61] getlocal 4 .............................. <aPatternList>
+  [ 63] getobjprop 59 ........................... <aPatternList.name>
+  [ 65] setlocal 5 .............................. sPatternName = aPatternList.name
+  [ 67] getlocal 4 .............................. <aPatternList>
+  [ 69] getobjprop 60 ........................... <aPatternList.field>
+  [ 71] setlocal 6 .............................. sColorField = aPatternList.field
+  [ 73] pusharglist 0 ........................... <[]>
+  [ 75] pushlist ................................ <[]>
+  [ 76] setlocal 7 .............................. aColors = []
+  [ 78] getlocal 6 .............................. <sColorField>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 44 ........................... <me.sAssetCast>
+  [ 84] pusharglist 2 ........................... <sColorField, me.sAssetCast>
+  [ 86] extcall 52 .............................. <member(sColorField, me.sAssetCast)>
+  [ 88] setlocal 8 .............................. oColorsMember = member(sColorField, me.sAssetCast)
+  [ 90] getlocal 8 .............................. <oColorsMember>
+  [ 92] getobjprop 53 ........................... <oColorsMember.text>
+  [ 94] setlocal 9 .............................. sColorsText = oColorsMember.text
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] setlocal 10
+  [100] getlocal 10
+  [102] getlocal 9 .............................. <sColorsText>
+  [104] pushsymb 54 ............................. <#lines>
+  [106] pusharglist 2 ........................... <sColorsText, #lines>
+  [108] objcall 55 .............................. <sColorsText.lines.count>
+  [110] lteq
+  [111] jmpifz [151] ............................ repeat with ii = 1 to sColorsText.lines.count
+  [114] getlocal 9 .............................. <sColorsText>
+  [116] pushsymb 56 ............................. <#line>
+  [118] getlocal 10 ............................. <ii>
+  [120] pusharglist 3 ........................... <sColorsText, #line, ii>
+  [122] objcall 57 .............................. <sColorsText.line[ii]>
+  [124] setlocal 11 ............................. sColorLine = sColorsText.line[ii]
+  [126] getlocal 11 ............................. <sColorLine>
+  [128] pusharglist 1 ........................... <sColorLine>
+  [130] extcall 58 .............................. <value(sColorLine)>
+  [132] setlocal 12 ............................. aColorsList = value(sColorLine)
+  [134] getlocal 7 .............................. <aColors>
+  [136] getlocal 12 ............................. <aColorsList>
+  [138] pusharglistnoret 2 ...................... <aColors, aColorsList>
+  [140] objcall 61 .............................. aColors.add(aColorsList)
+  [142] pushint8 1
+  [144] getlocal 10
+  [146] add
+  [147] setlocal 10
+  [149] endrepeat [100]
+  [151] getprop 94 .............................. <aFloorPatterns>
+  [153] getlocal 5 .............................. <sPatternName>
+  [155] getlocal 7 .............................. <aColors>
+  [157] pusharglistnoret 3 ...................... <aFloorPatterns, sPatternName, aColors>
+  [159] objcall 62 .............................. aFloorPatterns.addProp(sPatternName, aColors)
+  [161] pushint8 1
+  [163] getlocal 2
+  [165] add
+  [166] setlocal 2
+  [168] endrepeat [ 27]
+  [170] getprop 94 .............................. <aFloorPatterns>
+  [172] pusharglistnoret 1 ...................... <aFloorPatterns>
+  [174] extcall 2 ............................... return aFloorPatterns
+  [176] ret
+end
+
+on displayPattern me
+  [  0] pushint8 105 ............................ <105>
+  [  2] pushint8 105 ............................ <105>
+  [  4] pushint8 32 ............................. <32>
+  [  6] pusharglist 3 ........................... <105, 105, 32>
+  [  8] extcall 140 ............................. <image(105, 105, 32)>
+  [ 10] setlocal 0 .............................. myimg = image(105, 105, 32)
+  [ 12] getprop 209 ............................. <iWallPatternIndex>
+  [ 14] pusharglist 1 ........................... <iWallPatternIndex>
+  [ 16] extcall 158 ............................. <voidp(iWallPatternIndex)>
+  [ 18] jmpifz [ 25] ............................ if voidp(iWallPatternIndex) then
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] setprop 209 ............................. iWallPatternIndex = 1
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getchainedprop 64 ....................... <me.aWallPatterns>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 209 .......................... <me.iWallPatternIndex>
+  [ 33] pusharglist 2 ........................... <me.aWallPatterns, me.iWallPatternIndex>
+  [ 35] objcall 80 .............................. <me.aWallPatterns.getPropAt(me.iWallPatternIndex)>
+  [ 37] setlocal 1 .............................. swallPatternName = me.aWallPatterns.getPropAt(me.iWallPatternIndex)
+  [ 39] pushcons 3 .............................. <"cc.cat.wall.type">
+  [ 41] pusharglist 1 ........................... <"cc.cat.wall.type">
+  [ 43] extcall 52 .............................. <member("cc.cat.wall.type")>
+  [ 45] getglobal 91 ............................ <TextMgr>
+  [ 47] getlocal 1 .............................. <swallPatternName>
+  [ 49] pusharglist 2 ........................... <TextMgr, swallPatternName>
+  [ 51] objcall 95 .............................. <TextMgr.GetRefText(swallPatternName)>
+  [ 53] pushcons 4 .............................. <": ">
+  [ 55] joinstr ................................. <TextMgr.GetRefText(swallPatternName) & ": ">
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getobjprop 210 .......................... <me.iWallColorIndex>
+  [ 60] pusharglist 1 ........................... <me.iWallColorIndex>
+  [ 62] extcall 96 .............................. <string(me.iWallColorIndex)>
+  [ 64] joinstr ................................. <TextMgr.GetRefText(swallPatternName) & ": " & string(me.iWallColorIndex)>
+  [ 65] setobjprop 53 ........................... member("cc.cat.wall.type").text = TextMgr.GetRefText(swallPatternName) & ": " & string(me.iWallColorIndex)
+  [ 67] getparam 0 .............................. <me>
+  [ 69] pushsymb 64 ............................. <#aWallPatterns>
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getobjprop 209 .......................... <me.iWallPatternIndex>
+  [ 75] pusharglist 3 ........................... <me, #aWallPatterns, me.iWallPatternIndex>
+  [ 77] objcall 81 .............................. <me.aWallPatterns[me.iWallPatternIndex]>
+  [ 79] getparam 0 .............................. <me>
+  [ 81] getobjprop 210 .......................... <me.iWallColorIndex>
+  [ 83] pusharglist 2 ........................... <me.aWallPatterns[me.iWallPatternIndex], me.iWallColorIndex>
+  [ 85] objcall 82 .............................. <me.aWallPatterns[me.iWallPatternIndex][me.iWallColorIndex]>
+  [ 87] setlocal 2 .............................. aColorData = me.aWallPatterns[me.iWallPatternIndex][me.iWallColorIndex]
+  [ 89] getlocal 2 .............................. <aColorData>
+  [ 91] getobjprop 83 ........................... <aColorData.dirtStyle>
+  [ 93] pushint8 1 .............................. <1>
+  [ 95] eq ...................................... <aColorData.dirtStyle = 1>
+  [ 96] jmpifz [138] ............................ if aColorData.dirtStyle = 1 then / else
+  [ 99] pushcons 5 .............................. <"cat_left_wall_1_b_0_0_0">
+  [101] getparam 0 .............................. <me>
+  [103] getobjprop 44 ........................... <me.sAssetCast>
+  [105] pusharglist 2 ........................... <"cat_left_wall_1_b_0_0_0", me.sAssetCast>
+  [107] extcall 52 .............................. <member("cat_left_wall_1_b_0_0_0", me.sAssetCast)>
+  [109] getchainedprop 140 ...................... <member("cat_left_wall_1_b_0_0_0", me.sAssetCast).image>
+  [111] pusharglist 1 ........................... <member("cat_left_wall_1_b_0_0_0", me.sAssetCast).image>
+  [113] objcall 141 ............................. <member("cat_left_wall_1_b_0_0_0", me.sAssetCast).image.duplicate()>
+  [115] setlocal 3 .............................. LeftWall = member("cat_left_wall_1_b_0_0_0", me.sAssetCast).image.duplicate()
+  [117] pushcons 6 .............................. <"cat_right_wall_1_b_0_0_0">
+  [119] getparam 0 .............................. <me>
+  [121] getobjprop 44 ........................... <me.sAssetCast>
+  [123] pusharglist 2 ........................... <"cat_right_wall_1_b_0_0_0", me.sAssetCast>
+  [125] extcall 52 .............................. <member("cat_right_wall_1_b_0_0_0", me.sAssetCast)>
+  [127] getchainedprop 140 ...................... <member("cat_right_wall_1_b_0_0_0", me.sAssetCast).image>
+  [129] pusharglist 1 ........................... <member("cat_right_wall_1_b_0_0_0", me.sAssetCast).image>
+  [131] objcall 141 ............................. <member("cat_right_wall_1_b_0_0_0", me.sAssetCast).image.duplicate()>
+  [133] setlocal 4 .............................. RightWall = member("cat_right_wall_1_b_0_0_0", me.sAssetCast).image.duplicate()
+  [135] jmp [184]
+  [138] getlocal 2 .............................. <aColorData>
+  [140] getobjprop 83 ........................... <aColorData.dirtStyle>
+  [142] pushint8 2 .............................. <2>
+  [144] eq ...................................... <aColorData.dirtStyle = 2>
+  [145] jmpifz [184] ............................ if aColorData.dirtStyle = 2 then
+  [148] pushcons 7 .............................. <"cat_left_wall_2_b_0_0_0">
+  [150] getparam 0 .............................. <me>
+  [152] getobjprop 44 ........................... <me.sAssetCast>
+  [154] pusharglist 2 ........................... <"cat_left_wall_2_b_0_0_0", me.sAssetCast>
+  [156] extcall 52 .............................. <member("cat_left_wall_2_b_0_0_0", me.sAssetCast)>
+  [158] getchainedprop 140 ...................... <member("cat_left_wall_2_b_0_0_0", me.sAssetCast).image>
+  [160] pusharglist 1 ........................... <member("cat_left_wall_2_b_0_0_0", me.sAssetCast).image>
+  [162] objcall 141 ............................. <member("cat_left_wall_2_b_0_0_0", me.sAssetCast).image.duplicate()>
+  [164] setlocal 3 .............................. LeftWall = member("cat_left_wall_2_b_0_0_0", me.sAssetCast).image.duplicate()
+  [166] pushcons 8 .............................. <"cat_right_wall_2_b_0_0_0">
+  [168] getparam 0 .............................. <me>
+  [170] getobjprop 44 ........................... <me.sAssetCast>
+  [172] pusharglist 2 ........................... <"cat_right_wall_2_b_0_0_0", me.sAssetCast>
+  [174] extcall 52 .............................. <member("cat_right_wall_2_b_0_0_0", me.sAssetCast)>
+  [176] getchainedprop 140 ...................... <member("cat_right_wall_2_b_0_0_0", me.sAssetCast).image>
+  [178] pusharglist 1 ........................... <member("cat_right_wall_2_b_0_0_0", me.sAssetCast).image>
+  [180] objcall 141 ............................. <member("cat_right_wall_2_b_0_0_0", me.sAssetCast).image.duplicate()>
+  [182] setlocal 4 .............................. RightWall = member("cat_right_wall_2_b_0_0_0", me.sAssetCast).image.duplicate()
+  [184] getlocal 2 .............................. <aColorData>
+  [186] getobjprop 13 ........................... <aColorData.color>
+  [188] setlocal 5 .............................. LeftWallcolor = aColorData.color
+  [190] getlocal 2 .............................. <aColorData>
+  [192] getobjprop 13 ........................... <aColorData.color>
+  [194] setlocal 6 .............................. RightWallcolor = aColorData.color
+  [196] getlocal 2 .............................. <aColorData>
+  [198] getobjprop 85 ........................... <aColorData.bgColor>
+  [200] setlocal 7 .............................. LeftWallbgcolor = aColorData.bgColor
+  [202] getlocal 2 .............................. <aColorData>
+  [204] getobjprop 85 ........................... <aColorData.bgColor>
+  [206] setlocal 8 .............................. RightWallbgcolor = aColorData.bgColor
+  [208] getlocal 2 .............................. <aColorData>
+  [210] getobjprop 86 ........................... <aColorData.dirtBlend>
+  [212] setlocal 9 .............................. LeftWallblend = aColorData.dirtBlend
+  [214] getlocal 2 .............................. <aColorData>
+  [216] getobjprop 86 ........................... <aColorData.dirtBlend>
+  [218] setlocal 10 ............................. RightWallblend = aColorData.dirtBlend
+  [220] pushcons 9 .............................. <"cat_left_wall_1_a_0_0_0">
+  [222] pusharglist 1 ........................... <"cat_left_wall_1_a_0_0_0">
+  [224] extcall 52 .............................. <member("cat_left_wall_1_a_0_0_0")>
+  [226] pushcons 10 ............................. <"cat_left_wall_">
+  [228] getlocal 2 .............................. <aColorData>
+  [230] getobjprop 88 ........................... <aColorData.palette>
+  [232] joinstr ................................. <"cat_left_wall_" & aColorData.palette>
+  [233] getparam 0 .............................. <me>
+  [235] getobjprop 44 ........................... <me.sAssetCast>
+  [237] pusharglist 2 ........................... <"cat_left_wall_" & aColorData.palette, me.sAssetCast>
+  [239] extcall 52 .............................. <member("cat_left_wall_" & aColorData.palette, me.sAssetCast)>
+  [241] setobjprop 88 ........................... member("cat_left_wall_1_a_0_0_0").palette = member("cat_left_wall_" & aColorData.palette, me.sAssetCast)
+  [243] pushcons 11 ............................. <"cat_right_wall_1_a_0_0_0">
+  [245] pusharglist 1 ........................... <"cat_right_wall_1_a_0_0_0">
+  [247] extcall 52 .............................. <member("cat_right_wall_1_a_0_0_0")>
+  [249] pushcons 12 ............................. <"cat_right_wall_">
+  [251] getlocal 2 .............................. <aColorData>
+  [253] getobjprop 88 ........................... <aColorData.palette>
+  [255] joinstr ................................. <"cat_right_wall_" & aColorData.palette>
+  [256] getparam 0 .............................. <me>
+  [258] getobjprop 44 ........................... <me.sAssetCast>
+  [260] pusharglist 2 ........................... <"cat_right_wall_" & aColorData.palette, me.sAssetCast>
+  [262] extcall 52 .............................. <member("cat_right_wall_" & aColorData.palette, me.sAssetCast)>
+  [264] setobjprop 88 ........................... member("cat_right_wall_1_a_0_0_0").palette = member("cat_right_wall_" & aColorData.palette, me.sAssetCast)
+  [266] getlocal 2 .............................. <aColorData>
+  [268] getobjprop 89 ........................... <aColorData.textureBlend>
+  [270] setlocal 11 ............................. LeftWallTextureblend = aColorData.textureBlend
+  [272] getlocal 2 .............................. <aColorData>
+  [274] getobjprop 89 ........................... <aColorData.textureBlend>
+  [276] setlocal 12 ............................. RightWallTextureblend = aColorData.textureBlend
+  [278] getparam 0 .............................. <me>
+  [280] getchainedprop 94 ....................... <me.aFloorPatterns>
+  [282] getparam 0 .............................. <me>
+  [284] getobjprop 207 .......................... <me.iFloorPatternIndex>
+  [286] pusharglist 2 ........................... <me.aFloorPatterns, me.iFloorPatternIndex>
+  [288] objcall 80 .............................. <me.aFloorPatterns.getPropAt(me.iFloorPatternIndex)>
+  [290] setlocal 13 ............................. sFloorPatternName = me.aFloorPatterns.getPropAt(me.iFloorPatternIndex)
+  [292] pushcons 13 ............................. <"cc.cat.floor.type">
+  [294] pusharglist 1 ........................... <"cc.cat.floor.type">
+  [296] extcall 52 .............................. <member("cc.cat.floor.type")>
+  [298] getglobal 91 ............................ <TextMgr>
+  [300] getlocal 13 ............................. <sFloorPatternName>
+  [302] pusharglist 2 ........................... <TextMgr, sFloorPatternName>
+  [304] objcall 95 .............................. <TextMgr.GetRefText(sFloorPatternName)>
+  [306] pushcons 4 .............................. <": ">
+  [308] joinstr ................................. <TextMgr.GetRefText(sFloorPatternName) & ": ">
+  [309] getparam 0 .............................. <me>
+  [311] getobjprop 208 .......................... <me.iFloorColorIndex>
+  [313] pusharglist 1 ........................... <me.iFloorColorIndex>
+  [315] extcall 96 .............................. <string(me.iFloorColorIndex)>
+  [317] joinstr ................................. <TextMgr.GetRefText(sFloorPatternName) & ": " & string(me.iFloorColorIndex)>
+  [318] setobjprop 53 ........................... member("cc.cat.floor.type").text = TextMgr.GetRefText(sFloorPatternName) & ": " & string(me.iFloorColorIndex)
+  [320] getparam 0 .............................. <me>
+  [322] pushsymb 94 ............................. <#aFloorPatterns>
+  [324] getparam 0 .............................. <me>
+  [326] getobjprop 207 .......................... <me.iFloorPatternIndex>
+  [328] pusharglist 3 ........................... <me, #aFloorPatterns, me.iFloorPatternIndex>
+  [330] objcall 81 .............................. <me.aFloorPatterns[me.iFloorPatternIndex]>
+  [332] getparam 0 .............................. <me>
+  [334] getobjprop 208 .......................... <me.iFloorColorIndex>
+  [336] pusharglist 2 ........................... <me.aFloorPatterns[me.iFloorPatternIndex], me.iFloorColorIndex>
+  [338] objcall 82 .............................. <me.aFloorPatterns[me.iFloorPatternIndex][me.iFloorColorIndex]>
+  [340] setlocal 2 .............................. aColorData = me.aFloorPatterns[me.iFloorPatternIndex][me.iFloorColorIndex]
+  [342] pushcons 14 ............................. <"floor_shape_preview">
+  [344] pusharglist 1 ........................... <"floor_shape_preview">
+  [346] extcall 52 .............................. <member("floor_shape_preview")>
+  [348] getlocal 2 .............................. <aColorData>
+  [350] getobjprop 97 ........................... <aColorData.startcolor>
+  [352] setobjprop 98 ........................... member("floor_shape_preview").fillColor = aColorData.startcolor
+  [354] pushcons 14 ............................. <"floor_shape_preview">
+  [356] pusharglist 1 ........................... <"floor_shape_preview">
+  [358] extcall 52 .............................. <member("floor_shape_preview")>
+  [360] getlocal 2 .............................. <aColorData>
+  [362] getobjprop 99 ........................... <aColorData.endColor>
+  [364] setobjprop 99 ........................... member("floor_shape_preview").endColor = aColorData.endColor
+  [366] getlocal 2 .............................. <aColorData>
+  [368] getobjprop 100 .......................... <aColorData.shapeBlend>
+  [370] setlocal 14 ............................. FloorShapeblend = aColorData.shapeBlend
+  [372] pushcons 15 ............................. <"studiofloor_1_preview">
+  [374] pusharglist 1 ........................... <"studiofloor_1_preview">
+  [376] extcall 52 .............................. <member("studiofloor_1_preview")>
+  [378] pushcons 16 ............................. <"cat_floor_">
+  [380] getlocal 2 .............................. <aColorData>
+  [382] getobjprop 88 ........................... <aColorData.palette>
+  [384] joinstr ................................. <"cat_floor_" & aColorData.palette>
+  [385] getparam 0 .............................. <me>
+  [387] getobjprop 44 ........................... <me.sAssetCast>
+  [389] pusharglist 2 ........................... <"cat_floor_" & aColorData.palette, me.sAssetCast>
+  [391] extcall 52 .............................. <member("cat_floor_" & aColorData.palette, me.sAssetCast)>
+  [393] setobjprop 88 ........................... member("studiofloor_1_preview").palette = member("cat_floor_" & aColorData.palette, me.sAssetCast)
+  [395] getlocal 2 .............................. <aColorData>
+  [397] getobjprop 103 .......................... <aColorData.texturecolor>
+  [399] setlocal 15 ............................. FloorShapecolor = aColorData.texturecolor
+  [401] getlocal 2 .............................. <aColorData>
+  [403] getobjprop 89 ........................... <aColorData.textureBlend>
+  [405] setlocal 16 ............................. FloorTextureblend = aColorData.textureBlend
+  [407] getlocal 3 .............................. <LeftWall>
+  [409] pusharglist 1 ........................... <LeftWall>
+  [411] objcall 163 ............................. <LeftWall.createMatte()>
+  [413] setlocal 17 ............................. leftwallmatte = LeftWall.createMatte()
+  [415] getlocal 4 .............................. <RightWall>
+  [417] pusharglist 1 ........................... <RightWall>
+  [419] objcall 163 ............................. <RightWall.createMatte()>
+  [421] setlocal 18 ............................. rightwallmatte = RightWall.createMatte()
+  [423] pushcons 17 ............................. <"cat.roomprev.wall">
+  [425] pusharglist 1 ........................... <"cat.roomprev.wall">
+  [427] extcall 52 .............................. <member("cat.roomprev.wall")>
+  [429] getchainedprop 140 ...................... <member("cat.roomprev.wall").image>
+  [431] pusharglist 1 ........................... <member("cat.roomprev.wall").image>
+  [433] objcall 141 ............................. <member("cat.roomprev.wall").image.duplicate()>
+  [435] setlocal 19 ............................. roomprevwall = member("cat.roomprev.wall").image.duplicate()
+  [437] getlocal 0 .............................. <myimg>
+  [439] getlocal 19 ............................. <roomprevwall>
+  [441] getlocal 19 ............................. <roomprevwall>
+  [443] getobjprop 135 .......................... <roomprevwall.rect>
+  [445] getlocal 19 ............................. <roomprevwall>
+  [447] getobjprop 135 .......................... <roomprevwall.rect>
+  [449] pusharglistnoret 4 ...................... <myimg, roomprevwall, roomprevwall.rect, roomprevwall.rect>
+  [451] objcall 142 ............................. myimg.copyPixels(roomprevwall, roomprevwall.rect, roomprevwall.rect)
+  [453] pushcons 18 ............................. <"cat.roomprev.floor">
+  [455] pusharglist 1 ........................... <"cat.roomprev.floor">
+  [457] extcall 52 .............................. <member("cat.roomprev.floor")>
+  [459] getchainedprop 140 ...................... <member("cat.roomprev.floor").image>
+  [461] pusharglist 1 ........................... <member("cat.roomprev.floor").image>
+  [463] objcall 141 ............................. <member("cat.roomprev.floor").image.duplicate()>
+  [465] setlocal 20 ............................. roomprevfloor = member("cat.roomprev.floor").image.duplicate()
+  [467] getlocal 20 ............................. <roomprevfloor>
+  [469] pusharglist 1 ........................... <roomprevfloor>
+  [471] objcall 163 ............................. <roomprevfloor.createMatte()>
+  [473] setlocal 21 ............................. floormatte = roomprevfloor.createMatte()
+  [475] getlocal 0 .............................. <myimg>
+  [477] getlocal 20 ............................. <roomprevfloor>
+  [479] getlocal 20 ............................. <roomprevfloor>
+  [481] getobjprop 135 .......................... <roomprevfloor.rect>
+  [483] pushzero ................................ <0>
+  [484] pushint8 61 ............................. <61>
+  [486] pushzero ................................ <0>
+  [487] pushint8 61 ............................. <61>
+  [489] pusharglist 4 ........................... <0, 61, 0, 61>
+  [491] extcall 135 ............................. <rect(0, 61, 0, 61)>
+  [493] add ..................................... <roomprevfloor.rect + rect(0, 61, 0, 61)>
+  [494] getlocal 20 ............................. <roomprevfloor>
+  [496] getobjprop 135 .......................... <roomprevfloor.rect>
+  [498] pushsymb 211 ............................ <#ink>
+  [500] pushint8 8 .............................. <8>
+  [502] pushsymb 164 ............................ <#maskImage>
+  [504] getlocal 21 ............................. <floormatte>
+  [506] pusharglist 4 ........................... <[#ink: 8, #maskImage: floormatte]>
+  [508] pushproplist ............................ <[#ink: 8, #maskImage: floormatte]>
+  [509] pusharglistnoret 5 ...................... <myimg, roomprevfloor, roomprevfloor.rect + rect(0, 61, 0, 61), roomprevfloor.rect, [#ink: 8, #maskImage: floormatte]>
+  [511] objcall 142 ............................. myimg.copyPixels(roomprevfloor, roomprevfloor.rect + rect(0, 61, 0, 61), roomprevfloor.rect, [#ink: 8, #maskImage: floormatte])
+  [513] pushcons 14 ............................. <"floor_shape_preview">
+  [515] pusharglist 1 ........................... <"floor_shape_preview">
+  [517] extcall 52 .............................. <member("floor_shape_preview")>
+  [519] getchainedprop 140 ...................... <member("floor_shape_preview").image>
+  [521] pusharglist 1 ........................... <member("floor_shape_preview").image>
+  [523] objcall 141 ............................. <member("floor_shape_preview").image.duplicate()>
+  [525] setlocal 22 ............................. floorshape = member("floor_shape_preview").image.duplicate()
+  [527] getlocal 20 ............................. <roomprevfloor>
+  [529] pusharglist 1 ........................... <roomprevfloor>
+  [531] objcall 212 ............................. <roomprevfloor.createMask()>
+  [533] setlocal 23 ............................. shapematte = roomprevfloor.createMask()
+  [535] getlocal 0 .............................. <myimg>
+  [537] getlocal 22 ............................. <floorshape>
+  [539] getlocal 22 ............................. <floorshape>
+  [541] getobjprop 135 .......................... <floorshape.rect>
+  [543] pushzero ................................ <0>
+  [544] pushint8 61 ............................. <61>
+  [546] pushzero ................................ <0>
+  [547] pushint8 61 ............................. <61>
+  [549] pusharglist 4 ........................... <0, 61, 0, 61>
+  [551] extcall 135 ............................. <rect(0, 61, 0, 61)>
+  [553] add ..................................... <floorshape.rect + rect(0, 61, 0, 61)>
+  [554] getlocal 22 ............................. <floorshape>
+  [556] getobjprop 135 .......................... <floorshape.rect>
+  [558] pushsymb 211 ............................ <#ink>
+  [560] pushint8 5 .............................. <5>
+  [562] pushsymb 13 ............................. <#color>
+  [564] pushzero ................................ <0>
+  [565] pushzero ................................ <0>
+  [566] pushzero ................................ <0>
+  [567] pusharglist 3 ........................... <0, 0, 0>
+  [569] extcall 131 ............................. <rgb(0, 0, 0)>
+  [571] pushsymb 85 ............................. <#bgColor>
+  [573] getlocal 15 ............................. <FloorShapecolor>
+  [575] pushsymb 87 ............................. <#blend>
+  [577] getlocal 14 ............................. <FloorShapeblend>
+  [579] pushsymb 164 ............................ <#maskImage>
+  [581] getlocal 21 ............................. <floormatte>
+  [583] pusharglist 10 .......................... <[#ink: 5, #color: rgb(0, 0, 0), #bgColor: FloorShapecolor, #blend: FloorShapeblend, #maskImage: floormatte]>
+  [585] pushproplist ............................ <[#ink: 5, #color: rgb(0, 0, 0), #bgColor: FloorShapecolor, #blend: FloorShapeblend, #maskImage: floormatte]>
+  [586] pusharglistnoret 5 ...................... <myimg, floorshape, floorshape.rect + rect(0, 61, 0, 61), floorshape.rect, [#ink: 5, #color: rgb(0, 0, 0), #bgColor: FloorShapecolor, #blend: FloorShapeblend, #maskImage: floormatte]>
+  [588] objcall 142 ............................. myimg.copyPixels(floorshape, floorshape.rect + rect(0, 61, 0, 61), floorshape.rect, [#ink: 5, #color: rgb(0, 0, 0), #bgColor: FloorShapecolor, #blend: FloorShapeblend, #maskImage: floormatte])
+  [590] pushcons 15 ............................. <"studiofloor_1_preview">
+  [592] pusharglist 1 ........................... <"studiofloor_1_preview">
+  [594] extcall 52 .............................. <member("studiofloor_1_preview")>
+  [596] getchainedprop 140 ...................... <member("studiofloor_1_preview").image>
+  [598] pusharglist 1 ........................... <member("studiofloor_1_preview").image>
+  [600] objcall 141 ............................. <member("studiofloor_1_preview").image.duplicate()>
+  [602] setlocal 24 ............................. floortexture = member("studiofloor_1_preview").image.duplicate()
+  [604] getlocal 0 .............................. <myimg>
+  [606] getlocal 24 ............................. <floortexture>
+  [608] getlocal 24 ............................. <floortexture>
+  [610] getobjprop 135 .......................... <floortexture.rect>
+  [612] pushzero ................................ <0>
+  [613] pushint8 61 ............................. <61>
+  [615] pushzero ................................ <0>
+  [616] pushint8 61 ............................. <61>
+  [618] pusharglist 4 ........................... <0, 61, 0, 61>
+  [620] extcall 135 ............................. <rect(0, 61, 0, 61)>
+  [622] add ..................................... <floortexture.rect + rect(0, 61, 0, 61)>
+  [623] getlocal 24 ............................. <floortexture>
+  [625] getobjprop 135 .......................... <floortexture.rect>
+  [627] pushsymb 87 ............................. <#blend>
+  [629] getlocal 16 ............................. <FloorTextureblend>
+  [631] pushsymb 164 ............................ <#maskImage>
+  [633] getlocal 21 ............................. <floormatte>
+  [635] pusharglist 4 ........................... <[#blend: FloorTextureblend, #maskImage: floormatte]>
+  [637] pushproplist ............................ <[#blend: FloorTextureblend, #maskImage: floormatte]>
+  [638] pusharglistnoret 5 ...................... <myimg, floortexture, floortexture.rect + rect(0, 61, 0, 61), floortexture.rect, [#blend: FloorTextureblend, #maskImage: floormatte]>
+  [640] objcall 142 ............................. myimg.copyPixels(floortexture, floortexture.rect + rect(0, 61, 0, 61), floortexture.rect, [#blend: FloorTextureblend, #maskImage: floormatte])
+  [642] getlocal 0 .............................. <myimg>
+  [644] getlocal 3 .............................. <LeftWall>
+  [646] getlocal 3 .............................. <LeftWall>
+  [648] getobjprop 135 .......................... <LeftWall.rect>
+  [650] getlocal 3 .............................. <LeftWall>
+  [652] getobjprop 135 .......................... <LeftWall.rect>
+  [654] pushsymb 13 ............................. <#color>
+  [656] getlocal 5 .............................. <LeftWallcolor>
+  [658] pushsymb 85 ............................. <#bgColor>
+  [660] getlocal 7 .............................. <LeftWallbgcolor>
+  [662] pushsymb 87 ............................. <#blend>
+  [664] getlocal 9 .............................. <LeftWallblend>
+  [666] pushsymb 211 ............................ <#ink>
+  [668] pushint8 8 .............................. <8>
+  [670] pushsymb 164 ............................ <#maskImage>
+  [672] getlocal 17 ............................. <leftwallmatte>
+  [674] pusharglist 10 .......................... <[#color: LeftWallcolor, #bgColor: LeftWallbgcolor, #blend: LeftWallblend, #ink: 8, #maskImage: leftwallmatte]>
+  [676] pushproplist ............................ <[#color: LeftWallcolor, #bgColor: LeftWallbgcolor, #blend: LeftWallblend, #ink: 8, #maskImage: leftwallmatte]>
+  [677] pusharglistnoret 5 ...................... <myimg, LeftWall, LeftWall.rect, LeftWall.rect, [#color: LeftWallcolor, #bgColor: LeftWallbgcolor, #blend: LeftWallblend, #ink: 8, #maskImage: leftwallmatte]>
+  [679] objcall 142 ............................. myimg.copyPixels(LeftWall, LeftWall.rect, LeftWall.rect, [#color: LeftWallcolor, #bgColor: LeftWallbgcolor, #blend: LeftWallblend, #ink: 8, #maskImage: leftwallmatte])
+  [681] getlocal 0 .............................. <myimg>
+  [683] getlocal 4 .............................. <RightWall>
+  [685] getlocal 4 .............................. <RightWall>
+  [687] getobjprop 135 .......................... <RightWall.rect>
+  [689] pushint8 50 ............................. <50>
+  [691] pushzero ................................ <0>
+  [692] pushint8 50 ............................. <50>
+  [694] pushzero ................................ <0>
+  [695] pusharglist 4 ........................... <50, 0, 50, 0>
+  [697] extcall 135 ............................. <rect(50, 0, 50, 0)>
+  [699] add ..................................... <RightWall.rect + rect(50, 0, 50, 0)>
+  [700] getlocal 4 .............................. <RightWall>
+  [702] getobjprop 135 .......................... <RightWall.rect>
+  [704] pushsymb 13 ............................. <#color>
+  [706] getlocal 6 .............................. <RightWallcolor>
+  [708] pushsymb 85 ............................. <#bgColor>
+  [710] getlocal 8 .............................. <RightWallbgcolor>
+  [712] pushsymb 87 ............................. <#blend>
+  [714] getlocal 10 ............................. <RightWallblend>
+  [716] pushsymb 211 ............................ <#ink>
+  [718] pushint8 8 .............................. <8>
+  [720] pushsymb 164 ............................ <#maskImage>
+  [722] getlocal 18 ............................. <rightwallmatte>
+  [724] pusharglist 10 .......................... <[#color: RightWallcolor, #bgColor: RightWallbgcolor, #blend: RightWallblend, #ink: 8, #maskImage: rightwallmatte]>
+  [726] pushproplist ............................ <[#color: RightWallcolor, #bgColor: RightWallbgcolor, #blend: RightWallblend, #ink: 8, #maskImage: rightwallmatte]>
+  [727] pusharglistnoret 5 ...................... <myimg, RightWall, RightWall.rect + rect(50, 0, 50, 0), RightWall.rect, [#color: RightWallcolor, #bgColor: RightWallbgcolor, #blend: RightWallblend, #ink: 8, #maskImage: rightwallmatte]>
+  [729] objcall 142 ............................. myimg.copyPixels(RightWall, RightWall.rect + rect(50, 0, 50, 0), RightWall.rect, [#color: RightWallcolor, #bgColor: RightWallbgcolor, #blend: RightWallblend, #ink: 8, #maskImage: rightwallmatte])
+  [731] pushcons 9 .............................. <"cat_left_wall_1_a_0_0_0">
+  [733] pusharglist 1 ........................... <"cat_left_wall_1_a_0_0_0">
+  [735] extcall 52 .............................. <member("cat_left_wall_1_a_0_0_0")>
+  [737] getchainedprop 140 ...................... <member("cat_left_wall_1_a_0_0_0").image>
+  [739] pusharglist 1 ........................... <member("cat_left_wall_1_a_0_0_0").image>
+  [741] objcall 141 ............................. <member("cat_left_wall_1_a_0_0_0").image.duplicate()>
+  [743] setlocal 25 ............................. leftwalltexture = member("cat_left_wall_1_a_0_0_0").image.duplicate()
+  [745] pushcons 11 ............................. <"cat_right_wall_1_a_0_0_0">
+  [747] pusharglist 1 ........................... <"cat_right_wall_1_a_0_0_0">
+  [749] extcall 52 .............................. <member("cat_right_wall_1_a_0_0_0")>
+  [751] getchainedprop 140 ...................... <member("cat_right_wall_1_a_0_0_0").image>
+  [753] pusharglist 1 ........................... <member("cat_right_wall_1_a_0_0_0").image>
+  [755] objcall 141 ............................. <member("cat_right_wall_1_a_0_0_0").image.duplicate()>
+  [757] setlocal 26 ............................. rightwalltexture = member("cat_right_wall_1_a_0_0_0").image.duplicate()
+  [759] getlocal 0 .............................. <myimg>
+  [761] getlocal 25 ............................. <leftwalltexture>
+  [763] getlocal 25 ............................. <leftwalltexture>
+  [765] getobjprop 135 .......................... <leftwalltexture.rect>
+  [767] getlocal 25 ............................. <leftwalltexture>
+  [769] getobjprop 135 .......................... <leftwalltexture.rect>
+  [771] pushsymb 87 ............................. <#blend>
+  [773] getlocal 11 ............................. <LeftWallTextureblend>
+  [775] pushsymb 211 ............................ <#ink>
+  [777] pushint8 8 .............................. <8>
+  [779] pushsymb 164 ............................ <#maskImage>
+  [781] getlocal 17 ............................. <leftwallmatte>
+  [783] pusharglist 6 ........................... <[#blend: LeftWallTextureblend, #ink: 8, #maskImage: leftwallmatte]>
+  [785] pushproplist ............................ <[#blend: LeftWallTextureblend, #ink: 8, #maskImage: leftwallmatte]>
+  [786] pusharglistnoret 5 ...................... <myimg, leftwalltexture, leftwalltexture.rect, leftwalltexture.rect, [#blend: LeftWallTextureblend, #ink: 8, #maskImage: leftwallmatte]>
+  [788] objcall 142 ............................. myimg.copyPixels(leftwalltexture, leftwalltexture.rect, leftwalltexture.rect, [#blend: LeftWallTextureblend, #ink: 8, #maskImage: leftwallmatte])
+  [790] getlocal 0 .............................. <myimg>
+  [792] getlocal 26 ............................. <rightwalltexture>
+  [794] getlocal 26 ............................. <rightwalltexture>
+  [796] getobjprop 135 .......................... <rightwalltexture.rect>
+  [798] pushint8 50 ............................. <50>
+  [800] pushzero ................................ <0>
+  [801] pushint8 50 ............................. <50>
+  [803] pushzero ................................ <0>
+  [804] pusharglist 4 ........................... <50, 0, 50, 0>
+  [806] extcall 135 ............................. <rect(50, 0, 50, 0)>
+  [808] add ..................................... <rightwalltexture.rect + rect(50, 0, 50, 0)>
+  [809] getlocal 26 ............................. <rightwalltexture>
+  [811] getobjprop 135 .......................... <rightwalltexture.rect>
+  [813] pushsymb 87 ............................. <#blend>
+  [815] getlocal 12 ............................. <RightWallTextureblend>
+  [817] pushsymb 211 ............................ <#ink>
+  [819] pushint8 8 .............................. <8>
+  [821] pushsymb 164 ............................ <#maskImage>
+  [823] getlocal 18 ............................. <rightwallmatte>
+  [825] pusharglist 6 ........................... <[#blend: RightWallTextureblend, #ink: 8, #maskImage: rightwallmatte]>
+  [827] pushproplist ............................ <[#blend: RightWallTextureblend, #ink: 8, #maskImage: rightwallmatte]>
+  [828] pusharglistnoret 5 ...................... <myimg, rightwalltexture, rightwalltexture.rect + rect(50, 0, 50, 0), rightwalltexture.rect, [#blend: RightWallTextureblend, #ink: 8, #maskImage: rightwallmatte]>
+  [830] objcall 142 ............................. myimg.copyPixels(rightwalltexture, rightwalltexture.rect + rect(50, 0, 50, 0), rightwalltexture.rect, [#blend: RightWallTextureblend, #ink: 8, #maskImage: rightwallmatte])
+  [832] pushcons 19 ............................. <"WFreplace">
+  [834] pusharglist 1 ........................... <"WFreplace">
+  [836] extcall 52 .............................. <member("WFreplace")>
+  [838] getlocal 0 .............................. <myimg>
+  [840] setobjprop 140 .......................... member("WFreplace").image = myimg
+  [842] pushcons 19 ............................. <"WFreplace">
+  [844] pusharglist 1 ........................... <"WFreplace">
+  [846] extcall 52 .............................. <member("WFreplace")>
+  [848] pushzero ................................ <0>
+  [849] pushzero ................................ <0>
+  [850] pusharglist 2 ........................... <0, 0>
+  [852] extcall 101 ............................. <point(0, 0)>
+  [854] setobjprop 102 .......................... member("WFreplace").regPoint = point(0, 0)
+  [856] ret
+end
+
+on setwalls me, pattern, color
+  [  0] getparam 1 .............................. <pattern>
+  [  2] setprop 209 ............................. iWallPatternIndex = pattern
+  [  4] getparam 2 .............................. <color>
+  [  6] setprop 210 ............................. iWallColorIndex = color
+  [  8] ret
+end
+
+on setfloor me, pattern, color
+  [  0] getparam 1 .............................. <pattern>
+  [  2] setprop 207 ............................. iFloorPatternIndex = pattern
+  [  4] getparam 2 .............................. <color>
+  [  6] setprop 208 ............................. iFloorColorIndex = color
+  [  8] ret
+end

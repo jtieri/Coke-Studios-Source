@@ -1,0 +1,954 @@
+property aItems, aSpritePool, aSpritePoolSource, iPoolMax, iDepthLow, iDepthHi
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 897 .......................... me.aItems = []
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 75 ............................. <75>
+  [ 12] setobjprop 1056 ......................... me.iPoolMax = 75
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglist 0 ........................... <[]>
+  [ 19] pushlist ................................ <[]>
+  [ 20] setobjprop 1057 ......................... me.aSpritePoolSource = []
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pusharglist 0 ........................... <[]>
+  [ 27] pushlist ................................ <[]>
+  [ 28] setobjprop 592 .......................... me.aSpritePool = []
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pusharglistnoret 1 ...................... <me>
+  [ 35] extcall 92 .............................. return me
+  [ 37] ret
+end
+
+on init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 105 ............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getglobal 88 ............................ <oIsoScene>
+  [ 17] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 1056 ......................... <me.iPoolMax>
+  [ 24] pusharglist 2 ........................... <oIsoScene.oSpriteManager, me.iPoolMax>
+  [ 26] objcall 585 ............................. <oIsoScene.oSpriteManager.getPooledSprites(me.iPoolMax)>
+  [ 29] setobjprop 1057 ......................... me.aSpritePoolSource = oIsoScene.oSpriteManager.getPooledSprites(me.iPoolMax)
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushsymb 1057 ........................... <#aSpritePoolSource>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] pusharglist 3 ........................... <me, #aSpritePoolSource, 1>
+  [ 43] objcall 577 ............................. <me.aSpritePoolSource[1]>
+  [ 46] pusharglist 1 ........................... <me.aSpritePoolSource[1]>
+  [ 48] extcall 451 ............................. <sprite(me.aSpritePoolSource[1])>
+  [ 51] getobjprop 482 .......................... <sprite(me.aSpritePoolSource[1]).locZ>
+  [ 54] setobjprop 1058 ......................... me.iDepthLow = sprite(me.aSpritePoolSource[1]).locZ
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getobjprop 1058 ......................... <me.iDepthLow>
+  [ 64] getparam 0 .............................. <me>
+  [ 66] pushsymb 1057 ........................... <#aSpritePoolSource>
+  [ 69] pusharglist 2 ........................... <me, #aSpritePoolSource>
+  [ 71] objcall 169 ............................. <me.aSpritePoolSource.count>
+  [ 73] pushint8 1 .............................. <1>
+  [ 75] sub ..................................... <me.aSpritePoolSource.count - 1>
+  [ 76] add ..................................... <me.iDepthLow + (me.aSpritePoolSource.count - 1)>
+  [ 77] setobjprop 1059 ......................... me.iDepthHi = me.iDepthLow + (me.aSpritePoolSource.count - 1)
+  [ 80] getparam 1 .............................. <oXml>
+  [ 82] pushcons 0 .............................. <"Item">
+  [ 84] pusharglist 2 ........................... <oXml, "Item">
+  [ 86] extcall 921 ............................. <getNodes(oXml, "Item")>
+  [ 89] setlocal 0 .............................. aWallItems = getNodes(oXml, "Item")
+  [ 91] pushint8 1 .............................. <1>
+  [ 93] setlocal 1
+  [ 95] getlocal 1
+  [ 97] getlocal 0 .............................. <aWallItems>
+  [ 99] getobjprop 169 .......................... <aWallItems.count>
+  [101] lteq
+  [102] jmpifz [266] ............................ repeat with i = 1 to aWallItems.count
+  [105] getlocal 0 .............................. <aWallItems>
+  [107] getlocal 1 .............................. <i>
+  [109] pusharglist 2 ........................... <aWallItems, i>
+  [111] objcall 196 ............................. <aWallItems[i]>
+  [113] setlocal 2 .............................. oItem = aWallItems[i]
+  [115] getlocal 2 .............................. <oItem>
+  [117] getchainedprop 108 ...................... <oItem.attributes>
+  [119] getobjprop 1021 ......................... <oItem.attributes.prodID>
+  [122] setlocal 3 .............................. sProdID = oItem.attributes.prodID
+  [124] getlocal 2 .............................. <oItem>
+  [126] getchainedprop 108 ...................... <oItem.attributes>
+  [128] getobjprop 1022 ......................... <oItem.attributes.posId>
+  [131] setlocal 4 .............................. sPosId = oItem.attributes.posId
+  [133] getlocal 2 .............................. <oItem>
+  [135] getchainedprop 108 ...................... <oItem.attributes>
+  [137] getobjprop 1023 ......................... <oItem.attributes.state>
+  [140] pusharglist 1 ........................... <oItem.attributes.state>
+  [142] extcall 107 ............................. <integer(oItem.attributes.state)>
+  [144] setlocal 5 .............................. iState = integer(oItem.attributes.state)
+  [146] getlocal 2 .............................. <oItem>
+  [148] getchainedprop 108 ...................... <oItem.attributes>
+  [150] getobjprop 108 .......................... <oItem.attributes.attributes>
+  [152] pusharglist 1 ........................... <oItem.attributes.attributes>
+  [154] extcall 941 ............................. <value(oItem.attributes.attributes)>
+  [157] setlocal 6 .............................. aAttributes = value(oItem.attributes.attributes)
+  [159] getlocal 2 .............................. <oItem>
+  [161] getchainedprop 108 ...................... <oItem.attributes>
+  [163] getobjprop 1026 ......................... <oItem.attributes.gridX>
+  [166] pusharglist 1 ........................... <oItem.attributes.gridX>
+  [168] extcall 107 ............................. <integer(oItem.attributes.gridX)>
+  [170] setlocal 7 .............................. iX = integer(oItem.attributes.gridX)
+  [172] getlocal 2 .............................. <oItem>
+  [174] getchainedprop 108 ...................... <oItem.attributes>
+  [176] getobjprop 1025 ......................... <oItem.attributes.gridY>
+  [179] pusharglist 1 ........................... <oItem.attributes.gridY>
+  [181] extcall 107 ............................. <integer(oItem.attributes.gridY)>
+  [183] setlocal 8 .............................. iY = integer(oItem.attributes.gridY)
+  [185] getparam 0 .............................. <me>
+  [187] getlocal 3 .............................. <sProdID>
+  [189] pusharglist 2 ........................... <me, sProdID>
+  [191] objcall 1001 ............................ <me.getCatalogueItem(sProdID)>
+  [194] setlocal 9 .............................. aCatalogueItem = me.getCatalogueItem(sProdID)
+  [196] getlocal 9 .............................. <aCatalogueItem>
+  [198] getobjprop 1027 ......................... <aCatalogueItem.imageBase>
+  [201] setlocal 10 ............................. sImageBase = aCatalogueItem.imageBase
+  [203] getlocal 9 .............................. <aCatalogueItem>
+  [205] getobjprop 1028 ......................... <aCatalogueItem.type>
+  [208] setlocal 11 ............................. sType = aCatalogueItem.type
+  [210] getlocal 9 .............................. <aCatalogueItem>
+  [212] getobjprop 621 .......................... <aCatalogueItem.Action>
+  [215] setlocal 12 ............................. sAction = aCatalogueItem.Action
+  [217] pusharglist 0 ........................... <>
+  [219] extcall 130 ............................. <VOID>
+  [221] setlocal 13 ............................. sCastLib = VOID
+  [223] getglobal 88 ............................ <oIsoScene>
+  [225] getlocal 3 .............................. <sProdID>
+  [227] getlocal 4 .............................. <sPosId>
+  [229] getlocal 10 ............................. <sImageBase>
+  [231] getlocal 11 ............................. <sType>
+  [233] getlocal 12 ............................. <sAction>
+  [235] getlocal 5 .............................. <iState>
+  [237] getlocal 6 .............................. <aAttributes>
+  [239] getlocal 13 ............................. <sCastLib>
+  [241] getlocal 7 .............................. <iX>
+  [243] pusharglist 0 ........................... <>
+  [245] extcall 130 ............................. <VOID>
+  [247] getlocal 8 .............................. <iY>
+  [249] pusharglist 0 ........................... <>
+  [251] extcall 130 ............................. <VOID>
+  [253] pusharglistnoret 13 ..................... <oIsoScene, sProdID, sPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iX, VOID, iY, VOID>
+  [255] objcall 22 .............................. oIsoScene.createItem(sProdID, sPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iX, VOID, iY, VOID)
+  [257] pushint8 1
+  [259] getlocal 1
+  [261] add
+  [262] setlocal 1
+  [264] endrepeat [ 95]
+  [266] ret
+end
+
+on getTotalItems me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 897 ............................ <#aItems>
+  [  5] pusharglist 2 ........................... <me, #aItems>
+  [  7] objcall 169 ............................. <me.aItems.count>
+  [  9] pusharglistnoret 1 ...................... <me.aItems.count>
+  [ 11] extcall 92 .............................. return me.aItems.count
+  [ 13] ret
+end
+
+on drawAll me, bForce
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 897 ............................ <#aItems>
+  [ 11] pusharglist 2 ........................... <me, #aItems>
+  [ 13] objcall 169 ............................. <me.aItems.count>
+  [ 15] lteq
+  [ 16] jmpifz [ 50] ............................ repeat with i = 1 to me.aItems.count
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushsymb 897 ............................ <#aItems>
+  [ 24] getlocal 0 .............................. <i>
+  [ 26] pusharglist 3 ........................... <me, #aItems, i>
+  [ 28] objcall 577 ............................. <me.aItems[i]>
+  [ 31] setlocal 1 .............................. oItem = me.aItems[i]
+  [ 33] getlocal 1 .............................. <oItem>
+  [ 35] getparam 1 .............................. <bForce>
+  [ 37] pusharglistnoret 2 ...................... <oItem, bForce>
+  [ 39] objcall 247 ............................. oItem.draw(bForce)
+  [ 41] pushint8 1
+  [ 43] getlocal 0
+  [ 45] add
+  [ 46] setlocal 0
+  [ 48] endrepeat [  4]
+  [ 50] ret
+end
+
+on getCatalogueItem me, sProdID
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 1031 .......................... <gCatalogue>
+  [  9] getobjprop 169 .......................... <gCatalogue.count>
+  [ 11] lteq
+  [ 12] jmpifz [ 52] ............................ repeat with i = 1 to gCatalogue.count
+  [ 15] getglobal 1031 .......................... <gCatalogue>
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 2 ........................... <gCatalogue, i>
+  [ 22] objcall 196 ............................. <gCatalogue[i]>
+  [ 24] setlocal 1 .............................. aCatalogueItem = gCatalogue[i]
+  [ 26] getlocal 1 .............................. <aCatalogueItem>
+  [ 28] getobjprop 1021 ......................... <aCatalogueItem.prodID>
+  [ 31] getparam 1 .............................. <sProdID>
+  [ 33] eq ...................................... <aCatalogueItem.prodID = sProdID>
+  [ 34] jmpifz [ 43] ............................ if aCatalogueItem.prodID = sProdID then
+  [ 37] getlocal 1 .............................. <aCatalogueItem>
+  [ 39] pusharglistnoret 1 ...................... <aCatalogueItem>
+  [ 41] extcall 92 .............................. return aCatalogueItem
+  [ 43] pushint8 1
+  [ 45] getlocal 0
+  [ 47] add
+  [ 48] setlocal 0
+  [ 50] endrepeat [  4]
+  [ 52] ret
+end
+
+on setDepthsByPos me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aDirtyItems = []
+  [  5] getparam 0 .............................. <me>
+  [  7] pushsymb 897 ............................ <#aItems>
+  [ 10] pusharglist 2 ........................... <me, #aItems>
+  [ 12] objcall 169 ............................. <me.aItems.count>
+  [ 14] setlocal 1 .............................. iCount = me.aItems.count
+  [ 16] getlocal 1 .............................. <iCount>
+  [ 18] pushzero ................................ <0>
+  [ 19] eq ...................................... <iCount = 0>
+  [ 20] jmpifz [ 29] ............................ if iCount = 0 then
+  [ 23] getlocal 0 .............................. <aDirtyItems>
+  [ 25] pusharglistnoret 1 ...................... <aDirtyItems>
+  [ 27] extcall 92 .............................. return aDirtyItems
+  [ 29] pushint8 1 .............................. <1>
+  [ 31] setlocal 2
+  [ 33] getlocal 2
+  [ 35] getlocal 1 .............................. <iCount>
+  [ 37] lteq
+  [ 38] jmpifz [120] ............................ repeat with iCurrPos = 1 to iCount
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pushsymb 897 ............................ <#aItems>
+  [ 46] getlocal 2 .............................. <iCurrPos>
+  [ 48] pusharglist 3 ........................... <me, #aItems, iCurrPos>
+  [ 50] objcall 577 ............................. <me.aItems[iCurrPos]>
+  [ 53] setlocal 3 .............................. oItem = me.aItems[iCurrPos]
+  [ 55] getlocal 3 .............................. <oItem>
+  [ 57] pusharglist 1 ........................... <oItem>
+  [ 59] objcall 282 ............................. <oItem.getGridZ()>
+  [ 62] setlocal 4 .............................. iZ = oItem.getGridZ()
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getlocal 3 .............................. <oItem>
+  [ 68] pusharglist 2 ........................... <me, oItem>
+  [ 70] objcall 1048 ............................ <me.getPosByDepth(oItem)>
+  [ 73] setlocal 5 .............................. iRealPos = me.getPosByDepth(oItem)
+  [ 75] getparam 0 .............................. <me>
+  [ 77] getlocal 2 .............................. <iCurrPos>
+  [ 79] pusharglist 2 ........................... <me, iCurrPos>
+  [ 81] objcall 1049 ............................ <me.getDepthByPos(iCurrPos)>
+  [ 84] setlocal 6 .............................. iRealDepth = me.getDepthByPos(iCurrPos)
+  [ 86] getlocal 2 .............................. <iCurrPos>
+  [ 88] getlocal 5 .............................. <iRealPos>
+  [ 90] nteq .................................... <iCurrPos <> iRealPos>
+  [ 91] jmpifz [111] ............................ if iCurrPos <> iRealPos then
+  [ 94] getlocal 3 .............................. <oItem>
+  [ 96] getlocal 6 .............................. <iRealDepth>
+  [ 98] pusharglistnoret 2 ...................... <oItem, iRealDepth>
+  [100] objcall 1061 ............................ oItem.setZPos(iRealDepth)
+  [103] getlocal 0 .............................. <aDirtyItems>
+  [105] getlocal 3 .............................. <oItem>
+  [107] pusharglistnoret 2 ...................... <aDirtyItems, oItem>
+  [109] objcall 133 ............................. aDirtyItems.add(oItem)
+  [111] pushint8 1
+  [113] getlocal 2
+  [115] add
+  [116] setlocal 2
+  [118] endrepeat [ 33]
+  [120] getlocal 0 .............................. <aDirtyItems>
+  [122] pusharglistnoret 1 ...................... <aDirtyItems>
+  [124] extcall 92 .............................. return aDirtyItems
+  [126] ret
+end
+
+on getPosByDepth me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglist 1 ........................... <oItem>
+  [  4] objcall 282 ............................. <oItem.getGridZ()>
+  [  7] setlocal 0 .............................. iZ = oItem.getGridZ()
+  [  9] getlocal 0 .............................. <iZ>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 1058 ......................... <me.iDepthLow>
+  [ 16] sub ..................................... <iZ - me.iDepthLow>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] add ..................................... <iZ - me.iDepthLow + 1>
+  [ 20] setlocal 1 .............................. iPos = iZ - me.iDepthLow + 1
+  [ 22] getlocal 1 .............................. <iPos>
+  [ 24] pusharglistnoret 1 ...................... <iPos>
+  [ 26] extcall 92 .............................. return iPos
+  [ 28] ret
+end
+
+on getDepthByPos me, iPos
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1058 ......................... <me.iDepthLow>
+  [  5] getparam 1 .............................. <iPos>
+  [  7] pushint8 1 .............................. <1>
+  [  9] sub ..................................... <iPos - 1>
+  [ 10] add ..................................... <me.iDepthLow + (iPos - 1)>
+  [ 11] setlocal 0 .............................. iDepth = me.iDepthLow + (iPos - 1)
+  [ 13] getlocal 0 .............................. <iDepth>
+  [ 15] pusharglistnoret 1 ...................... <iDepth>
+  [ 17] extcall 92 .............................. return iDepth
+  [ 19] ret
+end
+
+on getMaxDepth me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1059 ......................... <me.iDepthHi>
+  [  5] pusharglistnoret 1 ...................... <me.iDepthHi>
+  [  7] extcall 92 .............................. return me.iDepthHi
+  [  9] ret
+end
+
+on getHighestDepth me, oExcludeItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1058 ......................... <me.iDepthLow>
+  [  5] setlocal 0 .............................. iHighestDepth = me.iDepthLow
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 897 .......................... <me.aItems>
+  [ 12] peek 0
+  [ 14] pusharglist 1
+  [ 16] extcall 169
+  [ 18] pushint8 1
+  [ 20] peek 0
+  [ 22] peek 2
+  [ 24] lteq
+  [ 25] jmpifz [ 89] ............................ repeat with oItem in me.aItems
+  [ 28] peek 2
+  [ 30] peek 1
+  [ 32] pusharglist 2
+  [ 34] extcall 196
+  [ 36] setlocal 1
+  [ 38] getparam 1 .............................. <oExcludeItem>
+  [ 40] pusharglist 1 ........................... <oExcludeItem>
+  [ 42] extcall 105 ............................. <voidp(oExcludeItem)>
+  [ 44] not ..................................... <not voidp(oExcludeItem)>
+  [ 45] jmpifz [ 62] ............................ if not voidp(oExcludeItem) then
+  [ 48] getlocal 1 .............................. <oItem>
+  [ 50] getparam 1 .............................. <oExcludeItem>
+  [ 52] pusharglist 2 ........................... <oItem, oExcludeItem>
+  [ 54] objcall 221 ............................. <oItem.equals(oExcludeItem)>
+  [ 56] jmpifz [ 62] ............................ if oItem.equals(oExcludeItem) then
+  [ 59] jmp [ 84] ............................... next repeat
+  [ 62] getlocal 1 .............................. <oItem>
+  [ 64] pusharglist 1 ........................... <oItem>
+  [ 66] objcall 282 ............................. <oItem.getGridZ()>
+  [ 69] getlocal 0 .............................. <iHighestDepth>
+  [ 71] gt ...................................... <oItem.getGridZ() > iHighestDepth>
+  [ 72] jmpifz [ 84] ............................ if oItem.getGridZ() > iHighestDepth then
+  [ 75] getlocal 1 .............................. <oItem>
+  [ 77] pusharglist 1 ........................... <oItem>
+  [ 79] objcall 282 ............................. <oItem.getGridZ()>
+  [ 82] setlocal 0 .............................. iHighestDepth = oItem.getGridZ()
+  [ 84] pushint8 1
+  [ 86] add
+  [ 87] endrepeat [ 20]
+  [ 89] pop 3
+  [ 91] getlocal 0 .............................. <iHighestDepth>
+  [ 93] pusharglistnoret 1 ...................... <iHighestDepth>
+  [ 95] extcall 92 .............................. return iHighestDepth
+  [ 97] ret
+end
+
+on getNextHighestDepth me, oExcludeItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oExcludeItem>
+  [  4] pusharglist 2 ........................... <me, oExcludeItem>
+  [  6] objcall 422 ............................. <me.getHighestDepth(oExcludeItem)>
+  [  9] setlocal 0 .............................. iHighestDepth = me.getHighestDepth(oExcludeItem)
+  [ 11] getlocal 0 .............................. <iHighestDepth>
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] add ..................................... <iHighestDepth + 1>
+  [ 16] setlocal 1 .............................. iNextHighestDepth = iHighestDepth + 1
+  [ 18] getlocal 1 .............................. <iNextHighestDepth>
+  [ 20] pusharglistnoret 1 ...................... <iNextHighestDepth>
+  [ 22] extcall 92 .............................. return iNextHighestDepth
+  [ 24] ret
+end
+
+on sortItemsByDepth me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNewItems = []
+  [  5] getparam 0 .............................. <me>
+  [  7] pushsymb 897 ............................ <#aItems>
+  [ 10] pusharglist 2 ........................... <me, #aItems>
+  [ 12] objcall 169 ............................. <me.aItems.count>
+  [ 14] setlocal 1 .............................. iCount = me.aItems.count
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getobjprop 1058 ......................... <me.iDepthLow>
+  [ 21] setlocal 2
+  [ 23] getlocal 2
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 1059 ......................... <me.iDepthHi>
+  [ 30] lteq
+  [ 31] jmpifz [ 97] ............................ repeat with i = me.iDepthLow to me.iDepthHi
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getlocal 2 .............................. <i>
+  [ 38] pusharglist 2 ........................... <me, i>
+  [ 40] objcall 1053 ............................ <me.getItemsAtDepth(i)>
+  [ 43] setlocal 3 .............................. aItemsAtDepth = me.getItemsAtDepth(i)
+  [ 45] getlocal 3 .............................. <aItemsAtDepth>
+  [ 47] peek 0
+  [ 49] pusharglist 1
+  [ 51] extcall 169
+  [ 53] pushint8 1
+  [ 55] peek 0
+  [ 57] peek 2
+  [ 59] lteq
+  [ 60] jmpifz [ 86] ............................ repeat with oItem in aItemsAtDepth
+  [ 63] peek 2
+  [ 65] peek 1
+  [ 67] pusharglist 2
+  [ 69] extcall 196
+  [ 71] setlocal 4
+  [ 73] getlocal 0 .............................. <aNewItems>
+  [ 75] getlocal 4 .............................. <oItem>
+  [ 77] pusharglistnoret 2 ...................... <aNewItems, oItem>
+  [ 79] objcall 133 ............................. aNewItems.add(oItem)
+  [ 81] pushint8 1
+  [ 83] add
+  [ 84] endrepeat [ 55]
+  [ 86] pop 3
+  [ 88] pushint8 1
+  [ 90] getlocal 2
+  [ 92] add
+  [ 93] setlocal 2
+  [ 95] endrepeat [ 23]
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getlocal 0 .............................. <aNewItems>
+  [101] setobjprop 897 .......................... me.aItems = aNewItems
+  [104] ret
+end
+
+on getItemsAtDepth me, iDepth
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aItemsAtDepth = []
+  [  5] getparam 0 .............................. <me>
+  [  7] pushsymb 897 ............................ <#aItems>
+  [ 10] pusharglist 2 ........................... <me, #aItems>
+  [ 12] objcall 169 ............................. <me.aItems.count>
+  [ 14] setlocal 1 .............................. iCount = me.aItems.count
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setlocal 2
+  [ 20] getlocal 2
+  [ 22] getlocal 1 .............................. <iCount>
+  [ 24] lteq
+  [ 25] jmpifz [ 76] ............................ repeat with i = 1 to iCount
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushsymb 897 ............................ <#aItems>
+  [ 33] getlocal 2 .............................. <i>
+  [ 35] pusharglist 3 ........................... <me, #aItems, i>
+  [ 37] objcall 577 ............................. <me.aItems[i]>
+  [ 40] setlocal 3 .............................. oItem = me.aItems[i]
+  [ 42] getlocal 3 .............................. <oItem>
+  [ 44] pusharglist 1 ........................... <oItem>
+  [ 46] objcall 282 ............................. <oItem.getGridZ()>
+  [ 49] setlocal 4 .............................. iZ = oItem.getGridZ()
+  [ 51] getlocal 4 .............................. <iZ>
+  [ 53] getparam 1 .............................. <iDepth>
+  [ 55] eq ...................................... <iZ = iDepth>
+  [ 56] jmpifz [ 67] ............................ if iZ = iDepth then
+  [ 59] getlocal 0 .............................. <aItemsAtDepth>
+  [ 61] getlocal 3 .............................. <oItem>
+  [ 63] pusharglistnoret 2 ...................... <aItemsAtDepth, oItem>
+  [ 65] objcall 133 ............................. aItemsAtDepth.add(oItem)
+  [ 67] pushint8 1
+  [ 69] getlocal 2
+  [ 71] add
+  [ 72] setlocal 2
+  [ 74] endrepeat [ 20]
+  [ 76] getlocal 0 .............................. <aItemsAtDepth>
+  [ 78] pusharglistnoret 1 ...................... <aItemsAtDepth>
+  [ 80] extcall 92 .............................. return aItemsAtDepth
+  [ 82] ret
+end
+
+on shiftItem me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 897 ...................... <me.aItems>
+  [  5] getparam 1 .............................. <oItem>
+  [  7] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [  9] objcall 330 ............................. me.aItems.deleteOne(oItem)
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getchainedprop 897 ...................... <me.aItems>
+  [ 17] getparam 1 .............................. <oItem>
+  [ 19] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [ 21] objcall 133 ............................. me.aItems.add(oItem)
+  [ 23] ret
+end
+
+on addItem me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 897 ...................... <me.aItems>
+  [  5] getparam 1 .............................. <oItem>
+  [  7] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [  9] objcall 133 ............................. me.aItems.add(oItem)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] objcall 1052 ............................ me.sortItemsByDepth()
+  [ 18] getparam 1 .............................. <oItem>
+  [ 20] pusharglistnoret 1 ...................... <oItem>
+  [ 22] objcall 247 ............................. oItem.draw()
+  [ 24] ret
+end
+
+on removeItem me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglistnoret 1 ...................... <oItem>
+  [  4] objcall 331 ............................. oItem.destroy()
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 897 ...................... <me.aItems>
+  [ 12] getparam 1 .............................. <oItem>
+  [ 14] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [ 16] objcall 330 ............................. me.aItems.deleteOne(oItem)
+  [ 19] ret
+end
+
+on destroy me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] pusharglistnoret 1 ...................... <oIsoScene>
+  [  4] objcall 25 .............................. oIsoScene.deleteSelectedItem()
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 0
+  [ 10] getlocal 0
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 897 ............................ <#aItems>
+  [ 17] pusharglist 2 ........................... <me, #aItems>
+  [ 19] objcall 169 ............................. <me.aItems.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 55] ............................ repeat with i = 1 to me.aItems.count
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 897 ............................ <#aItems>
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 3 ........................... <me, #aItems, i>
+  [ 34] objcall 577 ............................. <me.aItems[i]>
+  [ 37] setlocal 1 .............................. oItem = me.aItems[i]
+  [ 39] getlocal 1 .............................. <oItem>
+  [ 41] pusharglistnoret 1 ...................... <oItem>
+  [ 43] objcall 331 ............................. oItem.destroy()
+  [ 46] pushint8 1
+  [ 48] getlocal 0
+  [ 50] add
+  [ 51] setlocal 0
+  [ 53] endrepeat [ 10]
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pusharglist 0 ........................... <[]>
+  [ 59] pushlist ................................ <[]>
+  [ 60] setobjprop 897 .......................... me.aItems = []
+  [ 63] getparam 0 .............................. <me>
+  [ 65] pusharglistnoret 1 ...................... <me>
+  [ 67] objcall 587 ............................. me.clearSpritePool()
+  [ 70] ret
+end
+
+on printItems me, _aItems
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 1 .............................. <_aItems>
+  [  8] getobjprop 169 .......................... <_aItems.count>
+  [ 10] lteq
+  [ 11] jmpifz [ 33] ............................ repeat with i = 1 to _aItems.count
+  [ 14] getparam 1 .............................. <_aItems>
+  [ 16] getlocal 0 .............................. <i>
+  [ 18] pusharglist 2 ........................... <_aItems, i>
+  [ 20] objcall 196 ............................. <_aItems[i]>
+  [ 22] setlocal 1 .............................. oItem = _aItems[i]
+  [ 24] pushint8 1
+  [ 26] getlocal 0
+  [ 28] add
+  [ 29] setlocal 0
+  [ 31] endrepeat [  4]
+  [ 33] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 897 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 169
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 43] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 196
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglistnoret 1 ...................... <i>
+  [ 35] objcall 705 ............................. i.toggleDisplay()
+  [ 38] pushint8 1
+  [ 40] add
+  [ 41] endrepeat [ 13]
+  [ 43] pop 3
+  [ 45] ret
+end
+
+on getPooledSprite me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 130 ............................. <VOID>
+  [  4] setlocal 0 .............................. iSprite = VOID
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 1
+  [ 10] getlocal 1
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 1057 ........................... <#aSpritePoolSource>
+  [ 17] pusharglist 2 ........................... <me, #aSpritePoolSource>
+  [ 19] objcall 169 ............................. <me.aSpritePoolSource.count>
+  [ 21] lteq
+  [ 22] jmpifz [105] ............................ repeat with i = 1 to me.aSpritePoolSource.count
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 1057 ........................... <#aSpritePoolSource>
+  [ 30] getlocal 1 .............................. <i>
+  [ 32] pusharglist 3 ........................... <me, #aSpritePoolSource, i>
+  [ 34] objcall 577 ............................. <me.aSpritePoolSource[i]>
+  [ 37] setlocal 2 .............................. _iSourceSprite = me.aSpritePoolSource[i]
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 44] getlocal 2 .............................. <_iSourceSprite>
+  [ 46] pusharglist 2 ........................... <me.aSpritePool, _iSourceSprite>
+  [ 48] objcall 600 ............................. <me.aSpritePool.getOne(_iSourceSprite)>
+  [ 51] pushzero ................................ <0>
+  [ 52] eq ...................................... <me.aSpritePool.getOne(_iSourceSprite) = 0>
+  [ 53] jmpifz [ 96] ............................ if me.aSpritePool.getOne(_iSourceSprite) = 0 then
+  [ 56] getlocal 2 .............................. <_iSourceSprite>
+  [ 58] setlocal 0 .............................. iSprite = _iSourceSprite
+  [ 60] getparam 0 .............................. <me>
+  [ 62] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 65] getlocal 2 .............................. <_iSourceSprite>
+  [ 67] pusharglistnoret 2 ...................... <me.aSpritePool, _iSourceSprite>
+  [ 69] objcall 133 ............................. me.aSpritePool.add(_iSourceSprite)
+  [ 71] getlocal 0 .............................. <iSprite>
+  [ 73] pushint8 1 .............................. <1>
+  [ 75] pusharglistnoret 2 ...................... <iSprite, 1>
+  [ 77] extcall 601 ............................. puppetSprite(iSprite, 1)
+  [ 80] getlocal 0 .............................. <iSprite>
+  [ 82] pusharglist 1 ........................... <iSprite>
+  [ 84] extcall 451 ............................. <sprite(iSprite)>
+  [ 87] pusharglist 0 ........................... <[]>
+  [ 89] pushlist ................................ <[]>
+  [ 90] setobjprop 602 .......................... sprite(iSprite).scriptInstanceList = []
+  [ 93] jmp [105] ............................... exit repeat
+  [ 96] pushint8 1
+  [ 98] getlocal 1
+  [100] add
+  [101] setlocal 1
+  [103] endrepeat [ 10]
+  [105] getlocal 0 .............................. <iSprite>
+  [107] pusharglist 1 ........................... <iSprite>
+  [109] extcall 105 ............................. <voidp(iSprite)>
+  [111] jmpifz [120] ............................ if voidp(iSprite) then
+  [114] pushcons 1 .............................. <"I'm all out of sprites. :(">
+  [116] pusharglistnoret 1 ...................... <"I'm all out of sprites. :(">
+  [118] extcall 174 ............................. alert("I'm all out of sprites. :(")
+  [120] getlocal 0 .............................. <iSprite>
+  [122] pusharglistnoret 1 ...................... <iSprite>
+  [124] extcall 92 .............................. return iSprite
+  [126] ret
+end
+
+on returnPooledSprites me, _aSprites
+  [  0] getparam 1 .............................. <_aSprites>
+  [  2] pusharglist 1 ........................... <_aSprites>
+  [  4] extcall 105 ............................. <voidp(_aSprites)>
+  [  6] jmpifz [ 13] ............................ if voidp(_aSprites) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setlocal 0
+  [ 17] getlocal 0
+  [ 19] getparam 1 .............................. <_aSprites>
+  [ 21] getobjprop 169 .......................... <_aSprites.count>
+  [ 23] lteq
+  [ 24] jmpifz [ 51] ............................ repeat with i = 1 to _aSprites.count
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getparam 1 .............................. <_aSprites>
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 2 ........................... <_aSprites, i>
+  [ 35] objcall 196 ............................. <_aSprites[i]>
+  [ 37] pusharglistnoret 2 ...................... <me, _aSprites[i]>
+  [ 39] objcall 506 ............................. me.returnPooledSprite(_aSprites[i])
+  [ 42] pushint8 1
+  [ 44] getlocal 0
+  [ 46] add
+  [ 47] setlocal 0
+  [ 49] endrepeat [ 17]
+  [ 51] ret
+end
+
+on returnPooledSprite me, iSprite
+  [  0] getparam 1 .............................. <iSprite>
+  [  2] pusharglist 1 ........................... <iSprite>
+  [  4] extcall 105 ............................. <voidp(iSprite)>
+  [  6] jmpifz [ 13] ............................ if voidp(iSprite) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 18] getparam 1 .............................. <iSprite>
+  [ 20] pusharglistnoret 2 ...................... <me.aSpritePool, iSprite>
+  [ 22] objcall 330 ............................. me.aSpritePool.deleteOne(iSprite)
+  [ 25] getparam 1 .............................. <iSprite>
+  [ 27] pusharglist 1 ........................... <iSprite>
+  [ 29] extcall 451 ............................. <sprite(iSprite)>
+  [ 32] pusharglist 0 ........................... <[]>
+  [ 34] pushlist ................................ <[]>
+  [ 35] setobjprop 602 .......................... sprite(iSprite).scriptInstanceList = []
+  [ 38] getparam 1 .............................. <iSprite>
+  [ 40] pushzero ................................ <0>
+  [ 41] pusharglistnoret 2 ...................... <iSprite, 0>
+  [ 43] extcall 601 ............................. puppetSprite(iSprite, 0)
+  [ 46] ret
+end
+
+on clearSpritePool me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 592 .......................... <me.aSpritePool>
+  [  7] pusharglistnoret 2 ...................... <me, me.aSpritePool>
+  [  9] objcall 586 ............................. me.returnPooledSprites(me.aSpritePool)
+  [ 12] ret
+end
+
+on getItemByPossessionId me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 897 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 169
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 54] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 196
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 1 ........................... <i>
+  [ 35] objcall 202 ............................. <i.getPosId()>
+  [ 37] getparam 1 .............................. <iPosId>
+  [ 39] eq ...................................... <i.getPosId() = iPosId>
+  [ 40] jmpifz [ 49] ............................ if i.getPosId() = iPosId then
+  [ 43] getlocal 0 .............................. <i>
+  [ 45] pusharglistnoret 1 ...................... <i>
+  [ 47] extcall 92 .............................. return i
+  [ 49] pushint8 1
+  [ 51] add
+  [ 52] endrepeat [ 13]
+  [ 54] pop 3
+  [ 56] ret
+end
+
+on generateXml me
+  [  0] pushcons 2 .............................. <"XML">
+  [  2] pusharglist 1 ........................... <"XML">
+  [  4] extcall 60 .............................. <newObject("XML")>
+  [  6] setlocal 0 .............................. oXml = newObject("XML")
+  [  8] getlocal 0 .............................. <oXml>
+  [ 10] pushcons 3 .............................. <"WallItems">
+  [ 12] pusharglist 2 ........................... <oXml, "WallItems">
+  [ 14] objcall 318 ............................. <oXml.createElement("WallItems")>
+  [ 17] setlocal 1 .............................. oRoot = oXml.createElement("WallItems")
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 2
+  [ 23] getlocal 2
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 897 ............................ <#aItems>
+  [ 30] pusharglist 2 ........................... <me, #aItems>
+  [ 32] objcall 169 ............................. <me.aItems.count>
+  [ 34] lteq
+  [ 35] jmpifz [155] ............................ repeat with i = 1 to me.aItems.count
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushsymb 897 ............................ <#aItems>
+  [ 43] getlocal 2 .............................. <i>
+  [ 45] pusharglist 3 ........................... <me, #aItems, i>
+  [ 47] objcall 577 ............................. <me.aItems[i]>
+  [ 50] setlocal 3 .............................. oItem = me.aItems[i]
+  [ 52] getlocal 0 .............................. <oXml>
+  [ 54] pushcons 0 .............................. <"Item">
+  [ 56] pusharglist 2 ........................... <oXml, "Item">
+  [ 58] objcall 318 ............................. <oXml.createElement("Item")>
+  [ 61] setlocal 4 .............................. oNode = oXml.createElement("Item")
+  [ 63] getlocal 4 .............................. <oNode>
+  [ 65] getchainedprop 108 ...................... <oNode.attributes>
+  [ 67] getlocal 3 .............................. <oItem>
+  [ 69] getobjprop 261 .......................... <oItem.sProdID>
+  [ 72] setobjprop 1021 ......................... oNode.attributes.prodID = oItem.sProdID
+  [ 75] getlocal 4 .............................. <oNode>
+  [ 77] getchainedprop 108 ...................... <oNode.attributes>
+  [ 79] getlocal 3 .............................. <oItem>
+  [ 81] getobjprop 258 .......................... <oItem.sPosId>
+  [ 84] setobjprop 1022 ......................... oNode.attributes.posId = oItem.sPosId
+  [ 87] getlocal 4 .............................. <oNode>
+  [ 89] getchainedprop 108 ...................... <oNode.attributes>
+  [ 91] getlocal 3 .............................. <oItem>
+  [ 93] getobjprop 259 .......................... <oItem.iState>
+  [ 96] setobjprop 1023 ......................... oNode.attributes.state = oItem.iState
+  [ 99] getlocal 4 .............................. <oNode>
+  [101] getchainedprop 108 ...................... <oNode.attributes>
+  [103] getlocal 3 .............................. <oItem>
+  [105] getobjprop 251 .......................... <oItem.aAttributes>
+  [107] pusharglist 1 ........................... <oItem.aAttributes>
+  [109] extcall 246 ............................. <string(oItem.aAttributes)>
+  [111] setobjprop 108 .......................... oNode.attributes.attributes = string(oItem.aAttributes)
+  [113] getlocal 4 .............................. <oNode>
+  [115] getchainedprop 108 ...................... <oNode.attributes>
+  [117] getlocal 3 .............................. <oItem>
+  [119] getobjprop 303 .......................... <oItem.iX>
+  [122] setobjprop 1026 ......................... oNode.attributes.gridX = oItem.iX
+  [125] getlocal 4 .............................. <oNode>
+  [127] getchainedprop 108 ...................... <oNode.attributes>
+  [129] getlocal 3 .............................. <oItem>
+  [131] getobjprop 395 .......................... <oItem.iY>
+  [134] setobjprop 1025 ......................... oNode.attributes.gridY = oItem.iY
+  [137] getlocal 1 .............................. <oRoot>
+  [139] getlocal 4 .............................. <oNode>
+  [141] pusharglistnoret 2 ...................... <oRoot, oNode>
+  [143] objcall 322 ............................. oRoot.appendChild(oNode)
+  [146] pushint8 1
+  [148] getlocal 2
+  [150] add
+  [151] setlocal 2
+  [153] endrepeat [ 23]
+  [155] getlocal 1 .............................. <oRoot>
+  [157] pusharglistnoret 1 ...................... <oRoot>
+  [159] extcall 92 .............................. return oRoot
+  [161] ret
+end
+
+on getSpritesUnderMouse me, aSpritesUnderMouse
+  [  0] getparam 1 .............................. <aSpritesUnderMouse>
+  [  2] pusharglist 1 ........................... <aSpritesUnderMouse>
+  [  4] extcall 105 ............................. <voidp(aSpritesUnderMouse)>
+  [  6] jmpifz [ 14] ............................ if voidp(aSpritesUnderMouse) then
+  [  9] pusharglist 0 ........................... <[:]>
+  [ 11] pushproplist ............................ <[:]>
+  [ 12] setparam 1 .............................. aSpritesUnderMouse = [:]
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 897 .......................... <me.aItems>
+  [ 19] peek 0
+  [ 21] pusharglist 1
+  [ 23] extcall 169
+  [ 25] pushint8 1
+  [ 27] peek 0
+  [ 29] peek 2
+  [ 31] lteq
+  [ 32] jmpifz [115] ............................ repeat with i in me.aItems
+  [ 35] peek 2
+  [ 37] peek 1
+  [ 39] pusharglist 2
+  [ 41] extcall 196
+  [ 43] setlocal 0
+  [ 45] getlocal 0 .............................. <i>
+  [ 47] pusharglist 1 ........................... <i>
+  [ 49] objcall 52 .............................. <i.getSpritesUnderMouse()>
+  [ 51] setlocal 1 .............................. aItemSprites = i.getSpritesUnderMouse()
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] setlocal 2
+  [ 57] getlocal 2
+  [ 59] getlocal 1 .............................. <aItemSprites>
+  [ 61] pusharglist 1 ........................... <aItemSprites>
+  [ 63] objcall 169 ............................. <aItemSprites.count()>
+  [ 65] lteq
+  [ 66] jmpifz [110] ............................ repeat with x = 1 to aItemSprites.count()
+  [ 69] getlocal 1 .............................. <aItemSprites>
+  [ 71] getlocal 2 .............................. <x>
+  [ 73] pusharglist 2 ........................... <aItemSprites, x>
+  [ 75] objcall 899 ............................. <aItemSprites.getPropAt(x)>
+  [ 78] setlocal 3 .............................. _iZ = aItemSprites.getPropAt(x)
+  [ 80] getlocal 1 .............................. <aItemSprites>
+  [ 82] getlocal 2 .............................. <x>
+  [ 84] pusharglist 2 ........................... <aItemSprites, x>
+  [ 86] objcall 196 ............................. <aItemSprites[x]>
+  [ 88] setlocal 4 .............................. _iSprite = aItemSprites[x]
+  [ 90] getparam 1 .............................. <aSpritesUnderMouse>
+  [ 92] getlocal 3 .............................. <_iZ>
+  [ 94] getlocal 4 .............................. <_iSprite>
+  [ 96] pusharglistnoret 3 ...................... <aSpritesUnderMouse, _iZ, _iSprite>
+  [ 98] objcall 357 ............................. aSpritesUnderMouse.addProp(_iZ, _iSprite)
+  [101] pushint8 1
+  [103] getlocal 2
+  [105] add
+  [106] setlocal 2
+  [108] endrepeat [ 57]
+  [110] pushint8 1
+  [112] add
+  [113] endrepeat [ 27]
+  [115] pop 3
+  [117] getparam 1 .............................. <aSpritesUnderMouse>
+  [119] pusharglistnoret 1 ...................... <aSpritesUnderMouse>
+  [121] extcall 92 .............................. return aSpritesUnderMouse
+  [123] ret
+end
+
+on getObjectsUnderMouse me, aObjectsUnderMouse
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 897 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 169
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 70] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 196
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 1 ........................... <i>
+  [ 35] objcall 732 ............................. <i.rolloverObject()>
+  [ 38] setlocal 1 .............................. bRollover = i.rolloverObject()
+  [ 40] getlocal 1 .............................. <bRollover>
+  [ 42] jmpifz [ 65] ............................ if bRollover then
+  [ 45] getlocal 0 .............................. <i>
+  [ 47] pusharglist 1 ........................... <i>
+  [ 49] objcall 422 ............................. <i.getHighestDepth()>
+  [ 52] setlocal 2 .............................. _iZ = i.getHighestDepth()
+  [ 54] getparam 1 .............................. <aObjectsUnderMouse>
+  [ 56] getlocal 2 .............................. <_iZ>
+  [ 58] getlocal 0 .............................. <i>
+  [ 60] pusharglistnoret 3 ...................... <aObjectsUnderMouse, _iZ, i>
+  [ 62] objcall 357 ............................. aObjectsUnderMouse.addProp(_iZ, i)
+  [ 65] pushint8 1
+  [ 67] add
+  [ 68] endrepeat [ 13]
+  [ 70] pop 3
+  [ 72] getparam 1 .............................. <aObjectsUnderMouse>
+  [ 74] pusharglistnoret 1 ...................... <aObjectsUnderMouse>
+  [ 76] extcall 92 .............................. return aObjectsUnderMouse
+  [ 78] ret
+end

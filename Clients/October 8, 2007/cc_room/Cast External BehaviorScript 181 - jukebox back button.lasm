@@ -1,0 +1,101 @@
+property pParentWindow
+global oDenizenManager
+
+on new me, parentwindow
+  [  0] getparam 1 .............................. <parentwindow>
+  [  2] setprop 20 .............................. pParentWindow = parentwindow
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 5 ............................... return me
+  [ 10] ret
+end
+
+on getIJbackbutton me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 7 ............................ <me.spriteNum>
+  [  4] pusharglistnoret 1 ...................... <me.spriteNum>
+  [  6] extcall 5 ............................... return me.spriteNum
+  [  8] ret
+end
+
+on mouseUp me
+  [  0] getprop 20 .............................. <pParentWindow>
+  [  2] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [  4] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [  6] getobjprop 246 .......................... <pParentWindow.pScrollingLists.cataloglist.pCatalogLevel>
+  [  8] setlocal 0 .............................. mylevel = pParentWindow.pScrollingLists.cataloglist.pCatalogLevel
+  [ 10] getlocal 0 .............................. <mylevel>
+  [ 12] peek 0 .................................. case mylevel of
+  [ 14] pushsymb 250 ............................ <#songs>
+  [ 16] eq
+  [ 17] jmpifz [106] ............................ (case) #songs:
+  [ 20] getprop 20 .............................. <pParentWindow>
+  [ 22] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [ 24] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 26] pusharglist 0 ........................... <>
+  [ 28] extcall 48 .............................. <VOID>
+  [ 30] setobjprop 52 ........................... pParentWindow.pScrollingLists.cataloglist.pSelectedSong = VOID
+  [ 32] pushsymb 333 ............................ <#disableaddsong>
+  [ 35] pusharglistnoret 1 ...................... <#disableaddsong>
+  [ 37] extcall 47 .............................. sendAllSprites(#disableaddsong)
+  [ 39] pushsymb 370 ............................ <#disabledownloadsong>
+  [ 42] pusharglistnoret 1 ...................... <#disabledownloadsong>
+  [ 44] extcall 47 .............................. sendAllSprites(#disabledownloadsong)
+  [ 46] getprop 20 .............................. <pParentWindow>
+  [ 48] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [ 50] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 52] pushsymb 249 ............................ <#Artists>
+  [ 54] setobjprop 246 .......................... pParentWindow.pScrollingLists.cataloglist.pCatalogLevel = #Artists
+  [ 56] getprop 20 .............................. <pParentWindow>
+  [ 58] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [ 60] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 62] pusharglistnoret 1 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 64] objcall 57 .............................. pParentWindow.pScrollingLists.cataloglist.displayloading()
+  [ 66] getmovieprop 186 ........................ <the runMode>
+  [ 68] pushcons 0 .............................. <"author">
+  [ 70] eq ...................................... <the runMode = "author">
+  [ 71] jmpifz [ 87] ............................ if the runMode = "author" then / else
+  [ 74] getprop 20 .............................. <pParentWindow>
+  [ 76] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [ 78] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 80] pusharglistnoret 1 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 82] objcall 55 .............................. pParentWindow.pScrollingLists.cataloglist.updatecontent()
+  [ 84] jmp [103]
+  [ 87] getglobal 54 ............................ <oDenizenManager>
+  [ 89] getprop 20 .............................. <pParentWindow>
+  [ 91] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [ 93] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [ 95] getobjprop 391 .......................... <pParentWindow.pScrollingLists.cataloglist.pSelectedgenre>
+  [ 98] pusharglistnoret 2 ...................... <oDenizenManager, pParentWindow.pScrollingLists.cataloglist.pSelectedgenre>
+  [100] objcall 322 ............................. oDenizenManager.getArtistsByGenre(pParentWindow.pScrollingLists.cataloglist.pSelectedgenre)
+  [103] jmp [162]
+  [106] peek 0
+  [108] pushsymb 249 ............................ <#Artists>
+  [110] eq
+  [111] jmpifz [162] ............................ (case) #Artists:
+  [114] getprop 20 .............................. <pParentWindow>
+  [116] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [118] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [120] pushsymb 247 ............................ <#Genres>
+  [122] setobjprop 246 .......................... pParentWindow.pScrollingLists.cataloglist.pCatalogLevel = #Genres
+  [124] getprop 20 .............................. <pParentWindow>
+  [126] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [128] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [130] pusharglistnoret 1 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [132] objcall 57 .............................. pParentWindow.pScrollingLists.cataloglist.displayloading()
+  [134] getmovieprop 186 ........................ <the runMode>
+  [136] pushcons 0 .............................. <"author">
+  [138] eq ...................................... <the runMode = "author">
+  [139] jmpifz [155] ............................ if the runMode = "author" then / else
+  [142] getprop 20 .............................. <pParentWindow>
+  [144] getchainedprop 227 ...................... <pParentWindow.pScrollingLists>
+  [146] getchainedprop 251 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [148] pusharglistnoret 1 ...................... <pParentWindow.pScrollingLists.cataloglist>
+  [150] objcall 55 .............................. pParentWindow.pScrollingLists.cataloglist.updatecontent()
+  [152] jmp [162]
+  [155] getglobal 54 ............................ <oDenizenManager>
+  [157] pusharglistnoret 1 ...................... <oDenizenManager>
+  [159] objcall 397 ............................. oDenizenManager.getGenres()
+  [162] pop 1 ................................... end case
+  [164] ret
+end

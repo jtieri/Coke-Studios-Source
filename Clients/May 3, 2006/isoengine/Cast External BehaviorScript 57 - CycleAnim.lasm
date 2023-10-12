@@ -1,0 +1,268 @@
+property sImageBase, sCastLib, aMembers, iIndex, iState, iTimer, iTimeLength, iSprite, bDebug
+
+on new me, _iSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 338 .......................... me.bDebug = 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 332 ............................. me.debug("new()")
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getparam 1 .............................. <_iSprite>
+  [ 19] setobjprop 129 .......................... me.iSprite = _iSprite
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] objcall 1 ............................... me.Init()
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pusharglistnoret 1 ...................... <me>
+  [ 31] extcall 52 .............................. return me
+  [ 33] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"beginSprite()">
+  [  4] pusharglistnoret 2 ...................... <me, "beginSprite()">
+  [  6] objcall 332 ............................. me.debug("beginSprite()")
+  [  9] getparam 0 .............................. <me>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 727 .......................... <me.spriteNum>
+  [ 16] setobjprop 129 .......................... me.iSprite = me.spriteNum
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] objcall 1 ............................... me.Init()
+  [ 24] ret
+end
+
+on destroy me
+  [  0] ret
+end
+
+on Init me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 129 .......................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 59 .............................. <voidp(me.iSprite)>
+  [  8] jmpifz [ 15] ............................ if voidp(me.iSprite) then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 52 .............................. return 
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 129 .......................... <me.iSprite>
+  [ 21] pusharglist 1 ........................... <me.iSprite>
+  [ 23] extcall 119 ............................. <sprite(me.iSprite)>
+  [ 25] getchainedprop 30 ....................... <sprite(me.iSprite).member>
+  [ 27] getobjprop 1507 ......................... <sprite(me.iSprite).member.castLibNum>
+  [ 30] pusharglist 1 ........................... <sprite(me.iSprite).member.castLibNum>
+  [ 32] extcall 199 ............................. <castLib(sprite(me.iSprite).member.castLibNum)>
+  [ 34] getobjprop 99 ........................... <castLib(sprite(me.iSprite).member.castLibNum).name>
+  [ 36] setobjprop 48 ........................... me.sCastLib = castLib(sprite(me.iSprite).member.castLibNum).name
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getparam 0 .............................. <me>
+  [ 42] pusharglist 1 ........................... <me>
+  [ 44] objcall 1506 ............................ <me.getImageBase()>
+  [ 47] setobjprop 84 ........................... me.sImageBase = me.getImageBase()
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getobjprop 84 ........................... <me.sImageBase>
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getobjprop 48 ........................... <me.sCastLib>
+  [ 61] pusharglist 3 ........................... <me, me.sImageBase, me.sCastLib>
+  [ 63] objcall 1505 ............................ <me.getMembers(me.sImageBase, me.sCastLib)>
+  [ 66] setobjprop 1508 ......................... me.aMembers = me.getMembers(me.sImageBase, me.sCastLib)
+  [ 69] getparam 0 .............................. <me>
+  [ 71] pushint8 1 .............................. <1>
+  [ 73] setobjprop 735 .......................... me.iIndex = 1
+  [ 76] getparam 0 .............................. <me>
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] setobjprop 505 .......................... me.iState = 1
+  [ 83] getparam 0 .............................. <me>
+  [ 85] getmovieprop 369 ........................ <the milliSeconds>
+  [ 88] setobjprop 1344 ......................... me.iTimer = the milliSeconds
+  [ 91] getparam 0 .............................. <me>
+  [ 93] pushint16 200 ........................... <200>
+  [ 96] setobjprop 1329 ......................... me.iTimeLength = 200
+  [ 99] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 505 .......................... <me.iState>
+  [  5] pushint8 1 .............................. <1>
+  [  7] eq ...................................... <me.iState = 1>
+  [  8] jmpifz [ 50] ............................ if me.iState = 1 then
+  [ 11] getmovieprop 369 ........................ <the milliSeconds>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 1344 ......................... <me.iTimer>
+  [ 19] sub ..................................... <the milliSeconds - me.iTimer>
+  [ 20] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iTimer
+  [ 22] getlocal 0 .............................. <iElapsedTime>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 1329 ......................... <me.iTimeLength>
+  [ 29] gteq .................................... <iElapsedTime >= me.iTimeLength>
+  [ 30] jmpifz [ 50] ............................ if iElapsedTime >= me.iTimeLength then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglistnoret 2 ...................... <me, 1>
+  [ 39] objcall 1391 ............................ me.nextFrame(1)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getmovieprop 369 ........................ <the milliSeconds>
+  [ 47] setobjprop 1344 ......................... me.iTimer = the milliSeconds
+  [ 50] ret
+end
+
+on startAnim me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 369 ........................ <the milliSeconds>
+  [  5] setobjprop 1344 ......................... me.iTimer = the milliSeconds
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 505 .......................... me.iState = 1
+  [ 15] ret
+end
+
+on stopAnim me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 505 .......................... me.iState = 0
+  [  6] ret
+end
+
+on nextFrame me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 735 .......................... <me.iIndex>
+  [  5] getparam 1 .............................. <iDir>
+  [  7] add ..................................... <me.iIndex + iDir>
+  [  8] setlocal 0 .............................. iNextIndex = me.iIndex + iDir
+  [ 10] getlocal 0 .............................. <iNextIndex>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 1508 ........................... <#aMembers>
+  [ 17] pusharglist 2 ........................... <me, #aMembers>
+  [ 19] objcall 155 ............................. <me.aMembers.count>
+  [ 21] gt ...................................... <iNextIndex > me.aMembers.count>
+  [ 22] jmpifz [ 29] ............................ if iNextIndex > me.aMembers.count then
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setlocal 0 .............................. iNextIndex = 1
+  [ 29] getlocal 0 .............................. <iNextIndex>
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] lt ...................................... <iNextIndex < 1>
+  [ 34] jmpifz [ 48] ............................ if iNextIndex < 1 then
+  [ 37] getparam 0 .............................. <me>
+  [ 39] pushsymb 1508 ........................... <#aMembers>
+  [ 42] pusharglist 2 ........................... <me, #aMembers>
+  [ 44] objcall 155 ............................. <me.aMembers.count>
+  [ 46] setlocal 0 .............................. iNextIndex = me.aMembers.count
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getlocal 0 .............................. <iNextIndex>
+  [ 52] setobjprop 735 .......................... me.iIndex = iNextIndex
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pushsymb 1508 ........................... <#aMembers>
+  [ 60] getparam 0 .............................. <me>
+  [ 62] getobjprop 735 .......................... <me.iIndex>
+  [ 65] pusharglist 3 ........................... <me, #aMembers, me.iIndex>
+  [ 67] objcall 104 ............................. <me.aMembers[me.iIndex]>
+  [ 69] setlocal 1 .............................. sMember = me.aMembers[me.iIndex]
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getobjprop 129 .......................... <me.iSprite>
+  [ 75] pusharglist 1 ........................... <me.iSprite>
+  [ 77] extcall 119 ............................. <sprite(me.iSprite)>
+  [ 79] getlocal 1 .............................. <sMember>
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getobjprop 48 ........................... <me.sCastLib>
+  [ 85] pusharglist 2 ........................... <sMember, me.sCastLib>
+  [ 87] extcall 30 .............................. <member(sMember, me.sCastLib)>
+  [ 89] setobjprop 30 ........................... sprite(me.iSprite).member = member(sMember, me.sCastLib)
+  [ 91] ret
+end
+
+on getMembers me, _sImageBase, _sCastLib
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. _aMembers = []
+  [  5] getparam 2 .............................. <_sCastLib>
+  [  7] pushint8 2 .............................. <2>
+  [  9] get 8 ................................... <the number of castMembers of castLib _sCastLib>
+  [ 11] setlocal 1 .............................. iLength = the number of castMembers of castLib _sCastLib
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setlocal 2
+  [ 17] getlocal 2
+  [ 19] getlocal 1 .............................. <iLength>
+  [ 21] lteq
+  [ 22] jmpifz [ 81] ............................ repeat with i = 1 to iLength
+  [ 25] getlocal 2 .............................. <i>
+  [ 27] getparam 2 .............................. <_sCastLib>
+  [ 29] pusharglist 2 ........................... <i, _sCastLib>
+  [ 31] extcall 30 .............................. <member(i, _sCastLib)>
+  [ 33] setlocal 3 .............................. oMember = member(i, _sCastLib)
+  [ 35] getlocal 3 .............................. <oMember>
+  [ 37] getobjprop 1247 ......................... <oMember.type>
+  [ 40] setlocal 4 .............................. sType = oMember.type
+  [ 42] getlocal 4 .............................. <sType>
+  [ 44] pushsymb 207 ............................ <#bitmap>
+  [ 46] eq ...................................... <sType = #bitmap>
+  [ 47] jmpifz [ 72] ............................ if sType = #bitmap then
+  [ 50] getlocal 3 .............................. <oMember>
+  [ 52] getobjprop 99 ........................... <oMember.name>
+  [ 54] setlocal 5 .............................. sName = oMember.name
+  [ 56] getlocal 5 .............................. <sName>
+  [ 58] getparam 1 .............................. <_sImageBase>
+  [ 60] containsstr ............................. <sName contains _sImageBase>
+  [ 61] jmpifz [ 72] ............................ if sName contains _sImageBase then
+  [ 64] getlocal 0 .............................. <_aMembers>
+  [ 66] getlocal 5 .............................. <sName>
+  [ 68] pusharglistnoret 2 ...................... <_aMembers, sName>
+  [ 70] objcall 140 ............................. _aMembers.add(sName)
+  [ 72] pushint8 1
+  [ 74] getlocal 2
+  [ 76] add
+  [ 77] setlocal 2
+  [ 79] endrepeat [ 17]
+  [ 81] getlocal 0 .............................. <_aMembers>
+  [ 83] pusharglistnoret 1 ...................... <_aMembers>
+  [ 85] extcall 52 .............................. return _aMembers
+  [ 87] ret
+end
+
+on getImageBase me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 129 .......................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 119 ............................. <sprite(me.iSprite)>
+  [  8] getchainedprop 30 ....................... <sprite(me.iSprite).member>
+  [ 10] getobjprop 99 ........................... <sprite(me.iSprite).member.name>
+  [ 12] setlocal 0 .............................. sName = sprite(me.iSprite).member.name
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 1 .............................. iFirstChar = 1
+  [ 18] getlocal 0 .............................. <sName>
+  [ 20] getobjprop 208 .......................... <sName.length>
+  [ 22] setlocal 2 .............................. iLastChar = sName.length
+  [ 24] getlocal 0 .............................. <sName>
+  [ 26] pushsymb 1471 ........................... <#char>
+  [ 29] getlocal 1 .............................. <iFirstChar>
+  [ 31] getlocal 2 .............................. <iLastChar>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] sub ..................................... <iLastChar - 1>
+  [ 36] pusharglist 4 ........................... <sName, #char, iFirstChar, iLastChar - 1>
+  [ 38] objcall 104 ............................. <sName.char[iFirstChar..iLastChar - 1]>
+  [ 40] setprop 84 .............................. sImageBase = sName.char[iFirstChar..iLastChar - 1]
+  [ 42] getprop 84 .............................. <sImageBase>
+  [ 44] pusharglistnoret 1 ...................... <sImageBase>
+  [ 46] extcall 52 .............................. return sImageBase
+  [ 48] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 338 .......................... <me.bDebug>
+  [  5] getparam 2 .............................. <bForce>
+  [  7] or ...................................... <me.bDebug or bForce>
+  [  8] jmpifz [ 20] ............................ if me.bDebug or bForce then
+  [ 11] pushcons 2 .............................. <"CycleAnim: ">
+  [ 13] getparam 1 .............................. <sMessage>
+  [ 15] joinstr ................................. <"CycleAnim: " & sMessage>
+  [ 16] pusharglistnoret 1 ...................... <"CycleAnim: " & sMessage>
+  [ 18] extcall 168 ............................. put "CycleAnim: " & sMessage
+  [ 20] ret
+end

@@ -1,0 +1,192 @@
+property sFileToLoad, oCallbackObject, mCallbackMethod, iPercentage, iLoadID, sID, bLoading, bDebug
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 10 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 0 .............................. <"new()">
+  [  9] pusharglistnoret 2 ...................... <me, "new()">
+  [ 11] objcall 4 ............................... me.debug("new()")
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushzero ................................ <0>
+  [ 16] setobjprop 566 .......................... me.bLoading = 0
+  [ 19] getmovieprop 313 ........................ <the actorList>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 26] objcall 30 .............................. (the actorList).add(me)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pusharglistnoret 1 ...................... <me>
+  [ 32] extcall 31 .............................. return me
+  [ 34] ret
+end
+
+on preloadText me, _sId, _sFileToLoad, _oCallbackObject, _mCallbackMethod
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"getText(">
+  [  4] getparam 2 .............................. <_sFileToLoad>
+  [  6] joinstr ................................. <"getText(" & _sFileToLoad>
+  [  7] pushcons 2 .............................. <",">
+  [  9] joinstr ................................. <"getText(" & _sFileToLoad & ",">
+  [ 10] getparam 3 .............................. <_oCallbackObject>
+  [ 12] joinstr ................................. <"getText(" & _sFileToLoad & "," & _oCallbackObject>
+  [ 13] pushcons 2 .............................. <",">
+  [ 15] joinstr ................................. <"getText(" & _sFileToLoad & "," & _oCallbackObject & ",">
+  [ 16] getparam 4 .............................. <_mCallbackMethod>
+  [ 18] joinstr ................................. <"getText(" & _sFileToLoad & "," & _oCallbackObject & "," & _mCallbackMethod>
+  [ 19] pushcons 3 .............................. <")">
+  [ 21] joinstr ................................. <"getText(" & _sFileToLoad & "," & _oCallbackObject & "," & _mCallbackMethod & ")">
+  [ 22] pusharglistnoret 2 ...................... <me, "getText(" & _sFileToLoad & "," & _oCallbackObject & "," & _mCallbackMethod & ")">
+  [ 24] objcall 4 ............................... me.debug("getText(" & _sFileToLoad & "," & _oCallbackObject & "," & _mCallbackMethod & ")")
+  [ 26] getparam 0 .............................. <me>
+  [ 28] getparam 2 .............................. <_sFileToLoad>
+  [ 30] setobjprop 568 .......................... me.sFileToLoad = _sFileToLoad
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getparam 3 .............................. <_oCallbackObject>
+  [ 37] setobjprop 570 .......................... me.oCallbackObject = _oCallbackObject
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 4 .............................. <_mCallbackMethod>
+  [ 44] setobjprop 571 .......................... me.mCallbackMethod = _mCallbackMethod
+  [ 47] getparam 0 .............................. <me>
+  [ 49] getparam 1 .............................. <_sId>
+  [ 51] setobjprop 607 .......................... me.sID = _sId
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getobjprop 568 .......................... <me.sFileToLoad>
+  [ 61] pusharglist 1 ........................... <me.sFileToLoad>
+  [ 63] extcall 608 ............................. <getNetText(me.sFileToLoad)>
+  [ 66] setobjprop 575 .......................... me.iLoadID = getNetText(me.sFileToLoad)
+  [ 69] getparam 0 .............................. <me>
+  [ 71] pushint8 1 .............................. <1>
+  [ 73] setobjprop 566 .......................... me.bLoading = 1
+  [ 76] ret
+end
+
+on fileLoaded me, bSuccess, sText
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 4 .............................. <"fileLoaded()">
+  [  4] pusharglistnoret 2 ...................... <me, "fileLoaded()">
+  [  6] objcall 4 ............................... me.debug("fileLoaded()")
+  [  8] getparam 1 .............................. <bSuccess>
+  [ 10] jmpifz [ 18] ............................ if bSuccess then
+  [ 13] pusharglistnoret 0 ...................... <>
+  [ 15] extcall 271 ............................. nothing()
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 571 .......................... <me.mCallbackMethod>
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 570 .......................... <me.oCallbackObject>
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getobjprop 568 .......................... <me.sFileToLoad>
+  [ 33] getparam 1 .............................. <bSuccess>
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getobjprop 607 .......................... <me.sID>
+  [ 40] getparam 2 .............................. <sText>
+  [ 42] pusharglistnoret 6 ...................... <me.mCallbackMethod, me.oCallbackObject, me.sFileToLoad, bSuccess, me.sID, sText>
+  [ 44] extcall 142 ............................. call(me.mCallbackMethod, me.oCallbackObject, me.sFileToLoad, bSuccess, me.sID, sText)
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglistnoret 1 ...................... <me>
+  [ 50] objcall 565 ............................. me.removeFromActorList()
+  [ 53] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 566 .......................... <me.bLoading>
+  [  5] not ..................................... <not me.bLoading>
+  [  6] jmpifz [ 13] ............................ if not me.bLoading then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 31 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 575 .......................... <me.iLoadID>
+  [ 18] pusharglist 1 ........................... <me.iLoadID>
+  [ 20] extcall 583 ............................. <getStreamStatus(me.iLoadID)>
+  [ 23] setlocal 0 .............................. aStatus = getStreamStatus(me.iLoadID)
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 575 .......................... <me.iLoadID>
+  [ 30] pusharglist 1 ........................... <me.iLoadID>
+  [ 32] extcall 584 ............................. <netDone(me.iLoadID)>
+  [ 35] jmpifz [ 90] ............................ if netDone(me.iLoadID) then
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushzero ................................ <0>
+  [ 41] setobjprop 566 .......................... me.bLoading = 0
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getobjprop 575 .......................... <me.iLoadID>
+  [ 49] pusharglist 1 ........................... <me.iLoadID>
+  [ 51] extcall 585 ............................. <netError(me.iLoadID)>
+  [ 54] setlocal 1 .............................. iError = netError(me.iLoadID)
+  [ 56] getlocal 1 .............................. <iError>
+  [ 58] pushcons 5 .............................. <"OK">
+  [ 60] nteq .................................... <iError <> "OK">
+  [ 61] jmpifz [ 64] ............................ if iError <> "OK" then
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getobjprop 575 .......................... <me.iLoadID>
+  [ 69] pusharglist 1 ........................... <me.iLoadID>
+  [ 71] extcall 611 ............................. <netTextresult(me.iLoadID)>
+  [ 74] setlocal 2 .............................. sText = netTextresult(me.iLoadID)
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getlocal 1 .............................. <iError>
+  [ 80] pushcons 5 .............................. <"OK">
+  [ 82] eq ...................................... <iError = "OK">
+  [ 83] getlocal 2 .............................. <sText>
+  [ 85] pusharglistnoret 3 ...................... <me, iError = "OK", sText>
+  [ 87] objcall 563 ............................. me.fileLoaded(iError = "OK", sText)
+  [ 90] getlocal 0 .............................. <aStatus>
+  [ 92] pushsymb 586 ............................ <#bytesSoFar>
+  [ 95] pusharglist 2 ........................... <aStatus, #bytesSoFar>
+  [ 97] objcall 33 .............................. <aStatus[#bytesSoFar]>
+  [ 99] setlocal 3 .............................. iBytesSoFar = aStatus[#bytesSoFar]
+  [101] getlocal 0 .............................. <aStatus>
+  [103] pushsymb 587 ............................ <#bytesTotal>
+  [106] pusharglist 2 ........................... <aStatus, #bytesTotal>
+  [108] objcall 33 .............................. <aStatus[#bytesTotal]>
+  [110] setlocal 4 .............................. iBytesTotal = aStatus[#bytesTotal]
+  [112] getlocal 4 .............................. <iBytesTotal>
+  [114] pushzero ................................ <0>
+  [115] gt ...................................... <iBytesTotal > 0>
+  [116] jmpifz [161] ............................ if iBytesTotal > 0 then
+  [119] getparam 0 .............................. <me>
+  [121] getlocal 3 .............................. <iBytesSoFar>
+  [123] getlocal 4 .............................. <iBytesTotal>
+  [125] div ..................................... <iBytesSoFar / iBytesTotal>
+  [126] pushint8 100 ............................ <100>
+  [128] mul ..................................... <iBytesSoFar / iBytesTotal * 100>
+  [129] pusharglist 1 ........................... <iBytesSoFar / iBytesTotal * 100>
+  [131] extcall 99 .............................. <integer(iBytesSoFar / iBytesTotal * 100)>
+  [133] setobjprop 588 .......................... me.iPercentage = integer(iBytesSoFar / iBytesTotal * 100)
+  [136] pushcons 6 .............................. <"LoadingStatus">
+  [138] pusharglist 1 ........................... <"LoadingStatus">
+  [140] extcall 14 .............................. <member("LoadingStatus")>
+  [142] pushcons 7 .............................. <"Loading ">
+  [144] getparam 0 .............................. <me>
+  [146] getobjprop 607 .......................... <me.sID>
+  [149] joinstr ................................. <"Loading " & me.sID>
+  [150] getparam 0 .............................. <me>
+  [152] getobjprop 588 .......................... <me.iPercentage>
+  [155] joinpadstr .............................. <"Loading " & me.sID && me.iPercentage>
+  [156] pushcons 8 .............................. <"%">
+  [158] joinstr ................................. <"Loading " & me.sID && me.iPercentage & "%">
+  [159] setobjprop 15 ........................... member("LoadingStatus").text = "Loading " & me.sID && me.iPercentage & "%"
+  [161] ret
+end
+
+on removeFromActorList me
+  [  0] getmovieprop 313 ........................ <the actorList>
+  [  3] getparam 0 .............................. <me>
+  [  5] pusharglistnoret 2 ...................... <the actorList, me>
+  [  7] objcall 129 ............................. (the actorList).deleteOne(me)
+  [  9] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 9 .............................. <"GetText: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"GetText: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"GetText: " & sMessage>
+  [ 17] extcall 38 .............................. put "GetText: " & sMessage
+  [ 19] ret
+end

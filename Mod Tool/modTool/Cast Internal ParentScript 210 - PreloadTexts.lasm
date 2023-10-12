@@ -1,0 +1,149 @@
+property aLoadList, oCallbackObject, mCallbackMethod, iIndex
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[:]>
+  [  4] pushproplist ............................ <[:]>
+  [  5] setobjprop 596 .......................... me.aLoadList = [:]
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushzero ................................ <0>
+  [ 11] setobjprop 597 .......................... me.iIndex = 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] extcall 31 .............................. return me
+  [ 20] ret
+end
+
+on addItem me, sID, sFile
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 596 ...................... <me.aLoadList>
+  [  5] getparam 1 .............................. <sID>
+  [  7] pushsymb 598 ............................ <#file>
+  [ 10] getparam 2 .............................. <sFile>
+  [ 12] pushsymb 15 ............................. <#text>
+  [ 14] pushcons 0 .............................. <EMPTY>
+  [ 16] pusharglist 4 ........................... <[#file: sFile, #text: EMPTY]>
+  [ 18] pushproplist ............................ <[#file: sFile, #text: EMPTY]>
+  [ 19] pusharglistnoret 3 ...................... <me.aLoadList, sID, [#file: sFile, #text: EMPTY]>
+  [ 21] objcall 152 ............................. me.aLoadList.addProp(sID, [#file: sFile, #text: EMPTY])
+  [ 23] ret
+end
+
+on setLoadList me, aList
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <aList>
+  [  4] setobjprop 596 .......................... me.aLoadList = aList
+  [  7] ret
+end
+
+on start me, _oCallbackObject, _mCallbackMethod
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_oCallbackObject>
+  [  4] setobjprop 570 .......................... me.oCallbackObject = _oCallbackObject
+  [  7] getparam 0 .............................. <me>
+  [  9] getparam 2 .............................. <_mCallbackMethod>
+  [ 11] setobjprop 571 .......................... me.mCallbackMethod = _mCallbackMethod
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushzero ................................ <0>
+  [ 17] setobjprop 597 .......................... me.iIndex = 0
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] objcall 348 ............................. me.next()
+  [ 27] ret
+end
+
+on next me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 597 .......................... <me.iIndex>
+  [  5] pushint8 1 .............................. <1>
+  [  7] add ..................................... <me.iIndex + 1>
+  [  8] setlocal 0 .............................. iNewIndex = me.iIndex + 1
+  [ 10] getlocal 0 .............................. <iNewIndex>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 596 ............................ <#aLoadList>
+  [ 17] pusharglist 2 ........................... <me, #aLoadList>
+  [ 19] objcall 32 .............................. <me.aLoadList.count>
+  [ 21] gt ...................................... <iNewIndex > me.aLoadList.count>
+  [ 22] jmpifz [ 35] ............................ if iNewIndex > me.aLoadList.count then / else
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pusharglistnoret 1 ...................... <me>
+  [ 29] objcall 595 ............................. me.finish()
+  [ 32] jmp [ 54]
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getlocal 0 .............................. <iNewIndex>
+  [ 39] setobjprop 597 .......................... me.iIndex = iNewIndex
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getobjprop 597 .......................... <me.iIndex>
+  [ 49] pusharglistnoret 2 ...................... <me, me.iIndex>
+  [ 51] objcall 612 ............................. me.loadText(me.iIndex)
+  [ 54] ret
+end
+
+on loadText me, _iIndex
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 596 ...................... <me.aLoadList>
+  [  5] getparam 1 .............................. <_iIndex>
+  [  7] pusharglist 2 ........................... <me.aLoadList, _iIndex>
+  [  9] objcall 159 ............................. <me.aLoadList.getPropAt(_iIndex)>
+  [ 11] setlocal 0 .............................. sID = me.aLoadList.getPropAt(_iIndex)
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushsymb 596 ............................ <#aLoadList>
+  [ 18] getparam 1 .............................. <_iIndex>
+  [ 20] pusharglist 3 ........................... <me, #aLoadList, _iIndex>
+  [ 22] objcall 61 .............................. <me.aLoadList[_iIndex]>
+  [ 24] pushsymb 598 ............................ <#file>
+  [ 27] pusharglist 2 ........................... <me.aLoadList[_iIndex], #file>
+  [ 29] objcall 33 .............................. <me.aLoadList[_iIndex][#file]>
+  [ 31] setlocal 1 .............................. sFile = me.aLoadList[_iIndex][#file]
+  [ 33] pushcons 1 .............................. <"PreloadText">
+  [ 35] pusharglist 1 ........................... <"PreloadText">
+  [ 37] extcall 315 ............................. <script("PreloadText")>
+  [ 40] pusharglist 1 ........................... <script("PreloadText")>
+  [ 42] extcall 236 ............................. <new(script("PreloadText"))>
+  [ 44] setlocal 2 .............................. oPreload = new(script("PreloadText"))
+  [ 46] getlocal 2 .............................. <oPreload>
+  [ 48] getlocal 0 .............................. <sID>
+  [ 50] getlocal 1 .............................. <sFile>
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pushsymb 613 ............................ <#textLoaded>
+  [ 57] pusharglistnoret 5 ...................... <oPreload, sID, sFile, me, #textLoaded>
+  [ 59] objcall 606 ............................. oPreload.preloadText(sID, sFile, me, #textLoaded)
+  [ 62] ret
+end
+
+on textLoaded me, sFile, bSuccess, sID, sText
+  [  0] getparam 2 .............................. <bSuccess>
+  [  2] not ..................................... <not bSuccess>
+  [  3] jmpifz [ 15] ............................ if not bSuccess then
+  [  6] pushcons 2 .............................. <"Text Load Failed: ">
+  [  8] getparam 1 .............................. <sFile>
+  [ 10] joinstr ................................. <"Text Load Failed: " & sFile>
+  [ 11] pusharglistnoret 1 ...................... <"Text Load Failed: " & sFile>
+  [ 13] extcall 171 ............................. alert("Text Load Failed: " & sFile)
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushsymb 596 ............................ <#aLoadList>
+  [ 20] getparam 3 .............................. <sID>
+  [ 22] pusharglist 3 ........................... <me, #aLoadList, sID>
+  [ 24] objcall 61 .............................. <me.aLoadList[sID]>
+  [ 26] pushsymb 15 ............................. <#text>
+  [ 28] getparam 4 .............................. <sText>
+  [ 30] pusharglistnoret 3 ...................... <me.aLoadList[sID], #text, sText>
+  [ 32] objcall 68 .............................. me.aLoadList[sID][#text] = sText
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglistnoret 1 ...................... <me>
+  [ 38] objcall 348 ............................. me.next()
+  [ 41] ret
+end
+
+on finish me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 571 .......................... <me.mCallbackMethod>
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 570 .......................... <me.oCallbackObject>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 596 .......................... <me.aLoadList>
+  [ 15] pusharglistnoret 3 ...................... <me.mCallbackMethod, me.oCallbackObject, me.aLoadList>
+  [ 17] extcall 142 ............................. call(me.mCallbackMethod, me.oCallbackObject, me.aLoadList)
+  [ 19] ret
+end

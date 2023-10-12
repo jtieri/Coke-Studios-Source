@@ -1,0 +1,73 @@
+property pTarget
+
+on new me, target
+  [  0] getparam 1 .............................. <target>
+  [  2] setprop 121 ............................. pTarget = target
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 5 ............................... return me
+  [ 10] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 304 ............................. stopEvent()
+  [  5] ret
+end
+
+on mouseUp me
+  [  0] getmovieprop 305 ........................ <the mouseLoc>
+  [  3] setlocal 0 .............................. iMouseLoc = the mouseLoc
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 7 ............................ <me.spriteNum>
+  [  9] pusharglist 1 ........................... <me.spriteNum>
+  [ 11] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 13] getobjprop 126 .......................... <sprite(me.spriteNum).top>
+  [ 15] setlocal 1 .............................. iMySpriteTop = sprite(me.spriteNum).top
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 7 ............................ <me.spriteNum>
+  [ 21] pusharglist 1 ........................... <me.spriteNum>
+  [ 23] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 25] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [ 27] setlocal 2 .............................. iMySpriteHeight = sprite(me.spriteNum).height
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 7 ............................ <me.spriteNum>
+  [ 33] pusharglist 1 ........................... <me.spriteNum>
+  [ 35] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 37] getobjprop 206 .......................... <sprite(me.spriteNum).right>
+  [ 39] setlocal 3 .............................. iMySpriteRight = sprite(me.spriteNum).right
+  [ 41] getprop 121 ............................. <pTarget>
+  [ 43] getobjprop 96 ........................... <pTarget.pDisplayLines>
+  [ 45] setlocal 4 .............................. iDisplayLines = pTarget.pDisplayLines
+  [ 47] getprop 121 ............................. <pTarget>
+  [ 49] getobjprop 69 ........................... <pTarget.pScrollIndex>
+  [ 51] setlocal 5 .............................. iScrollIndex = pTarget.pScrollIndex
+  [ 53] getlocal 0 .............................. <iMouseLoc>
+  [ 55] pushint8 2 .............................. <2>
+  [ 57] pusharglist 2 ........................... <iMouseLoc, 2>
+  [ 59] objcall 82 .............................. <iMouseLoc[2]>
+  [ 61] getlocal 1 .............................. <iMySpriteTop>
+  [ 63] sub ..................................... <iMouseLoc[2] - iMySpriteTop>
+  [ 64] getlocal 2 .............................. <iMySpriteHeight>
+  [ 66] getlocal 4 .............................. <iDisplayLines>
+  [ 68] div ..................................... <iMySpriteHeight / iDisplayLines>
+  [ 69] div ..................................... <(iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)>
+  [ 70] getlocal 5 .............................. <iScrollIndex>
+  [ 72] add ..................................... <((iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)) + iScrollIndex>
+  [ 73] setlocal 6 .............................. MyNum = ((iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)) + iScrollIndex
+  [ 75] gettoplevelprop 320 ..................... <_mouse>
+  [ 78] getobjprop 321 .......................... <_mouse.doubleClick>
+  [ 81] jmpifz [ 95] ............................ if _mouse.doubleClick then / else
+  [ 84] getprop 121 ............................. <pTarget>
+  [ 86] getlocal 6 .............................. <MyNum>
+  [ 88] pusharglistnoret 2 ...................... <pTarget, MyNum>
+  [ 90] objcall 241 ............................. pTarget.lineclicked(MyNum)
+  [ 92] jmp [104]
+  [ 95] getprop 121 ............................. <pTarget>
+  [ 97] getlocal 6 .............................. <MyNum>
+  [ 99] pusharglistnoret 2 ...................... <pTarget, MyNum>
+  [101] objcall 327 ............................. pTarget.hiliteline(MyNum)
+  [104] pusharglistnoret 0 ...................... <>
+  [106] extcall 304 ............................. stopEvent()
+  [109] ret
+end

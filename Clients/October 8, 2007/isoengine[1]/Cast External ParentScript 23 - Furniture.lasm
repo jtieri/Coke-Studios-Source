@@ -1,0 +1,1719 @@
+property aItems
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 955 .......................... me.aItems = []
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] extcall 93 .............................. return me
+  [ 14] ret
+end
+
+on Init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 106 ............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 93 .............................. return 
+  [ 13] getparam 1 .............................. <oXml>
+  [ 15] pusharglist 1 ........................... <oXml>
+  [ 17] objcall 263 ............................. <oXml.toString()>
+  [ 20] setlocal 0 .............................. sXmlString = oXml.toString()
+  [ 22] getlocal 0 .............................. <sXmlString>
+  [ 24] pushcons 0 .............................. <"castLib=">
+  [ 26] containsstr ............................. <sXmlString contains "castLib=">
+  [ 27] jmpifz [ 42] ............................ if sXmlString contains "castLib=" then / else
+  [ 30] getparam 1 .............................. <oXml>
+  [ 32] getchainedprop 109 ...................... <oXml.attributes>
+  [ 34] getobjprop 1078 ......................... <oXml.attributes.castLib>
+  [ 37] setlocal 1 .............................. sCastLib = oXml.attributes.castLib
+  [ 39] jmp [ 46]
+  [ 42] pushcons 1 .............................. <"Furniture">
+  [ 44] setlocal 1 .............................. sCastLib = "Furniture"
+  [ 46] getparam 1 .............................. <oXml>
+  [ 48] pushcons 2 .............................. <"Item">
+  [ 50] pusharglist 2 ........................... <oXml, "Item">
+  [ 52] extcall 979 ............................. <getNodes(oXml, "Item")>
+  [ 55] setlocal 2 .............................. aFurniItems = getNodes(oXml, "Item")
+  [ 57] pushint8 1 .............................. <1>
+  [ 59] setlocal 3
+  [ 61] getlocal 3
+  [ 63] getlocal 2 .............................. <aFurniItems>
+  [ 65] getobjprop 150 .......................... <aFurniItems.count>
+  [ 67] lteq
+  [ 68] jmpifz [466] ............................ repeat with i = 1 to aFurniItems.count
+  [ 71] getlocal 2 .............................. <aFurniItems>
+  [ 73] getlocal 3 .............................. <i>
+  [ 75] pusharglist 2 ........................... <aFurniItems, i>
+  [ 77] objcall 151 ............................. <aFurniItems[i]>
+  [ 79] setlocal 4 .............................. oItem = aFurniItems[i]
+  [ 81] getlocal 4 .............................. <oItem>
+  [ 83] pusharglist 1 ........................... <oItem>
+  [ 85] objcall 263 ............................. <oItem.toString()>
+  [ 88] setlocal 0 .............................. sXmlString = oItem.toString()
+  [ 90] getlocal 0 .............................. <sXmlString>
+  [ 92] pushcons 3 .............................. <"prodId=">
+  [ 94] containsstr ............................. <sXmlString contains "prodId=">
+  [ 95] jmpifz [110] ............................ if sXmlString contains "prodId=" then / else
+  [ 98] getlocal 4 .............................. <oItem>
+  [100] getchainedprop 109 ...................... <oItem.attributes>
+  [102] getobjprop 1079 ......................... <oItem.attributes.prodID>
+  [105] setlocal 5 .............................. sProdID = oItem.attributes.prodID
+  [107] jmp [116]
+  [110] pusharglist 0 ........................... <>
+  [112] extcall 132 ............................. <VOID>
+  [114] setlocal 5 .............................. sProdID = VOID
+  [116] getlocal 0 .............................. <sXmlString>
+  [118] pushcons 4 .............................. <"posId=">
+  [120] containsstr ............................. <sXmlString contains "posId=">
+  [121] jmpifz [136] ............................ if sXmlString contains "posId=" then / else
+  [124] getlocal 4 .............................. <oItem>
+  [126] getchainedprop 109 ...................... <oItem.attributes>
+  [128] getobjprop 1080 ......................... <oItem.attributes.posId>
+  [131] setlocal 6 .............................. sPosId = oItem.attributes.posId
+  [133] jmp [142]
+  [136] pusharglist 0 ........................... <>
+  [138] extcall 132 ............................. <VOID>
+  [140] setlocal 6 .............................. sPosId = VOID
+  [142] getlocal 0 .............................. <sXmlString>
+  [144] pushcons 5 .............................. <"state=">
+  [146] containsstr ............................. <sXmlString contains "state=">
+  [147] jmpifz [166] ............................ if sXmlString contains "state=" then / else
+  [150] getlocal 4 .............................. <oItem>
+  [152] getchainedprop 109 ...................... <oItem.attributes>
+  [154] getobjprop 1081 ......................... <oItem.attributes.state>
+  [157] pusharglist 1 ........................... <oItem.attributes.state>
+  [159] extcall 108 ............................. <integer(oItem.attributes.state)>
+  [161] setlocal 7 .............................. iState = integer(oItem.attributes.state)
+  [163] jmp [169]
+  [166] pushzero ................................ <0>
+  [167] setlocal 7 .............................. iState = 0
+  [169] getlocal 0 .............................. <sXmlString>
+  [171] pushcons 6 .............................. <"attributes=">
+  [173] containsstr ............................. <sXmlString contains "attributes=">
+  [174] jmpifz [193] ............................ if sXmlString contains "attributes=" then / else
+  [177] getlocal 4 .............................. <oItem>
+  [179] getchainedprop 109 ...................... <oItem.attributes>
+  [181] getobjprop 109 .......................... <oItem.attributes.attributes>
+  [183] pusharglist 1 ........................... <oItem.attributes.attributes>
+  [185] extcall 999 ............................. <value(oItem.attributes.attributes)>
+  [188] setlocal 8 .............................. aAttributes = value(oItem.attributes.attributes)
+  [190] jmp [198]
+  [193] pusharglist 0 ........................... <[:]>
+  [195] pushproplist ............................ <[:]>
+  [196] setlocal 8 .............................. aAttributes = [:]
+  [198] getlocal 0 .............................. <sXmlString>
+  [200] pushcons 7 .............................. <"gridZ=">
+  [202] containsstr ............................. <sXmlString contains "gridZ=">
+  [203] jmpifz [222] ............................ if sXmlString contains "gridZ=" then / else
+  [206] getlocal 4 .............................. <oItem>
+  [208] getchainedprop 109 ...................... <oItem.attributes>
+  [210] getobjprop 1082 ......................... <oItem.attributes.gridZ>
+  [213] pusharglist 1 ........................... <oItem.attributes.gridZ>
+  [215] extcall 108 ............................. <integer(oItem.attributes.gridZ)>
+  [217] setlocal 9 .............................. iRow = integer(oItem.attributes.gridZ)
+  [219] jmp [226]
+  [222] pusharglistnoret 0 ...................... <>
+  [224] extcall 93 .............................. return 
+  [226] getlocal 0 .............................. <sXmlString>
+  [228] pushcons 8 .............................. <"gridY=">
+  [230] containsstr ............................. <sXmlString contains "gridY=">
+  [231] jmpifz [250] ............................ if sXmlString contains "gridY=" then / else
+  [234] getlocal 4 .............................. <oItem>
+  [236] getchainedprop 109 ...................... <oItem.attributes>
+  [238] getobjprop 1083 ......................... <oItem.attributes.gridY>
+  [241] pusharglist 1 ........................... <oItem.attributes.gridY>
+  [243] extcall 108 ............................. <integer(oItem.attributes.gridY)>
+  [245] setlocal 10 ............................. iGridY = integer(oItem.attributes.gridY)
+  [247] jmp [253]
+  [250] pushzero ................................ <0>
+  [251] setlocal 10 ............................. iGridY = 0
+  [253] getlocal 0 .............................. <sXmlString>
+  [255] pushcons 9 .............................. <"gridX=">
+  [257] containsstr ............................. <sXmlString contains "gridX=">
+  [258] jmpifz [277] ............................ if sXmlString contains "gridX=" then / else
+  [261] getlocal 4 .............................. <oItem>
+  [263] getchainedprop 109 ...................... <oItem.attributes>
+  [265] getobjprop 1084 ......................... <oItem.attributes.gridX>
+  [268] pusharglist 1 ........................... <oItem.attributes.gridX>
+  [270] extcall 108 ............................. <integer(oItem.attributes.gridX)>
+  [272] setlocal 11 ............................. iCol = integer(oItem.attributes.gridX)
+  [274] jmp [281]
+  [277] pusharglistnoret 0 ...................... <>
+  [279] extcall 93 .............................. return 
+  [281] getlocal 0 .............................. <sXmlString>
+  [283] pushcons 10 ............................. <"dir=">
+  [285] containsstr ............................. <sXmlString contains "dir=">
+  [286] jmpifz [305] ............................ if sXmlString contains "dir=" then / else
+  [289] getlocal 4 .............................. <oItem>
+  [291] getchainedprop 109 ...................... <oItem.attributes>
+  [293] getobjprop 1024 ......................... <oItem.attributes.dir>
+  [296] pusharglist 1 ........................... <oItem.attributes.dir>
+  [298] extcall 108 ............................. <integer(oItem.attributes.dir)>
+  [300] setlocal 12 ............................. iDirection = integer(oItem.attributes.dir)
+  [302] jmp [309]
+  [305] pushint8 2 .............................. <2>
+  [307] setlocal 12 ............................. iDirection = 2
+  [309] getlocal 5 .............................. <sProdID>
+  [311] pusharglist 1 ........................... <sProdID>
+  [313] extcall 106 ............................. <voidp(sProdID)>
+  [315] not ..................................... <not voidp(sProdID)>
+  [316] jmpifz [354] ............................ if not voidp(sProdID) then / else
+  [319] getparam 0 .............................. <me>
+  [321] getlocal 5 .............................. <sProdID>
+  [323] pusharglist 2 ........................... <me, sProdID>
+  [325] objcall 1059 ............................ <me.getCatalogueItem(sProdID)>
+  [328] setlocal 13 ............................. aCatalogueItem = me.getCatalogueItem(sProdID)
+  [330] getlocal 13 ............................. <aCatalogueItem>
+  [332] getobjprop 1085 ......................... <aCatalogueItem.imageBase>
+  [335] setlocal 14 ............................. sImageBase = aCatalogueItem.imageBase
+  [337] getlocal 13 ............................. <aCatalogueItem>
+  [339] getobjprop 1086 ......................... <aCatalogueItem.type>
+  [342] setlocal 15 ............................. sType = aCatalogueItem.type
+  [344] getlocal 13 ............................. <aCatalogueItem>
+  [346] getobjprop 654 .......................... <aCatalogueItem.Action>
+  [349] setlocal 16 ............................. sAction = aCatalogueItem.Action
+  [351] jmp [426]
+  [354] getlocal 0 .............................. <sXmlString>
+  [356] pushcons 11 ............................. <"imageBase=">
+  [358] containsstr ............................. <sXmlString contains "imageBase=">
+  [359] jmpifz [374] ............................ if sXmlString contains "imageBase=" then / else
+  [362] getlocal 4 .............................. <oItem>
+  [364] getchainedprop 109 ...................... <oItem.attributes>
+  [366] getobjprop 1085 ......................... <oItem.attributes.imageBase>
+  [369] setlocal 14 ............................. sImageBase = oItem.attributes.imageBase
+  [371] jmp [378]
+  [374] pusharglistnoret 0 ...................... <>
+  [376] extcall 93 .............................. return 
+  [378] getlocal 0 .............................. <sXmlString>
+  [380] pushcons 12 ............................. <"type=">
+  [382] containsstr ............................. <sXmlString contains "type=">
+  [383] jmpifz [398] ............................ if sXmlString contains "type=" then / else
+  [386] getlocal 4 .............................. <oItem>
+  [388] getchainedprop 109 ...................... <oItem.attributes>
+  [390] getobjprop 1086 ......................... <oItem.attributes.type>
+  [393] setlocal 15 ............................. sType = oItem.attributes.type
+  [395] jmp [402]
+  [398] pushcons 13 ............................. <"Default">
+  [400] setlocal 15 ............................. sType = "Default"
+  [402] getlocal 0 .............................. <sXmlString>
+  [404] pushcons 14 ............................. <"action=">
+  [406] containsstr ............................. <sXmlString contains "action=">
+  [407] jmpifz [422] ............................ if sXmlString contains "action=" then / else
+  [410] getlocal 4 .............................. <oItem>
+  [412] getchainedprop 109 ...................... <oItem.attributes>
+  [414] getobjprop 654 .......................... <oItem.attributes.Action>
+  [417] setlocal 16 ............................. sAction = oItem.attributes.Action
+  [419] jmp [426]
+  [422] pushcons 13 ............................. <"Default">
+  [424] setlocal 16 ............................. sAction = "Default"
+  [426] getglobal 88 ............................ <oIsoScene>
+  [428] getlocal 5 .............................. <sProdID>
+  [430] getlocal 6 .............................. <sPosId>
+  [432] getlocal 14 ............................. <sImageBase>
+  [434] getlocal 15 ............................. <sType>
+  [436] getlocal 16 ............................. <sAction>
+  [438] getlocal 7 .............................. <iState>
+  [440] getlocal 8 .............................. <aAttributes>
+  [442] getlocal 1 .............................. <sCastLib>
+  [444] getlocal 9 .............................. <iRow>
+  [446] getlocal 11 ............................. <iCol>
+  [448] getlocal 10 ............................. <iGridY>
+  [450] getlocal 12 ............................. <iDirection>
+  [452] pusharglistnoret 13 ..................... <oIsoScene, sProdID, sPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iRow, iCol, iGridY, iDirection>
+  [454] objcall 24 .............................. oIsoScene.createItem(sProdID, sPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iRow, iCol, iGridY, iDirection)
+  [456] pushint8 1
+  [458] getlocal 3
+  [460] add
+  [461] setlocal 3
+  [463] endrepeat [ 61]
+  [466] ret
+end
+
+on getTotalItems me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 955 ............................ <#aItems>
+  [  5] pusharglist 2 ........................... <me, #aItems>
+  [  7] objcall 150 ............................. <me.aItems.count>
+  [  9] pusharglistnoret 1 ...................... <me.aItems.count>
+  [ 11] extcall 93 .............................. return me.aItems.count
+  [ 13] ret
+end
+
+on getCatalogueItem me, sProdID
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 1089 .......................... <gCatalogue>
+  [  9] getobjprop 150 .......................... <gCatalogue.count>
+  [ 11] lteq
+  [ 12] jmpifz [ 52] ............................ repeat with i = 1 to gCatalogue.count
+  [ 15] getglobal 1089 .......................... <gCatalogue>
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 2 ........................... <gCatalogue, i>
+  [ 22] objcall 151 ............................. <gCatalogue[i]>
+  [ 24] setlocal 1 .............................. aCatalogueItem = gCatalogue[i]
+  [ 26] getlocal 1 .............................. <aCatalogueItem>
+  [ 28] getobjprop 1079 ......................... <aCatalogueItem.prodID>
+  [ 31] getparam 1 .............................. <sProdID>
+  [ 33] eq ...................................... <aCatalogueItem.prodID = sProdID>
+  [ 34] jmpifz [ 43] ............................ if aCatalogueItem.prodID = sProdID then
+  [ 37] getlocal 1 .............................. <aCatalogueItem>
+  [ 39] pusharglistnoret 1 ...................... <aCatalogueItem>
+  [ 41] extcall 93 .............................. return aCatalogueItem
+  [ 43] pushint8 1
+  [ 45] getlocal 0
+  [ 47] add
+  [ 48] setlocal 0
+  [ 50] endrepeat [  4]
+  [ 52] ret
+end
+
+on updateAll me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 955 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 43] ............................ repeat with oItem in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <oItem>
+  [ 33] pusharglistnoret 1 ...................... <oItem>
+  [ 35] objcall 1090 ............................ oItem.update()
+  [ 38] pushint8 1
+  [ 40] add
+  [ 41] endrepeat [ 13]
+  [ 43] pop 3
+  [ 45] ret
+end
+
+on updateItemByPosId me, sPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 955 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 58] ............................ repeat with oItem in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <oItem>
+  [ 33] getobjprop 285 .......................... <oItem.sPosId>
+  [ 36] getparam 1 .............................. <sPosId>
+  [ 38] eq ...................................... <oItem.sPosId = sPosId>
+  [ 39] jmpifz [ 53] ............................ if oItem.sPosId = sPosId then
+  [ 42] getlocal 0 .............................. <oItem>
+  [ 44] pusharglistnoret 1 ...................... <oItem>
+  [ 46] objcall 1090 ............................ oItem.update()
+  [ 49] pusharglistnoret 0 ...................... <>
+  [ 51] extcall 93 .............................. return 
+  [ 53] pushint8 1
+  [ 55] add
+  [ 56] endrepeat [ 13]
+  [ 58] pop 3
+  [ 60] ret
+end
+
+on updateItem me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglistnoret 1 ...................... <oItem>
+  [  4] objcall 1090 ............................ oItem.update()
+  [  7] ret
+end
+
+on addItem me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 955 ...................... <me.aItems>
+  [  5] getparam 1 .............................. <oItem>
+  [  7] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [  9] objcall 135 ............................. me.aItems.add(oItem)
+  [ 11] ret
+end
+
+on removeItem me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglistnoret 1 ...................... <oItem>
+  [  4] objcall 360 ............................. oItem.destroy()
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 955 ...................... <me.aItems>
+  [ 12] getparam 1 .............................. <oItem>
+  [ 14] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [ 16] objcall 359 ............................. me.aItems.deleteOne(oItem)
+  [ 19] ret
+end
+
+on removeAll me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] pusharglistnoret 1 ...................... <oIsoScene>
+  [  4] objcall 27 .............................. oIsoScene.deleteSelectedItem()
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 0
+  [ 10] getlocal 0
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 955 ............................ <#aItems>
+  [ 17] pusharglist 2 ........................... <me, #aItems>
+  [ 19] objcall 150 ............................. <me.aItems.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 55] ............................ repeat with i = 1 to me.aItems.count
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 955 ............................ <#aItems>
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 3 ........................... <me, #aItems, i>
+  [ 34] objcall 611 ............................. <me.aItems[i]>
+  [ 37] setlocal 1 .............................. oItem = me.aItems[i]
+  [ 39] getlocal 1 .............................. <oItem>
+  [ 41] pusharglistnoret 1 ...................... <oItem>
+  [ 43] objcall 360 ............................. oItem.destroy()
+  [ 46] pushint8 1
+  [ 48] getlocal 0
+  [ 50] add
+  [ 51] setlocal 0
+  [ 53] endrepeat [ 10]
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pusharglist 0 ........................... <[]>
+  [ 59] pushlist ................................ <[]>
+  [ 60] setobjprop 955 .......................... me.aItems = []
+  [ 63] ret
+end
+
+on destroy me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] pusharglistnoret 1 ...................... <oIsoScene>
+  [  4] objcall 27 .............................. oIsoScene.deleteSelectedItem()
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 0
+  [ 10] getlocal 0
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 955 ............................ <#aItems>
+  [ 17] pusharglist 2 ........................... <me, #aItems>
+  [ 19] objcall 150 ............................. <me.aItems.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 55] ............................ repeat with i = 1 to me.aItems.count
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 955 ............................ <#aItems>
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 3 ........................... <me, #aItems, i>
+  [ 34] objcall 611 ............................. <me.aItems[i]>
+  [ 37] setlocal 1 .............................. oItem = me.aItems[i]
+  [ 39] getlocal 1 .............................. <oItem>
+  [ 41] pusharglistnoret 1 ...................... <oItem>
+  [ 43] objcall 360 ............................. oItem.destroy()
+  [ 46] pushint8 1
+  [ 48] getlocal 0
+  [ 50] add
+  [ 51] setlocal 0
+  [ 53] endrepeat [ 10]
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pusharglist 0 ........................... <[]>
+  [ 59] pushlist ................................ <[]>
+  [ 60] setobjprop 955 .......................... me.aItems = []
+  [ 63] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 955 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 43] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglistnoret 1 ...................... <i>
+  [ 35] objcall 261 ............................. i.toggleDisplay()
+  [ 38] pushint8 1
+  [ 40] add
+  [ 41] endrepeat [ 13]
+  [ 43] pop 3
+  [ 45] ret
+end
+
+on containsSeatableItems me, _aItems
+  [  0] getparam 1 .............................. <_aItems>
+  [  2] peek 0
+  [  4] pusharglist 1
+  [  6] extcall 150
+  [  8] pushint8 1
+  [ 10] peek 0
+  [ 12] peek 2
+  [ 14] lteq
+  [ 15] jmpifz [ 50] ............................ repeat with oItem in _aItems
+  [ 18] peek 2
+  [ 20] peek 1
+  [ 22] pusharglist 2
+  [ 24] extcall 151
+  [ 26] setlocal 0
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getlocal 0 .............................. <oItem>
+  [ 32] pusharglist 2 ........................... <me, oItem>
+  [ 34] objcall 202 ............................. <me.isSeatableItem(oItem)>
+  [ 36] jmpifz [ 45] ............................ if me.isSeatableItem(oItem) then
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] pusharglistnoret 1 ...................... <1>
+  [ 43] extcall 93 .............................. return 1
+  [ 45] pushint8 1
+  [ 47] add
+  [ 48] endrepeat [ 10]
+  [ 50] pop 3
+  [ 52] pushzero ................................ <0>
+  [ 53] pusharglistnoret 1 ...................... <0>
+  [ 55] extcall 93 .............................. return 0
+  [ 57] ret
+end
+
+on isSeatableItem me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglist 1 ........................... <oItem>
+  [  4] objcall 205 ............................. <oItem.getType()>
+  [  6] pushcons 15 ............................. <"Chair">
+  [  8] eq ...................................... <oItem.getType() = "Chair">
+  [  9] getparam 1 .............................. <oItem>
+  [ 11] pusharglist 1 ........................... <oItem>
+  [ 13] objcall 205 ............................. <oItem.getType()>
+  [ 15] pushcons 16 ............................. <"Sofa">
+  [ 17] eq ...................................... <oItem.getType() = "Sofa">
+  [ 18] or ...................................... <(oItem.getType() = "Chair") or (oItem.getType() = "Sofa")>
+  [ 19] getparam 1 .............................. <oItem>
+  [ 21] pusharglist 1 ........................... <oItem>
+  [ 23] objcall 205 ............................. <oItem.getType()>
+  [ 25] pushcons 17 ............................. <"Stool">
+  [ 27] eq ...................................... <oItem.getType() = "Stool">
+  [ 28] or ...................................... <(oItem.getType() = "Chair") or (oItem.getType() = "Sofa") or (oItem.getType() = "Stool")>
+  [ 29] getparam 1 .............................. <oItem>
+  [ 31] pusharglist 1 ........................... <oItem>
+  [ 33] objcall 205 ............................. <oItem.getType()>
+  [ 35] pushcons 18 ............................. <"carfront">
+  [ 37] eq ...................................... <oItem.getType() = "carfront">
+  [ 38] or ...................................... <(oItem.getType() = "Chair") or (oItem.getType() = "Sofa") or (oItem.getType() = "Stool") or (oItem.getType() = "carfront")>
+  [ 39] jmpifz [ 51] ............................ if (oItem.getType() = "Chair") or (oItem.getType() = "Sofa") or (oItem.getType() = "Stool") or (oItem.getType() = "carfront") then / else
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] pusharglistnoret 1 ...................... <1>
+  [ 46] extcall 93 .............................. return 1
+  [ 48] jmp [ 56]
+  [ 51] pushzero ................................ <0>
+  [ 52] pusharglistnoret 1 ...................... <0>
+  [ 54] extcall 93 .............................. return 0
+  [ 56] ret
+end
+
+on getItemsAtSquaresExcept me, _aSquares, _oItem
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aList = []
+  [  5] getparam 1 .............................. <_aSquares>
+  [  7] peek 0
+  [  9] pusharglist 1
+  [ 11] extcall 150
+  [ 13] pushint8 1
+  [ 15] peek 0
+  [ 17] peek 2
+  [ 19] lteq
+  [ 20] jmpifz [123] ............................ repeat with oSquare in _aSquares
+  [ 23] peek 2
+  [ 25] peek 1
+  [ 27] pusharglist 2
+  [ 29] extcall 151
+  [ 31] setlocal 1
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getlocal 1 .............................. <oSquare>
+  [ 37] pusharglist 2 ........................... <me, oSquare>
+  [ 39] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 41] setlocal 2 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 43] getlocal 2 .............................. <_aItems>
+  [ 45] peek 0
+  [ 47] pusharglist 1
+  [ 49] extcall 150
+  [ 51] pushint8 1
+  [ 53] peek 0
+  [ 55] peek 2
+  [ 57] lteq
+  [ 58] jmpifz [116] ............................ repeat with oItem in _aItems
+  [ 61] peek 2
+  [ 63] peek 1
+  [ 65] pusharglist 2
+  [ 67] extcall 151
+  [ 69] setlocal 3
+  [ 71] getlocal 3 .............................. <oItem>
+  [ 73] getparam 2 .............................. <_oItem>
+  [ 75] pusharglist 2 ........................... <oItem, _oItem>
+  [ 77] objcall 243 ............................. <oItem.equals(_oItem)>
+  [ 79] jmpifz [ 85] ............................ if oItem.equals(_oItem) then
+  [ 82] jmp [111] ............................... next repeat
+  [ 85] getlocal 0 .............................. <aList>
+  [ 87] getlocal 3 .............................. <oItem>
+  [ 89] pusharglist 2 ........................... <aList, oItem>
+  [ 91] objcall 817 ............................. <aList.getPos(oItem)>
+  [ 94] setlocal 4 .............................. iPos = aList.getPos(oItem)
+  [ 96] getlocal 4 .............................. <iPos>
+  [ 98] pushzero ................................ <0>
+  [ 99] eq ...................................... <iPos = 0>
+  [100] jmpifz [111] ............................ if iPos = 0 then
+  [103] getlocal 0 .............................. <aList>
+  [105] getlocal 3 .............................. <oItem>
+  [107] pusharglistnoret 2 ...................... <aList, oItem>
+  [109] objcall 135 ............................. aList.add(oItem)
+  [111] pushint8 1
+  [113] add
+  [114] endrepeat [ 53]
+  [116] pop 3
+  [118] pushint8 1
+  [120] add
+  [121] endrepeat [ 15]
+  [123] pop 3
+  [125] getlocal 0 .............................. <aList>
+  [127] pusharglistnoret 1 ...................... <aList>
+  [129] extcall 93 .............................. return aList
+  [131] ret
+end
+
+on getItemsAtSquare me, oSquare
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aList = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 955 .......................... <me.aItems>
+  [ 10] peek 0
+  [ 12] pusharglist 1
+  [ 14] extcall 150
+  [ 16] pushint8 1
+  [ 18] peek 0
+  [ 20] peek 2
+  [ 22] lteq
+  [ 23] jmpifz [ 61] ............................ repeat with oItem in me.aItems
+  [ 26] peek 2
+  [ 28] peek 1
+  [ 30] pusharglist 2
+  [ 32] extcall 151
+  [ 34] setlocal 1
+  [ 36] getlocal 1 .............................. <oItem>
+  [ 38] getparam 1 .............................. <oSquare>
+  [ 40] pusharglist 2 ........................... <oItem, oSquare>
+  [ 42] objcall 630 ............................. <oItem.existsAtSquare(oSquare)>
+  [ 45] jmpifz [ 56] ............................ if oItem.existsAtSquare(oSquare) then
+  [ 48] getlocal 0 .............................. <aList>
+  [ 50] getlocal 1 .............................. <oItem>
+  [ 52] pusharglistnoret 2 ...................... <aList, oItem>
+  [ 54] objcall 135 ............................. aList.add(oItem)
+  [ 56] pushint8 1
+  [ 58] add
+  [ 59] endrepeat [ 18]
+  [ 61] pop 3
+  [ 63] getlocal 0 .............................. <aList>
+  [ 65] pusharglistnoret 1 ...................... <aList>
+  [ 67] extcall 93 .............................. return aList
+  [ 69] ret
+end
+
+on getItemsAtSquareExcept me, oSquare, _oItem
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aList = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 955 .......................... <me.aItems>
+  [ 10] peek 0
+  [ 12] pusharglist 1
+  [ 14] extcall 150
+  [ 16] pushint8 1
+  [ 18] peek 0
+  [ 20] peek 2
+  [ 22] lteq
+  [ 23] jmpifz [ 75] ............................ repeat with oItem in me.aItems
+  [ 26] peek 2
+  [ 28] peek 1
+  [ 30] pusharglist 2
+  [ 32] extcall 151
+  [ 34] setlocal 1
+  [ 36] getlocal 1 .............................. <oItem>
+  [ 38] getparam 2 .............................. <_oItem>
+  [ 40] pusharglist 2 ........................... <oItem, _oItem>
+  [ 42] objcall 243 ............................. <oItem.equals(_oItem)>
+  [ 44] jmpifz [ 50] ............................ if oItem.equals(_oItem) then
+  [ 47] jmp [ 70] ............................... next repeat
+  [ 50] getlocal 1 .............................. <oItem>
+  [ 52] getparam 1 .............................. <oSquare>
+  [ 54] pusharglist 2 ........................... <oItem, oSquare>
+  [ 56] objcall 630 ............................. <oItem.existsAtSquare(oSquare)>
+  [ 59] jmpifz [ 70] ............................ if oItem.existsAtSquare(oSquare) then
+  [ 62] getlocal 0 .............................. <aList>
+  [ 64] getlocal 1 .............................. <oItem>
+  [ 66] pusharglistnoret 2 ...................... <aList, oItem>
+  [ 68] objcall 135 ............................. aList.add(oItem)
+  [ 70] pushint8 1
+  [ 72] add
+  [ 73] endrepeat [ 18]
+  [ 75] pop 3
+  [ 77] getlocal 0 .............................. <aList>
+  [ 79] pusharglistnoret 1 ...................... <aList>
+  [ 81] extcall 93 .............................. return aList
+  [ 83] ret
+end
+
+on getGreatestNumberOfItemsForSquares me, aSquares
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iCount = 0
+  [  3] getparam 1 .............................. <aSquares>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 57] ............................ repeat with oSquare in aSquares
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 1
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getlocal 1 .............................. <oSquare>
+  [ 35] pusharglist 2 ........................... <me, oSquare>
+  [ 37] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 39] setlocal 2 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 41] getlocal 0 .............................. <iCount>
+  [ 43] getlocal 2 .............................. <_aItems>
+  [ 45] pusharglist 1 ........................... <_aItems>
+  [ 47] objcall 150 ............................. <_aItems.count()>
+  [ 49] add ..................................... <iCount + _aItems.count()>
+  [ 50] setlocal 0 .............................. iCount = iCount + _aItems.count()
+  [ 52] pushint8 1
+  [ 54] add
+  [ 55] endrepeat [ 13]
+  [ 57] pop 3
+  [ 59] getlocal 0 .............................. <iCount>
+  [ 61] pusharglistnoret 1 ...................... <iCount>
+  [ 63] extcall 93 .............................. return iCount
+  [ 65] ret
+end
+
+on getGreatestGridYForSquaresExcept me, aSquares, oItem
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestGridY = 0
+  [  3] getparam 1 .............................. <aSquares>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 61] ............................ repeat with oSquare in aSquares
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 1
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getlocal 1 .............................. <oSquare>
+  [ 35] getparam 2 .............................. <oItem>
+  [ 37] pusharglist 3 ........................... <me, oSquare, oItem>
+  [ 39] objcall 1068 ............................ <me.getGreatestGridYForSquareExcept(oSquare, oItem)>
+  [ 42] setlocal 2 .............................. iItemGridY = me.getGreatestGridYForSquareExcept(oSquare, oItem)
+  [ 44] getlocal 2 .............................. <iItemGridY>
+  [ 46] getlocal 0 .............................. <iGreatestGridY>
+  [ 48] gt ...................................... <iItemGridY > iGreatestGridY>
+  [ 49] jmpifz [ 56] ............................ if iItemGridY > iGreatestGridY then
+  [ 52] getlocal 2 .............................. <iItemGridY>
+  [ 54] setlocal 0 .............................. iGreatestGridY = iItemGridY
+  [ 56] pushint8 1
+  [ 58] add
+  [ 59] endrepeat [ 13]
+  [ 61] pop 3
+  [ 63] getlocal 0 .............................. <iGreatestGridY>
+  [ 65] pusharglistnoret 1 ...................... <iGreatestGridY>
+  [ 67] extcall 93 .............................. return iGreatestGridY
+  [ 69] ret
+end
+
+on getGreatestGridYForSquareExcept me, oSquare, _oItem
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestGridY = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] getparam 1 .............................. <oSquare>
+  [  7] getparam 2 .............................. <_oItem>
+  [  9] pusharglist 3 ........................... <me, oSquare, _oItem>
+  [ 11] objcall 1065 ............................ <me.getItemsAtSquareExcept(oSquare, _oItem)>
+  [ 14] setlocal 1 .............................. _aItems = me.getItemsAtSquareExcept(oSquare, _oItem)
+  [ 16] getlocal 1 .............................. <_aItems>
+  [ 18] peek 0
+  [ 20] pusharglist 1
+  [ 22] extcall 150
+  [ 24] pushint8 1
+  [ 26] peek 0
+  [ 28] peek 2
+  [ 30] lteq
+  [ 31] jmpifz [ 84] ............................ repeat with oItem in _aItems
+  [ 34] peek 2
+  [ 36] peek 1
+  [ 38] pusharglist 2
+  [ 40] extcall 151
+  [ 42] setlocal 2
+  [ 44] getlocal 2 .............................. <oItem>
+  [ 46] getparam 2 .............................. <_oItem>
+  [ 48] pusharglist 2 ........................... <oItem, _oItem>
+  [ 50] objcall 243 ............................. <oItem.equals(_oItem)>
+  [ 52] jmpifz [ 58] ............................ if oItem.equals(_oItem) then
+  [ 55] jmp [ 79] ............................... next repeat
+  [ 58] getlocal 2 .............................. <oItem>
+  [ 60] pusharglist 1 ........................... <oItem>
+  [ 62] objcall 760 ............................. <oItem.getGridY()>
+  [ 65] setlocal 3 .............................. iItemGridY = oItem.getGridY()
+  [ 67] getlocal 3 .............................. <iItemGridY>
+  [ 69] getlocal 0 .............................. <iGreatestGridY>
+  [ 71] gt ...................................... <iItemGridY > iGreatestGridY>
+  [ 72] jmpifz [ 79] ............................ if iItemGridY > iGreatestGridY then
+  [ 75] getlocal 3 .............................. <iItemGridY>
+  [ 77] setlocal 0 .............................. iGreatestGridY = iItemGridY
+  [ 79] pushint8 1
+  [ 81] add
+  [ 82] endrepeat [ 26]
+  [ 84] pop 3
+  [ 86] getlocal 0 .............................. <iGreatestGridY>
+  [ 88] pusharglistnoret 1 ...................... <iGreatestGridY>
+  [ 90] extcall 93 .............................. return iGreatestGridY
+  [ 92] ret
+end
+
+on getGreatestHeightForSquares me, aSquares
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestHeight = 0
+  [  3] getparam 1 .............................. <aSquares>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 59] ............................ repeat with oSquare in aSquares
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 1
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getlocal 1 .............................. <oSquare>
+  [ 35] pusharglist 2 ........................... <me, oSquare>
+  [ 37] objcall 1072 ............................ <me.getGreatestHeightAtSquare(oSquare)>
+  [ 40] setlocal 2 .............................. iHeight = me.getGreatestHeightAtSquare(oSquare)
+  [ 42] getlocal 2 .............................. <iHeight>
+  [ 44] getlocal 0 .............................. <iGreatestHeight>
+  [ 46] gt ...................................... <iHeight > iGreatestHeight>
+  [ 47] jmpifz [ 54] ............................ if iHeight > iGreatestHeight then
+  [ 50] getlocal 2 .............................. <iHeight>
+  [ 52] setlocal 0 .............................. iGreatestHeight = iHeight
+  [ 54] pushint8 1
+  [ 56] add
+  [ 57] endrepeat [ 13]
+  [ 59] pop 3
+  [ 61] getlocal 0 .............................. <iGreatestHeight>
+  [ 63] pusharglistnoret 1 ...................... <iGreatestHeight>
+  [ 65] extcall 93 .............................. return iGreatestHeight
+  [ 67] ret
+end
+
+on getGreatestHeightForSquaresExcept me, aSquares, oItem
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestHeight = 0
+  [  3] getparam 1 .............................. <aSquares>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 61] ............................ repeat with oSquare in aSquares
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 1
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getlocal 1 .............................. <oSquare>
+  [ 35] getparam 2 .............................. <oItem>
+  [ 37] pusharglist 3 ........................... <me, oSquare, oItem>
+  [ 39] objcall 1071 ............................ <me.getGreatestHeightAtSquareExcept(oSquare, oItem)>
+  [ 42] setlocal 2 .............................. iHeight = me.getGreatestHeightAtSquareExcept(oSquare, oItem)
+  [ 44] getlocal 2 .............................. <iHeight>
+  [ 46] getlocal 0 .............................. <iGreatestHeight>
+  [ 48] gt ...................................... <iHeight > iGreatestHeight>
+  [ 49] jmpifz [ 56] ............................ if iHeight > iGreatestHeight then
+  [ 52] getlocal 2 .............................. <iHeight>
+  [ 54] setlocal 0 .............................. iGreatestHeight = iHeight
+  [ 56] pushint8 1
+  [ 58] add
+  [ 59] endrepeat [ 13]
+  [ 61] pop 3
+  [ 63] getlocal 0 .............................. <iGreatestHeight>
+  [ 65] pusharglistnoret 1 ...................... <iGreatestHeight>
+  [ 67] extcall 93 .............................. return iGreatestHeight
+  [ 69] ret
+end
+
+on getGreatestHeightAtSquareExcept me, oSquare, _oItem
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestHeight = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] getparam 1 .............................. <oSquare>
+  [  7] getparam 2 .............................. <_oItem>
+  [  9] pusharglist 3 ........................... <me, oSquare, _oItem>
+  [ 11] objcall 1065 ............................ <me.getItemsAtSquareExcept(oSquare, _oItem)>
+  [ 14] setlocal 1 .............................. _aItems = me.getItemsAtSquareExcept(oSquare, _oItem)
+  [ 16] getlocal 1 .............................. <_aItems>
+  [ 18] peek 0
+  [ 20] pusharglist 1
+  [ 22] extcall 150
+  [ 24] pushint8 1
+  [ 26] peek 0
+  [ 28] peek 2
+  [ 30] lteq
+  [ 31] jmpifz [ 91] ............................ repeat with oItem in _aItems
+  [ 34] peek 2
+  [ 36] peek 1
+  [ 38] pusharglist 2
+  [ 40] extcall 151
+  [ 42] setlocal 2
+  [ 44] getlocal 2 .............................. <oItem>
+  [ 46] getparam 2 .............................. <_oItem>
+  [ 48] pusharglist 2 ........................... <oItem, _oItem>
+  [ 50] objcall 243 ............................. <oItem.equals(_oItem)>
+  [ 52] jmpifz [ 58] ............................ if oItem.equals(_oItem) then
+  [ 55] jmp [ 86] ............................... next repeat
+  [ 58] getlocal 2 .............................. <oItem>
+  [ 60] pusharglist 1 ........................... <oItem>
+  [ 62] objcall 204 ............................. <oItem.getHeightOffset()>
+  [ 64] getlocal 2 .............................. <oItem>
+  [ 66] pusharglist 1 ........................... <oItem>
+  [ 68] objcall 1095 ............................ <oItem.getHeight()>
+  [ 71] add ..................................... <oItem.getHeightOffset() + oItem.getHeight()>
+  [ 72] setlocal 3 .............................. iHeight = oItem.getHeightOffset() + oItem.getHeight()
+  [ 74] getlocal 3 .............................. <iHeight>
+  [ 76] getlocal 0 .............................. <iGreatestHeight>
+  [ 78] gt ...................................... <iHeight > iGreatestHeight>
+  [ 79] jmpifz [ 86] ............................ if iHeight > iGreatestHeight then
+  [ 82] getlocal 3 .............................. <iHeight>
+  [ 84] setlocal 0 .............................. iGreatestHeight = iHeight
+  [ 86] pushint8 1
+  [ 88] add
+  [ 89] endrepeat [ 26]
+  [ 91] pop 3
+  [ 93] getlocal 0 .............................. <iGreatestHeight>
+  [ 95] pusharglistnoret 1 ...................... <iGreatestHeight>
+  [ 97] extcall 93 .............................. return iGreatestHeight
+  [ 99] ret
+end
+
+on getGreatestHeightAtSquare me, oSquare
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. iGreatestHeight = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] getparam 1 .............................. <oSquare>
+  [  7] pusharglist 2 ........................... <me, oSquare>
+  [  9] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 11] setlocal 1 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 13] getlocal 1 .............................. <_aItems>
+  [ 15] peek 0
+  [ 17] pusharglist 1
+  [ 19] extcall 150
+  [ 21] pushint8 1
+  [ 23] peek 0
+  [ 25] peek 2
+  [ 27] lteq
+  [ 28] jmpifz [ 69] ............................ repeat with oItem in _aItems
+  [ 31] peek 2
+  [ 33] peek 1
+  [ 35] pusharglist 2
+  [ 37] extcall 151
+  [ 39] setlocal 2
+  [ 41] getlocal 2 .............................. <oItem>
+  [ 43] pusharglist 1 ........................... <oItem>
+  [ 45] objcall 204 ............................. <oItem.getHeightOffset()>
+  [ 47] getlocal 2 .............................. <oItem>
+  [ 49] pusharglist 1 ........................... <oItem>
+  [ 51] objcall 1095 ............................ <oItem.getHeight()>
+  [ 54] add ..................................... <oItem.getHeightOffset() + oItem.getHeight()>
+  [ 55] setlocal 3 .............................. iHeight = oItem.getHeightOffset() + oItem.getHeight()
+  [ 57] getlocal 0 .............................. <iGreatestHeight>
+  [ 59] getlocal 3 .............................. <iHeight>
+  [ 61] add ..................................... <iGreatestHeight + iHeight>
+  [ 62] setlocal 0 .............................. iGreatestHeight = iGreatestHeight + iHeight
+  [ 64] pushint8 1
+  [ 66] add
+  [ 67] endrepeat [ 23]
+  [ 69] pop 3
+  [ 71] getlocal 0 .............................. <iGreatestHeight>
+  [ 73] pusharglistnoret 1 ...................... <iGreatestHeight>
+  [ 75] extcall 93 .............................. return iGreatestHeight
+  [ 77] ret
+end
+
+on getItemsAtSquareByHeightExcept me, oSquare, _oItem, iHeight
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aList = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 955 .......................... <me.aItems>
+  [ 10] peek 0
+  [ 12] pusharglist 1
+  [ 14] extcall 150
+  [ 16] pushint8 1
+  [ 18] peek 0
+  [ 20] peek 2
+  [ 22] lteq
+  [ 23] jmpifz [ 88] ............................ repeat with oItem in me.aItems
+  [ 26] peek 2
+  [ 28] peek 1
+  [ 30] pusharglist 2
+  [ 32] extcall 151
+  [ 34] setlocal 1
+  [ 36] getlocal 1 .............................. <oItem>
+  [ 38] getparam 2 .............................. <_oItem>
+  [ 40] pusharglist 2 ........................... <oItem, _oItem>
+  [ 42] objcall 243 ............................. <oItem.equals(_oItem)>
+  [ 44] jmpifz [ 50] ............................ if oItem.equals(_oItem) then
+  [ 47] jmp [ 83] ............................... next repeat
+  [ 50] getlocal 1 .............................. <oItem>
+  [ 52] getparam 1 .............................. <oSquare>
+  [ 54] pusharglist 2 ........................... <oItem, oSquare>
+  [ 56] objcall 630 ............................. <oItem.existsAtSquare(oSquare)>
+  [ 59] jmpifz [ 83] ............................ if oItem.existsAtSquare(oSquare) then
+  [ 62] getlocal 1 .............................. <oItem>
+  [ 64] pusharglist 1 ........................... <oItem>
+  [ 66] objcall 760 ............................. <oItem.getGridY()>
+  [ 69] getparam 3 .............................. <iHeight>
+  [ 71] eq ...................................... <oItem.getGridY() = iHeight>
+  [ 72] jmpifz [ 83] ............................ if oItem.getGridY() = iHeight then
+  [ 75] getlocal 0 .............................. <aList>
+  [ 77] getlocal 1 .............................. <oItem>
+  [ 79] pusharglistnoret 2 ...................... <aList, oItem>
+  [ 81] objcall 135 ............................. aList.add(oItem)
+  [ 83] pushint8 1
+  [ 85] add
+  [ 86] endrepeat [ 18]
+  [ 88] pop 3
+  [ 90] getlocal 0 .............................. <aList>
+  [ 92] pusharglistnoret 1 ...................... <aList>
+  [ 94] extcall 93 .............................. return aList
+  [ 96] ret
+end
+
+on getItemsAtSquaresInHeightRangeExcept me, aSquares, _oItem, iLow, iHi
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aItemsInRange = []
+  [  5] getparam 1 .............................. <aSquares>
+  [  7] peek 0
+  [  9] pusharglist 1
+  [ 11] extcall 150
+  [ 13] pushint8 1
+  [ 15] peek 0
+  [ 17] peek 2
+  [ 19] lteq
+  [ 20] jmpifz [ 98] ............................ repeat with oSquare in aSquares
+  [ 23] peek 2
+  [ 25] peek 1
+  [ 27] pusharglist 2
+  [ 29] extcall 151
+  [ 31] setlocal 1
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getlocal 1 .............................. <oSquare>
+  [ 37] getparam 2 .............................. <_oItem>
+  [ 39] getparam 3 .............................. <iLow>
+  [ 41] getparam 4 .............................. <iHi>
+  [ 43] pusharglist 5 ........................... <me, oSquare, _oItem, iLow, iHi>
+  [ 45] objcall 1075 ............................ <me.getItemsAtSquareInHeightRangeExcept(oSquare, _oItem, iLow, iHi)>
+  [ 48] setlocal 2 .............................. _aItems = me.getItemsAtSquareInHeightRangeExcept(oSquare, _oItem, iLow, iHi)
+  [ 50] getlocal 2 .............................. <_aItems>
+  [ 52] peek 0
+  [ 54] pusharglist 1
+  [ 56] extcall 150
+  [ 58] pushint8 1
+  [ 60] peek 0
+  [ 62] peek 2
+  [ 64] lteq
+  [ 65] jmpifz [ 91] ............................ repeat with oItem in _aItems
+  [ 68] peek 2
+  [ 70] peek 1
+  [ 72] pusharglist 2
+  [ 74] extcall 151
+  [ 76] setlocal 3
+  [ 78] getlocal 0 .............................. <aItemsInRange>
+  [ 80] getlocal 3 .............................. <oItem>
+  [ 82] pusharglistnoret 2 ...................... <aItemsInRange, oItem>
+  [ 84] objcall 135 ............................. aItemsInRange.add(oItem)
+  [ 86] pushint8 1
+  [ 88] add
+  [ 89] endrepeat [ 60]
+  [ 91] pop 3
+  [ 93] pushint8 1
+  [ 95] add
+  [ 96] endrepeat [ 15]
+  [ 98] pop 3
+  [100] getlocal 0 .............................. <aItemsInRange>
+  [102] pusharglistnoret 1 ...................... <aItemsInRange>
+  [104] extcall 93 .............................. return aItemsInRange
+  [106] ret
+end
+
+on getItemsAtSquareInHeightRangeExcept me, oSquare, _oItem, iLow, iHi
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aItemsInRange = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getparam 1 .............................. <oSquare>
+  [  9] getparam 2 .............................. <_oItem>
+  [ 11] pusharglist 3 ........................... <me, oSquare, _oItem>
+  [ 13] objcall 1065 ............................ <me.getItemsAtSquareExcept(oSquare, _oItem)>
+  [ 16] setlocal 1 .............................. _aItems = me.getItemsAtSquareExcept(oSquare, _oItem)
+  [ 18] getlocal 1 .............................. <_aItems>
+  [ 20] peek 0
+  [ 22] pusharglist 1
+  [ 24] extcall 150
+  [ 26] pushint8 1
+  [ 28] peek 0
+  [ 30] peek 2
+  [ 32] lteq
+  [ 33] jmpifz [140] ............................ repeat with oItem in _aItems
+  [ 36] peek 2
+  [ 38] peek 1
+  [ 40] pusharglist 2
+  [ 42] extcall 151
+  [ 44] setlocal 2
+  [ 46] getlocal 2 .............................. <oItem>
+  [ 48] pusharglist 1 ........................... <oItem>
+  [ 50] objcall 204 ............................. <oItem.getHeightOffset()>
+  [ 52] setlocal 3 .............................. iItemLow = oItem.getHeightOffset()
+  [ 54] getlocal 3 .............................. <iItemLow>
+  [ 56] getlocal 2 .............................. <oItem>
+  [ 58] pusharglist 1 ........................... <oItem>
+  [ 60] objcall 1095 ............................ <oItem.getHeight()>
+  [ 63] add ..................................... <iItemLow + oItem.getHeight()>
+  [ 64] setlocal 4 .............................. iItemHi = iItemLow + oItem.getHeight()
+  [ 66] getlocal 3 .............................. <iItemLow>
+  [ 68] getparam 3 .............................. <iLow>
+  [ 70] eq ...................................... <iItemLow = iLow>
+  [ 71] jmpifz [ 85] ............................ if iItemLow = iLow then
+  [ 74] getlocal 0 .............................. <aItemsInRange>
+  [ 76] getlocal 2 .............................. <oItem>
+  [ 78] pusharglistnoret 2 ...................... <aItemsInRange, oItem>
+  [ 80] objcall 135 ............................. aItemsInRange.add(oItem)
+  [ 82] jmp [135] ............................... next repeat
+  [ 85] getlocal 3 .............................. <iItemLow>
+  [ 87] getparam 3 .............................. <iLow>
+  [ 89] gt ...................................... <iItemLow > iLow>
+  [ 90] getlocal 4 .............................. <iItemHi>
+  [ 92] getparam 4 .............................. <iHi>
+  [ 94] lteq .................................... <iItemHi <= iHi>
+  [ 95] and ..................................... <(iItemLow > iLow) and (iItemHi <= iHi)>
+  [ 96] jmpifz [110] ............................ if (iItemLow > iLow) and (iItemHi <= iHi) then
+  [ 99] getlocal 0 .............................. <aItemsInRange>
+  [101] getlocal 2 .............................. <oItem>
+  [103] pusharglistnoret 2 ...................... <aItemsInRange, oItem>
+  [105] objcall 135 ............................. aItemsInRange.add(oItem)
+  [107] jmp [135] ............................... next repeat
+  [110] getlocal 3 .............................. <iItemLow>
+  [112] getparam 3 .............................. <iLow>
+  [114] lt ...................................... <iItemLow < iLow>
+  [115] getlocal 4 .............................. <iItemHi>
+  [117] getparam 4 .............................. <iHi>
+  [119] gteq .................................... <iItemHi >= iHi>
+  [120] and ..................................... <(iItemLow < iLow) and (iItemHi >= iHi)>
+  [121] jmpifz [135] ............................ if (iItemLow < iLow) and (iItemHi >= iHi) then
+  [124] getlocal 0 .............................. <aItemsInRange>
+  [126] getlocal 2 .............................. <oItem>
+  [128] pusharglistnoret 2 ...................... <aItemsInRange, oItem>
+  [130] objcall 135 ............................. aItemsInRange.add(oItem)
+  [132] jmp [135] ............................... next repeat
+  [135] pushint8 1
+  [137] add
+  [138] endrepeat [ 28]
+  [140] pop 3
+  [142] getlocal 0 .............................. <aItemsInRange>
+  [144] pusharglistnoret 1 ...................... <aItemsInRange>
+  [146] extcall 93 .............................. return aItemsInRange
+  [148] ret
+end
+
+on getItemAtSquareWithGreatestHeightOffset me, oSquare
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oSquare>
+  [  4] pusharglist 2 ........................... <me, oSquare>
+  [  6] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [  8] setlocal 0 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 10] getlocal 0 .............................. <_aItems>
+  [ 12] getobjprop 150 .......................... <_aItems.count>
+  [ 14] pushzero ................................ <0>
+  [ 15] eq ...................................... <_aItems.count = 0>
+  [ 16] jmpifz [ 27] ............................ if _aItems.count = 0 then
+  [ 19] pusharglist 0 ........................... <>
+  [ 21] extcall 132 ............................. <VOID>
+  [ 23] pusharglistnoret 1 ...................... <VOID>
+  [ 25] extcall 93 .............................. return VOID
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getlocal 0 .............................. <_aItems>
+  [ 31] pusharglist 2 ........................... <me, _aItems>
+  [ 33] objcall 1077 ............................ <me.getItemWithGreatestHeightOffset(_aItems)>
+  [ 36] setlocal 1 .............................. oItem = me.getItemWithGreatestHeightOffset(_aItems)
+  [ 38] getlocal 1 .............................. <oItem>
+  [ 40] pusharglistnoret 1 ...................... <oItem>
+  [ 42] extcall 93 .............................. return oItem
+  [ 44] ret
+end
+
+on getSeatableItemAtSquareWithGreatestHeightOffset me, oSquare
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oSquare>
+  [  4] pusharglist 2 ........................... <me, oSquare>
+  [  6] objcall 1076 ............................ <me.getSeatableItemsAtSquare(oSquare)>
+  [  9] setlocal 0 .............................. aSeatableItems = me.getSeatableItemsAtSquare(oSquare)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getlocal 0 .............................. <aSeatableItems>
+  [ 15] pusharglist 2 ........................... <me, aSeatableItems>
+  [ 17] objcall 1077 ............................ <me.getItemWithGreatestHeightOffset(aSeatableItems)>
+  [ 20] setlocal 1 .............................. oItem = me.getItemWithGreatestHeightOffset(aSeatableItems)
+  [ 22] getlocal 1 .............................. <oItem>
+  [ 24] pusharglistnoret 1 ...................... <oItem>
+  [ 26] extcall 93 .............................. return oItem
+  [ 28] ret
+end
+
+on getSeatableItemsAtSquare me, oSquare
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. _aSeatableItems = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getparam 1 .............................. <oSquare>
+  [  9] pusharglist 2 ........................... <me, oSquare>
+  [ 11] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 13] setlocal 1 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 15] getlocal 1 .............................. <_aItems>
+  [ 17] getobjprop 150 .......................... <_aItems.count>
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <_aItems.count = 0>
+  [ 21] jmpifz [ 30] ............................ if _aItems.count = 0 then
+  [ 24] getlocal 0 .............................. <_aSeatableItems>
+  [ 26] pusharglistnoret 1 ...................... <_aSeatableItems>
+  [ 28] extcall 93 .............................. return _aSeatableItems
+  [ 30] getlocal 1 .............................. <_aItems>
+  [ 32] peek 0
+  [ 34] pusharglist 1
+  [ 36] extcall 150
+  [ 38] pushint8 1
+  [ 40] peek 0
+  [ 42] peek 2
+  [ 44] lteq
+  [ 45] jmpifz [ 82] ............................ repeat with oItem in _aItems
+  [ 48] peek 2
+  [ 50] peek 1
+  [ 52] pusharglist 2
+  [ 54] extcall 151
+  [ 56] setlocal 2
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getlocal 2 .............................. <oItem>
+  [ 62] pusharglist 2 ........................... <me, oItem>
+  [ 64] objcall 202 ............................. <me.isSeatableItem(oItem)>
+  [ 66] jmpifz [ 77] ............................ if me.isSeatableItem(oItem) then
+  [ 69] getlocal 0 .............................. <_aSeatableItems>
+  [ 71] getlocal 2 .............................. <oItem>
+  [ 73] pusharglistnoret 2 ...................... <_aSeatableItems, oItem>
+  [ 75] objcall 135 ............................. _aSeatableItems.add(oItem)
+  [ 77] pushint8 1
+  [ 79] add
+  [ 80] endrepeat [ 40]
+  [ 82] pop 3
+  [ 84] getlocal 0 .............................. <_aSeatableItems>
+  [ 86] pusharglistnoret 1 ...................... <_aSeatableItems>
+  [ 88] extcall 93 .............................. return _aSeatableItems
+  [ 90] ret
+end
+
+on getItemWithGreatestHeightOffset me, _aItems
+  [  0] getparam 1 .............................. <_aItems>
+  [  2] getobjprop 150 .......................... <_aItems.count>
+  [  4] pushzero ................................ <0>
+  [  5] eq ...................................... <_aItems.count = 0>
+  [  6] jmpifz [ 17] ............................ if _aItems.count = 0 then
+  [  9] pusharglist 0 ........................... <>
+  [ 11] extcall 132 ............................. <VOID>
+  [ 13] pusharglistnoret 1 ...................... <VOID>
+  [ 15] extcall 93 .............................. return VOID
+  [ 17] getparam 1 .............................. <_aItems>
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] pusharglist 2 ........................... <_aItems, 1>
+  [ 23] objcall 151 ............................. <_aItems[1]>
+  [ 25] setlocal 0 .............................. _oItem = _aItems[1]
+  [ 27] pushzero ................................ <0>
+  [ 28] setlocal 1 .............................. iGreatestHeight = 0
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] setlocal 2
+  [ 34] getlocal 2
+  [ 36] getparam 1 .............................. <_aItems>
+  [ 38] getobjprop 150 .......................... <_aItems.count>
+  [ 40] lteq
+  [ 41] jmpifz [ 87] ............................ repeat with i = 1 to _aItems.count
+  [ 44] getparam 1 .............................. <_aItems>
+  [ 46] getlocal 2 .............................. <i>
+  [ 48] pusharglist 2 ........................... <_aItems, i>
+  [ 50] objcall 151 ............................. <_aItems[i]>
+  [ 52] setlocal 3 .............................. oItem = _aItems[i]
+  [ 54] getlocal 3 .............................. <oItem>
+  [ 56] pusharglist 1 ........................... <oItem>
+  [ 58] objcall 204 ............................. <oItem.getHeightOffset()>
+  [ 60] setlocal 4 .............................. iItemHeightOfset = oItem.getHeightOffset()
+  [ 62] getlocal 4 .............................. <iItemHeightOfset>
+  [ 64] getlocal 1 .............................. <iGreatestHeight>
+  [ 66] gt ...................................... <iItemHeightOfset > iGreatestHeight>
+  [ 67] jmpifz [ 78] ............................ if iItemHeightOfset > iGreatestHeight then
+  [ 70] getlocal 4 .............................. <iItemHeightOfset>
+  [ 72] setlocal 1 .............................. iGreatestHeight = iItemHeightOfset
+  [ 74] getlocal 3 .............................. <oItem>
+  [ 76] setlocal 0 .............................. _oItem = oItem
+  [ 78] pushint8 1
+  [ 80] getlocal 2
+  [ 82] add
+  [ 83] setlocal 2
+  [ 85] endrepeat [ 34]
+  [ 87] getlocal 0 .............................. <_oItem>
+  [ 89] pusharglistnoret 1 ...................... <_oItem>
+  [ 91] extcall 93 .............................. return _oItem
+  [ 93] ret
+end
+
+on seatableItemInList me, _aItems
+  [  0] getparam 1 .............................. <_aItems>
+  [  2] peek 0
+  [  4] pusharglist 1
+  [  6] extcall 150
+  [  8] pushint8 1
+  [ 10] peek 0
+  [ 12] peek 2
+  [ 14] lteq
+  [ 15] jmpifz [ 49] ............................ repeat with i in _aItems
+  [ 18] peek 2
+  [ 20] peek 1
+  [ 22] pusharglist 2
+  [ 24] extcall 151
+  [ 26] setlocal 0
+  [ 28] getlocal 0 .............................. <i>
+  [ 30] pusharglist 1 ........................... <i>
+  [ 32] objcall 1104 ............................ <i.getSeatable()>
+  [ 35] jmpifz [ 44] ............................ if i.getSeatable() then
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] pusharglistnoret 1 ...................... <1>
+  [ 42] extcall 93 .............................. return 1
+  [ 44] pushint8 1
+  [ 46] add
+  [ 47] endrepeat [ 10]
+  [ 49] pop 3
+  [ 51] pushzero ................................ <0>
+  [ 52] pusharglistnoret 1 ...................... <0>
+  [ 54] extcall 93 .............................. return 0
+  [ 56] ret
+end
+
+on getItemByPossessionId me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 955 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 54] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 1 ........................... <i>
+  [ 35] objcall 222 ............................. <i.getPosId()>
+  [ 37] getparam 1 .............................. <iPosId>
+  [ 39] eq ...................................... <i.getPosId() = iPosId>
+  [ 40] jmpifz [ 49] ............................ if i.getPosId() = iPosId then
+  [ 43] getlocal 0 .............................. <i>
+  [ 45] pusharglistnoret 1 ...................... <i>
+  [ 47] extcall 93 .............................. return i
+  [ 49] pushint8 1
+  [ 51] add
+  [ 52] endrepeat [ 13]
+  [ 54] pop 3
+  [ 56] ret
+end
+
+on generateXml me
+  [  0] pushcons 19 ............................. <"XML">
+  [  2] pusharglist 1 ........................... <"XML">
+  [  4] extcall 60 .............................. <newObject("XML")>
+  [  6] setlocal 0 .............................. oXml = newObject("XML")
+  [  8] getlocal 0 .............................. <oXml>
+  [ 10] pushcons 1 .............................. <"Furniture">
+  [ 12] pusharglist 2 ........................... <oXml, "Furniture">
+  [ 14] objcall 347 ............................. <oXml.createElement("Furniture")>
+  [ 17] setlocal 1 .............................. oRoot = oXml.createElement("Furniture")
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 2
+  [ 23] getlocal 2
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 955 ............................ <#aItems>
+  [ 30] pusharglist 2 ........................... <me, #aItems>
+  [ 32] objcall 150 ............................. <me.aItems.count>
+  [ 34] lteq
+  [ 35] jmpifz [204] ............................ repeat with i = 1 to me.aItems.count
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushsymb 955 ............................ <#aItems>
+  [ 43] getlocal 2 .............................. <i>
+  [ 45] pusharglist 3 ........................... <me, #aItems, i>
+  [ 47] objcall 611 ............................. <me.aItems[i]>
+  [ 50] setlocal 3 .............................. oItem = me.aItems[i]
+  [ 52] getlocal 0 .............................. <oXml>
+  [ 54] pushcons 2 .............................. <"Item">
+  [ 56] pusharglist 2 ........................... <oXml, "Item">
+  [ 58] objcall 347 ............................. <oXml.createElement("Item")>
+  [ 61] setlocal 4 .............................. oNode = oXml.createElement("Item")
+  [ 63] getlocal 3 .............................. <oItem>
+  [ 65] getobjprop 279 .......................... <oItem.sProdID>
+  [ 68] pusharglist 1 ........................... <oItem.sProdID>
+  [ 70] extcall 106 ............................. <voidp(oItem.sProdID)>
+  [ 72] not ..................................... <not voidp(oItem.sProdID)>
+  [ 73] jmpifz [ 88] ............................ if not voidp(oItem.sProdID) then
+  [ 76] getlocal 4 .............................. <oNode>
+  [ 78] getchainedprop 109 ...................... <oNode.attributes>
+  [ 80] getlocal 3 .............................. <oItem>
+  [ 82] getobjprop 279 .......................... <oItem.sProdID>
+  [ 85] setobjprop 1079 ......................... oNode.attributes.prodID = oItem.sProdID
+  [ 88] getlocal 3 .............................. <oItem>
+  [ 90] getobjprop 285 .......................... <oItem.sPosId>
+  [ 93] pusharglist 1 ........................... <oItem.sPosId>
+  [ 95] extcall 106 ............................. <voidp(oItem.sPosId)>
+  [ 97] not ..................................... <not voidp(oItem.sPosId)>
+  [ 98] jmpifz [113] ............................ if not voidp(oItem.sPosId) then
+  [101] getlocal 4 .............................. <oNode>
+  [103] getchainedprop 109 ...................... <oNode.attributes>
+  [105] getlocal 3 .............................. <oItem>
+  [107] getobjprop 285 .......................... <oItem.sPosId>
+  [110] setobjprop 1080 ......................... oNode.attributes.posId = oItem.sPosId
+  [113] getlocal 4 .............................. <oNode>
+  [115] getchainedprop 109 ...................... <oNode.attributes>
+  [117] getlocal 3 .............................. <oItem>
+  [119] getobjprop 278 .......................... <oItem.iState>
+  [122] setobjprop 1081 ......................... oNode.attributes.state = oItem.iState
+  [125] getlocal 4 .............................. <oNode>
+  [127] getchainedprop 109 ...................... <oNode.attributes>
+  [129] getlocal 3 .............................. <oItem>
+  [131] getobjprop 289 .......................... <oItem.aAttributes>
+  [134] pusharglist 1 ........................... <oItem.aAttributes>
+  [136] extcall 162 ............................. <string(oItem.aAttributes)>
+  [138] setobjprop 109 .......................... oNode.attributes.attributes = string(oItem.aAttributes)
+  [140] getlocal 4 .............................. <oNode>
+  [142] getchainedprop 109 ...................... <oNode.attributes>
+  [144] getlocal 3 .............................. <oItem>
+  [146] getobjprop 179 .......................... <oItem.iCol>
+  [148] setobjprop 1084 ......................... oNode.attributes.gridX = oItem.iCol
+  [151] getlocal 4 .............................. <oNode>
+  [153] getchainedprop 109 ...................... <oNode.attributes>
+  [155] getlocal 3 .............................. <oItem>
+  [157] getobjprop 277 .......................... <oItem.iGridY>
+  [160] setobjprop 1083 ......................... oNode.attributes.gridY = oItem.iGridY
+  [163] getlocal 4 .............................. <oNode>
+  [165] getchainedprop 109 ...................... <oNode.attributes>
+  [167] getlocal 3 .............................. <oItem>
+  [169] getobjprop 178 .......................... <oItem.iRow>
+  [171] setobjprop 1082 ......................... oNode.attributes.gridZ = oItem.iRow
+  [174] getlocal 4 .............................. <oNode>
+  [176] getchainedprop 109 ...................... <oNode.attributes>
+  [178] getlocal 3 .............................. <oItem>
+  [180] getobjprop 281 .......................... <oItem.iDirection>
+  [183] setobjprop 1024 ......................... oNode.attributes.dir = oItem.iDirection
+  [186] getlocal 1 .............................. <oRoot>
+  [188] getlocal 4 .............................. <oNode>
+  [190] pusharglistnoret 2 ...................... <oRoot, oNode>
+  [192] objcall 351 ............................. oRoot.appendChild(oNode)
+  [195] pushint8 1
+  [197] getlocal 2
+  [199] add
+  [200] setlocal 2
+  [202] endrepeat [ 23]
+  [204] getlocal 1 .............................. <oRoot>
+  [206] pusharglistnoret 1 ...................... <oRoot>
+  [208] extcall 93 .............................. return oRoot
+  [210] ret
+end
+
+on getItemsUnderMouse me, aItemsUnderMouse
+  [  0] getparam 1 .............................. <aItemsUnderMouse>
+  [  2] pusharglist 1 ........................... <aItemsUnderMouse>
+  [  4] extcall 106 ............................. <voidp(aItemsUnderMouse)>
+  [  6] jmpifz [ 14] ............................ if voidp(aItemsUnderMouse) then
+  [  9] pusharglist 0 ........................... <[]>
+  [ 11] pushlist ................................ <[]>
+  [ 12] setparam 1 .............................. aItemsUnderMouse = []
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 955 .......................... <me.aItems>
+  [ 19] peek 0
+  [ 21] pusharglist 1
+  [ 23] extcall 150
+  [ 25] pushint8 1
+  [ 27] peek 0
+  [ 29] peek 2
+  [ 31] lteq
+  [ 32] jmpifz [ 68] ............................ repeat with i in me.aItems
+  [ 35] peek 2
+  [ 37] peek 1
+  [ 39] pusharglist 2
+  [ 41] extcall 151
+  [ 43] setlocal 0
+  [ 45] getlocal 0 .............................. <i>
+  [ 47] pusharglist 1 ........................... <i>
+  [ 49] objcall 730 ............................. <i.mouseIsOverITem()>
+  [ 52] jmpifz [ 63] ............................ if i.mouseIsOverITem() then
+  [ 55] getparam 1 .............................. <aItemsUnderMouse>
+  [ 57] getlocal 0 .............................. <i>
+  [ 59] pusharglistnoret 2 ...................... <aItemsUnderMouse, i>
+  [ 61] objcall 135 ............................. aItemsUnderMouse.add(i)
+  [ 63] pushint8 1
+  [ 65] add
+  [ 66] endrepeat [ 27]
+  [ 68] pop 3
+  [ 70] getparam 1 .............................. <aItemsUnderMouse>
+  [ 72] pusharglistnoret 1 ...................... <aItemsUnderMouse>
+  [ 74] extcall 93 .............................. return aItemsUnderMouse
+  [ 76] ret
+end
+
+on getSpritesUnderMouse me, aSpritesUnderMouse
+  [  0] getparam 1 .............................. <aSpritesUnderMouse>
+  [  2] pusharglist 1 ........................... <aSpritesUnderMouse>
+  [  4] extcall 106 ............................. <voidp(aSpritesUnderMouse)>
+  [  6] jmpifz [ 14] ............................ if voidp(aSpritesUnderMouse) then
+  [  9] pusharglist 0 ........................... <[:]>
+  [ 11] pushproplist ............................ <[:]>
+  [ 12] setparam 1 .............................. aSpritesUnderMouse = [:]
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 955 .......................... <me.aItems>
+  [ 19] peek 0
+  [ 21] pusharglist 1
+  [ 23] extcall 150
+  [ 25] pushint8 1
+  [ 27] peek 0
+  [ 29] peek 2
+  [ 31] lteq
+  [ 32] jmpifz [115] ............................ repeat with i in me.aItems
+  [ 35] peek 2
+  [ 37] peek 1
+  [ 39] pusharglist 2
+  [ 41] extcall 151
+  [ 43] setlocal 0
+  [ 45] getlocal 0 .............................. <i>
+  [ 47] pusharglist 1 ........................... <i>
+  [ 49] objcall 52 .............................. <i.getSpritesUnderMouse()>
+  [ 51] setlocal 1 .............................. aItemSprites = i.getSpritesUnderMouse()
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] setlocal 2
+  [ 57] getlocal 2
+  [ 59] getlocal 1 .............................. <aItemSprites>
+  [ 61] pusharglist 1 ........................... <aItemSprites>
+  [ 63] objcall 150 ............................. <aItemSprites.count()>
+  [ 65] lteq
+  [ 66] jmpifz [110] ............................ repeat with x = 1 to aItemSprites.count()
+  [ 69] getlocal 1 .............................. <aItemSprites>
+  [ 71] getlocal 2 .............................. <x>
+  [ 73] pusharglist 2 ........................... <aItemSprites, x>
+  [ 75] objcall 957 ............................. <aItemSprites.getPropAt(x)>
+  [ 78] setlocal 3 .............................. _iZ = aItemSprites.getPropAt(x)
+  [ 80] getlocal 1 .............................. <aItemSprites>
+  [ 82] getlocal 2 .............................. <x>
+  [ 84] pusharglist 2 ........................... <aItemSprites, x>
+  [ 86] objcall 151 ............................. <aItemSprites[x]>
+  [ 88] setlocal 4 .............................. _iSprite = aItemSprites[x]
+  [ 90] getparam 1 .............................. <aSpritesUnderMouse>
+  [ 92] getlocal 3 .............................. <_iZ>
+  [ 94] getlocal 4 .............................. <_iSprite>
+  [ 96] pusharglistnoret 3 ...................... <aSpritesUnderMouse, _iZ, _iSprite>
+  [ 98] objcall 388 ............................. aSpritesUnderMouse.addProp(_iZ, _iSprite)
+  [101] pushint8 1
+  [103] getlocal 2
+  [105] add
+  [106] setlocal 2
+  [108] endrepeat [ 57]
+  [110] pushint8 1
+  [112] add
+  [113] endrepeat [ 27]
+  [115] pop 3
+  [117] getparam 1 .............................. <aSpritesUnderMouse>
+  [119] pusharglistnoret 1 ...................... <aSpritesUnderMouse>
+  [121] extcall 93 .............................. return aSpritesUnderMouse
+  [123] ret
+end
+
+on getObjectsUnderMouse me, aObjectsUnderMouse
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 955 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 150
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 70] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 151
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 1 ........................... <i>
+  [ 35] objcall 763 ............................. <i.rolloverObject()>
+  [ 38] setlocal 1 .............................. bRollover = i.rolloverObject()
+  [ 40] getlocal 1 .............................. <bRollover>
+  [ 42] jmpifz [ 65] ............................ if bRollover then
+  [ 45] getlocal 0 .............................. <i>
+  [ 47] pusharglist 1 ........................... <i>
+  [ 49] objcall 451 ............................. <i.getHighestDepth()>
+  [ 52] setlocal 2 .............................. _iZ = i.getHighestDepth()
+  [ 54] getparam 1 .............................. <aObjectsUnderMouse>
+  [ 56] getlocal 2 .............................. <_iZ>
+  [ 58] getlocal 0 .............................. <i>
+  [ 60] pusharglistnoret 3 ...................... <aObjectsUnderMouse, _iZ, i>
+  [ 62] objcall 388 ............................. aObjectsUnderMouse.addProp(_iZ, i)
+  [ 65] pushint8 1
+  [ 67] add
+  [ 68] endrepeat [ 13]
+  [ 70] pop 3
+  [ 72] getparam 1 .............................. <aObjectsUnderMouse>
+  [ 74] pusharglistnoret 1 ...................... <aObjectsUnderMouse>
+  [ 76] extcall 93 .............................. return aObjectsUnderMouse
+  [ 78] ret
+end
+
+on getTeleporterAtSquare me, oSquare
+  [  0] getparam 1 .............................. <oSquare>
+  [  2] pusharglist 1 ........................... <oSquare>
+  [  4] extcall 106 ............................. <voidp(oSquare)>
+  [  6] jmpifz [ 17] ............................ if voidp(oSquare) then
+  [  9] pusharglist 0 ........................... <>
+  [ 11] extcall 132 ............................. <VOID>
+  [ 13] pusharglistnoret 1 ...................... <VOID>
+  [ 15] extcall 93 .............................. return VOID
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getparam 1 .............................. <oSquare>
+  [ 21] pusharglist 2 ........................... <me, oSquare>
+  [ 23] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 25] setlocal 0 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 27] getlocal 0 .............................. <_aItems>
+  [ 29] peek 0
+  [ 31] pusharglist 1
+  [ 33] extcall 150
+  [ 35] pushint8 1
+  [ 37] peek 0
+  [ 39] peek 2
+  [ 41] lteq
+  [ 42] jmpifz [ 78] ............................ repeat with i in _aItems
+  [ 45] peek 2
+  [ 47] peek 1
+  [ 49] pusharglist 2
+  [ 51] extcall 151
+  [ 53] setlocal 1
+  [ 55] getlocal 1 .............................. <i>
+  [ 57] pusharglist 1 ........................... <i>
+  [ 59] objcall 205 ............................. <i.getType()>
+  [ 61] pushcons 20 ............................. <"Teleport">
+  [ 63] eq ...................................... <i.getType() = "Teleport">
+  [ 64] jmpifz [ 73] ............................ if i.getType() = "Teleport" then
+  [ 67] getlocal 1 .............................. <i>
+  [ 69] pusharglistnoret 1 ...................... <i>
+  [ 71] extcall 93 .............................. return i
+  [ 73] pushint8 1
+  [ 75] add
+  [ 76] endrepeat [ 37]
+  [ 78] pop 3
+  [ 80] pusharglist 0 ........................... <>
+  [ 82] extcall 132 ............................. <VOID>
+  [ 84] pusharglistnoret 1 ...................... <VOID>
+  [ 86] extcall 93 .............................. return VOID
+  [ 88] ret
+end
+
+on getStandOnAtSquare me, oSquare
+  [  0] getparam 1 .............................. <oSquare>
+  [  2] pusharglist 1 ........................... <oSquare>
+  [  4] extcall 106 ............................. <voidp(oSquare)>
+  [  6] jmpifz [ 17] ............................ if voidp(oSquare) then
+  [  9] pusharglist 0 ........................... <>
+  [ 11] extcall 132 ............................. <VOID>
+  [ 13] pusharglistnoret 1 ...................... <VOID>
+  [ 15] extcall 93 .............................. return VOID
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getparam 1 .............................. <oSquare>
+  [ 21] pusharglist 2 ........................... <me, oSquare>
+  [ 23] objcall 192 ............................. <me.getItemsAtSquare(oSquare)>
+  [ 25] setlocal 0 .............................. _aItems = me.getItemsAtSquare(oSquare)
+  [ 27] getlocal 0 .............................. <_aItems>
+  [ 29] peek 0
+  [ 31] pusharglist 1
+  [ 33] extcall 150
+  [ 35] pushint8 1
+  [ 37] peek 0
+  [ 39] peek 2
+  [ 41] lteq
+  [ 42] jmpifz [ 88] ............................ repeat with i in _aItems
+  [ 45] peek 2
+  [ 47] peek 1
+  [ 49] pusharglist 2
+  [ 51] extcall 151
+  [ 53] setlocal 1
+  [ 55] getlocal 1 .............................. <i>
+  [ 57] pusharglist 1 ........................... <i>
+  [ 59] objcall 205 ............................. <i.getType()>
+  [ 61] pushcons 21 ............................. <"Stand_On">
+  [ 63] eq ...................................... <i.getType() = "Stand_On">
+  [ 64] getlocal 1 .............................. <i>
+  [ 66] pusharglist 1 ........................... <i>
+  [ 68] objcall 205 ............................. <i.getType()>
+  [ 70] pushcons 22 ............................. <"mirror">
+  [ 72] eq ...................................... <i.getType() = "mirror">
+  [ 73] or ...................................... <(i.getType() = "Stand_On") or (i.getType() = "mirror")>
+  [ 74] jmpifz [ 83] ............................ if (i.getType() = "Stand_On") or (i.getType() = "mirror") then
+  [ 77] getlocal 1 .............................. <i>
+  [ 79] pusharglistnoret 1 ...................... <i>
+  [ 81] extcall 93 .............................. return i
+  [ 83] pushint8 1
+  [ 85] add
+  [ 86] endrepeat [ 37]
+  [ 88] pop 3
+  [ 90] pusharglist 0 ........................... <>
+  [ 92] extcall 132 ............................. <VOID>
+  [ 94] pusharglistnoret 1 ...................... <VOID>
+  [ 96] extcall 93 .............................. return VOID
+  [ 98] ret
+end

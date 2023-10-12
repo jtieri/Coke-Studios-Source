@@ -1,0 +1,73 @@
+property pContent
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 5 ............................... return me
+  [  6] ret
+end
+
+on getrightslot6 me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 7 ............................ <me.spriteNum>
+  [  4] pusharglistnoret 1 ...................... <me.spriteNum>
+  [  6] extcall 5 ............................... return me.spriteNum
+  [  8] ret
+end
+
+on mouseWithin me
+  [  0] getprop 9 ............................... <pContent>
+  [  2] pusharglist 1 ........................... <pContent>
+  [  4] extcall 8 ............................... <voidp(pContent)>
+  [  6] jmpifz [ 28] ............................ if voidp(pContent) then / else
+  [  9] pushcons 0 .............................. <"cc.tradinghelptext">
+  [ 11] pusharglist 1 ........................... <"cc.tradinghelptext">
+  [ 13] extcall 10 .............................. <member("cc.tradinghelptext")>
+  [ 15] getglobal 11 ............................ <TextMgr>
+  [ 17] pushcons 1 .............................. <"BOX_ROLL">
+  [ 19] pusharglist 2 ........................... <TextMgr, "BOX_ROLL">
+  [ 21] objcall 12 .............................. <TextMgr.GetRefText("BOX_ROLL")>
+  [ 23] setobjprop 13 ........................... member("cc.tradinghelptext").text = TextMgr.GetRefText("BOX_ROLL")
+  [ 25] jmp [ 40]
+  [ 28] pushcons 0 .............................. <"cc.tradinghelptext">
+  [ 30] pusharglist 1 ........................... <"cc.tradinghelptext">
+  [ 32] extcall 10 .............................. <member("cc.tradinghelptext")>
+  [ 34] getprop 9 ............................... <pContent>
+  [ 36] getobjprop 14 ........................... <pContent.name>
+  [ 38] setobjprop 13 ........................... member("cc.tradinghelptext").text = pContent.name
+  [ 40] ret
+end
+
+on mouseOverTradeSlot me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 7 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 15 .............................. <rollover(me.spriteNum)>
+  [  8] jmpifz [ 19] ............................ if rollover(me.spriteNum) then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 7 ............................ <me.spriteNum>
+  [ 15] pusharglistnoret 1 ...................... <me.spriteNum>
+  [ 17] extcall 5 ............................... return me.spriteNum
+  [ 19] ret
+end
+
+on testTradeDrop me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] pusharglist 2 ........................... <me, me>
+  [  6] objcall 3 ............................... <me.mouseOverTradeSlot(me)>
+  [  8] jmpifz [ 34] ............................ if me.mouseOverTradeSlot(me) then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 9 ............................ <me.pContent>
+  [ 15] pusharglist 1 ........................... <me.pContent>
+  [ 17] extcall 8 ............................... <voidp(me.pContent)>
+  [ 19] jmpifz [ 34] ............................ if voidp(me.pContent) then
+  [ 22] getglobal 16 ............................ <oIsoScene>
+  [ 24] pusharglistnoret 1 ...................... <oIsoScene>
+  [ 26] objcall 17 .............................. oIsoScene.addSelectedItemToTrade()
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] pusharglistnoret 1 ...................... <1>
+  [ 32] extcall 5 ............................... return 1
+  [ 34] ret
+end

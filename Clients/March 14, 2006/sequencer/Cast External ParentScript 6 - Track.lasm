@@ -1,0 +1,167 @@
+property iVolume, iChannel, oSound, bMute, aSoundEvents, oSequencer
+global gSoundLevel
+
+on new me, _oSequencer, _iChannel
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_oSequencer>
+  [  4] setobjprop 224 .......................... me.oSequencer = _oSequencer
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 2 .............................. <_iChannel>
+  [ 10] setobjprop 79 ........................... me.iChannel = _iChannel
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] objcall 219 ............................. me.reset()
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] extcall 46 .............................. return me
+  [ 24] ret
+end
+
+on reset me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint16 255 ........................... <255>
+  [  5] setobjprop 125 .......................... me.iVolume = 255
+  [  7] getparam 0 .............................. <me>
+  [  9] getparam 0 .............................. <me>
+  [ 11] getchainedprop 224 ...................... <me.oSequencer>
+  [ 13] getchainedprop 41 ....................... <me.oSequencer.oSoundLibrary>
+  [ 15] pushint8 4 .............................. <4>
+  [ 17] pusharglist 2 ........................... <me.oSequencer.oSoundLibrary, 4>
+  [ 19] objcall 70 .............................. <me.oSequencer.oSoundLibrary.getSilence(4)>
+  [ 21] setobjprop 56 ........................... me.oSound = me.oSequencer.oSoundLibrary.getSilence(4)
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pushzero ................................ <0>
+  [ 26] setobjprop 227 .......................... me.bMute = 0
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pusharglist 0 ........................... <[]>
+  [ 32] pushlist ................................ <[]>
+  [ 33] setobjprop 86 ........................... me.aSoundEvents = []
+  [ 35] ret
+end
+
+on getVolume me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 125 .......................... <me.iVolume>
+  [  4] pusharglistnoret 1 ...................... <me.iVolume>
+  [  6] extcall 46 .............................. return me.iVolume
+  [  8] ret
+end
+
+on setVolume me, _iVolume
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_iVolume>
+  [  4] setobjprop 125 .......................... me.iVolume = _iVolume
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 232 ............................. me.resetVolume()
+  [ 12] ret
+end
+
+on resetVolume me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 79 ........................... <me.iChannel>
+  [  4] pusharglist 1 ........................... <me.iChannel>
+  [  6] extcall 50 .............................. <sound(me.iChannel)>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 224 ...................... <me.oSequencer>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 125 .......................... <me.iVolume>
+  [ 16] pushfloat32 0.0 ......................... <0.0>
+  [ 21] pushfloat32 255.0 ....................... <255.0>
+  [ 26] pushfloat32 0.0 ......................... <0.0>
+  [ 31] getglobal 231 ........................... <gSoundLevel>
+  [ 33] pusharglist 6 ........................... <me.oSequencer, me.iVolume, 0.0, 255.0, 0.0, gSoundLevel>
+  [ 35] objcall 29 .............................. <me.oSequencer.mapPoints(me.iVolume, 0.0, 255.0, 0.0, gSoundLevel)>
+  [ 37] setobjprop 52 ........................... sound(me.iChannel).volume = me.oSequencer.mapPoints(me.iVolume, 0.0, 255.0, 0.0, gSoundLevel)
+  [ 39] ret
+end
+
+on getSound me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 56 ........................... <me.oSound>
+  [  4] pusharglistnoret 1 ...................... <me.oSound>
+  [  6] extcall 46 .............................. return me.oSound
+  [  8] ret
+end
+
+on setSound me, _oSound
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_oSound>
+  [  4] setobjprop 56 ........................... me.oSound = _oSound
+  [  6] ret
+end
+
+on setSoundByAsset me, sAsset
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getchainedprop 224 ...................... <me.oSequencer>
+  [  6] getchainedprop 41 ....................... <me.oSequencer.oSoundLibrary>
+  [  8] getparam 1 .............................. <sAsset>
+  [ 10] pusharglist 2 ........................... <me.oSequencer.oSoundLibrary, sAsset>
+  [ 12] objcall 190 ............................. <me.oSequencer.oSoundLibrary.getSoundByAsset(sAsset)>
+  [ 14] setobjprop 56 ........................... me.oSound = me.oSequencer.oSoundLibrary.getSoundByAsset(sAsset)
+  [ 16] ret
+end
+
+on getMute me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 227 .......................... <me.bMute>
+  [  4] pusharglistnoret 1 ...................... <me.bMute>
+  [  6] extcall 46 .............................. return me.bMute
+  [  8] ret
+end
+
+on setMute me, _bMute
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_bMute>
+  [  4] setobjprop 227 .......................... me.bMute = _bMute
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 227 .......................... <me.bMute>
+  [ 10] jmpifz [ 27] ............................ if me.bMute then / else
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 79 ........................... <me.iChannel>
+  [ 17] pusharglist 1 ........................... <me.iChannel>
+  [ 19] extcall 50 .............................. <sound(me.iChannel)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 52 ........................... sound(me.iChannel).volume = 0
+  [ 24] jmp [ 41]
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 79 ........................... <me.iChannel>
+  [ 31] pusharglist 1 ........................... <me.iChannel>
+  [ 33] extcall 50 .............................. <sound(me.iChannel)>
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getobjprop 125 .......................... <me.iVolume>
+  [ 39] setobjprop 52 ........................... sound(me.iChannel).volume = me.iVolume
+  [ 41] ret
+end
+
+on getSoundEvents me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 86 ........................... <me.aSoundEvents>
+  [  4] pusharglistnoret 1 ...................... <me.aSoundEvents>
+  [  6] extcall 46 .............................. return me.aSoundEvents
+  [  8] ret
+end
+
+on addSoundEvent me, iBeat, iLoopCount
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 86 ....................... <me.aSoundEvents>
+  [  4] pushcons 0 .............................. <"SoundEvent">
+  [  6] pusharglist 1 ........................... <"SoundEvent">
+  [  8] extcall 40 .............................. <script("SoundEvent")>
+  [ 10] getparam 1 .............................. <iBeat>
+  [ 12] getparam 2 .............................. <iLoopCount>
+  [ 14] pusharglist 3 ........................... <script("SoundEvent"), iBeat, iLoopCount>
+  [ 16] objcall 0 ............................... <script("SoundEvent").new(iBeat, iLoopCount)>
+  [ 18] pusharglistnoret 2 ...................... <me.aSoundEvents, script("SoundEvent").new(iBeat, iLoopCount)>
+  [ 20] objcall 57 .............................. me.aSoundEvents.add(script("SoundEvent").new(iBeat, iLoopCount))
+  [ 22] ret
+end
+
+on clearSoundEvents me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 86 ........................... me.aSoundEvents = []
+  [  7] ret
+end

@@ -1,0 +1,488 @@
+property bDebug, oPathfinder, iRows, iCols, aNodes
+global oIsoScene
+
+on new me, _iRows, _iCols, oXml
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 56 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 0 .............................. <"AStar">
+  [  9] pusharglist 1 ........................... <"AStar">
+  [ 11] extcall 57 .............................. <script("AStar")>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pusharglist 2 ........................... <script("AStar"), me>
+  [ 17] extcall 0 ............................... <new(script("AStar"), me)>
+  [ 19] setobjprop 182 .......................... me.oPathfinder = new(script("AStar"), me)
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getparam 1 .............................. <_iRows>
+  [ 25] getparam 2 .............................. <_iCols>
+  [ 27] pusharglistnoret 3 ...................... <me, _iRows, _iCols>
+  [ 29] objcall 856 ............................. me.reset(_iRows, _iCols)
+  [ 32] getparam 3 .............................. <oXml>
+  [ 34] pusharglist 1 ........................... <oXml>
+  [ 36] extcall 106 ............................. <voidp(oXml)>
+  [ 38] not ..................................... <not voidp(oXml)>
+  [ 39] jmpifz [ 51] ............................ if not voidp(oXml) then
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getparam 3 .............................. <oXml>
+  [ 46] pusharglistnoret 2 ...................... <me, oXml>
+  [ 48] objcall 860 ............................. me.createMapFromXML(oXml)
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pushcons 1 .............................. <"new Map()">
+  [ 55] pusharglistnoret 2 ...................... <me, "new Map()">
+  [ 57] objcall 50 .............................. me.debug("new Map()")
+  [ 59] getparam 0 .............................. <me>
+  [ 61] pusharglistnoret 1 ...................... <me>
+  [ 63] extcall 93 .............................. return me
+  [ 65] ret
+end
+
+on reset me, _iRows, _iCols
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_iRows>
+  [  4] setobjprop 80 ........................... me.iRows = _iRows
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 2 .............................. <_iCols>
+  [ 10] setobjprop 82 ........................... me.iCols = _iCols
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] objcall 857 ............................. me.createNodes()
+  [ 19] ret
+end
+
+on createNodes me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 357 .......................... me.aNodes = []
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 80 ........................... <me.iRows>
+  [ 18] lteq
+  [ 19] jmpifz [ 98] ............................ repeat with iRow = 1 to me.iRows
+  [ 22] pusharglist 0 ........................... <[]>
+  [ 24] pushlist ................................ <[]>
+  [ 25] setlocal 1 .............................. aRow = []
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setlocal 2
+  [ 31] getlocal 2
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getobjprop 82 ........................... <me.iCols>
+  [ 37] lteq
+  [ 38] jmpifz [ 77] ............................ repeat with iCol = 1 to me.iCols
+  [ 41] getlocal 1 .............................. <aRow>
+  [ 43] pushcons 2 .............................. <"MapNode">
+  [ 45] pusharglist 1 ........................... <"MapNode">
+  [ 47] extcall 57 .............................. <script("MapNode")>
+  [ 49] getlocal 0 .............................. <iRow>
+  [ 51] getlocal 2 .............................. <iCol>
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getchainedprop 182 ...................... <me.oPathfinder>
+  [ 57] getobjprop 183 .......................... <me.oPathfinder.W_BLOCKED>
+  [ 59] pusharglist 4 ........................... <script("MapNode"), iRow, iCol, me.oPathfinder.W_BLOCKED>
+  [ 61] extcall 0 ............................... <new(script("MapNode"), iRow, iCol, me.oPathfinder.W_BLOCKED)>
+  [ 63] pusharglistnoret 2 ...................... <aRow, new(script("MapNode"), iRow, iCol, me.oPathfinder.W_BLOCKED)>
+  [ 65] objcall 418 ............................. aRow.append(new(script("MapNode"), iRow, iCol, me.oPathfinder.W_BLOCKED))
+  [ 68] pushint8 1
+  [ 70] getlocal 2
+  [ 72] add
+  [ 73] setlocal 2
+  [ 75] endrepeat [ 31]
+  [ 77] getparam 0 .............................. <me>
+  [ 79] getchainedprop 357 ...................... <me.aNodes>
+  [ 82] getlocal 1 .............................. <aRow>
+  [ 84] pusharglistnoret 2 ...................... <me.aNodes, aRow>
+  [ 86] objcall 418 ............................. me.aNodes.append(aRow)
+  [ 89] pushint8 1
+  [ 91] getlocal 0
+  [ 93] add
+  [ 94] setlocal 0
+  [ 96] endrepeat [ 12]
+  [ 98] pusharglistnoret 0 ...................... <>
+  [100] extcall 258 ............................. nothing()
+  [103] ret
+end
+
+on getNodeByWeight me, iW
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 80 ........................... <me.iRows>
+  [ 10] lteq
+  [ 11] jmpifz [ 74] ............................ repeat with iRow = 1 to me.iRows
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 1
+  [ 18] getlocal 1
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 82 ........................... <me.iCols>
+  [ 24] lteq
+  [ 25] jmpifz [ 65] ............................ repeat with iCol = 1 to me.iCols
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getlocal 0 .............................. <iRow>
+  [ 32] getlocal 1 .............................. <iCol>
+  [ 34] pusharglist 3 ........................... <me, iRow, iCol>
+  [ 36] objcall 180 ............................. <me.getNode(iRow, iCol)>
+  [ 38] setlocal 2 .............................. oNode = me.getNode(iRow, iCol)
+  [ 40] getlocal 2 .............................. <oNode>
+  [ 42] getobjprop 181 .......................... <oNode.w>
+  [ 44] getparam 1 .............................. <iW>
+  [ 46] eq ...................................... <oNode.w = iW>
+  [ 47] jmpifz [ 56] ............................ if oNode.w = iW then
+  [ 50] getlocal 2 .............................. <oNode>
+  [ 52] pusharglistnoret 1 ...................... <oNode>
+  [ 54] extcall 93 .............................. return oNode
+  [ 56] pushint8 1
+  [ 58] getlocal 1
+  [ 60] add
+  [ 61] setlocal 1
+  [ 63] endrepeat [ 18]
+  [ 65] pushint8 1
+  [ 67] getlocal 0
+  [ 69] add
+  [ 70] setlocal 0
+  [ 72] endrepeat [  4]
+  [ 74] ret
+end
+
+on getNode me, iRow, iCol
+  [  0] getparam 1 .............................. <iRow>
+  [  2] pushzero ................................ <0>
+  [  3] eq ...................................... <iRow = 0>
+  [  4] jmpifz [ 15] ............................ if iRow = 0 then
+  [  7] pusharglist 0 ........................... <>
+  [  9] extcall 132 ............................. <VOID>
+  [ 11] pusharglistnoret 1 ...................... <VOID>
+  [ 13] extcall 93 .............................. return VOID
+  [ 15] getparam 2 .............................. <iCol>
+  [ 17] pushzero ................................ <0>
+  [ 18] eq ...................................... <iCol = 0>
+  [ 19] jmpifz [ 30] ............................ if iCol = 0 then
+  [ 22] pusharglist 0 ........................... <>
+  [ 24] extcall 132 ............................. <VOID>
+  [ 26] pusharglistnoret 1 ...................... <VOID>
+  [ 28] extcall 93 .............................. return VOID
+  [ 30] getparam 1 .............................. <iRow>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 80 ........................... <me.iRows>
+  [ 36] gt ...................................... <iRow > me.iRows>
+  [ 37] jmpifz [ 48] ............................ if iRow > me.iRows then
+  [ 40] pusharglist 0 ........................... <>
+  [ 42] extcall 132 ............................. <VOID>
+  [ 44] pusharglistnoret 1 ...................... <VOID>
+  [ 46] extcall 93 .............................. return VOID
+  [ 48] getparam 2 .............................. <iCol>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 82 ........................... <me.iCols>
+  [ 54] gt ...................................... <iCol > me.iCols>
+  [ 55] jmpifz [ 66] ............................ if iCol > me.iCols then
+  [ 58] pusharglist 0 ........................... <>
+  [ 60] extcall 132 ............................. <VOID>
+  [ 62] pusharglistnoret 1 ...................... <VOID>
+  [ 64] extcall 93 .............................. return VOID
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pushsymb 357 ............................ <#aNodes>
+  [ 71] getparam 1 .............................. <iRow>
+  [ 73] pusharglist 3 ........................... <me, #aNodes, iRow>
+  [ 75] objcall 470 ............................. <me.aNodes[iRow]>
+  [ 78] getparam 2 .............................. <iCol>
+  [ 80] pusharglist 2 ........................... <me.aNodes[iRow], iCol>
+  [ 82] objcall 151 ............................. <me.aNodes[iRow][iCol]>
+  [ 84] pusharglistnoret 1 ...................... <me.aNodes[iRow][iCol]>
+  [ 86] extcall 93 .............................. return me.aNodes[iRow][iCol]
+  [ 88] ret
+end
+
+on setWeight me, iW, iRow, iCol
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 2 .............................. <iRow>
+  [  4] getparam 3 .............................. <iCol>
+  [  6] pusharglist 3 ........................... <me, iRow, iCol>
+  [  8] objcall 180 ............................. <me.getNode(iRow, iCol)>
+  [ 10] getparam 1 .............................. <iW>
+  [ 12] setobjprop 181 .......................... me.getNode(iRow, iCol).w = iW
+  [ 14] ret
+end
+
+on createMapFromXML me, oXml
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 3 .............................. <"createMapFromXML()">
+  [  4] pusharglistnoret 2 ...................... <me, "createMapFromXML()">
+  [  6] objcall 50 .............................. me.debug("createMapFromXML()")
+  [  8] getparam 1 .............................. <oXml>
+  [ 10] pusharglist 0 ........................... <>
+  [ 12] extcall 132 ............................. <VOID>
+  [ 14] eq ...................................... <oXml = VOID>
+  [ 15] jmpifz [121] ............................ if oXml = VOID then
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglist 0 ........................... <[]>
+  [ 22] pushlist ................................ <[]>
+  [ 23] setobjprop 357 .......................... me.aNodes = []
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] setlocal 0
+  [ 30] getlocal 0
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 80 ........................... <me.iRows>
+  [ 36] lteq
+  [ 37] jmpifz [117] ............................ repeat with iRow = 1 to me.iRows
+  [ 40] pusharglist 0 ........................... <[]>
+  [ 42] pushlist ................................ <[]>
+  [ 43] setlocal 1 .............................. aRow = []
+  [ 45] pushint8 1 .............................. <1>
+  [ 47] setlocal 2
+  [ 49] getlocal 2
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getobjprop 82 ........................... <me.iCols>
+  [ 55] lteq
+  [ 56] jmpifz [ 96] ............................ repeat with iCol = 1 to me.iCols
+  [ 59] getlocal 1 .............................. <aRow>
+  [ 61] pushcons 2 .............................. <"MapNode">
+  [ 63] pusharglist 1 ........................... <"MapNode">
+  [ 65] extcall 57 .............................. <script("MapNode")>
+  [ 67] getlocal 0 .............................. <iRow>
+  [ 69] getlocal 2 .............................. <iCol>
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getchainedprop 182 ...................... <me.oPathfinder>
+  [ 75] getobjprop 863 .......................... <me.oPathfinder.W_OPEN>
+  [ 78] pusharglist 4 ........................... <script("MapNode"), iRow, iCol, me.oPathfinder.W_OPEN>
+  [ 80] extcall 0 ............................... <new(script("MapNode"), iRow, iCol, me.oPathfinder.W_OPEN)>
+  [ 82] pusharglistnoret 2 ...................... <aRow, new(script("MapNode"), iRow, iCol, me.oPathfinder.W_OPEN)>
+  [ 84] objcall 418 ............................. aRow.append(new(script("MapNode"), iRow, iCol, me.oPathfinder.W_OPEN))
+  [ 87] pushint8 1
+  [ 89] getlocal 2
+  [ 91] add
+  [ 92] setlocal 2
+  [ 94] endrepeat [ 49]
+  [ 96] getparam 0 .............................. <me>
+  [ 98] getchainedprop 357 ...................... <me.aNodes>
+  [101] getlocal 1 .............................. <aRow>
+  [103] pusharglistnoret 2 ...................... <me.aNodes, aRow>
+  [105] objcall 418 ............................. me.aNodes.append(aRow)
+  [108] pushint8 1
+  [110] getlocal 0
+  [112] add
+  [113] setlocal 0
+  [115] endrepeat [ 30]
+  [117] pusharglistnoret 0 ...................... <>
+  [119] extcall 93 .............................. return 
+  [121] getparam 1 .............................. <oXml>
+  [123] getobjprop 107 .......................... <oXml.firstChild>
+  [125] setlocal 3 .............................. oRoot = oXml.firstChild
+  [127] getlocal 3 .............................. <oRoot>
+  [129] getchainedprop 109 ...................... <oRoot.attributes>
+  [131] getobjprop 864 .......................... <oRoot.attributes.rows>
+  [134] pusharglist 1 ........................... <oRoot.attributes.rows>
+  [136] extcall 108 ............................. <integer(oRoot.attributes.rows)>
+  [138] setprop 80 .............................. iRows = integer(oRoot.attributes.rows)
+  [140] getlocal 3 .............................. <oRoot>
+  [142] getchainedprop 109 ...................... <oRoot.attributes>
+  [144] getobjprop 865 .......................... <oRoot.attributes.cols>
+  [147] pusharglist 1 ........................... <oRoot.attributes.cols>
+  [149] extcall 108 ............................. <integer(oRoot.attributes.cols)>
+  [151] setprop 82 .............................. iCols = integer(oRoot.attributes.cols)
+  [153] getparam 0 .............................. <me>
+  [155] getprop 80 .............................. <iRows>
+  [157] getprop 82 .............................. <iCols>
+  [159] pusharglistnoret 3 ...................... <me, iRows, iCols>
+  [161] objcall 856 ............................. me.reset(iRows, iCols)
+  [164] getlocal 3 .............................. <oRoot>
+  [166] getobjprop 348 .......................... <oRoot.childNodes>
+  [169] setlocal 4 .............................. aTiles = oRoot.childNodes
+  [171] pushzero ................................ <0>
+  [172] setlocal 5
+  [174] getlocal 5
+  [176] getlocal 4 .............................. <aTiles>
+  [178] getobjprop 349 .......................... <aTiles.length>
+  [181] pushint8 1 .............................. <1>
+  [183] sub ..................................... <aTiles.length - 1>
+  [184] lteq
+  [185] jmpifz [376] ............................ repeat with i = 0 to aTiles.length - 1
+  [188] getlocal 4 .............................. <aTiles>
+  [190] getlocal 5 .............................. <i>
+  [192] pusharglist 2 ........................... <aTiles, i>
+  [194] objcall 151 ............................. <aTiles[i]>
+  [196] setlocal 6 .............................. oTile = aTiles[i]
+  [198] getlocal 6 .............................. <oTile>
+  [200] getchainedprop 109 ...................... <oTile.attributes>
+  [202] getobjprop 866 .......................... <oTile.attributes.r>
+  [205] pusharglist 1 ........................... <oTile.attributes.r>
+  [207] extcall 108 ............................. <integer(oTile.attributes.r)>
+  [209] setlocal 0 .............................. iRow = integer(oTile.attributes.r)
+  [211] getlocal 6 .............................. <oTile>
+  [213] getchainedprop 109 ...................... <oTile.attributes>
+  [215] getobjprop 867 .......................... <oTile.attributes.c>
+  [218] pusharglist 1 ........................... <oTile.attributes.c>
+  [220] extcall 108 ............................. <integer(oTile.attributes.c)>
+  [222] setlocal 2 .............................. iCol = integer(oTile.attributes.c)
+  [224] getlocal 6 .............................. <oTile>
+  [226] getchainedprop 109 ...................... <oTile.attributes>
+  [228] getobjprop 181 .......................... <oTile.attributes.w>
+  [230] pusharglist 1 ........................... <oTile.attributes.w>
+  [232] extcall 108 ............................. <integer(oTile.attributes.w)>
+  [234] setlocal 7 .............................. iW = integer(oTile.attributes.w)
+  [236] pusharglist 0 ........................... <[]>
+  [238] pushlist ................................ <[]>
+  [239] setlocal 8 .............................. aP = []
+  [241] getparam 0 .............................. <me>
+  [243] getlocal 6 .............................. <oTile>
+  [245] pushcons 4 .............................. <"PointerNode">
+  [247] pusharglist 3 ........................... <me, oTile, "PointerNode">
+  [249] objcall 862 ............................. <me.getXMLNodes(oTile, "PointerNode")>
+  [252] setlocal 9 .............................. aPointers = me.getXMLNodes(oTile, "PointerNode")
+  [254] getlocal 9 .............................. <aPointers>
+  [256] pusharglist 1 ........................... <aPointers>
+  [258] extcall 106 ............................. <voidp(aPointers)>
+  [260] not ..................................... <not voidp(aPointers)>
+  [261] jmpifz [342] ............................ if not voidp(aPointers) then
+  [264] pushint8 1 .............................. <1>
+  [266] setlocal 10
+  [268] getlocal 10
+  [270] getlocal 9 .............................. <aPointers>
+  [272] getobjprop 150 .......................... <aPointers.count>
+  [274] lteq
+  [275] jmpifz [342] ............................ repeat with ii = 1 to aPointers.count
+  [278] getlocal 9 .............................. <aPointers>
+  [280] getlocal 10 ............................. <ii>
+  [282] pusharglist 2 ........................... <aPointers, ii>
+  [284] objcall 151 ............................. <aPointers[ii]>
+  [286] setlocal 11 ............................. oPNode = aPointers[ii]
+  [288] getlocal 11 ............................. <oPNode>
+  [290] getchainedprop 109 ...................... <oPNode.attributes>
+  [292] getobjprop 866 .......................... <oPNode.attributes.r>
+  [295] pusharglist 1 ........................... <oPNode.attributes.r>
+  [297] extcall 108 ............................. <integer(oPNode.attributes.r)>
+  [299] setlocal 12 ............................. iPRow = integer(oPNode.attributes.r)
+  [301] getlocal 11 ............................. <oPNode>
+  [303] getchainedprop 109 ...................... <oPNode.attributes>
+  [305] getobjprop 867 .......................... <oPNode.attributes.c>
+  [308] pusharglist 1 ........................... <oPNode.attributes.c>
+  [310] extcall 108 ............................. <integer(oPNode.attributes.c)>
+  [312] setlocal 13 ............................. iPCol = integer(oPNode.attributes.c)
+  [314] getlocal 8 .............................. <aP>
+  [316] pushsymb 645 ............................ <#row>
+  [319] getlocal 12 ............................. <iPRow>
+  [321] pushsymb 646 ............................ <#col>
+  [324] getlocal 13 ............................. <iPCol>
+  [326] pusharglist 4 ........................... <[#row: iPRow, #col: iPCol]>
+  [328] pushproplist ............................ <[#row: iPRow, #col: iPCol]>
+  [329] pusharglistnoret 2 ...................... <aP, [#row: iPRow, #col: iPCol]>
+  [331] objcall 135 ............................. aP.add([#row: iPRow, #col: iPCol])
+  [333] pushint8 1
+  [335] getlocal 10
+  [337] add
+  [338] setlocal 10
+  [340] endrepeat [268]
+  [342] getparam 0 .............................. <me>
+  [344] getlocal 0 .............................. <iRow>
+  [346] getlocal 2 .............................. <iCol>
+  [348] pusharglist 3 ........................... <me, iRow, iCol>
+  [350] objcall 180 ............................. <me.getNode(iRow, iCol)>
+  [352] setlocal 14 ............................. oNode = me.getNode(iRow, iCol)
+  [354] getlocal 14 ............................. <oNode>
+  [356] getlocal 7 .............................. <iW>
+  [358] setobjprop 181 .......................... oNode.w = iW
+  [360] getlocal 14 ............................. <oNode>
+  [362] getlocal 8 .............................. <aP>
+  [364] setobjprop 868 .......................... oNode.p = aP
+  [367] pushint8 1
+  [369] getlocal 5
+  [371] add
+  [372] setlocal 5
+  [374] endrepeat [174]
+  [376] ret
+end
+
+on getXMLNode me, oXml, sNodeName
+  [  0] getparam 1 .............................. <oXml>
+  [  2] getobjprop 348 .......................... <oXml.childNodes>
+  [  5] setlocal 0 .............................. aChildren = oXml.childNodes
+  [  7] pushzero ................................ <0>
+  [  8] setlocal 1
+  [ 10] getlocal 1
+  [ 12] getlocal 0 .............................. <aChildren>
+  [ 14] getobjprop 349 .......................... <aChildren.length>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] sub ..................................... <aChildren.length - 1>
+  [ 20] lteq
+  [ 21] jmpifz [ 60] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 24] getlocal 0 .............................. <aChildren>
+  [ 26] getlocal 1 .............................. <i>
+  [ 28] pusharglist 2 ........................... <aChildren, i>
+  [ 30] objcall 151 ............................. <aChildren[i]>
+  [ 32] setlocal 2 .............................. oNode = aChildren[i]
+  [ 34] getlocal 2 .............................. <oNode>
+  [ 36] getobjprop 350 .......................... <oNode.NodeName>
+  [ 39] getparam 2 .............................. <sNodeName>
+  [ 41] eq ...................................... <oNode.NodeName = sNodeName>
+  [ 42] jmpifz [ 51] ............................ if oNode.NodeName = sNodeName then
+  [ 45] getlocal 2 .............................. <oNode>
+  [ 47] pusharglistnoret 1 ...................... <oNode>
+  [ 49] extcall 93 .............................. return oNode
+  [ 51] pushint8 1
+  [ 53] getlocal 1
+  [ 55] add
+  [ 56] setlocal 1
+  [ 58] endrepeat [ 10]
+  [ 60] ret
+end
+
+on getXMLNodes me, xml, sNodeName
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aXmlNodes = []
+  [  5] getparam 1 .............................. <xml>
+  [  7] getobjprop 348 .......................... <xml.childNodes>
+  [ 10] setlocal 1 .............................. childNodes = xml.childNodes
+  [ 12] pushzero ................................ <0>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <childNodes>
+  [ 19] getobjprop 349 .......................... <childNodes.length>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] sub ..................................... <childNodes.length - 1>
+  [ 25] lteq
+  [ 26] jmpifz [ 67] ............................ repeat with i = 0 to childNodes.length - 1
+  [ 29] getlocal 1 .............................. <childNodes>
+  [ 31] getlocal 2 .............................. <i>
+  [ 33] pusharglist 2 ........................... <childNodes, i>
+  [ 35] objcall 151 ............................. <childNodes[i]>
+  [ 37] setlocal 3 .............................. node = childNodes[i]
+  [ 39] getlocal 3 .............................. <node>
+  [ 41] getobjprop 350 .......................... <node.NodeName>
+  [ 44] getparam 2 .............................. <sNodeName>
+  [ 46] eq ...................................... <node.NodeName = sNodeName>
+  [ 47] jmpifz [ 58] ............................ if node.NodeName = sNodeName then
+  [ 50] getlocal 0 .............................. <aXmlNodes>
+  [ 52] getlocal 3 .............................. <node>
+  [ 54] pusharglistnoret 2 ...................... <aXmlNodes, node>
+  [ 56] objcall 135 ............................. aXmlNodes.add(node)
+  [ 58] pushint8 1
+  [ 60] getlocal 2
+  [ 62] add
+  [ 63] setlocal 2
+  [ 65] endrepeat [ 15]
+  [ 67] getlocal 0 .............................. <aXmlNodes>
+  [ 69] pusharglistnoret 1 ...................... <aXmlNodes>
+  [ 71] extcall 93 .............................. return aXmlNodes
+  [ 73] ret
+end
+
+on toString me
+  [  0] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 56 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 20] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 5 .............................. <"Map:">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"Map:" & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"Map:" & sMessage>
+  [ 17] extcall 274 ............................. put "Map:" & sMessage
+  [ 20] ret
+end

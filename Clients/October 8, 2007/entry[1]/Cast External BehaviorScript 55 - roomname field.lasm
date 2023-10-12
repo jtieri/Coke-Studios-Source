@@ -1,0 +1,202 @@
+property myMember, myMemberType, iMaxLength
+global TextMgr
+
+on new me
+  [  0] pushcons 0 .............................. <"nav_modify_studio_name">
+  [  2] pusharglist 1 ........................... <"nav_modify_studio_name">
+  [  4] extcall 101 ............................. <member("nav_modify_studio_name")>
+  [  6] setprop 205 ............................. myMember = member("nav_modify_studio_name")
+  [  8] pushsymb 129 ............................ <#text>
+  [ 10] setprop 663 ............................. myMemberType = #text
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushint8 25 ............................. <25>
+  [ 17] setobjprop 690 .......................... me.iMaxLength = 25
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] extcall 78 .............................. return me
+  [ 26] ret
+end
+
+on keyDown me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 5 ............................. Filter(me)
+  [  6] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 430 ............................. stopEvent()
+  [  5] ret
+end
+
+on mouseUp me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 430 ............................. stopEvent()
+  [  5] ret
+end
+
+on getroomname me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 429 .......................... <me.spriteNum>
+  [  5] pusharglistnoret 1 ...................... <me.spriteNum>
+  [  7] extcall 78 .............................. return me.spriteNum
+  [  9] ret
+end
+
+on Filter me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 691 .......................... <the controlDown>
+  [  5] pusharglist 0 ........................... <>
+  [  7] thebuiltin 656 .......................... <the keyCode>
+  [ 10] pushint8 9 .............................. <9>
+  [ 12] eq ...................................... <the keyCode = 9>
+  [ 13] and ..................................... <the controlDown and (the keyCode = 9)>
+  [ 14] pusharglist 0 ........................... <>
+  [ 16] thebuiltin 692 .......................... <the commandDown>
+  [ 19] pusharglist 0 ........................... <>
+  [ 21] thebuiltin 656 .......................... <the keyCode>
+  [ 24] pushint8 9 .............................. <9>
+  [ 26] eq ...................................... <the keyCode = 9>
+  [ 27] and ..................................... <the commandDown and (the keyCode = 9)>
+  [ 28] or ...................................... <(the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9))>
+  [ 29] jmpifz [ 41] ............................ if (the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9)) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 430 ............................. stopEvent()
+  [ 37] pusharglistnoret 0 ...................... <>
+  [ 39] extcall 78 .............................. return 
+  [ 41] pusharglist 0 ........................... <>
+  [ 43] thebuiltin 658 .......................... <the key>
+  [ 46] pushcons 1 .............................. <TAB>
+  [ 48] eq ...................................... <the key = TAB>
+  [ 49] jmpifz [ 83] ............................ if the key = TAB then / else
+  [ 52] pusharglistnoret 0 ...................... <>
+  [ 54] extcall 657 ............................. pass()
+  [ 57] getmovieprop 693 ........................ <the keyboardFocusSprite>
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] eq ...................................... <the keyboardFocusSprite = 1>
+  [ 63] jmpifz [ 80] ............................ if the keyboardFocusSprite = 1 then
+  [ 66] pushsymb 694 ............................ <#getroomdesc>
+  [ 69] pusharglist 1 ........................... <#getroomdesc>
+  [ 71] extcall 188 ............................. <sendAllSprites(#getroomdesc)>
+  [ 73] setlocal 0 .............................. roomDesc = sendAllSprites(#getroomdesc)
+  [ 75] getlocal 0 .............................. <roomDesc>
+  [ 77] setmovieprop 693 ........................ the keyboardFocusSprite = roomDesc
+  [ 80] jmp [187]
+  [ 83] getparam 0 .............................. <me>
+  [ 85] getobjprop 205 .......................... <me.myMember>
+  [ 87] getchainedprop 129 ...................... <me.myMember.text>
+  [ 89] getobjprop 165 .......................... <me.myMember.text.length>
+  [ 91] setlocal 1 .............................. iLength = me.myMember.text.length
+  [ 93] getglobal 178 ........................... <TextMgr>
+  [ 95] pusharglist 0 ........................... <>
+  [ 97] thebuiltin 656 .......................... <the keyCode>
+  [100] pusharglist 2 ........................... <TextMgr, the keyCode>
+  [102] objcall 695 ............................. <TextMgr.isValidKeyCode(the keyCode)>
+  [105] setlocal 2 .............................. bIsValidKeyCode = TextMgr.isValidKeyCode(the keyCode)
+  [107] getglobal 178 ........................... <TextMgr>
+  [109] pusharglist 0 ........................... <>
+  [111] thebuiltin 658 .......................... <the key>
+  [114] pusharglist 2 ........................... <TextMgr, the key>
+  [116] objcall 696 ............................. <TextMgr.isValidStudioKey(the key)>
+  [119] setlocal 3 .............................. bIsValidKey = TextMgr.isValidStudioKey(the key)
+  [121] getlocal 1 .............................. <iLength>
+  [123] getparam 0 .............................. <me>
+  [125] getobjprop 690 .......................... <me.iMaxLength>
+  [128] gteq .................................... <iLength >= me.iMaxLength>
+  [129] jmpifz [158] ............................ if iLength >= me.iMaxLength then
+  [132] getlocal 2 .............................. <bIsValidKeyCode>
+  [134] jmpifz [149] ............................ if bIsValidKeyCode then / else
+  [137] pusharglistnoret 0 ...................... <>
+  [139] extcall 657 ............................. pass()
+  [142] pusharglistnoret 0 ...................... <>
+  [144] extcall 78 .............................. return 
+  [146] jmp [158]
+  [149] pusharglistnoret 0 ...................... <>
+  [151] extcall 430 ............................. stopEvent()
+  [154] pusharglistnoret 0 ...................... <>
+  [156] extcall 78 .............................. return 
+  [158] getlocal 3 .............................. <bIsValidKey>
+  [160] getlocal 2 .............................. <bIsValidKeyCode>
+  [162] or ...................................... <bIsValidKey or bIsValidKeyCode>
+  [163] jmpifz [178] ............................ if bIsValidKey or bIsValidKeyCode then / else
+  [166] pusharglistnoret 0 ...................... <>
+  [168] extcall 657 ............................. pass()
+  [171] pusharglistnoret 0 ...................... <>
+  [173] extcall 78 .............................. return 
+  [175] jmp [187]
+  [178] pusharglistnoret 0 ...................... <>
+  [180] extcall 430 ............................. stopEvent()
+  [183] pusharglistnoret 0 ...................... <>
+  [185] extcall 78 .............................. return 
+  [187] ret
+end
+
+on Insert me, theKey
+  [  0] pushint8 24 ............................. <24>
+  [  2] get 7 ................................... <the selStart>
+  [  4] setlocal 0 .............................. startChar = the selStart
+  [  6] getlocal 0 .............................. <startChar>
+  [  8] pushint8 23 ............................. <23>
+  [ 10] get 7 ................................... <the selEnd>
+  [ 12] eq ...................................... <startChar = the selEnd>
+  [ 13] jmpifz [ 74] ............................ if startChar = the selEnd then / else
+  [ 16] getprop 663 ............................. <myMemberType>
+  [ 19] pushsymb 202 ............................ <#field>
+  [ 21] eq ...................................... <myMemberType = #field>
+  [ 22] jmpifz [ 44] ............................ if myMemberType = #field then / else
+  [ 25] getparam 1 .............................. <theKey>
+  [ 27] getlocal 0 .............................. <startChar>
+  [ 29] pushzero ................................ <0>
+  [ 30] pushzero ................................ <0>
+  [ 31] pushzero ................................ <0>
+  [ 32] pushzero ................................ <0>
+  [ 33] pushzero ................................ <0>
+  [ 34] pushzero ................................ <0>
+  [ 35] pushzero ................................ <0>
+  [ 36] getprop 205 ............................. <myMember>
+  [ 38] pushzero ................................ <0>
+  [ 39] putchunk 38 ............................. put theKey after char startChar of field myMember
+  [ 41] jmp [ 71]
+  [ 44] getprop 205 ............................. <myMember>
+  [ 46] getobjprop 129 .......................... <myMember.text>
+  [ 48] setlocal 1 .............................. theText = myMember.text
+  [ 50] getparam 1 .............................. <theKey>
+  [ 52] getlocal 0 .............................. <startChar>
+  [ 54] pushzero ................................ <0>
+  [ 55] pushzero ................................ <0>
+  [ 56] pushzero ................................ <0>
+  [ 57] pushzero ................................ <0>
+  [ 58] pushzero ................................ <0>
+  [ 59] pushzero ................................ <0>
+  [ 60] pushzero ................................ <0>
+  [ 61] pushint8 1 .............................. <1>
+  [ 63] putchunk 37 ............................. put theKey after char startChar of theText
+  [ 65] getprop 205 ............................. <myMember>
+  [ 67] getlocal 1 .............................. <theText>
+  [ 69] setobjprop 129 .......................... myMember.text = theText
+  [ 71] jmp [ 94]
+  [ 74] getprop 205 ............................. <myMember>
+  [ 76] pushsymb 164 ............................ <#char>
+  [ 78] getlocal 0 .............................. <startChar>
+  [ 80] pushint8 1 .............................. <1>
+  [ 82] add ..................................... <startChar + 1>
+  [ 83] pushint8 23 ............................. <23>
+  [ 85] get 7 ................................... <the selEnd>
+  [ 87] getparam 1 .............................. <theKey>
+  [ 89] pusharglistnoret 5 ...................... <myMember, #char, startChar + 1, the selEnd, theKey>
+  [ 91] objcall 454 ............................. myMember.char[startChar + 1..the selEnd] = theKey
+  [ 94] getlocal 0 .............................. <startChar>
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] add ..................................... <startChar + 1>
+  [ 99] pushint8 23 ............................. <23>
+  [101] set 7 ................................... set the selEnd to startChar + 1
+  [103] getlocal 0 .............................. <startChar>
+  [105] pushint8 1 .............................. <1>
+  [107] add ..................................... <startChar + 1>
+  [108] pushint8 24 ............................. <24>
+  [110] set 7 ................................... set the selStart to startChar + 1
+  [112] pusharglistnoret 0 ...................... <>
+  [114] extcall 430 ............................. stopEvent()
+  [117] ret
+end

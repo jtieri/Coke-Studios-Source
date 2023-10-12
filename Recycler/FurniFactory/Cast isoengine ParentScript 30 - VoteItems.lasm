@@ -1,0 +1,69 @@
+property aItems
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 897 .......................... me.aItems = []
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] extcall 92 .............................. return me
+  [ 14] ret
+end
+
+on init me
+  [  0] ret
+end
+
+on addItem me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 897 ...................... <me.aItems>
+  [  5] getparam 1 .............................. <oItem>
+  [  7] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [  9] objcall 133 ............................. me.aItems.add(oItem)
+  [ 11] ret
+end
+
+on removeItem me, oItem
+  [  0] getparam 1 .............................. <oItem>
+  [  2] pusharglistnoret 1 ...................... <oItem>
+  [  4] objcall 331 ............................. oItem.destroy()
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 897 ...................... <me.aItems>
+  [ 12] getparam 1 .............................. <oItem>
+  [ 14] pusharglistnoret 2 ...................... <me.aItems, oItem>
+  [ 16] objcall 330 ............................. me.aItems.deleteOne(oItem)
+  [ 19] ret
+end
+
+on destroy me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 897 ............................ <#aItems>
+  [ 11] pusharglist 2 ........................... <me, #aItems>
+  [ 13] objcall 169 ............................. <me.aItems.count>
+  [ 15] lteq
+  [ 16] jmpifz [ 49] ............................ repeat with i = 1 to me.aItems.count
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushsymb 897 ............................ <#aItems>
+  [ 24] getlocal 0 .............................. <i>
+  [ 26] pusharglist 3 ........................... <me, #aItems, i>
+  [ 28] objcall 577 ............................. <me.aItems[i]>
+  [ 31] setlocal 1 .............................. oItem = me.aItems[i]
+  [ 33] getlocal 1 .............................. <oItem>
+  [ 35] pusharglistnoret 1 ...................... <oItem>
+  [ 37] objcall 331 ............................. oItem.destroy()
+  [ 40] pushint8 1
+  [ 42] getlocal 0
+  [ 44] add
+  [ 45] setlocal 0
+  [ 47] endrepeat [  4]
+  [ 49] getparam 0 .............................. <me>
+  [ 51] pusharglist 0 ........................... <[]>
+  [ 53] pushlist ................................ <[]>
+  [ 54] setobjprop 897 .......................... me.aItems = []
+  [ 57] ret
+end

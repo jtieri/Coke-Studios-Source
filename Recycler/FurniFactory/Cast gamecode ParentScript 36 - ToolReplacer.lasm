@@ -1,0 +1,123 @@
+property iFPS, iFPSTimer, iFPSTimerLength, iCurTool, iDir
+global oComputer
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 8 .............................. <8>
+  [  4] setobjprop 311 .......................... me.iFPS = 8
+  [  7] getparam 0 .............................. <me>
+  [  9] getmovieprop 281 ........................ <the milliSeconds>
+  [ 12] setobjprop 312 .......................... me.iFPSTimer = the milliSeconds
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushint16 1000 .......................... <1000>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 311 .......................... <me.iFPS>
+  [ 25] div ..................................... <1000 / me.iFPS>
+  [ 26] setobjprop 313 .......................... me.iFPSTimerLength = 1000 / me.iFPS
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushint8 10 ............................. <10>
+  [ 33] setobjprop 715 .......................... me.iCurTool = 10
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] inv ..................................... <-1>
+  [ 41] setobjprop 542 .......................... me.iDir = -1
+  [ 44] getmovieprop 60 ......................... <the actorList>
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 50] objcall 81 .............................. (the actorList).add(me)
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] extcall 63 .............................. return me
+  [ 58] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 715 .......................... <me.iCurTool>
+  [  5] pushint8 11 ............................. <11>
+  [  7] eq ...................................... <me.iCurTool = 11>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 542 .......................... <me.iDir>
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] eq ...................................... <me.iDir = 1>
+  [ 16] and ..................................... <(me.iCurTool = 11) and (me.iDir = 1)>
+  [ 17] jmpifz [ 29] ............................ if (me.iCurTool = 11) and (me.iDir = 1) then / else
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] objcall 100 ............................. me.destroy()
+  [ 26] jmp [162]
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 311 .......................... <me.iFPS>
+  [ 34] pushzero ................................ <0>
+  [ 35] gt ...................................... <me.iFPS > 0>
+  [ 36] jmpifz [162] ............................ if me.iFPS > 0 then
+  [ 39] getmovieprop 281 ........................ <the milliSeconds>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 312 .......................... <me.iFPSTimer>
+  [ 47] sub ..................................... <the milliSeconds - me.iFPSTimer>
+  [ 48] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iFPSTimer
+  [ 50] getlocal 0 .............................. <iElapsedTime>
+  [ 52] getparam 0 .............................. <me>
+  [ 54] getobjprop 313 .......................... <me.iFPSTimerLength>
+  [ 57] gteq .................................... <iElapsedTime >= me.iFPSTimerLength>
+  [ 58] jmpifz [162] ............................ if iElapsedTime >= me.iFPSTimerLength then
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 542 .......................... <me.iDir>
+  [ 66] pushint8 1 .............................. <1>
+  [ 68] inv ..................................... <-1>
+  [ 69] eq ...................................... <me.iDir = -1>
+  [ 70] getparam 0 .............................. <me>
+  [ 72] getobjprop 715 .......................... <me.iCurTool>
+  [ 75] pushzero ................................ <0>
+  [ 76] eq ...................................... <me.iCurTool = 0>
+  [ 77] and ..................................... <(me.iDir = -1) and (me.iCurTool = 0)>
+  [ 78] jmpifz [ 95] ............................ if (me.iDir = -1) and (me.iCurTool = 0) then
+  [ 81] getparam 0 .............................. <me>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] setobjprop 542 .......................... me.iDir = 1
+  [ 88] getparam 0 .............................. <me>
+  [ 90] pushint8 1 .............................. <1>
+  [ 92] setobjprop 715 .......................... me.iCurTool = 1
+  [ 95] getparam 0 .............................. <me>
+  [ 97] getobjprop 542 .......................... <me.iDir>
+  [100] pushint8 1 .............................. <1>
+  [102] inv ..................................... <-1>
+  [103] eq ...................................... <me.iDir = -1>
+  [104] jmpifz [121] ............................ if me.iDir = -1 then / else
+  [107] getglobal 58 ............................ <oComputer>
+  [109] getparam 0 .............................. <me>
+  [111] getobjprop 715 .......................... <me.iCurTool>
+  [114] pusharglistnoret 2 ...................... <oComputer, me.iCurTool>
+  [116] objcall 36 .............................. oComputer.pickUpTool(me.iCurTool)
+  [118] jmp [132]
+  [121] getglobal 58 ............................ <oComputer>
+  [123] getparam 0 .............................. <me>
+  [125] getobjprop 715 .......................... <me.iCurTool>
+  [128] pusharglistnoret 2 ...................... <oComputer, me.iCurTool>
+  [130] objcall 37 .............................. oComputer.dropOffTool(me.iCurTool)
+  [132] getparam 0 .............................. <me>
+  [134] getparam 0 .............................. <me>
+  [136] getobjprop 715 .......................... <me.iCurTool>
+  [139] getparam 0 .............................. <me>
+  [141] getobjprop 542 .......................... <me.iDir>
+  [144] add ..................................... <me.iCurTool + me.iDir>
+  [145] setobjprop 715 .......................... me.iCurTool = me.iCurTool + me.iDir
+  [148] getparam 0 .............................. <me>
+  [150] getmovieprop 281 ........................ <the milliSeconds>
+  [153] setobjprop 312 .......................... me.iFPSTimer = the milliSeconds
+  [156] pushint8 1 .............................. <1>
+  [158] pusharglistnoret 1 ...................... <1>
+  [160] extcall 63 .............................. return 1
+  [162] pushzero ................................ <0>
+  [163] pusharglistnoret 1 ...................... <0>
+  [165] extcall 63 .............................. return 0
+  [167] ret
+end
+
+on destroy me
+  [  0] getmovieprop 60 ......................... <the actorList>
+  [  2] getparam 0 .............................. <me>
+  [  4] pusharglistnoret 2 ...................... <the actorList, me>
+  [  6] objcall 62 .............................. (the actorList).deleteOne(me)
+  [  8] ret
+end

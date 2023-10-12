@@ -1,0 +1,227 @@
+property ancestor
+global oIsoScene, oPossessionStudio, ElementMgr, oStudio, oDenizenManager
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] objcall 1426 ............................ me.displayState()
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pusharglistnoret 1 ...................... <me>
+  [ 30] extcall 52 .............................. return me
+  [ 32] ret
+end
+
+on mouseDownEvent me, bDoubleClick
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglist 1 ........................... <oStudio>
+  [  4] extcall 59 .............................. <voidp(oStudio)>
+  [  6] jmpifz [ 13] ............................ if voidp(oStudio) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <bDoubleClick>
+  [ 17] pusharglist 2 ........................... <me, bDoubleClick>
+  [ 19] objcall 1574 ............................ <me.select(bDoubleClick)>
+  [ 22] pusharglistnoret 1 ...................... <me.select(bDoubleClick)>
+  [ 24] extcall 52 .............................. return me.select(bDoubleClick)
+  [ 26] ret
+end
+
+on select me, bDoubleClick
+  [  0] pushcons 1 .............................. <"*** SELECT STEREO: DOUBLE CLICK: ">
+  [  2] getparam 1 .............................. <bDoubleClick>
+  [  4] joinstr ................................. <"*** SELECT STEREO: DOUBLE CLICK: " & bDoubleClick>
+  [  5] pushcons 2 .............................. <" *** ">
+  [  7] pusharglistnoret 2 ...................... <"*** SELECT STEREO: DOUBLE CLICK: " & bDoubleClick, " *** ">
+  [  9] extcall 168 ............................. put "*** SELECT STEREO: DOUBLE CLICK: " & bDoubleClick, " *** "
+  [ 11] getglobal 133 ........................... <oIsoScene>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 58 ........................... <me.oItem>
+  [ 17] pusharglistnoret 2 ...................... <oIsoScene, me.oItem>
+  [ 19] objcall 302 ............................. oIsoScene.moveAvatarToFrontOfItem(me.oItem)
+  [ 22] getparam 1 .............................. <bDoubleClick>
+  [ 24] jmpifz [ 48] ............................ if bDoubleClick then
+  [ 27] getglobal 133 ........................... <oIsoScene>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 58 ........................... <me.oItem>
+  [ 33] pusharglist 2 ........................... <oIsoScene, me.oItem>
+  [ 35] objcall 303 ............................. <oIsoScene.avatarIsInFrontOfItem(me.oItem)>
+  [ 38] jmpifz [ 48] ............................ if oIsoScene.avatarIsInFrontOfItem(me.oItem) then
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 1 ...................... <me>
+  [ 45] objcall 1575 ............................ me.doubleClickStereo()
+  [ 48] pushzero ................................ <0>
+  [ 49] pusharglistnoret 1 ...................... <0>
+  [ 51] extcall 52 .............................. return 0
+  [ 53] ret
+end
+
+on doubleClickStereo me
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglist 1 ........................... <oStudio>
+  [  4] extcall 59 .............................. <voidp(oStudio)>
+  [  6] jmpifz [ 13] ............................ if voidp(oStudio) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getglobal 233 ........................... <gFeatureSet>
+  [ 15] pushsymb 1578 ........................... <#CDPLAYER>
+  [ 18] pusharglist 2 ........................... <gFeatureSet, #CDPLAYER>
+  [ 20] objcall 235 ............................. <gFeatureSet.isEnabled(#CDPLAYER)>
+  [ 22] not ..................................... <not gFeatureSet.isEnabled(#CDPLAYER)>
+  [ 23] jmpifz [ 38] ............................ if not gFeatureSet.isEnabled(#CDPLAYER) then
+  [ 26] getglobal 172 ........................... <ElementMgr>
+  [ 28] pushcons 3 .............................. <"FEATURE_DISABLED">
+  [ 30] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 32] objcall 236 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 34] pusharglistnoret 0 ...................... <>
+  [ 36] extcall 52 .............................. return 
+  [ 38] getglobal 77 ............................ <oDenizenManager>
+  [ 40] pusharglist 1 ........................... <oDenizenManager>
+  [ 42] objcall 448 ............................. <oDenizenManager.getBackpack()>
+  [ 45] setlocal 0 .............................. oBackPack = oDenizenManager.getBackpack()
+  [ 47] getlocal 0 .............................. <oBackPack>
+  [ 49] pusharglist 1 ........................... <oBackPack>
+  [ 51] extcall 59 .............................. <voidp(oBackPack)>
+  [ 53] not ..................................... <not voidp(oBackPack)>
+  [ 54] jmpifz [ 99] ............................ if not voidp(oBackPack) then
+  [ 57] getglobal 77 ............................ <oDenizenManager>
+  [ 59] pusharglist 1 ........................... <oDenizenManager>
+  [ 61] objcall 448 ............................. <oDenizenManager.getBackpack()>
+  [ 64] pusharglist 1 ........................... <oDenizenManager.getBackpack()>
+  [ 66] objcall 449 ............................. <oDenizenManager.getBackpack().getNumberOfBurnedCds()>
+  [ 69] setlocal 1 .............................. iBurnedCds = oDenizenManager.getBackpack().getNumberOfBurnedCds()
+  [ 71] getlocal 1 .............................. <iBurnedCds>
+  [ 73] pusharglist 1 ........................... <iBurnedCds>
+  [ 75] extcall 59 .............................. <voidp(iBurnedCds)>
+  [ 77] getlocal 1 .............................. <iBurnedCds>
+  [ 79] pushzero ................................ <0>
+  [ 80] eq ...................................... <iBurnedCds = 0>
+  [ 81] or ...................................... <voidp(iBurnedCds) or (iBurnedCds = 0)>
+  [ 82] jmpifz [ 99] ............................ if voidp(iBurnedCds) or (iBurnedCds = 0) then
+  [ 85] getglobal 172 ........................... <ElementMgr>
+  [ 87] pushcons 4 .............................. <"NOCD_TITLE">
+  [ 89] pushcons 5 .............................. <"NOCD_DESC">
+  [ 91] pusharglistnoret 3 ...................... <ElementMgr, "NOCD_TITLE", "NOCD_DESC">
+  [ 93] objcall 236 ............................. ElementMgr.alert("NOCD_TITLE", "NOCD_DESC")
+  [ 95] pusharglistnoret 0 ...................... <>
+  [ 97] extcall 52 .............................. return 
+  [ 99] getglobal 64 ............................ <oStudio>
+  [101] pusharglist 1 ........................... <oStudio>
+  [103] objcall 74 .............................. <oStudio.getcdplayer()>
+  [105] pusharglist 1 ........................... <oStudio.getcdplayer()>
+  [107] objcall 1579 ............................ <oStudio.getcdplayer().isLocked()>
+  [110] pushint8 1 .............................. <1>
+  [112] eq ...................................... <oStudio.getcdplayer().isLocked() = 1>
+  [113] setlocal 2 .............................. bLocked = oStudio.getcdplayer().isLocked() = 1
+  [115] getglobal 64 ............................ <oStudio>
+  [117] pusharglist 1 ........................... <oStudio>
+  [119] objcall 74 .............................. <oStudio.getcdplayer()>
+  [121] pusharglist 1 ........................... <oStudio.getcdplayer()>
+  [123] objcall 80 .............................. <oStudio.getcdplayer().getAvatar()>
+  [125] setlocal 3 .............................. sCdPlayerAvatar = oStudio.getcdplayer().getAvatar()
+  [127] getlocal 3 .............................. <sCdPlayerAvatar>
+  [129] getglobal 77 ............................ <oDenizenManager>
+  [131] pusharglist 1 ........................... <oDenizenManager>
+  [133] objcall 78 .............................. <oDenizenManager.getScreenName()>
+  [135] eq ...................................... <sCdPlayerAvatar = oDenizenManager.getScreenName()>
+  [136] setlocal 4 .............................. bIsMe = sCdPlayerAvatar = oDenizenManager.getScreenName()
+  [138] getlocal 2 .............................. <bLocked>
+  [140] jmpifz [169] ............................ if bLocked then / else
+  [143] getlocal 4 .............................. <bIsMe>
+  [145] not ..................................... <not bIsMe>
+  [146] jmpifz [159] ............................ if not bIsMe then / else
+  [149] getglobal 64 ............................ <oStudio>
+  [151] pusharglistnoret 1 ...................... <oStudio>
+  [153] objcall 1580 ............................ oStudio.receiveCdWaitTurn()
+  [156] jmp [166]
+  [159] getglobal 64 ............................ <oStudio>
+  [161] pusharglistnoret 1 ...................... <oStudio>
+  [163] objcall 1581 ............................ oStudio.sendCdStop()
+  [166] jmp [184]
+  [169] getglobal 64 ............................ <oStudio>
+  [171] getparam 0 .............................. <me>
+  [173] getchainedprop 58 ....................... <me.oItem>
+  [175] pusharglist 1 ........................... <me.oItem>
+  [177] objcall 249 ............................. <me.oItem.getPosId()>
+  [179] pusharglistnoret 2 ...................... <oStudio, me.oItem.getPosId()>
+  [181] objcall 1582 ............................ oStudio.sendCdRequest(me.oItem.getPosId())
+  [184] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1392 ............................ me.oItem.setFrame(0)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getchainedprop 58 ....................... <me.oItem>
+  [ 14] pusharglist 1 ........................... <me.oItem>
+  [ 16] objcall 1336 ............................ <me.oItem.getState()>
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <me.oItem.getState() = 0>
+  [ 21] jmpifz [ 37] ............................ if me.oItem.getState() = 0 then / else
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 58 ....................... <me.oItem>
+  [ 28] pushzero ................................ <0>
+  [ 29] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 31] objcall 1394 ............................ me.oItem.setAnimate(0)
+  [ 34] jmp [ 48]
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 58 ....................... <me.oItem>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 45] objcall 1394 ............................ me.oItem.setAnimate(1)
+  [ 48] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1336 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 24] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1577 ............................ me.setOn()
+  [ 21] jmp [ 31]
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] objcall 1576 ............................ me.setOff()
+  [ 31] getglobal 258 ........................... <oPossessionStudio>
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglist 1 ........................... <me>
+  [ 38] objcall 1573 ............................ <me.getItem()>
+  [ 41] pusharglistnoret 2 ...................... <oPossessionStudio, me.getItem()>
+  [ 43] objcall 517 ............................. oPossessionStudio.sendUpdatePossession(me.getItem())
+  [ 46] ret
+end
+
+on setOff me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1335 ............................ me.oItem.setState(0)
+  [ 10] ret
+end
+
+on setOn me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [  8] objcall 1335 ............................ me.oItem.setState(1)
+  [ 11] ret
+end

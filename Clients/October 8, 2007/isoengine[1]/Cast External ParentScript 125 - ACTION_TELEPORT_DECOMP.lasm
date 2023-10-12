@@ -1,0 +1,292 @@
+property ancestor, bHilite, bDoorOpen, bOn, iLength, iStartTime
+global oPossessionStudio, oIsoScene, oStudio
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 779 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 1469 ......................... me.bHilite = 0
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setobjprop 1470 ......................... me.bDoorOpen = 1
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushzero ................................ <0>
+  [ 35] setobjprop 1471 ......................... me.bOn = 0
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushint16 5000 .......................... <5000>
+  [ 43] setobjprop 411 .......................... me.iLength = 5000
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getmovieprop 89 ......................... <the milliSeconds>
+  [ 50] setobjprop 927 .......................... me.iStartTime = the milliSeconds
+  [ 53] getparam 0 .............................. <me>
+  [ 55] pusharglistnoret 1 ...................... <me>
+  [ 57] objcall 1281 ............................ me.displayState()
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pusharglistnoret 1 ...................... <me>
+  [ 64] extcall 93 .............................. return me
+  [ 66] ret
+end
+
+on mouseDownEvent me, bDoubleClick
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <bDoubleClick>
+  [  4] pusharglist 2 ........................... <me, bDoubleClick>
+  [  6] objcall 1445 ............................ <me.select(bDoubleClick)>
+  [  9] pusharglistnoret 1 ...................... <me.select(bDoubleClick)>
+  [ 11] extcall 93 .............................. return me.select(bDoubleClick)
+  [ 13] ret
+end
+
+on select me, bDoubleClick
+  [  0] getparam 1 .............................. <bDoubleClick>
+  [  2] jmpifz [ 10] ............................ if bDoubleClick then
+  [  5] pushzero ................................ <0>
+  [  6] pusharglistnoret 1 ...................... <0>
+  [  8] extcall 93 .............................. return 0
+  [ 10] getglobal 228 ........................... <oStudio>
+  [ 12] pusharglist 1 ........................... <oStudio>
+  [ 14] extcall 106 ............................. <voidp(oStudio)>
+  [ 16] jmpifz [ 25] ............................ if voidp(oStudio) then
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] pusharglistnoret 1 ...................... <1>
+  [ 23] extcall 93 .............................. return 1
+  [ 25] getglobal 88 ............................ <oIsoScene>
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 225 .......................... <me.oItem>
+  [ 31] pusharglist 2 ........................... <oIsoScene, me.oItem>
+  [ 33] objcall 19 .............................. <oIsoScene.avatarIsInFrontOfItem(me.oItem)>
+  [ 35] jmpifz [ 82] ............................ if oIsoScene.avatarIsInFrontOfItem(me.oItem) then
+  [ 38] getglobal 194 ........................... <gFeatureSet>
+  [ 40] pushsymb 1472 ........................... <#TELEPORTING>
+  [ 43] pusharglist 2 ........................... <gFeatureSet, #TELEPORTING>
+  [ 45] objcall 196 ............................. <gFeatureSet.isEnabled(#TELEPORTING)>
+  [ 47] not ..................................... <not gFeatureSet.isEnabled(#TELEPORTING)>
+  [ 48] jmpifz [ 63] ............................ if not gFeatureSet.isEnabled(#TELEPORTING) then
+  [ 51] getglobal 174 ........................... <ElementMgr>
+  [ 53] pushcons 1 .............................. <"FEATURE_DISABLED">
+  [ 55] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 57] objcall 197 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 59] pusharglistnoret 0 ...................... <>
+  [ 61] extcall 93 .............................. return 
+  [ 63] getglobal 88 ............................ <oIsoScene>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getchainedprop 225 ...................... <me.oItem>
+  [ 69] pusharglist 1 ........................... <me.oItem>
+  [ 71] objcall 207 ............................. <me.oItem.getSquare()>
+  [ 73] pusharglistnoret 2 ...................... <oIsoScene, me.oItem.getSquare()>
+  [ 75] objcall 17 .............................. oIsoScene.moveAvatar(me.oItem.getSquare())
+  [ 77] pushzero ................................ <0>
+  [ 78] pusharglistnoret 1 ...................... <0>
+  [ 80] extcall 93 .............................. return 0
+  [ 82] getglobal 88 ............................ <oIsoScene>
+  [ 84] getparam 0 .............................. <me>
+  [ 86] getobjprop 225 .......................... <me.oItem>
+  [ 88] pusharglistnoret 2 ...................... <oIsoScene, me.oItem>
+  [ 90] objcall 18 .............................. oIsoScene.moveAvatarToFrontOfItem(me.oItem)
+  [ 92] pushzero ................................ <0>
+  [ 93] pusharglistnoret 1 ...................... <0>
+  [ 95] extcall 93 .............................. return 0
+  [ 97] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 225 ...................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1180 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 18] ............................ if me.oItem.getState() = 0 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 93 .............................. return 
+  [ 18] getmovieprop 89 ......................... <the milliSeconds>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 927 .......................... <me.iStartTime>
+  [ 25] sub ..................................... <the milliSeconds - me.iStartTime>
+  [ 26] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iStartTime
+  [ 28] getlocal 0 .............................. <iElapsedTime>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 411 .......................... <me.iLength>
+  [ 35] gteq .................................... <iElapsedTime >= me.iLength>
+  [ 36] jmpifz [ 46] ............................ if iElapsedTime >= me.iLength then
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglistnoret 1 ...................... <me>
+  [ 43] objcall 1463 ............................ me.turnOff()
+  [ 46] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 225 ...................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1246 ............................ me.oItem.setFrame(0)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getchainedprop 225 ...................... <me.oItem>
+  [ 14] pusharglist 1 ........................... <me.oItem>
+  [ 16] objcall 1180 ............................ <me.oItem.getState()>
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <me.oItem.getState() = 0>
+  [ 21] jmpifz [ 37] ............................ if me.oItem.getState() = 0 then / else
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 225 ...................... <me.oItem>
+  [ 28] pushzero ................................ <0>
+  [ 29] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 31] objcall 1248 ............................ me.oItem.setAnimate(0)
+  [ 34] jmp [ 48]
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 225 ...................... <me.oItem>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 45] objcall 1248 ............................ me.oItem.setAnimate(1)
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getchainedprop 225 ...................... <me.oItem>
+  [ 52] pushcons 2 .............................. <"d">
+  [ 54] pushsymb 493 ............................ <#visible>
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getobjprop 1469 ......................... <me.bHilite>
+  [ 62] pusharglistnoret 4 ...................... <me.oItem, "d", #visible, me.bHilite>
+  [ 64] objcall 1254 ............................ me.oItem.setDrawOrderAttribute("d", #visible, me.bHilite)
+  [ 67] getparam 0 .............................. <me>
+  [ 69] getchainedprop 225 ...................... <me.oItem>
+  [ 71] pushcons 3 .............................. <"f">
+  [ 73] pushsymb 493 ............................ <#visible>
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getobjprop 1470 ......................... <me.bDoorOpen>
+  [ 81] not ..................................... <not me.bDoorOpen>
+  [ 82] pusharglistnoret 4 ...................... <me.oItem, "f", #visible, not me.bDoorOpen>
+  [ 84] objcall 1254 ............................ me.oItem.setDrawOrderAttribute("f", #visible, not me.bDoorOpen)
+  [ 87] getparam 0 .............................. <me>
+  [ 89] getchainedprop 225 ...................... <me.oItem>
+  [ 91] pusharglistnoret 1 ...................... <me.oItem>
+  [ 93] objcall 275 ............................. me.oItem.draw()
+  [ 96] ret
+end
+
+on turnOn me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1471 ......................... <me.bOn>
+  [  5] jmpifz [ 12] ............................ if me.bOn then
+  [  8] pusharglistnoret 0 ...................... <>
+  [ 10] extcall 93 .............................. return 
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setobjprop 1471 ......................... me.bOn = 1
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] objcall 1467 ............................ me.showHilite()
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pusharglistnoret 1 ...................... <me>
+  [ 30] objcall 1466 ............................ me.closeDoor()
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 1464 ............................ me.startAnimation()
+  [ 40] ret
+end
+
+on turnOff me, bDontSendUpdate
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 1471 ......................... me.bOn = 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 1468 ............................ me.hideHilite()
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pusharglistnoret 1 ...................... <me>
+  [ 17] objcall 1465 ............................ me.openDoor()
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] objcall 743 ............................. me.stopAnimation()
+  [ 27] ret
+end
+
+on startAnimation me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1456 ............................ me.startTimer()
+  [  7] ret
+end
+
+on stopAnimation me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1457 ............................ me.stopTimer()
+  [  7] ret
+end
+
+on openDoor me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 1470 ......................... me.bDoorOpen = 1
+  [  7] getparam 1 .............................. <_bDisplay>
+  [  9] jmpifz [ 19] ............................ if _bDisplay then
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] objcall 1281 ............................ me.displayState()
+  [ 19] ret
+end
+
+on closeDoor me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 1470 ......................... me.bDoorOpen = 0
+  [  6] getparam 1 .............................. <_bDisplay>
+  [  8] jmpifz [ 18] ............................ if _bDisplay then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] objcall 1281 ............................ me.displayState()
+  [ 18] ret
+end
+
+on showHilite me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 1469 ......................... me.bHilite = 1
+  [  7] getparam 1 .............................. <_bDisplay>
+  [  9] jmpifz [ 19] ............................ if _bDisplay then
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] objcall 1281 ............................ me.displayState()
+  [ 19] ret
+end
+
+on hideHilite me, _bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 1469 ......................... me.bHilite = 0
+  [  6] getparam 1 .............................. <_bDisplay>
+  [  8] jmpifz [ 18] ............................ if _bDisplay then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] objcall 1281 ............................ me.displayState()
+  [ 18] ret
+end
+
+on startTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 89 ......................... <the milliSeconds>
+  [  4] setobjprop 927 .......................... me.iStartTime = the milliSeconds
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 225 ...................... <me.oItem>
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 15] objcall 1179 ............................ me.oItem.setState(1)
+  [ 18] ret
+end
+
+on stopTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 225 ...................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1179 ............................ me.oItem.setState(0)
+  [ 10] ret
+end

@@ -1,0 +1,451 @@
+property oSession, sRoomId, bDebug
+global oCallAlertDisplayManager, sModScreenName, oModSessionManager, ElementMgr, TextMgr, oStudioManager, oStudioByModManager
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 10 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 4 ............................... me.debug("new()")
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushcons 1 .............................. <"Admin">
+  [ 18] setobjprop 429 .......................... me.sRoomId = "Admin"
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] extcall 31 .............................. return me
+  [ 27] ret
+end
+
+on getSession me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 307 .......................... <me.oSession>
+  [  5] pusharglistnoret 1 ...................... <me.oSession>
+  [  7] extcall 31 .............................. return me.oSession
+  [  9] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 2 .............................. <"ModCFHController: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"ModCFHController: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"ModCFHController: " & sMessage>
+  [ 17] extcall 38 .............................. put "ModCFHController: " & sMessage
+  [ 19] ret
+end
+
+on logIn me, sDNS
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 3 .............................. <"login() ">
+  [  4] getparam 1 .............................. <sDNS>
+  [  6] joinstr ................................. <"login() " & sDNS>
+  [  7] pusharglistnoret 2 ...................... <me, "login() " & sDNS>
+  [  9] objcall 4 ............................... me.debug("login() " & sDNS)
+  [ 11] pushint16 9000 .......................... <9000>
+  [ 14] setlocal 0 .............................. iPort = 9000
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getglobal 413 ........................... <oModSessionManager>
+  [ 21] getparam 1 .............................. <sDNS>
+  [ 23] getlocal 0 .............................. <iPort>
+  [ 25] pusharglist 3 ........................... <oModSessionManager, sDNS, iPort>
+  [ 27] objcall 414 ............................. <oModSessionManager.getSession(sDNS, iPort)>
+  [ 30] setobjprop 307 .......................... me.oSession = oModSessionManager.getSession(sDNS, iPort)
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getchainedprop 307 ...................... <me.oSession>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pusharglistnoret 2 ...................... <me.oSession, me>
+  [ 42] objcall 415 ............................. me.oSession.addController(me)
+  [ 45] getprop 307 ............................. <oSession>
+  [ 48] pusharglist 1 ........................... <oSession>
+  [ 50] objcall 416 ............................. <oSession.getConnected()>
+  [ 53] jmpifz [ 76] ............................ if oSession.getConnected() then / else
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getchainedprop 307 ...................... <me.oSession>
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 429 .......................... <me.sRoomId>
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pusharglistnoret 3 ...................... <me.oSession, me.sRoomId, me>
+  [ 70] objcall 417 ............................. me.oSession.enterRoom(me.sRoomId, me)
+  [ 73] jmp [112]
+  [ 76] getprop 307 ............................. <oSession>
+  [ 79] pusharglist 1 ........................... <oSession>
+  [ 81] objcall 418 ............................. <oSession.getConnecting()>
+  [ 84] jmpifz [100] ............................ if oSession.getConnecting() then / else
+  [ 87] pushcons 4 .............................. <"Session is currently connecting...">
+  [ 89] pusharglistnoret 1 ...................... <"Session is currently connecting...">
+  [ 91] extcall 171 ............................. alert("Session is currently connecting...")
+  [ 93] pusharglistnoret 0 ...................... <>
+  [ 95] extcall 31 .............................. return 
+  [ 97] jmp [112]
+  [100] getparam 0 .............................. <me>
+  [102] getchainedprop 307 ...................... <me.oSession>
+  [105] getglobal 235 ........................... <sModScreenName>
+  [107] pusharglistnoret 2 ...................... <me.oSession, sModScreenName>
+  [109] objcall 419 ............................. me.oSession.connect(sModScreenName)
+  [112] ret
+end
+
+on sendModMessage me, sScreenName, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 5 .............................. <"sendModMessage() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"sendModMessage() " & sScreenName>
+  [  7] getparam 2 .............................. <sMessage>
+  [  9] joinpadstr .............................. <"sendModMessage() " & sScreenName && sMessage>
+  [ 10] pusharglistnoret 2 ...................... <me, "sendModMessage() " & sScreenName && sMessage>
+  [ 12] objcall 4 ............................... me.debug("sendModMessage() " & sScreenName && sMessage)
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglist 1 ........................... <me>
+  [ 18] objcall 414 ............................. <me.getSession()>
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getobjprop 429 .......................... <me.sRoomId>
+  [ 26] pusharglist 2 ........................... <me.getSession(), me.sRoomId>
+  [ 28] objcall 537 ............................. <me.getSession().getRoom(me.sRoomId)>
+  [ 31] setlocal 0 .............................. oRoom = me.getSession().getRoom(me.sRoomId)
+  [ 33] getlocal 0 .............................. <oRoom>
+  [ 35] pusharglist 1 ........................... <oRoom>
+  [ 37] extcall 26 .............................. <voidp(oRoom)>
+  [ 39] not ..................................... <not voidp(oRoom)>
+  [ 40] jmpifz [ 54] ............................ if not voidp(oRoom) then
+  [ 43] getlocal 0 .............................. <oRoom>
+  [ 45] getparam 1 .............................. <sScreenName>
+  [ 47] getparam 2 .............................. <sMessage>
+  [ 49] pusharglistnoret 3 ...................... <oRoom, sScreenName, sMessage>
+  [ 51] objcall 502 ............................. oRoom.sendModMessage(sScreenName, sMessage)
+  [ 54] ret
+end
+
+on sendPickUpCallForHelp me, iID, bIsAlert
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"sendPickUpCallForHelp() ">
+  [  4] getparam 1 .............................. <iID>
+  [  6] joinstr ................................. <"sendPickUpCallForHelp() " & iID>
+  [  7] getparam 2 .............................. <bIsAlert>
+  [  9] joinpadstr .............................. <"sendPickUpCallForHelp() " & iID && bIsAlert>
+  [ 10] pusharglistnoret 2 ...................... <me, "sendPickUpCallForHelp() " & iID && bIsAlert>
+  [ 12] objcall 4 ............................... me.debug("sendPickUpCallForHelp() " & iID && bIsAlert)
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglist 1 ........................... <me>
+  [ 18] objcall 414 ............................. <me.getSession()>
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getobjprop 429 .......................... <me.sRoomId>
+  [ 26] pusharglist 2 ........................... <me.getSession(), me.sRoomId>
+  [ 28] objcall 537 ............................. <me.getSession().getRoom(me.sRoomId)>
+  [ 31] setlocal 0 .............................. oRoom = me.getSession().getRoom(me.sRoomId)
+  [ 33] getlocal 0 .............................. <oRoom>
+  [ 35] pusharglist 1 ........................... <oRoom>
+  [ 37] extcall 26 .............................. <voidp(oRoom)>
+  [ 39] not ..................................... <not voidp(oRoom)>
+  [ 40] jmpifz [ 54] ............................ if not voidp(oRoom) then
+  [ 43] getlocal 0 .............................. <oRoom>
+  [ 45] getparam 1 .............................. <iID>
+  [ 47] getparam 2 .............................. <bIsAlert>
+  [ 49] pusharglistnoret 3 ...................... <oRoom, iID, bIsAlert>
+  [ 51] objcall 494 ............................. oRoom.sendPickUpCallForHelp(iID, bIsAlert)
+  [ 54] ret
+end
+
+on sendRespondToCallForHelp me, iID, bIsAlert, sResponse
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 7 .............................. <"sendRespondToCallForHelp() ">
+  [  4] getparam 1 .............................. <iID>
+  [  6] joinstr ................................. <"sendRespondToCallForHelp() " & iID>
+  [  7] getparam 2 .............................. <bIsAlert>
+  [  9] joinpadstr .............................. <"sendRespondToCallForHelp() " & iID && bIsAlert>
+  [ 10] getparam 3 .............................. <sResponse>
+  [ 12] joinpadstr .............................. <"sendRespondToCallForHelp() " & iID && bIsAlert && sResponse>
+  [ 13] pusharglistnoret 2 ...................... <me, "sendRespondToCallForHelp() " & iID && bIsAlert && sResponse>
+  [ 15] objcall 4 ............................... me.debug("sendRespondToCallForHelp() " & iID && bIsAlert && sResponse)
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglist 1 ........................... <me>
+  [ 21] objcall 414 ............................. <me.getSession()>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 429 .......................... <me.sRoomId>
+  [ 29] pusharglist 2 ........................... <me.getSession(), me.sRoomId>
+  [ 31] objcall 537 ............................. <me.getSession().getRoom(me.sRoomId)>
+  [ 34] setlocal 0 .............................. oRoom = me.getSession().getRoom(me.sRoomId)
+  [ 36] getlocal 0 .............................. <oRoom>
+  [ 38] pusharglist 1 ........................... <oRoom>
+  [ 40] extcall 26 .............................. <voidp(oRoom)>
+  [ 42] not ..................................... <not voidp(oRoom)>
+  [ 43] jmpifz [ 59] ............................ if not voidp(oRoom) then
+  [ 46] getlocal 0 .............................. <oRoom>
+  [ 48] getparam 1 .............................. <iID>
+  [ 50] getparam 2 .............................. <bIsAlert>
+  [ 52] getparam 3 .............................. <sResponse>
+  [ 54] pusharglistnoret 4 ...................... <oRoom, iID, bIsAlert, sResponse>
+  [ 56] objcall 500 ............................. oRoom.sendRespondToCallForHelp(iID, bIsAlert, sResponse)
+  [ 59] ret
+end
+
+on sendBanUser me, sScreenName, iInterval, sMessage, sComment
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 8 .............................. <"sendBanUser() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"sendBanUser() " & sScreenName>
+  [  7] getparam 2 .............................. <iInterval>
+  [  9] joinpadstr .............................. <"sendBanUser() " & sScreenName && iInterval>
+  [ 10] getparam 3 .............................. <sMessage>
+  [ 12] joinpadstr .............................. <"sendBanUser() " & sScreenName && iInterval && sMessage>
+  [ 13] getparam 4 .............................. <sComment>
+  [ 15] joinpadstr .............................. <"sendBanUser() " & sScreenName && iInterval && sMessage && sComment>
+  [ 16] pusharglistnoret 2 ...................... <me, "sendBanUser() " & sScreenName && iInterval && sMessage && sComment>
+  [ 18] objcall 4 ............................... me.debug("sendBanUser() " & sScreenName && iInterval && sMessage && sComment)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 1 ........................... <me>
+  [ 24] objcall 414 ............................. <me.getSession()>
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 429 .......................... <me.sRoomId>
+  [ 32] pusharglist 2 ........................... <me.getSession(), me.sRoomId>
+  [ 34] objcall 537 ............................. <me.getSession().getRoom(me.sRoomId)>
+  [ 37] setlocal 0 .............................. oRoom = me.getSession().getRoom(me.sRoomId)
+  [ 39] getlocal 0 .............................. <oRoom>
+  [ 41] pusharglist 1 ........................... <oRoom>
+  [ 43] extcall 26 .............................. <voidp(oRoom)>
+  [ 45] not ..................................... <not voidp(oRoom)>
+  [ 46] jmpifz [ 64] ............................ if not voidp(oRoom) then
+  [ 49] getlocal 0 .............................. <oRoom>
+  [ 51] getparam 1 .............................. <sScreenName>
+  [ 53] getparam 2 .............................. <iInterval>
+  [ 55] getparam 3 .............................. <sMessage>
+  [ 57] getparam 4 .............................. <sComment>
+  [ 59] pusharglistnoret 5 ...................... <oRoom, sScreenName, iInterval, sMessage, sComment>
+  [ 61] objcall 508 ............................. oRoom.sendBanUser(sScreenName, iInterval, sMessage, sComment)
+  [ 64] ret
+end
+
+on sendWarnUser me, sScreenName, sMessage, sComment
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 9 .............................. <"sendWarnUser() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"sendWarnUser() " & sScreenName>
+  [  7] getparam 2 .............................. <sMessage>
+  [  9] joinpadstr .............................. <"sendWarnUser() " & sScreenName && sMessage>
+  [ 10] getparam 3 .............................. <sComment>
+  [ 12] joinpadstr .............................. <"sendWarnUser() " & sScreenName && sMessage && sComment>
+  [ 13] pusharglistnoret 2 ...................... <me, "sendWarnUser() " & sScreenName && sMessage && sComment>
+  [ 15] objcall 4 ............................... me.debug("sendWarnUser() " & sScreenName && sMessage && sComment)
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglist 1 ........................... <me>
+  [ 21] objcall 414 ............................. <me.getSession()>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 429 .......................... <me.sRoomId>
+  [ 29] pusharglist 2 ........................... <me.getSession(), me.sRoomId>
+  [ 31] objcall 537 ............................. <me.getSession().getRoom(me.sRoomId)>
+  [ 34] setlocal 0 .............................. oRoom = me.getSession().getRoom(me.sRoomId)
+  [ 36] getlocal 0 .............................. <oRoom>
+  [ 38] pusharglist 1 ........................... <oRoom>
+  [ 40] extcall 26 .............................. <voidp(oRoom)>
+  [ 42] not ..................................... <not voidp(oRoom)>
+  [ 43] jmpifz [ 59] ............................ if not voidp(oRoom) then
+  [ 46] getlocal 0 .............................. <oRoom>
+  [ 48] getparam 1 .............................. <sScreenName>
+  [ 50] getparam 2 .............................. <sMessage>
+  [ 52] getparam 3 .............................. <sComment>
+  [ 54] pusharglistnoret 4 ...................... <oRoom, sScreenName, sMessage, sComment>
+  [ 56] objcall 504 ............................. oRoom.sendWarnUser(sScreenName, sMessage, sComment)
+  [ 59] ret
+end
+
+on loggedIn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"loggedIn()">
+  [  4] pusharglistnoret 2 ...................... <me, "loggedIn()">
+  [  6] objcall 4 ............................... me.debug("loggedIn()")
+  [  8] getglobal 282 ........................... <oLogInManager>
+  [ 11] getchainedprop 480 ...................... <oLogInManager.pVerificationSprite>
+  [ 14] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] pusharglist 3 ........................... <oLogInManager.pVerificationSprite, #scriptInstanceList, 1>
+  [ 21] objcall 61 .............................. <oLogInManager.pVerificationSprite.scriptInstanceList[1]>
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setobjprop 468 .......................... oLogInManager.pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getchainedprop 307 ...................... <me.oSession>
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getobjprop 429 .......................... <me.sRoomId>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pusharglistnoret 3 ...................... <me.oSession, me.sRoomId, me>
+  [ 42] objcall 417 ............................. me.oSession.enterRoom(me.sRoomId, me)
+  [ 45] ret
+end
+
+on loggedOut me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 11 ............................. <"loggedOut()">
+  [  4] pusharglistnoret 2 ...................... <me, "loggedOut()">
+  [  6] objcall 4 ............................... me.debug("loggedOut()")
+  [  8] ret
+end
+
+on connectionFailed me, iReasonId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 12 ............................. <"connectionFailed() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"connectionFailed() " & iReasonId>
+  [  7] pusharglistnoret 2 ...................... <me, "connectionFailed() " & iReasonId>
+  [  9] objcall 4 ............................... me.debug("connectionFailed() " & iReasonId)
+  [ 11] ret
+end
+
+on loginFailed me, iReasonId, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 13 ............................. <"loginFailed() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"loginFailed() " & iReasonId>
+  [  7] getparam 2 .............................. <sMessage>
+  [  9] joinpadstr .............................. <"loginFailed() " & iReasonId && sMessage>
+  [ 10] pusharglistnoret 2 ...................... <me, "loginFailed() " & iReasonId && sMessage>
+  [ 12] objcall 4 ............................... me.debug("loginFailed() " & iReasonId && sMessage)
+  [ 14] pushcons 13 ............................. <"loginFailed() ">
+  [ 16] getparam 1 .............................. <iReasonId>
+  [ 18] joinpadstr .............................. <"loginFailed() " && iReasonId>
+  [ 19] getparam 2 .............................. <sMessage>
+  [ 21] joinpadstr .............................. <"loginFailed() " && iReasonId && sMessage>
+  [ 22] pusharglistnoret 1 ...................... <"loginFailed() " && iReasonId && sMessage>
+  [ 24] extcall 171 ............................. alert("loginFailed() " && iReasonId && sMessage)
+  [ 26] ret
+end
+
+on lostConnection me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"lostConnection()">
+  [  4] pusharglistnoret 2 ...................... <me, "lostConnection()">
+  [  6] objcall 4 ............................... me.debug("lostConnection()")
+  [  8] pushcons 14 ............................. <"lostConnection()">
+  [ 10] pusharglistnoret 1 ...................... <"lostConnection()">
+  [ 12] extcall 171 ............................. alert("lostConnection()")
+  [ 14] ret
+end
+
+on exception me, iReasonId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 15 ............................. <"exception() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"exception() " & iReasonId>
+  [  7] pusharglistnoret 2 ...................... <me, "exception() " & iReasonId>
+  [  9] objcall 4 ............................... me.debug("exception() " & iReasonId)
+  [ 11] ret
+end
+
+on notify me, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 16 ............................. <"notify() ">
+  [  4] getparam 1 .............................. <sMessage>
+  [  6] joinstr ................................. <"notify() " & sMessage>
+  [  7] pusharglistnoret 2 ...................... <me, "notify() " & sMessage>
+  [  9] objcall 4 ............................... me.debug("notify() " & sMessage)
+  [ 11] ret
+end
+
+on roomEntered me, sRoomId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 17 ............................. <"roomEntered()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomEntered()">
+  [  6] objcall 4 ............................... me.debug("roomEntered()")
+  [  8] ret
+end
+
+on roomEnterFailed me, sRoomId, iReasonId, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 18 ............................. <"roomEnterFailed()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomEnterFailed()">
+  [  6] objcall 4 ............................... me.debug("roomEnterFailed()")
+  [  8] pushcons 18 ............................. <"roomEnterFailed()">
+  [ 10] getprop 429 ............................. <sRoomId>
+  [ 13] joinpadstr .............................. <"roomEnterFailed()" && sRoomId>
+  [ 14] getparam 2 .............................. <iReasonId>
+  [ 16] joinpadstr .............................. <"roomEnterFailed()" && sRoomId && iReasonId>
+  [ 17] getparam 3 .............................. <sMessage>
+  [ 19] joinpadstr .............................. <"roomEnterFailed()" && sRoomId && iReasonId && sMessage>
+  [ 20] pusharglistnoret 1 ...................... <"roomEnterFailed()" && sRoomId && iReasonId && sMessage>
+  [ 22] extcall 171 ............................. alert("roomEnterFailed()" && sRoomId && iReasonId && sMessage)
+  [ 24] ret
+end
+
+on roomExited me, sRoomId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 19 ............................. <"roomExited()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomExited()">
+  [  6] objcall 4 ............................... me.debug("roomExited()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 307 ...................... <me.oSession>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pusharglistnoret 2 ...................... <me.oSession, me>
+  [ 17] objcall 431 ............................. me.oSession.removeController(me)
+  [ 20] ret
+end
+
+on receiveStartModStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 20 ............................. <"receiveStartModStudio() ">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinstr ................................. <"receiveStartModStudio() " & sModName>
+  [  7] getparam 2 .............................. <sStudioID>
+  [  9] joinpadstr .............................. <"receiveStartModStudio() " & sModName && sStudioID>
+  [ 10] pusharglistnoret 2 ...................... <me, "receiveStartModStudio() " & sModName && sStudioID>
+  [ 12] objcall 4 ............................... me.debug("receiveStartModStudio() " & sModName && sStudioID)
+  [ 14] getglobal 323 ........................... <oStudioByModManager>
+  [ 17] pusharglist 1 ........................... <oStudioByModManager>
+  [ 19] extcall 322 ............................. <objectp(oStudioByModManager)>
+  [ 22] not ..................................... <not objectp(oStudioByModManager)>
+  [ 23] jmpifz [ 42] ............................ if not objectp(oStudioByModManager) then
+  [ 26] pushcons 21 ............................. <"StudioByModManager">
+  [ 28] pusharglist 1 ........................... <"StudioByModManager">
+  [ 30] extcall 315 ............................. <script("StudioByModManager")>
+  [ 33] getparam 1 .............................. <sModName>
+  [ 35] pusharglist 2 ........................... <script("StudioByModManager"), sModName>
+  [ 37] extcall 236 ............................. <new(script("StudioByModManager"), sModName)>
+  [ 39] setglobal 323 ........................... oStudioByModManager = new(script("StudioByModManager"), sModName)
+  [ 42] getglobal 323 ........................... <oStudioByModManager>
+  [ 45] getparam 1 .............................. <sModName>
+  [ 47] getparam 2 .............................. <sStudioID>
+  [ 49] pusharglistnoret 3 ...................... <oStudioByModManager, sModName, sStudioID>
+  [ 51] objcall 367 ............................. oStudioByModManager.addStudio(sModName, sStudioID)
+  [ 54] getglobal 253 ........................... <ElementMgr>
+  [ 56] getparam 1 .............................. <sModName>
+  [ 58] getparam 2 .............................. <sStudioID>
+  [ 60] pusharglistnoret 3 ...................... <ElementMgr, sModName, sStudioID>
+  [ 62] objcall 240 ............................. ElementMgr.startModStudio(sModName, sStudioID)
+  [ 64] ret
+end
+
+on receiveStopModStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 22 ............................. <"receiveStopModStudio() ">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinstr ................................. <"receiveStopModStudio() " & sModName>
+  [  7] getparam 2 .............................. <sStudioID>
+  [  9] joinpadstr .............................. <"receiveStopModStudio() " & sModName && sStudioID>
+  [ 10] pusharglistnoret 2 ...................... <me, "receiveStopModStudio() " & sModName && sStudioID>
+  [ 12] objcall 4 ............................... me.debug("receiveStopModStudio() " & sModName && sStudioID)
+  [ 14] getglobal 323 ........................... <oStudioByModManager>
+  [ 17] pusharglist 1 ........................... <oStudioByModManager>
+  [ 19] extcall 322 ............................. <objectp(oStudioByModManager)>
+  [ 22] not ..................................... <not objectp(oStudioByModManager)>
+  [ 23] jmpifz [ 42] ............................ if not objectp(oStudioByModManager) then
+  [ 26] pushcons 21 ............................. <"StudioByModManager">
+  [ 28] pusharglist 1 ........................... <"StudioByModManager">
+  [ 30] extcall 315 ............................. <script("StudioByModManager")>
+  [ 33] getparam 1 .............................. <sModName>
+  [ 35] pusharglist 2 ........................... <script("StudioByModManager"), sModName>
+  [ 37] extcall 236 ............................. <new(script("StudioByModManager"), sModName)>
+  [ 39] setglobal 323 ........................... oStudioByModManager = new(script("StudioByModManager"), sModName)
+  [ 42] getglobal 323 ........................... <oStudioByModManager>
+  [ 45] getparam 1 .............................. <sModName>
+  [ 47] getparam 2 .............................. <sStudioID>
+  [ 49] pusharglistnoret 3 ...................... <oStudioByModManager, sModName, sStudioID>
+  [ 51] objcall 326 ............................. oStudioByModManager.deleteStudio(sModName, sStudioID)
+  [ 54] getglobal 253 ........................... <ElementMgr>
+  [ 56] getparam 1 .............................. <sModName>
+  [ 58] getparam 2 .............................. <sStudioID>
+  [ 60] pusharglistnoret 3 ...................... <ElementMgr, sModName, sStudioID>
+  [ 62] objcall 241 ............................. ElementMgr.stopModStudio(sModName, sStudioID)
+  [ 64] ret
+end

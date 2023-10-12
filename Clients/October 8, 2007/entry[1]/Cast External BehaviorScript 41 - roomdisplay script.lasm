@@ -1,0 +1,101 @@
+property pTarget, pMouseDown
+
+on new me, target
+  [  0] getparam 1 .............................. <target>
+  [  2] setprop 570 ............................. pTarget = target
+  [  5] pushzero ................................ <0>
+  [  6] setprop 586 ............................. pMouseDown = 0
+  [  9] getparam 0 .............................. <me>
+  [ 11] pusharglistnoret 1 ...................... <me>
+  [ 13] extcall 78 .............................. return me
+  [ 15] ret
+end
+
+on mouseDown me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 429 .......................... <me.spriteNum>
+  [  5] pusharglist 1 ........................... <me.spriteNum>
+  [  7] extcall 395 ............................. <rollover(me.spriteNum)>
+  [ 10] jmpifz [ 18] ............................ if rollover(me.spriteNum) then
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setprop 586 ............................. pMouseDown = 1
+  [ 18] pusharglistnoret 0 ...................... <>
+  [ 20] extcall 430 ............................. stopEvent()
+  [ 23] ret
+end
+
+on mouseUp me
+  [  0] getprop 586 ............................. <pMouseDown>
+  [  3] jmpifz [138] ............................ if pMouseDown then
+  [  6] pushzero ................................ <0>
+  [  7] setprop 586 ............................. pMouseDown = 0
+  [ 10] getmovieprop 455 ........................ <the mouseLoc>
+  [ 13] setlocal 0 .............................. iMouseLoc = the mouseLoc
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 429 .......................... <me.spriteNum>
+  [ 20] pusharglist 1 ........................... <me.spriteNum>
+  [ 22] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 24] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [ 27] setlocal 1 .............................. iMySpriteTop = sprite(me.spriteNum).top
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 429 .......................... <me.spriteNum>
+  [ 34] pusharglist 1 ........................... <me.spriteNum>
+  [ 36] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 38] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [ 41] setlocal 2 .............................. iMySpriteHeight = sprite(me.spriteNum).height
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getobjprop 429 .......................... <me.spriteNum>
+  [ 48] pusharglist 1 ........................... <me.spriteNum>
+  [ 50] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 52] getobjprop 504 .......................... <sprite(me.spriteNum).right>
+  [ 55] setlocal 3 .............................. iMySpriteRight = sprite(me.spriteNum).right
+  [ 57] getprop 570 ............................. <pTarget>
+  [ 60] getobjprop 473 .......................... <pTarget.pDisplayLines>
+  [ 63] setlocal 4 .............................. iDisplayLines = pTarget.pDisplayLines
+  [ 65] getprop 570 ............................. <pTarget>
+  [ 68] getobjprop 110 .......................... <pTarget.pScrollIndex>
+  [ 70] setlocal 5 .............................. iScrollIndex = pTarget.pScrollIndex
+  [ 72] getlocal 0 .............................. <iMouseLoc>
+  [ 74] pushint8 2 .............................. <2>
+  [ 76] pusharglist 2 ........................... <iMouseLoc, 2>
+  [ 78] objcall 95 .............................. <iMouseLoc[2]>
+  [ 80] getlocal 1 .............................. <iMySpriteTop>
+  [ 82] sub ..................................... <iMouseLoc[2] - iMySpriteTop>
+  [ 83] getlocal 2 .............................. <iMySpriteHeight>
+  [ 85] getlocal 4 .............................. <iDisplayLines>
+  [ 87] div ..................................... <iMySpriteHeight / iDisplayLines>
+  [ 88] div ..................................... <(iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)>
+  [ 89] getlocal 5 .............................. <iScrollIndex>
+  [ 91] add ..................................... <((iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)) + iScrollIndex>
+  [ 92] setlocal 6 .............................. MyNum = ((iMouseLoc[2] - iMySpriteTop) / (iMySpriteHeight / iDisplayLines)) + iScrollIndex
+  [ 94] getlocal 0 .............................. <iMouseLoc>
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] pusharglist 2 ........................... <iMouseLoc, 1>
+  [100] objcall 95 .............................. <iMouseLoc[1]>
+  [102] getlocal 3 .............................. <iMySpriteRight>
+  [104] pushint8 20 ............................. <20>
+  [106] sub ..................................... <iMySpriteRight - 20>
+  [107] gteq .................................... <iMouseLoc[1] >= (iMySpriteRight - 20)>
+  [108] jmpifz [118] ............................ if iMouseLoc[1] >= (iMySpriteRight - 20) then / else
+  [111] pushint8 1 .............................. <1>
+  [113] setlocal 7 .............................. bGoStudio = 1
+  [115] jmp [121]
+  [118] pushzero ................................ <0>
+  [119] setlocal 7 .............................. bGoStudio = 0
+  [121] getprop 570 ............................. <pTarget>
+  [124] getlocal 6 .............................. <MyNum>
+  [126] getlocal 7 .............................. <bGoStudio>
+  [128] pusharglistnoret 3 ...................... <pTarget, MyNum, bGoStudio>
+  [130] objcall 466 ............................. pTarget.roomclicked(MyNum, bGoStudio)
+  [133] pusharglistnoret 0 ...................... <>
+  [135] extcall 430 ............................. stopEvent()
+  [138] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 586 ............................. pMouseDown = 0
+  [  4] pusharglistnoret 0 ...................... <>
+  [  6] extcall 430 ............................. stopEvent()
+  [  9] ret
+end

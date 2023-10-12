@@ -1,0 +1,160 @@
+property aSessions, bDebug
+global oModSessionManager
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 28 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglist 0 ........................... <[]>
+  [ 10] pushlist ................................ <[]>
+  [ 11] setobjprop 1181 ......................... me.aSessions = []
+  [ 14] getparam 0 .............................. <me>
+  [ 16] setglobal 1182 .......................... oModSessionManager = me
+  [ 19] ret
+end
+
+on getSession me, sServer, iPort
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1181 ......................... <me.aSessions>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 42
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 83] ............................ repeat with oSession in me.aSessions
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 43
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <oSession>
+  [ 33] pusharglist 1 ........................... <oSession>
+  [ 35] objcall 182 ............................. <oSession.getServer()>
+  [ 37] getparam 1 .............................. <sServer>
+  [ 39] eq ...................................... <oSession.getServer() = sServer>
+  [ 40] getlocal 0 .............................. <oSession>
+  [ 42] pusharglist 1 ........................... <oSession>
+  [ 44] objcall 183 ............................. <oSession.getPort()>
+  [ 46] getparam 2 .............................. <iPort>
+  [ 48] eq ...................................... <oSession.getPort() = iPort>
+  [ 49] and ..................................... <(oSession.getServer() = sServer) and (oSession.getPort() = iPort)>
+  [ 50] jmpifz [ 78] ............................ if (oSession.getServer() = sServer) and (oSession.getPort() = iPort) then
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getobjprop 28 ........................... <me.bDebug>
+  [ 57] jmpifz [ 72] ............................ if me.bDebug then
+  [ 60] pushcons 0 .............................. <"ModSessionManager.getSession() returning existing session: ">
+  [ 62] getparam 1 .............................. <sServer>
+  [ 64] joinstr ................................. <"ModSessionManager.getSession() returning existing session: " & sServer>
+  [ 65] getparam 2 .............................. <iPort>
+  [ 67] joinpadstr .............................. <"ModSessionManager.getSession() returning existing session: " & sServer && iPort>
+  [ 68] pusharglistnoret 1 ...................... <"ModSessionManager.getSession() returning existing session: " & sServer && iPort>
+  [ 70] extcall 33 .............................. put "ModSessionManager.getSession() returning existing session: " & sServer && iPort
+  [ 72] getlocal 0 .............................. <oSession>
+  [ 74] pusharglistnoret 1 ...................... <oSession>
+  [ 76] extcall 71 .............................. return oSession
+  [ 78] pushint8 1
+  [ 80] add
+  [ 81] endrepeat [ 13]
+  [ 83] pop 3
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getobjprop 28 ........................... <me.bDebug>
+  [ 89] jmpifz [104] ............................ if me.bDebug then
+  [ 92] pushcons 1 .............................. <"ModSessionManager.getSession() creating new session: ">
+  [ 94] getparam 1 .............................. <sServer>
+  [ 96] joinstr ................................. <"ModSessionManager.getSession() creating new session: " & sServer>
+  [ 97] getparam 2 .............................. <iPort>
+  [ 99] joinpadstr .............................. <"ModSessionManager.getSession() creating new session: " & sServer && iPort>
+  [100] pusharglistnoret 1 ...................... <"ModSessionManager.getSession() creating new session: " & sServer && iPort>
+  [102] extcall 33 .............................. put "ModSessionManager.getSession() creating new session: " & sServer && iPort
+  [104] pushcons 2 .............................. <"ModSession">
+  [106] pusharglist 1 ........................... <"ModSession">
+  [108] extcall 148 ............................. <script("ModSession")>
+  [110] getparam 0 .............................. <me>
+  [112] getobjprop 3 ............................ <me.spriteNum>
+  [114] pusharglist 2 ........................... <script("ModSession"), me.spriteNum>
+  [116] objcall 149 ............................. <script("ModSession").new(me.spriteNum)>
+  [118] setlocal 0 .............................. oSession = script("ModSession").new(me.spriteNum)
+  [120] getlocal 0 .............................. <oSession>
+  [122] getparam 1 .............................. <sServer>
+  [124] pusharglistnoret 2 ...................... <oSession, sServer>
+  [126] objcall 677 ............................. oSession.setServer(sServer)
+  [129] getlocal 0 .............................. <oSession>
+  [131] getparam 2 .............................. <iPort>
+  [133] pusharglistnoret 2 ...................... <oSession, iPort>
+  [135] objcall 678 ............................. oSession.setPort(iPort)
+  [138] getparam 0 .............................. <me>
+  [140] getchainedprop 1181 ..................... <me.aSessions>
+  [143] getlocal 0 .............................. <oSession>
+  [145] pusharglistnoret 2 ...................... <me.aSessions, oSession>
+  [147] objcall 55 .............................. me.aSessions.add(oSession)
+  [149] getlocal 0 .............................. <oSession>
+  [151] pusharglistnoret 1 ...................... <oSession>
+  [153] extcall 71 .............................. return oSession
+  [155] ret
+end
+
+on printAllSessions me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1181 ......................... <me.aSessions>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 42
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 79] ............................ repeat with oSession in me.aSessions
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 43
+  [ 29] setlocal 0
+  [ 31] pushcons 3 .............................. <"[SEssion] ">
+  [ 33] getlocal 0 .............................. <oSession>
+  [ 35] pusharglist 1 ........................... <oSession>
+  [ 37] objcall 182 ............................. <oSession.getServer()>
+  [ 39] joinstr ................................. <"[SEssion] " & oSession.getServer()>
+  [ 40] getlocal 0 .............................. <oSession>
+  [ 42] pusharglist 1 ........................... <oSession>
+  [ 44] objcall 183 ............................. <oSession.getPort()>
+  [ 46] joinpadstr .............................. <"[SEssion] " & oSession.getServer() && oSession.getPort()>
+  [ 47] pusharglistnoret 1 ...................... <"[SEssion] " & oSession.getServer() && oSession.getPort()>
+  [ 49] extcall 33 .............................. put "[SEssion] " & oSession.getServer() && oSession.getPort()
+  [ 51] pushcons 4 .............................. <RETURN>
+  [ 53] pusharglistnoret 1 ...................... <RETURN>
+  [ 55] extcall 33 .............................. put RETURN
+  [ 57] getlocal 0 .............................. <oSession>
+  [ 59] pusharglist 1 ........................... <oSession>
+  [ 61] objcall 699 ............................. <oSession.getRooms()>
+  [ 64] pusharglistnoret 1 ...................... <oSession.getRooms()>
+  [ 66] extcall 33 .............................. put oSession.getRooms()
+  [ 68] pushcons 4 .............................. <RETURN>
+  [ 70] pusharglistnoret 1 ...................... <RETURN>
+  [ 72] extcall 33 .............................. put RETURN
+  [ 74] pushint8 1
+  [ 76] add
+  [ 77] endrepeat [ 13]
+  [ 79] pop 3
+  [ 81] ret
+end
+
+on getSessionByIp me
+  [  0] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 28 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 5 .............................. <"ModSessionManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"ModSessionManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"ModSessionManager: " & sMessage>
+  [ 17] extcall 33 .............................. put "ModSessionManager: " & sMessage
+  [ 19] ret
+end

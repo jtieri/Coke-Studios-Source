@@ -1,0 +1,132 @@
+property bDebug
+global oDisplay, oComputer
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 1 ............................. init(me)
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 0 ............................... me.debug("new()")
+  [ 14] getparam 0 .............................. <me>
+  [ 16] setglobal 83 ............................ oDisplay = me
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] extcall 63 .............................. return me
+  [ 24] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 48 ........................... me.bDebug = 0
+  [  5] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 48 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 1 .............................. <"oDisplay:">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinpadstr .............................. <"oDisplay:" && sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oDisplay:" && sMessage>
+  [ 17] extcall 49 .............................. put "oDisplay:" && sMessage
+  [ 19] ret
+end
+
+on sendDisplay me, sDisplayType, sDisplay
+  [  0] getparam 2 .............................. <sDisplay>
+  [  2] pusharglist 1 ........................... <sDisplay>
+  [  4] extcall 121 ............................. <string(sDisplay)>
+  [  6] setparam 2 .............................. sDisplay = string(sDisplay)
+  [  8] pushcons 2 .............................. <"display">
+  [ 10] getparam 1 .............................. <sDisplayType>
+  [ 12] joinstr ................................. <"display" & sDisplayType>
+  [ 13] setlocal 0 .............................. sMemberName = "display" & sDisplayType
+  [ 15] getparam 1 .............................. <sDisplayType>
+  [ 17] peek 0 .................................. case sDisplayType of
+  [ 19] pushcons 3 .............................. <"Computer">
+  [ 21] eq
+  [ 22] jmpifz [ 38] ............................ (case) "Computer":
+  [ 25] pushcons 4 .............................. <"Time">
+  [ 27] pushcons 5 .............................. <RETURN>
+  [ 29] joinstr ................................. <"Time" & RETURN>
+  [ 30] getparam 2 .............................. <sDisplay>
+  [ 32] joinstr ................................. <"Time" & RETURN & sDisplay>
+  [ 33] setparam 2 .............................. sDisplay = "Time" & RETURN & sDisplay
+  [ 35] jmp [159]
+  [ 38] peek 0
+  [ 40] pushcons 6 .............................. <"Lives">
+  [ 42] eq
+  [ 43] jmpifz [ 59] ............................ (case) "Lives":
+  [ 46] pushcons 7 .............................. <"Turns Left">
+  [ 48] pushcons 5 .............................. <RETURN>
+  [ 50] joinstr ................................. <"Turns Left" & RETURN>
+  [ 51] getparam 2 .............................. <sDisplay>
+  [ 53] joinstr ................................. <"Turns Left" & RETURN & sDisplay>
+  [ 54] setparam 2 .............................. sDisplay = "Turns Left" & RETURN & sDisplay
+  [ 56] jmp [159]
+  [ 59] peek 0
+  [ 61] pushcons 8 .............................. <"Score">
+  [ 63] eq
+  [ 64] jmpifz [ 80] ............................ (case) "Score":
+  [ 67] pushcons 8 .............................. <"Score">
+  [ 69] pushcons 5 .............................. <RETURN>
+  [ 71] joinstr ................................. <"Score" & RETURN>
+  [ 72] getparam 2 .............................. <sDisplay>
+  [ 74] joinstr ................................. <"Score" & RETURN & sDisplay>
+  [ 75] setparam 2 .............................. sDisplay = "Score" & RETURN & sDisplay
+  [ 77] jmp [159]
+  [ 80] peek 0
+  [ 82] pushcons 9 .............................. <"Tool">
+  [ 84] eq
+  [ 85] jmpifz [101] ............................ (case) "Tool":
+  [ 88] pushcons 10 ............................. <"Tool in Hand">
+  [ 90] pushcons 5 .............................. <RETURN>
+  [ 92] joinstr ................................. <"Tool in Hand" & RETURN>
+  [ 93] getparam 2 .............................. <sDisplay>
+  [ 95] joinstr ................................. <"Tool in Hand" & RETURN & sDisplay>
+  [ 96] setparam 2 .............................. sDisplay = "Tool in Hand" & RETURN & sDisplay
+  [ 98] jmp [159]
+  [101] peek 0
+  [103] pushcons 11 ............................. <"TotalTools">
+  [105] eq
+  [106] jmpifz [122] ............................ (case) "TotalTools":
+  [109] pushcons 12 ............................. <"Tools Left">
+  [111] pushcons 5 .............................. <RETURN>
+  [113] joinstr ................................. <"Tools Left" & RETURN>
+  [114] getparam 2 .............................. <sDisplay>
+  [116] joinstr ................................. <"Tools Left" & RETURN & sDisplay>
+  [117] setparam 2 .............................. sDisplay = "Tools Left" & RETURN & sDisplay
+  [119] jmp [159]
+  [122] peek 0
+  [124] pushcons 13 ............................. <"Alert">
+  [126] eq
+  [127] jmpifz [141] ............................ (case) "Alert":
+  [130] getparam 2 .............................. <sDisplay>
+  [132] pusharglistnoret 1 ...................... <sDisplay>
+  [134] extcall 710 ............................. alert(sDisplay)
+  [137] ret ..................................... exit
+  [138] jmp [159]
+  [141] peek 0
+  [143] pushcons 14 ............................. <"Tool_Target">
+  [145] eq
+  [146] jmpifz [159] ............................ (case) "Tool_Target":
+  [149] pushcons 15 ............................. <"Tool Needed">
+  [151] pushcons 5 .............................. <RETURN>
+  [153] joinstr ................................. <"Tool Needed" & RETURN>
+  [154] getparam 2 .............................. <sDisplay>
+  [156] joinstr ................................. <"Tool Needed" & RETURN & sDisplay>
+  [157] setparam 2 .............................. sDisplay = "Tool Needed" & RETURN & sDisplay
+  [159] pop 1 ................................... end case
+  [161] getlocal 0 .............................. <sMemberName>
+  [163] pusharglist 1 ........................... <sMemberName>
+  [165] extcall 142 ............................. <member(sMemberName)>
+  [167] getparam 2 .............................. <sDisplay>
+  [169] setobjprop 430 .......................... member(sMemberName).text = sDisplay
+  [172] ret
+end

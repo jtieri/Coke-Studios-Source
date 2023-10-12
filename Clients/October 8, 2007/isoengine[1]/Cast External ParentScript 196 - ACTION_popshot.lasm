@@ -1,0 +1,242 @@
+property ancestor, myAttributes, iFlashSprite
+global oDenizenManager, ElementMgr, gFeatureSet, oPossessionStudio
+
+on new me, _oItem, iState, _aAttributes
+  [  0] pushcons 0 .............................. <"action_popshot received new()">
+  [  2] pusharglistnoret 1 ...................... <"action_popshot received new()">
+  [  4] extcall 274 ............................. put "action_popshot received new()"
+  [  7] getparam 0 .............................. <me>
+  [  9] pushcons 1 .............................. <"ACTION_DEFAULT">
+  [ 11] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [ 13] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [ 15] getparam 1 .............................. <_oItem>
+  [ 17] getparam 3 .............................. <_aAttributes>
+  [ 19] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, _aAttributes>
+  [ 21] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, _aAttributes)>
+  [ 23] setobjprop 779 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, _aAttributes)
+  [ 26] getparam 3 .............................. <_aAttributes>
+  [ 28] setprop 1750 ............................ myAttributes = _aAttributes
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getparam 3 .............................. <_aAttributes>
+  [ 35] pusharglistnoret 2 ...................... <me, _aAttributes>
+  [ 37] objcall 1182 ............................ me.setAttributes(_aAttributes)
+  [ 40] getmovieprop 134 ........................ <the actorList>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 46] extcall 418 ............................. append(the actorList, me)
+  [ 49] getparam 0 .............................. <me>
+  [ 51] pusharglistnoret 1 ...................... <me>
+  [ 53] extcall 93 .............................. return me
+  [ 55] ret
+end
+
+on setAttributes me, oAttributes
+  [  0] ret
+end
+
+on stepFrame me
+  [  0] getprop 1760 ............................ <iFlashSprite>
+  [  3] pusharglist 1 ........................... <iFlashSprite>
+  [  5] extcall 106 ............................. <voidp(iFlashSprite)>
+  [  7] jmpifz [100] ............................ if voidp(iFlashSprite) then / else
+  [ 10] pushcons 2 .............................. <"iFlashSprite is void">
+  [ 12] pusharglistnoret 1 ...................... <"iFlashSprite is void">
+  [ 14] extcall 274 ............................. put "iFlashSprite is void"
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getchainedprop 225 ...................... <me.oItem>
+  [ 21] pusharglist 1 ........................... <me.oItem>
+  [ 23] objcall 728 ............................. <me.oItem.getSprites()>
+  [ 26] peek 0
+  [ 28] pusharglist 1
+  [ 30] extcall 150
+  [ 32] pushint8 1
+  [ 34] peek 0
+  [ 36] peek 2
+  [ 38] lteq
+  [ 39] jmpifz [ 95] ............................ repeat with sP in me.oItem.getSprites()
+  [ 42] peek 2
+  [ 44] peek 1
+  [ 46] pusharglist 2
+  [ 48] extcall 151
+  [ 50] setlocal 0
+  [ 52] getlocal 0 .............................. <sP>
+  [ 54] pusharglist 1 ........................... <sP>
+  [ 56] extcall 481 ............................. <sprite(sP)>
+  [ 59] getchainedprop 163 ...................... <sprite(sP).member>
+  [ 61] getobjprop 1086 ......................... <sprite(sP).member.type>
+  [ 64] pushsymb 1195 ........................... <#flash>
+  [ 67] eq ...................................... <sprite(sP).member.type = #flash>
+  [ 68] jmpifz [ 90] ............................ if sprite(sP).member.type = #flash then
+  [ 71] getlocal 0 .............................. <sP>
+  [ 73] setprop 1760 ............................ iFlashSprite = sP
+  [ 76] pushcons 3 .............................. <"iFlashSprite =">
+  [ 78] getprop 1760 ............................ <iFlashSprite>
+  [ 81] joinpadstr .............................. <"iFlashSprite =" && iFlashSprite>
+  [ 82] pusharglistnoret 1 ...................... <"iFlashSprite =" && iFlashSprite>
+  [ 84] extcall 274 ............................. put "iFlashSprite =" && iFlashSprite
+  [ 87] jmp [ 95] ............................... exit repeat
+  [ 90] pushint8 1
+  [ 92] add
+  [ 93] endrepeat [ 34]
+  [ 95] pop 3
+  [ 97] jmp [166]
+  [100] getparam 0 .............................. <me>
+  [102] getchainedprop 225 ...................... <me.oItem>
+  [104] pushsymb 289 ............................ <#aAttributes>
+  [107] pushsymb 1752 ........................... <#logoID>
+  [110] pusharglist 3 ........................... <me.oItem, #aAttributes, #logoID>
+  [112] objcall 611 ............................. <me.oItem.aAttributes[#logoID]>
+  [115] pusharglist 1 ........................... <me.oItem.aAttributes[#logoID]>
+  [117] extcall 108 ............................. <integer(me.oItem.aAttributes[#logoID])>
+  [119] setlocal 1 .............................. mylogo = integer(me.oItem.aAttributes[#logoID])
+  [121] getprop 1760 ............................ <iFlashSprite>
+  [124] pusharglist 1 ........................... <iFlashSprite>
+  [126] extcall 481 ............................. <sprite(iFlashSprite)>
+  [129] getobjprop 1267 ......................... <sprite(iFlashSprite).frame>
+  [132] getlocal 1 .............................. <mylogo>
+  [134] nteq .................................... <sprite(iFlashSprite).frame <> mylogo>
+  [135] jmpifz [166] ............................ if sprite(iFlashSprite).frame <> mylogo then
+  [138] getprop 1760 ............................ <iFlashSprite>
+  [141] pusharglist 1 ........................... <iFlashSprite>
+  [143] extcall 481 ............................. <sprite(iFlashSprite)>
+  [146] getlocal 1 .............................. <mylogo>
+  [148] pusharglistnoret 2 ...................... <sprite(iFlashSprite), mylogo>
+  [150] objcall 1753 ............................ sprite(iFlashSprite).goToFrame(mylogo)
+  [153] getprop 1760 ............................ <iFlashSprite>
+  [156] pusharglist 1 ........................... <iFlashSprite>
+  [158] extcall 481 ............................. <sprite(iFlashSprite)>
+  [161] pusharglistnoret 1 ...................... <sprite(iFlashSprite)>
+  [163] objcall 1755 ............................ sprite(iFlashSprite).stop()
+  [166] ret
+end
+
+on mouseDownEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 779 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 10 .............................. me.ancestor.mouseDownEvent()
+  [  9] pusharglist 0 ........................... <>
+  [ 11] thebuiltin 977 .......................... <the doubleClick>
+  [ 14] jmpifz [ 24] ............................ if the doubleClick then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 1 ...................... <me>
+  [ 21] objcall 1441 ............................ me.toggleState()
+  [ 24] ret
+end
+
+on displayState me
+  [  0] pushcons 4 .............................. <"v-ball displaystate">
+  [  2] pusharglistnoret 1 ...................... <"v-ball displaystate">
+  [  4] extcall 274 ............................. put "v-ball displaystate"
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 225 ...................... <me.oItem>
+  [ 11] pusharglist 1 ........................... <me.oItem>
+  [ 13] objcall 1180 ............................ <me.oItem.getState()>
+  [ 16] peek 0 .................................. case me.oItem.getState() of
+  [ 18] pushzero ................................ <0>
+  [ 19] eq
+  [ 20] jmpifz [ 36] ............................ (case) 0:
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getchainedprop 225 ...................... <me.oItem>
+  [ 27] pushzero ................................ <0>
+  [ 28] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 30] objcall 1248 ............................ me.oItem.setAnimate(0)
+  [ 33] jmp [ 55]
+  [ 36] peek 0
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] eq
+  [ 41] jmpifz [ 55] ............................ (case) 1:
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getchainedprop 225 ...................... <me.oItem>
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 52] objcall 1248 ............................ me.oItem.setAnimate(1)
+  [ 55] pop 1 ................................... end case
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getchainedprop 225 ...................... <me.oItem>
+  [ 61] pushzero ................................ <0>
+  [ 62] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 64] objcall 1246 ............................ me.oItem.setFrame(0)
+  [ 67] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 1442 ............................ <me.getItem()>
+  [  7] pusharglist 1 ........................... <me.getItem()>
+  [  9] objcall 1230 ............................ <me.getItem().duplicate()>
+  [ 12] setlocal 0 .............................. oTmpItem = me.getItem().duplicate()
+  [ 14] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [ 17] jmpifz [ 27] ............................ if the debugPlaybackEnabled then
+  [ 20] pushcons 5 .............................. <"Furniture item object duplication">
+  [ 22] pusharglistnoret 1 ...................... <"Furniture item object duplication">
+  [ 24] extcall 274 ............................. put "Furniture item object duplication"
+  [ 27] getlocal 0 .............................. <oTmpItem>
+  [ 29] pusharglist 1 ........................... <oTmpItem>
+  [ 31] extcall 1502 ............................ <objectp(oTmpItem)>
+  [ 34] jmpifz [174] ............................ if objectp(oTmpItem) then / else
+  [ 37] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [ 40] jmpifz [ 50] ............................ if the debugPlaybackEnabled then
+  [ 43] pushcons 6 .............................. <"oTmpItem is an object">
+  [ 45] pusharglistnoret 1 ...................... <"oTmpItem is an object">
+  [ 47] extcall 274 ............................. put "oTmpItem is an object"
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pusharglist 1 ........................... <me>
+  [ 54] objcall 1442 ............................ <me.getItem()>
+  [ 57] pusharglist 1 ........................... <me.getItem()>
+  [ 59] objcall 1180 ............................ <me.getItem().getState()>
+  [ 62] peek 0 .................................. case me.getItem().getState() of
+  [ 64] pushzero ................................ <0>
+  [ 65] eq
+  [ 66] jmpifz [ 92] ............................ (case) 0:
+  [ 69] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [ 72] jmpifz [ 82] ............................ if the debugPlaybackEnabled then
+  [ 75] pushcons 7 .............................. <"Changing state from 0 to 1">
+  [ 77] pusharglistnoret 1 ...................... <"Changing state from 0 to 1">
+  [ 79] extcall 274 ............................. put "Changing state from 0 to 1"
+  [ 82] getlocal 0 .............................. <oTmpItem>
+  [ 84] pushint8 1 .............................. <1>
+  [ 86] setobjprop 278 .......................... oTmpItem.iState = 1
+  [ 89] jmp [119]
+  [ 92] peek 0
+  [ 94] pushint8 1 .............................. <1>
+  [ 96] eq
+  [ 97] jmpifz [119] ............................ (case) 1:
+  [100] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [103] jmpifz [113] ............................ if the debugPlaybackEnabled then
+  [106] pushcons 8 .............................. <"Changing state from 1 to 0">
+  [108] pusharglistnoret 1 ...................... <"Changing state from 1 to 0">
+  [110] extcall 274 ............................. put "Changing state from 1 to 0"
+  [113] getlocal 0 .............................. <oTmpItem>
+  [115] pushzero ................................ <0>
+  [116] setobjprop 278 .......................... oTmpItem.iState = 0
+  [119] pop 1 ................................... end case
+  [121] getglobal 296 ........................... <oPossessionStudio>
+  [124] pusharglist 1 ........................... <oPossessionStudio>
+  [126] extcall 106 ............................. <voidp(oPossessionStudio)>
+  [128] not ..................................... <not voidp(oPossessionStudio)>
+  [129] jmpifz [158] ............................ if not voidp(oPossessionStudio) then / else
+  [132] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [135] jmpifz [145] ............................ if the debugPlaybackEnabled then
+  [138] pushcons 9 .............................. <"Calling oPossessionStudio.sendUpdatePossession(oTmpItem)">
+  [140] pusharglistnoret 1 ...................... <"Calling oPossessionStudio.sendUpdatePossession(oTmpItem)">
+  [142] extcall 274 ............................. put "Calling oPossessionStudio.sendUpdatePossession(oTmpItem)"
+  [145] getglobal 296 ........................... <oPossessionStudio>
+  [148] getlocal 0 .............................. <oTmpItem>
+  [150] pusharglistnoret 2 ...................... <oPossessionStudio, oTmpItem>
+  [152] objcall 297 ............................. oPossessionStudio.sendUpdatePossession(oTmpItem)
+  [155] jmp [171]
+  [158] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [161] jmpifz [171] ............................ if the debugPlaybackEnabled then
+  [164] pushcons 10 ............................. <"oPossessionStudio is void">
+  [166] pusharglistnoret 1 ...................... <"oPossessionStudio is void">
+  [168] extcall 274 ............................. put "oPossessionStudio is void"
+  [171] jmp [187]
+  [174] getmovieprop 1501 ....................... <the debugPlaybackEnabled>
+  [177] jmpifz [187] ............................ if the debugPlaybackEnabled then
+  [180] pushcons 11 ............................. <"Error">
+  [182] pusharglistnoret 1 ...................... <"Error">
+  [184] extcall 274 ............................. put "Error"
+  [187] ret
+end

@@ -1,0 +1,127 @@
+property pAvatarMissionEditSprite, pVerificationSprite, aAvatarData, bDebug
+global oEditAvatarManager, oUserDisplayManager, oDenizenManager
+
+on new me, sScreenName, iGender, sMission, sAvatarString
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setprop 511 ............................. aAvatarData = [:]
+  [  6] getprop 511 ............................. <aAvatarData>
+  [  9] pushsymb 262 ............................ <#denizenName>
+  [ 12] getparam 1 .............................. <sScreenName>
+  [ 14] pusharglistnoret 3 ...................... <aAvatarData, #denizenName, sScreenName>
+  [ 16] objcall 68 .............................. aAvatarData[#denizenName] = sScreenName
+  [ 18] getprop 511 ............................. <aAvatarData>
+  [ 21] pushsymb 269 ............................ <#gender>
+  [ 24] getparam 2 .............................. <iGender>
+  [ 26] pusharglistnoret 3 ...................... <aAvatarData, #gender, iGender>
+  [ 28] objcall 68 .............................. aAvatarData[#gender] = iGender
+  [ 30] getprop 511 ............................. <aAvatarData>
+  [ 33] pushsymb 265 ............................ <#mission>
+  [ 36] getparam 3 .............................. <sMission>
+  [ 38] pusharglistnoret 3 ...................... <aAvatarData, #mission, sMission>
+  [ 40] objcall 68 .............................. aAvatarData[#mission] = sMission
+  [ 42] getprop 511 ............................. <aAvatarData>
+  [ 45] pushsymb 266 ............................ <#avatarString>
+  [ 48] getparam 4 .............................. <sAvatarString>
+  [ 50] pusharglistnoret 3 ...................... <aAvatarData, #avatarString, sAvatarString>
+  [ 52] objcall 68 .............................. aAvatarData[#avatarString] = sAvatarString
+  [ 54] getparam 0 .............................. <me>
+  [ 56] pushzero ................................ <0>
+  [ 57] setobjprop 10 ........................... me.bDebug = 0
+  [ 59] getparam 0 .............................. <me>
+  [ 61] pusharglistnoret 1 ...................... <me>
+  [ 63] extcall 31 .............................. return me
+  [ 65] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oEditAvatarManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oEditAvatarManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oEditAvatarManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oEditAvatarManager: " & sMessage
+  [ 19] ret
+end
+
+on editAvatarDetail me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"editAvatarDetail:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"editAvatarDetail:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "editAvatarDetail:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("editAvatarDetail:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 21] getprop 512 ............................. <pAvatarMissionEditSprite>
+  [ 24] getchainedprop 14 ....................... <pAvatarMissionEditSprite.member>
+  [ 26] getobjprop 15 ........................... <pAvatarMissionEditSprite.member.text>
+  [ 28] setobjprop 265 .......................... me.aAvatarData.mission = pAvatarMissionEditSprite.member.text
+  [ 31] getglobal 69 ............................ <oDenizenManager>
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 38] getobjprop 262 .......................... <me.aAvatarData.denizenName>
+  [ 41] getparam 0 .............................. <me>
+  [ 43] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 46] getobjprop 269 .......................... <me.aAvatarData.gender>
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 54] getobjprop 265 .......................... <me.aAvatarData.mission>
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 62] getobjprop 266 .......................... <me.aAvatarData.avatarString>
+  [ 65] pusharglistnoret 5 ...................... <oDenizenManager, me.aAvatarData.denizenName, me.aAvatarData.gender, me.aAvatarData.mission, me.aAvatarData.avatarString>
+  [ 67] objcall 513 ............................. oDenizenManager.modifyDenizen(me.aAvatarData.denizenName, me.aAvatarData.gender, me.aAvatarData.mission, me.aAvatarData.avatarString)
+  [ 70] ret
+end
+
+on receiveModifyDenizenResult me, iError, sScreenName, sAvatarMission
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"receiveModifyDenizenResult:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"receiveModifyDenizenResult:iError:" && iError>
+  [  7] pushcons 3 .............................. <"sScreenName:">
+  [  9] joinpadstr .............................. <"receiveModifyDenizenResult:iError:" && iError && "sScreenName:">
+  [ 10] getparam 2 .............................. <sScreenName>
+  [ 12] joinpadstr .............................. <"receiveModifyDenizenResult:iError:" && iError && "sScreenName:" && sScreenName>
+  [ 13] pushcons 4 .............................. <"sAvatarMission:">
+  [ 15] joinpadstr .............................. <"receiveModifyDenizenResult:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:">
+  [ 16] getparam 3 .............................. <sAvatarMission>
+  [ 18] joinpadstr .............................. <"receiveModifyDenizenResult:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission>
+  [ 19] pusharglistnoret 2 ...................... <me, "receiveModifyDenizenResult:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission>
+  [ 21] objcall 4 ............................... me.debug("receiveModifyDenizenResult:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission)
+  [ 23] getparam 1 .............................. <iError>
+  [ 25] not ..................................... <not iError>
+  [ 26] jmpifz [ 77] ............................ if not iError then / else
+  [ 29] getprop 480 ............................. <pVerificationSprite>
+  [ 32] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [ 39] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 46] getglobal 52 ............................ <oUserDisplayManager>
+  [ 48] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getchainedprop 511 ...................... <me.aAvatarData>
+  [ 56] getobjprop 265 .......................... <me.aAvatarData.mission>
+  [ 59] setobjprop 265 .......................... oUserDisplayManager.pUserData.mission = me.aAvatarData.mission
+  [ 62] getglobal 52 ............................ <oUserDisplayManager>
+  [ 64] getglobal 52 ............................ <oUserDisplayManager>
+  [ 66] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [ 69] pusharglistnoret 2 ...................... <oUserDisplayManager, oUserDisplayManager.pUserData>
+  [ 71] objcall 272 ............................. oUserDisplayManager.displayUser(oUserDisplayManager.pUserData)
+  [ 74] jmp [ 86]
+  [ 77] pushcons 5 .............................. <"ERROR:modifyDenizen(): ">
+  [ 79] getparam 1 .............................. <iError>
+  [ 81] joinpadstr .............................. <"ERROR:modifyDenizen(): " && iError>
+  [ 82] pusharglistnoret 1 ...................... <"ERROR:modifyDenizen(): " && iError>
+  [ 84] extcall 171 ............................. alert("ERROR:modifyDenizen(): " && iError)
+  [ 86] ret
+end

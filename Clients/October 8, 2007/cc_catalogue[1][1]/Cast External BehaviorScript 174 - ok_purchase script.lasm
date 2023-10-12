@@ -1,0 +1,64 @@
+property pProdID, pAttributes, pParentWindow
+global ElementMgr
+
+on new me, parentwindow
+  [  0] getparam 1 .............................. <parentwindow>
+  [  2] setprop 179 ............................. pParentWindow = parentwindow
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 2 ............................... return me
+  [ 10] ret
+end
+
+on getpurchasebtn me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 25 ........................... <me.spriteNum>
+  [  4] pusharglistnoret 1 ...................... <me.spriteNum>
+  [  6] extcall 2 ............................... return me.spriteNum
+  [  8] ret
+end
+
+on setProdId me, prodID
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <prodID>
+  [  4] setobjprop 193 .......................... me.pProdID = prodID
+  [  6] ret
+end
+
+on setAttributes me, attributes
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <attributes>
+  [  4] setobjprop 194 .......................... me.pAttributes = attributes
+  [  6] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 18 .............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] getglobal 14 ............................ <oDenizenManager>
+  [  2] pusharglist 1 ........................... <oDenizenManager>
+  [  4] objcall 15 .............................. <oDenizenManager.getScreenName()>
+  [  6] setlocal 0 .............................. myscreenname = oDenizenManager.getScreenName()
+  [  8] getglobal 7 ............................. <ElementMgr>
+  [ 10] getobjprop 195 .......................... <ElementMgr.pSelectedCatId>
+  [ 12] setlocal 1 .............................. _prodid = ElementMgr.pSelectedCatId
+  [ 14] getglobal 7 ............................. <ElementMgr>
+  [ 16] getobjprop 196 .......................... <ElementMgr.pSelectedAttributes>
+  [ 18] setlocal 2 .............................. _attributes = ElementMgr.pSelectedAttributes
+  [ 20] getglobal 16 ............................ <oPossessionManager>
+  [ 22] getlocal 0 .............................. <myscreenname>
+  [ 24] getlocal 1 .............................. <_prodid>
+  [ 26] getlocal 2 .............................. <_attributes>
+  [ 28] pusharglistnoret 4 ...................... <oPossessionManager, myscreenname, _prodid, _attributes>
+  [ 30] objcall 197 ............................. oPossessionManager.purchaseItem(myscreenname, _prodid, _attributes)
+  [ 32] getprop 179 ............................. <pParentWindow>
+  [ 34] pusharglistnoret 1 ...................... <pParentWindow>
+  [ 36] objcall 198 ............................. pParentWindow.closeWindow()
+  [ 38] pusharglistnoret 0 ...................... <>
+  [ 40] extcall 18 .............................. dontPassEvent()
+  [ 42] ret
+end

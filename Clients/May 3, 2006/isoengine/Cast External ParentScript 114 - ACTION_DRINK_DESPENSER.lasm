@@ -1,0 +1,220 @@
+property ancestor, iLength, iStartTime
+global oStudio, oIsoScene, oDenizenManager
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushint16 5000 .......................... <5000>
+  [ 24] setobjprop 620 .......................... me.iLength = 5000
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getmovieprop 369 ........................ <the milliSeconds>
+  [ 32] setobjprop 1091 ......................... me.iStartTime = the milliSeconds
+  [ 35] getparam 0 .............................. <me>
+  [ 37] pusharglistnoret 1 ...................... <me>
+  [ 39] objcall 1426 ............................ me.displayState()
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 1 ...................... <me>
+  [ 46] extcall 52 .............................. return me
+  [ 48] ret
+end
+
+on drinkCoke me
+  [  0] getglobal 233 ........................... <gFeatureSet>
+  [  2] pushsymb 1586 ........................... <#DRINK_DISPENSER>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #DRINK_DISPENSER>
+  [  7] objcall 235 ............................. <gFeatureSet.isEnabled(#DRINK_DISPENSER)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#DRINK_DISPENSER)>
+  [ 10] jmpifz [ 25] ............................ if not gFeatureSet.isEnabled(#DRINK_DISPENSER) then
+  [ 13] getglobal 172 ........................... <ElementMgr>
+  [ 15] pushcons 1 .............................. <"FEATURE_DISABLED">
+  [ 17] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 19] objcall 236 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 52 .............................. return 
+  [ 25] getglobal 77 ............................ <oDenizenManager>
+  [ 27] pusharglist 1 ........................... <oDenizenManager>
+  [ 29] extcall 59 .............................. <voidp(oDenizenManager)>
+  [ 31] jmpifz [ 38] ............................ if voidp(oDenizenManager) then
+  [ 34] pusharglistnoret 0 ...................... <>
+  [ 36] extcall 52 .............................. return 
+  [ 38] getglobal 133 ........................... <oIsoScene>
+  [ 40] getchainedprop 401 ...................... <oIsoScene.oAvatars>
+  [ 43] getglobal 77 ............................ <oDenizenManager>
+  [ 45] pusharglist 1 ........................... <oDenizenManager>
+  [ 47] objcall 78 .............................. <oDenizenManager.getScreenName()>
+  [ 49] pusharglist 2 ........................... <oIsoScene.oAvatars, oDenizenManager.getScreenName()>
+  [ 51] objcall 80 .............................. <oIsoScene.oAvatars.getAvatar(oDenizenManager.getScreenName())>
+  [ 53] setlocal 0 .............................. oAvatar = oIsoScene.oAvatars.getAvatar(oDenizenManager.getScreenName())
+  [ 55] getlocal 0 .............................. <oAvatar>
+  [ 57] pusharglist 1 ........................... <oAvatar>
+  [ 59] extcall 59 .............................. <voidp(oAvatar)>
+  [ 61] jmpifz [ 68] ............................ if voidp(oAvatar) then
+  [ 64] pusharglistnoret 0 ...................... <>
+  [ 66] extcall 52 .............................. return 
+  [ 68] getlocal 0 .............................. <oAvatar>
+  [ 70] pusharglist 1 ........................... <oAvatar>
+  [ 72] objcall 124 ............................. <oAvatar.isDrinking()>
+  [ 74] jmpifz [ 81] ............................ if oAvatar.isDrinking() then
+  [ 77] pusharglistnoret 0 ...................... <>
+  [ 79] extcall 52 .............................. return 
+  [ 81] getglobal 77 ............................ <oDenizenManager>
+  [ 83] pusharglist 1 ........................... <oDenizenManager>
+  [ 85] objcall 1587 ............................ <oDenizenManager.getCokesDrank()>
+  [ 88] setlocal 1 .............................. iCokesDrank = oDenizenManager.getCokesDrank()
+  [ 90] getlocal 1 .............................. <iCokesDrank>
+  [ 92] pushint8 10 ............................. <10>
+  [ 94] gteq .................................... <iCokesDrank >= 10>
+  [ 95] jmpifz [102] ............................ if iCokesDrank >= 10 then
+  [ 98] pusharglistnoret 0 ...................... <>
+  [100] extcall 52 .............................. return 
+  [102] getglobal 64 ............................ <oStudio>
+  [104] pusharglist 1 ........................... <oStudio>
+  [106] extcall 59 .............................. <voidp(oStudio)>
+  [108] not ..................................... <not voidp(oStudio)>
+  [109] jmpifz [119] ............................ if not voidp(oStudio) then
+  [112] getglobal 64 ............................ <oStudio>
+  [114] pusharglistnoret 1 ...................... <oStudio>
+  [116] objcall 1588 ............................ oStudio.sendDrinkCoke()
+  [119] getparam 0 .............................. <me>
+  [121] pusharglistnoret 1 ...................... <me>
+  [123] objcall 1572 ............................ me.toggleState()
+  [126] ret
+end
+
+on mouseDownEvent me, bDoubleClick
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglist 1 ........................... <oStudio>
+  [  4] extcall 59 .............................. <voidp(oStudio)>
+  [  6] jmpifz [ 13] ............................ if voidp(oStudio) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <bDoubleClick>
+  [ 17] pusharglist 2 ........................... <me, bDoubleClick>
+  [ 19] objcall 1574 ............................ <me.select(bDoubleClick)>
+  [ 22] pusharglistnoret 1 ...................... <me.select(bDoubleClick)>
+  [ 24] extcall 52 .............................. return me.select(bDoubleClick)
+  [ 26] ret
+end
+
+on select me, bDoubleClick
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 58 ........................... <me.oItem>
+  [  6] pusharglistnoret 2 ...................... <oIsoScene, me.oItem>
+  [  8] objcall 302 ............................. oIsoScene.moveAvatarToFrontOfItem(me.oItem)
+  [ 11] getparam 1 .............................. <bDoubleClick>
+  [ 13] jmpifz [ 37] ............................ if bDoubleClick then
+  [ 16] getglobal 133 ........................... <oIsoScene>
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 58 ........................... <me.oItem>
+  [ 22] pusharglist 2 ........................... <oIsoScene, me.oItem>
+  [ 24] objcall 303 ............................. <oIsoScene.avatarIsInFrontOfItem(me.oItem)>
+  [ 27] jmpifz [ 37] ............................ if oIsoScene.avatarIsInFrontOfItem(me.oItem) then
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pusharglistnoret 1 ...................... <me>
+  [ 34] objcall 933 ............................. me.drinkCoke()
+  [ 37] pushzero ................................ <0>
+  [ 38] pusharglistnoret 1 ...................... <0>
+  [ 40] extcall 52 .............................. return 0
+  [ 42] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1336 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 18] ............................ if me.oItem.getState() = 0 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 52 .............................. return 
+  [ 18] getmovieprop 369 ........................ <the milliSeconds>
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getobjprop 1091 ......................... <me.iStartTime>
+  [ 26] sub ..................................... <the milliSeconds - me.iStartTime>
+  [ 27] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iStartTime
+  [ 29] getlocal 0 .............................. <iElapsedTime>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 620 .......................... <me.iLength>
+  [ 36] gteq .................................... <iElapsedTime >= me.iLength>
+  [ 37] jmpifz [ 47] ............................ if iElapsedTime >= me.iLength then
+  [ 40] getparam 0 .............................. <me>
+  [ 42] pusharglistnoret 1 ...................... <me>
+  [ 44] objcall 1576 ............................ me.setOff()
+  [ 47] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1336 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 24] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1577 ............................ me.setOn()
+  [ 21] jmp [ 31]
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] objcall 1576 ............................ me.setOff()
+  [ 31] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] getparam 0 .............................. <me>
+  [  6] getchainedprop 58 ....................... <me.oItem>
+  [  8] pusharglist 1 ........................... <me.oItem>
+  [ 10] objcall 1336 ............................ <me.oItem.getState()>
+  [ 13] pusharglistnoret 2 ...................... <me.oItem, me.oItem.getState()>
+  [ 15] objcall 1392 ............................ me.oItem.setFrame(me.oItem.getState())
+  [ 18] ret
+end
+
+on setOff me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1585 ............................ me.stopTimer()
+  [  7] ret
+end
+
+on setOn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1584 ............................ me.startTimer()
+  [  7] ret
+end
+
+on startTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 369 ........................ <the milliSeconds>
+  [  5] setobjprop 1091 ......................... me.iStartTime = the milliSeconds
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 58 ....................... <me.oItem>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 16] objcall 1335 ............................ me.oItem.setState(1)
+  [ 19] ret
+end
+
+on stopTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1335 ............................ me.oItem.setState(0)
+  [ 10] ret
+end

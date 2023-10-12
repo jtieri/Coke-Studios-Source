@@ -1,0 +1,358 @@
+property pname, aAttributes, pProdID, pPosId, bDebug
+global gCatalog, oIsoScene, oStudioMap, oRoom, oStudio, oDenizenManager, ElementMgr
+
+on new me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 75 .............................. bDebug = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] pusharglistnoret 1 ...................... <me>
+  [  7] extcall 78 .............................. return me
+  [  9] ret
+end
+
+on mouseDown me
+  [  0] getglobal 314 ........................... <oStudio>
+  [  3] getglobal 118 ........................... <oDenizenManager>
+  [  5] pusharglist 1 ........................... <oDenizenManager>
+  [  7] objcall 197 ............................. <oDenizenManager.getScreenName()>
+  [  9] pusharglist 2 ........................... <oStudio, oDenizenManager.getScreenName()>
+  [ 11] objcall 906 ............................. <oStudio.isOwner(oDenizenManager.getScreenName())>
+  [ 14] setlocal 0 .............................. bIsOwner = oStudio.isOwner(oDenizenManager.getScreenName())
+  [ 16] getglobal 86 ............................ <ElementMgr>
+  [ 18] pusharglist 1 ........................... <ElementMgr>
+  [ 20] objcall 57 .............................. <ElementMgr.getTrader()>
+  [ 22] pusharglist 1 ........................... <ElementMgr.getTrader()>
+  [ 24] extcall 87 .............................. <voidp(ElementMgr.getTrader())>
+  [ 26] not ..................................... <not voidp(ElementMgr.getTrader())>
+  [ 27] setlocal 1 .............................. bTrading = not voidp(ElementMgr.getTrader())
+  [ 29] getlocal 0 .............................. <bIsOwner>
+  [ 31] not ..................................... <not bIsOwner>
+  [ 32] getlocal 1 .............................. <bTrading>
+  [ 34] not ..................................... <not bTrading>
+  [ 35] and ..................................... <not bIsOwner and not bTrading>
+  [ 36] jmpifz [ 49] ............................ if not bIsOwner and not bTrading then
+  [ 39] pushcons 0 .............................. <"CANNOT PUT ITEM DOWN">
+  [ 41] pusharglistnoret 1 ...................... <"CANNOT PUT ITEM DOWN">
+  [ 43] extcall 80 .............................. put "CANNOT PUT ITEM DOWN"
+  [ 45] pusharglistnoret 0 ...................... <>
+  [ 47] extcall 78 .............................. return 
+  [ 49] getglobal 408 ........................... <oStudioMap>
+  [ 52] pusharglist 1 ........................... <oStudioMap>
+  [ 54] objcall 907 ............................. <oStudioMap.isPrivate()>
+  [ 57] not ..................................... <not oStudioMap.isPrivate()>
+  [ 58] getlocal 1 .............................. <bTrading>
+  [ 60] not ..................................... <not bTrading>
+  [ 61] and ..................................... <not oStudioMap.isPrivate() and not bTrading>
+  [ 62] jmpifz [ 69] ............................ if not oStudioMap.isPrivate() and not bTrading then
+  [ 65] pusharglistnoret 0 ...................... <>
+  [ 67] extcall 78 .............................. return 
+  [ 69] getglobal 324 ........................... <oIsoScene>
+  [ 72] pusharglist 1 ........................... <oIsoScene>
+  [ 74] objcall 908 ............................. <oIsoScene.getSelectedItem()>
+  [ 77] setlocal 2 .............................. oSelectedItem = oIsoScene.getSelectedItem()
+  [ 79] getlocal 2 .............................. <oSelectedItem>
+  [ 81] pusharglist 1 ........................... <oSelectedItem>
+  [ 83] extcall 87 .............................. <voidp(oSelectedItem)>
+  [ 85] not ..................................... <not voidp(oSelectedItem)>
+  [ 86] jmpifz [103] ............................ if not voidp(oSelectedItem) then
+  [ 89] getlocal 2 .............................. <oSelectedItem>
+  [ 91] pusharglist 1 ........................... <oSelectedItem>
+  [ 93] objcall 909 ............................. <oSelectedItem.getDrag()>
+  [ 96] jmpifz [103] ............................ if oSelectedItem.getDrag() then
+  [ 99] pusharglistnoret 0 ...................... <>
+  [101] extcall 78 .............................. return 
+  [103] getglobal 324 ........................... <oIsoScene>
+  [106] pusharglist 1 ........................... <oIsoScene>
+  [108] objcall 910 ............................. <oIsoScene.checkMaxItemsExceeded()>
+  [111] not ..................................... <not oIsoScene.checkMaxItemsExceeded()>
+  [112] jmpifz [119] ............................ if not oIsoScene.checkMaxItemsExceeded() then
+  [115] pusharglistnoret 0 ...................... <>
+  [117] extcall 78 .............................. return 
+  [119] getglobal 911 ........................... <gCatalog>
+  [122] getparam 0 .............................. <me>
+  [124] getobjprop 894 .......................... <me.pProdID>
+  [127] pusharglist 2 ........................... <gCatalog, me.pProdID>
+  [129] objcall 912 ............................. <gCatalog.getItemByProdId(me.pProdID)>
+  [132] setlocal 3 .............................. oItem = gCatalog.getItemByProdId(me.pProdID)
+  [134] getlocal 3 .............................. <oItem>
+  [136] pushsymb 890 ............................ <#imageBase>
+  [139] pusharglist 2 ........................... <oItem, #imageBase>
+  [141] objcall 95 .............................. <oItem[#imageBase]>
+  [143] setlocal 4 .............................. sImageBase = oItem[#imageBase]
+  [145] getlocal 3 .............................. <oItem>
+  [147] pushsymb 412 ............................ <#type>
+  [150] pusharglist 2 ........................... <oItem, #type>
+  [152] objcall 95 .............................. <oItem[#type]>
+  [154] setlocal 5 .............................. sType = oItem[#type]
+  [156] getlocal 3 .............................. <oItem>
+  [158] pushsymb 913 ............................ <#Action>
+  [161] pusharglist 2 ........................... <oItem, #Action>
+  [163] objcall 95 .............................. <oItem[#Action]>
+  [165] setlocal 6 .............................. sAction = oItem[#Action]
+  [167] getlocal 3 .............................. <oItem>
+  [169] pushsymb 914 ............................ <#state>
+  [172] pusharglist 2 ........................... <oItem, #state>
+  [174] objcall 95 .............................. <oItem[#state]>
+  [176] setlocal 7 .............................. iState = oItem[#state]
+  [178] getlocal 3 .............................. <oItem>
+  [180] pushsymb 460 ............................ <#height>
+  [183] pusharglist 2 ........................... <oItem, #height>
+  [185] objcall 95 .............................. <oItem[#height]>
+  [187] setlocal 8 .............................. iHeight = oItem[#height]
+  [189] getlocal 8 .............................. <iHeight>
+  [191] pusharglist 1 ........................... <iHeight>
+  [193] extcall 87 .............................. <voidp(iHeight)>
+  [195] jmpifz [201] ............................ if voidp(iHeight) then
+  [198] pushzero ................................ <0>
+  [199] setlocal 8 .............................. iHeight = 0
+  [201] pushzero ................................ <0>
+  [202] setlocal 9 .............................. iHeightOffset = 0
+  [204] getlocal 3 .............................. <oItem>
+  [206] pushsymb 915 ............................ <#itemsAllowedOnTop>
+  [209] pusharglist 2 ........................... <oItem, #itemsAllowedOnTop>
+  [211] objcall 95 .............................. <oItem[#itemsAllowedOnTop]>
+  [213] setlocal 10 ............................. bItemsAllowedOnTop = oItem[#itemsAllowedOnTop]
+  [215] getlocal 10 ............................. <bItemsAllowedOnTop>
+  [217] pusharglist 1 ........................... <bItemsAllowedOnTop>
+  [219] extcall 87 .............................. <voidp(bItemsAllowedOnTop)>
+  [221] jmpifz [227] ............................ if voidp(bItemsAllowedOnTop) then
+  [224] pushzero ................................ <0>
+  [225] setlocal 10 ............................. bItemsAllowedOnTop = 0
+  [227] getparam 0 .............................. <me>
+  [229] getobjprop 284 .......................... <me.aAttributes>
+  [232] pusharglist 1 ........................... <me.aAttributes>
+  [234] extcall 87 .............................. <voidp(me.aAttributes)>
+  [236] jmpifz [253] ............................ if voidp(me.aAttributes) then / else
+  [239] getlocal 3 .............................. <oItem>
+  [241] pushsymb 891 ............................ <#attributes>
+  [244] pusharglist 2 ........................... <oItem, #attributes>
+  [246] objcall 95 .............................. <oItem[#attributes]>
+  [248] setlocal 11 ............................. _aAttributes = oItem[#attributes]
+  [250] jmp [260]
+  [253] getparam 0 .............................. <me>
+  [255] getobjprop 284 .......................... <me.aAttributes>
+  [258] setlocal 11 ............................. _aAttributes = me.aAttributes
+  [260] pushcons 1 .............................. <"Furniture">
+  [262] setlocal 12 ............................. sCastLib = "Furniture"
+  [264] pusharglist 0 ........................... <>
+  [266] extcall 212 ............................. <VOID>
+  [268] setlocal 13 ............................. iRow = VOID
+  [270] pusharglist 0 ........................... <>
+  [272] extcall 212 ............................. <VOID>
+  [274] setlocal 14 ............................. iCol = VOID
+  [276] pusharglist 0 ........................... <>
+  [278] extcall 212 ............................. <VOID>
+  [280] setlocal 15 ............................. iGridY = VOID
+  [282] pushint8 2 .............................. <2>
+  [284] setlocal 16 ............................. iDirection = 2
+  [286] getglobal 408 ........................... <oStudioMap>
+  [289] pusharglist 1 ........................... <oStudioMap>
+  [291] objcall 907 ............................. <oStudioMap.isPrivate()>
+  [294] jmpifz [328] ............................ if oStudioMap.isPrivate() then
+  [297] getparam 0 .............................. <me>
+  [299] pushcons 2 .............................. <"CAN'T PLACE WALLPAPER IN WAYNE ENT">
+  [301] pushint8 1 .............................. <1>
+  [303] pusharglistnoret 3 ...................... <me, "CAN'T PLACE WALLPAPER IN WAYNE ENT", 1>
+  [305] objcall 1 ............................... me.debug("CAN'T PLACE WALLPAPER IN WAYNE ENT", 1)
+  [307] getglobal 408 ........................... <oStudioMap>
+  [310] pusharglist 1 ........................... <oStudioMap>
+  [312] objcall 916 ............................. <oStudioMap.isWayneEnt()>
+  [315] getlocal 5 .............................. <sType>
+  [317] pushcons 3 .............................. <"Wallpaper">
+  [319] eq ...................................... <sType = "Wallpaper">
+  [320] and ..................................... <oStudioMap.isWayneEnt() and (sType = "Wallpaper")>
+  [321] jmpifz [328] ............................ if oStudioMap.isWayneEnt() and (sType = "Wallpaper") then
+  [324] pusharglistnoret 0 ...................... <>
+  [326] extcall 78 .............................. return 
+  [328] pushcons 4 .............................. <"wayne enterprises check done">
+  [330] pusharglistnoret 1 ...................... <"wayne enterprises check done">
+  [332] extcall 80 .............................. put "wayne enterprises check done"
+  [334] pushcons 5 .............................. <"props = ">
+  [336] getprop 894 ............................. <pProdID>
+  [339] joinpadstr .............................. <"props = " && pProdID>
+  [340] getprop 895 ............................. <pPosId>
+  [343] joinpadstr .............................. <"props = " && pProdID && pPosId>
+  [344] getlocal 4 .............................. <sImageBase>
+  [346] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase>
+  [347] getlocal 5 .............................. <sType>
+  [349] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType>
+  [350] getlocal 6 .............................. <sAction>
+  [352] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction>
+  [353] getlocal 7 .............................. <iState>
+  [355] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState>
+  [356] getprop 284 ............................. <aAttributes>
+  [359] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes>
+  [360] getlocal 12 ............................. <sCastLib>
+  [362] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib>
+  [363] getlocal 13 ............................. <iRow>
+  [365] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow>
+  [366] getlocal 14 ............................. <iCol>
+  [368] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol>
+  [369] getlocal 15 ............................. <iGridY>
+  [371] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY>
+  [372] getlocal 16 ............................. <iDirection>
+  [374] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection>
+  [375] getlocal 8 .............................. <iHeight>
+  [377] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection && iHeight>
+  [378] getlocal 9 .............................. <iHeightOffset>
+  [380] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection && iHeight && iHeightOffset>
+  [381] getlocal 10 ............................. <bItemsAllowedOnTop>
+  [383] joinpadstr .............................. <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection && iHeight && iHeightOffset && bItemsAllowedOnTop>
+  [384] pusharglistnoret 1 ...................... <"props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection && iHeight && iHeightOffset && bItemsAllowedOnTop>
+  [386] extcall 80 .............................. put "props = " && pProdID && pPosId && sImageBase && sType && sAction && iState && aAttributes && sCastLib && iRow && iCol && iGridY && iDirection && iHeight && iHeightOffset && bItemsAllowedOnTop
+  [388] getglobal 324 ........................... <oIsoScene>
+  [391] getparam 0 .............................. <me>
+  [393] getobjprop 894 .......................... <me.pProdID>
+  [396] getparam 0 .............................. <me>
+  [398] getobjprop 895 .......................... <me.pPosId>
+  [401] getlocal 4 .............................. <sImageBase>
+  [403] getlocal 5 .............................. <sType>
+  [405] getlocal 6 .............................. <sAction>
+  [407] getlocal 7 .............................. <iState>
+  [409] getlocal 11 ............................. <_aAttributes>
+  [411] getlocal 12 ............................. <sCastLib>
+  [413] getlocal 13 ............................. <iRow>
+  [415] getlocal 14 ............................. <iCol>
+  [417] getlocal 15 ............................. <iGridY>
+  [419] getlocal 16 ............................. <iDirection>
+  [421] getlocal 8 .............................. <iHeight>
+  [423] getlocal 9 .............................. <iHeightOffset>
+  [425] getlocal 10 ............................. <bItemsAllowedOnTop>
+  [427] pusharglist 16 .......................... <oIsoScene, me.pProdID, me.pPosId, sImageBase, sType, sAction, iState, _aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop>
+  [429] objcall 917 ............................. <oIsoScene.createItem(me.pProdID, me.pPosId, sImageBase, sType, sAction, iState, _aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop)>
+  [432] setlocal 17 ............................. oFurniItem = oIsoScene.createItem(me.pProdID, me.pPosId, sImageBase, sType, sAction, iState, _aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop)
+  [434] pushcons 6 .............................. <"oFurniItem created">
+  [436] pusharglistnoret 1 ...................... <"oFurniItem created">
+  [438] extcall 80 .............................. put "oFurniItem created"
+  [440] getglobal 324 ........................... <oIsoScene>
+  [443] getlocal 17 ............................. <oFurniItem>
+  [445] pushzero ................................ <0>
+  [446] pusharglistnoret 3 ...................... <oIsoScene, oFurniItem, 0>
+  [448] objcall 918 ............................. oIsoScene.setSelectedItem(oFurniItem, 0)
+  [451] pushcons 7 .............................. <"oFurniItem selected">
+  [453] pusharglistnoret 1 ...................... <"oFurniItem selected">
+  [455] extcall 80 .............................. put "oFurniItem selected"
+  [457] getglobal 324 ........................... <oIsoScene>
+  [460] pushint8 1 .............................. <1>
+  [462] pusharglistnoret 2 ...................... <oIsoScene, 1>
+  [464] objcall 919 ............................. oIsoScene.moveSelectedItem(1)
+  [467] pushcons 8 .............................. <"moved selected item">
+  [469] pusharglistnoret 1 ...................... <"moved selected item">
+  [471] extcall 80 .............................. put "moved selected item"
+  [473] pusharglistnoret 0 ...................... <>
+  [475] extcall 430 ............................. stopEvent()
+  [478] ret
+end
+
+on mouseUp me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 430 ............................. stopEvent()
+  [  5] ret
+end
+
+on displayRollover me, bState
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 241 .......................... <me.pname>
+  [  4] setlocal 0 .............................. sDisplay = me.pname
+  [  6] getparam 1 .............................. <bState>
+  [  8] jmpifz [133] ............................ if bState then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 894 .......................... <me.pProdID>
+  [ 16] getglobal 324 ........................... <oIsoScene>
+  [ 19] getchainedprop 937 ...................... <oIsoScene.oIsoConstants>
+  [ 22] getobjprop 938 .......................... <oIsoScene.oIsoConstants.BURNED_CD>
+  [ 25] eq ...................................... <me.pProdID = oIsoScene.oIsoConstants.BURNED_CD>
+  [ 26] jmpifz [ 59] ............................ if me.pProdID = oIsoScene.oIsoConstants.BURNED_CD then
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushsymb 284 ............................ <#aAttributes>
+  [ 34] pushsymb 939 ............................ <#ownerName>
+  [ 37] pusharglist 3 ........................... <me, #aAttributes, #ownerName>
+  [ 39] objcall 108 ............................. <me.aAttributes[#ownerName]>
+  [ 41] pushcons 9 .............................. <": ">
+  [ 43] joinstr ................................. <me.aAttributes[#ownerName] & ": ">
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pushsymb 284 ............................ <#aAttributes>
+  [ 49] pushsymb 940 ............................ <#songName>
+  [ 52] pusharglist 3 ........................... <me, #aAttributes, #songName>
+  [ 54] objcall 108 ............................. <me.aAttributes[#songName]>
+  [ 56] joinstr ................................. <me.aAttributes[#ownerName] & ": " & me.aAttributes[#songName]>
+  [ 57] setlocal 0 .............................. sDisplay = me.aAttributes[#ownerName] & ": " & me.aAttributes[#songName]
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getobjprop 894 .......................... <me.pProdID>
+  [ 64] getglobal 324 ........................... <oIsoScene>
+  [ 67] getchainedprop 937 ...................... <oIsoScene.oIsoConstants>
+  [ 70] getobjprop 941 .......................... <oIsoScene.oIsoConstants.TELEPORTER>
+  [ 73] eq ...................................... <me.pProdID = oIsoScene.oIsoConstants.TELEPORTER>
+  [ 74] jmpifz [133] ............................ if me.pProdID = oIsoScene.oIsoConstants.TELEPORTER then
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pushsymb 284 ............................ <#aAttributes>
+  [ 82] pushsymb 942 ............................ <#destinationName>
+  [ 85] pusharglist 3 ........................... <me, #aAttributes, #destinationName>
+  [ 87] objcall 108 ............................. <me.aAttributes[#destinationName]>
+  [ 89] setlocal 1 .............................. sDestinationName = me.aAttributes[#destinationName]
+  [ 91] getlocal 1 .............................. <sDestinationName>
+  [ 93] pusharglist 1 ........................... <sDestinationName>
+  [ 95] extcall 87 .............................. <voidp(sDestinationName)>
+  [ 97] not ..................................... <not voidp(sDestinationName)>
+  [ 98] getlocal 1 .............................. <sDestinationName>
+  [100] pushcons 10 ............................. <EMPTY>
+  [102] nteq .................................... <sDestinationName <> EMPTY>
+  [103] and ..................................... <not voidp(sDestinationName) and (sDestinationName <> EMPTY)>
+  [104] jmpifz [133] ............................ if not voidp(sDestinationName) and (sDestinationName <> EMPTY) then
+  [107] getprop 284 ............................. <aAttributes>
+  [110] pushsymb 943 ............................ <#destinationOwner>
+  [113] pusharglist 2 ........................... <aAttributes, #destinationOwner>
+  [115] objcall 95 .............................. <aAttributes[#destinationOwner]>
+  [117] pushcons 9 .............................. <": ">
+  [119] joinstr ................................. <aAttributes[#destinationOwner] & ": ">
+  [120] getprop 284 ............................. <aAttributes>
+  [123] pushsymb 942 ............................ <#destinationName>
+  [126] pusharglist 2 ........................... <aAttributes, #destinationName>
+  [128] objcall 95 .............................. <aAttributes[#destinationName]>
+  [130] joinstr ................................. <aAttributes[#destinationOwner] & ": " & aAttributes[#destinationName]>
+  [131] setlocal 0 .............................. sDisplay = aAttributes[#destinationOwner] & ": " & aAttributes[#destinationName]
+  [133] getlocal 0 .............................. <sDisplay>
+  [135] pusharglist 1 ........................... <sDisplay>
+  [137] extcall 87 .............................. <voidp(sDisplay)>
+  [139] jmpifz [146] ............................ if voidp(sDisplay) then
+  [142] pushcons 10 ............................. <EMPTY>
+  [144] setlocal 0 .............................. sDisplay = EMPTY
+  [146] pushcons 11 ............................. <"cc.pack.rollover.text">
+  [148] pusharglist 1 ........................... <"cc.pack.rollover.text">
+  [150] extcall 101 ............................. <member("cc.pack.rollover.text")>
+  [152] getlocal 0 .............................. <sDisplay>
+  [154] pusharglist 1 ........................... <sDisplay>
+  [156] extcall 207 ............................. <string(sDisplay)>
+  [158] setobjprop 129 .......................... member("cc.pack.rollover.text").text = string(sDisplay)
+  [160] ret
+end
+
+on mouseEnter me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] pusharglistnoret 2 ...................... <me, 1>
+  [  6] objcall 904 ............................. me.displayRollover(1)
+  [  9] ret
+end
+
+on mouseLeave me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] pusharglistnoret 2 ...................... <me, 0>
+  [  5] objcall 904 ............................. me.displayRollover(0)
+  [  8] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 75 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 12 ............................. <"entry::backpack item script::">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"entry::backpack item script::" & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"entry::backpack item script::" & sMessage>
+  [ 17] extcall 80 .............................. put "entry::backpack item script::" & sMessage
+  [ 19] ret
+end

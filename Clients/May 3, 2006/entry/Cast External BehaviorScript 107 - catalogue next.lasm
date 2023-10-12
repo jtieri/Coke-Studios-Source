@@ -1,0 +1,240 @@
+property pParentWindow
+
+on new me, parentwindow
+  [  0] getparam 1 .............................. <parentwindow>
+  [  2] setprop 590 ............................. pParentWindow = parentwindow
+  [  5] getparam 0 .............................. <me>
+  [  7] pusharglistnoret 1 ...................... <me>
+  [  9] extcall 23 .............................. return me
+  [ 11] ret
+end
+
+on mouseUp me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setmovieprop 687 ........................ the updateLock = 1
+  [  5] getmovieprop 805 ........................ <the milliSeconds>
+  [  8] setlocal 0 .............................. milsec = the milliSeconds
+  [ 10] pushcons 0 .............................. <":">
+  [ 12] setmovieprop 157 ........................ the itemDelimiter = ":"
+  [ 14] pushcons 1 .............................. <"cc.catalogue.text.pagenum">
+  [ 16] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [ 18] extcall 34 .............................. <member("cc.catalogue.text.pagenum")>
+  [ 20] getchainedprop 78 ....................... <member("cc.catalogue.text.pagenum").text>
+  [ 22] pushsymb 158 ............................ <#item>
+  [ 24] pushint8 2 .............................. <2>
+  [ 26] pusharglist 3 ........................... <member("cc.catalogue.text.pagenum").text, #item, 2>
+  [ 28] objcall 149 ............................. <member("cc.catalogue.text.pagenum").text.item[2]>
+  [ 30] setlocal 1 .............................. currentpage = member("cc.catalogue.text.pagenum").text.item[2]
+  [ 32] pushcons 2 .............................. <"/">
+  [ 34] setmovieprop 157 ........................ the itemDelimiter = "/"
+  [ 36] getlocal 1 .............................. <currentpage>
+  [ 38] pushsymb 158 ............................ <#item>
+  [ 40] pushint8 1 .............................. <1>
+  [ 42] pusharglist 3 ........................... <currentpage, #item, 1>
+  [ 44] objcall 149 ............................. <currentpage.item[1]>
+  [ 46] pusharglist 1 ........................... <currentpage.item[1]>
+  [ 48] extcall 613 ............................. <integer(currentpage.item[1])>
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] add ..................................... <integer(currentpage.item[1]) + 1>
+  [ 54] setlocal 1 .............................. currentpage = integer(currentpage.item[1]) + 1
+  [ 56] pushcons 3 .............................. <",">
+  [ 58] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 60] getglobal 30 ............................ <ElementMgr>
+  [ 62] pusharglist 1 ........................... <ElementMgr>
+  [ 64] objcall 263 ............................. <ElementMgr.cataloguepages()>
+  [ 67] setlocal 2 .............................. PageList = ElementMgr.cataloguepages()
+  [ 69] getlocal 1 .............................. <currentpage>
+  [ 71] getlocal 2 .............................. <PageList>
+  [ 73] pusharglist 1 ........................... <PageList>
+  [ 75] objcall 29 .............................. <PageList.count()>
+  [ 77] pushint8 1 .............................. <1>
+  [ 79] sub ..................................... <PageList.count() - 1>
+  [ 80] gt ...................................... <currentpage > (PageList.count() - 1)>
+  [ 81] jmpifz [ 88] ............................ if currentpage > (PageList.count() - 1) then
+  [ 84] pushint8 1 .............................. <1>
+  [ 86] setlocal 1 .............................. currentpage = 1
+  [ 88] pushcons 1 .............................. <"cc.catalogue.text.pagenum">
+  [ 90] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [ 92] extcall 34 .............................. <member("cc.catalogue.text.pagenum")>
+  [ 94] getglobal 91 ............................ <TextMgr>
+  [ 96] pushcons 4 .............................. <"CAT_PAGE">
+  [ 98] pusharglist 2 ........................... <TextMgr, "CAT_PAGE">
+  [100] objcall 93 .............................. <TextMgr.GetRefText("CAT_PAGE")>
+  [102] pushcons 0 .............................. <":">
+  [104] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":">
+  [105] getlocal 1 .............................. <currentpage>
+  [107] joinpadstr .............................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage>
+  [108] pushcons 2 .............................. <"/">
+  [110] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/">
+  [111] getlocal 2 .............................. <PageList>
+  [113] pusharglist 1 ........................... <PageList>
+  [115] objcall 29 .............................. <PageList.count()>
+  [117] pushint8 1 .............................. <1>
+  [119] sub ..................................... <PageList.count() - 1>
+  [120] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1>
+  [121] setobjprop 78 ........................... member("cc.catalogue.text.pagenum").text = TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1
+  [123] getprop 590 ............................. <pParentWindow>
+  [126] getobjprop 14 ........................... <pParentWindow.prect>
+  [128] setlocal 3 .............................. myRect = pParentWindow.prect
+  [130] getlocal 1 .............................. <currentpage>
+  [132] pushint8 2 .............................. <2>
+  [134] gt ...................................... <currentpage > 2>
+  [135] jmpifz [373] ............................ if currentpage > 2 then / else
+  [138] getlocal 1 .............................. <currentpage>
+  [140] pushint8 3 .............................. <3>
+  [142] eq ...................................... <currentpage = 3>
+  [143] jmpifz [209] ............................ if currentpage = 3 then / else
+  [146] getprop 590 ............................. <pParentWindow>
+  [149] pusharglistnoret 1 ...................... <pParentWindow>
+  [151] objcall 5 ............................... pParentWindow.closeWindow()
+  [153] getglobal 30 ............................ <ElementMgr>
+  [155] pushcons 5 .............................. <"catalogue.pagedynamic.window">
+  [157] getlocal 3 .............................. <myRect>
+  [159] pusharglistnoret 3 ...................... <ElementMgr, "catalogue.pagedynamic.window", myRect>
+  [161] objcall 239 ............................. ElementMgr.newwindow("catalogue.pagedynamic.window", myRect)
+  [163] pushcons 1 .............................. <"cc.catalogue.text.pagenum">
+  [165] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [167] extcall 34 .............................. <member("cc.catalogue.text.pagenum")>
+  [169] getglobal 91 ............................ <TextMgr>
+  [171] pushcons 4 .............................. <"CAT_PAGE">
+  [173] pusharglist 2 ........................... <TextMgr, "CAT_PAGE">
+  [175] objcall 93 .............................. <TextMgr.GetRefText("CAT_PAGE")>
+  [177] pushcons 0 .............................. <":">
+  [179] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":">
+  [180] getlocal 1 .............................. <currentpage>
+  [182] joinpadstr .............................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage>
+  [183] pushcons 2 .............................. <"/">
+  [185] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/">
+  [186] getlocal 2 .............................. <PageList>
+  [188] pusharglist 1 ........................... <PageList>
+  [190] objcall 29 .............................. <PageList.count()>
+  [192] pushint8 1 .............................. <1>
+  [194] sub ..................................... <PageList.count() - 1>
+  [195] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1>
+  [196] setobjprop 78 ........................... member("cc.catalogue.text.pagenum").text = TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1
+  [198] getglobal 566 ........................... <oCatalogManager>
+  [201] pusharglistnoret 1 ...................... <oCatalogManager>
+  [203] objcall 945 ............................. oCatalogManager.getProductList()
+  [206] jmp [260]
+  [209] pushcons 1 .............................. <"cc.catalogue.text.pagenum">
+  [211] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [213] extcall 34 .............................. <member("cc.catalogue.text.pagenum")>
+  [215] getglobal 91 ............................ <TextMgr>
+  [217] pushcons 4 .............................. <"CAT_PAGE">
+  [219] pusharglist 2 ........................... <TextMgr, "CAT_PAGE">
+  [221] objcall 93 .............................. <TextMgr.GetRefText("CAT_PAGE")>
+  [223] pushcons 0 .............................. <":">
+  [225] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":">
+  [226] getlocal 1 .............................. <currentpage>
+  [228] joinpadstr .............................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage>
+  [229] pushcons 2 .............................. <"/">
+  [231] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/">
+  [232] getlocal 2 .............................. <PageList>
+  [234] pusharglist 1 ........................... <PageList>
+  [236] objcall 29 .............................. <PageList.count()>
+  [238] pushint8 1 .............................. <1>
+  [240] sub ..................................... <PageList.count() - 1>
+  [241] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1>
+  [242] setobjprop 78 ........................... member("cc.catalogue.text.pagenum").text = TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1
+  [244] getglobal 30 ............................ <ElementMgr>
+  [246] getchainedprop 31 ....................... <ElementMgr.pOpenWindows>
+  [248] getchainedprop 442 ...................... <ElementMgr.pOpenWindows.catalogue_pagedynamic>
+  [251] getchainedprop 10 ....................... <ElementMgr.pOpenWindows.catalogue_pagedynamic.pScrollingLists>
+  [253] getchainedprop 69 ....................... <ElementMgr.pOpenWindows.catalogue_pagedynamic.pScrollingLists.itemslist>
+  [255] pusharglistnoret 1 ...................... <ElementMgr.pOpenWindows.catalogue_pagedynamic.pScrollingLists.itemslist>
+  [257] objcall 319 ............................. ElementMgr.pOpenWindows.catalogue_pagedynamic.pScrollingLists.itemslist.updatecontent()
+  [260] pushint8 1 .............................. <1>
+  [262] setlocal 4
+  [264] getlocal 4
+  [266] getlocal 2 .............................. <PageList>
+  [268] pusharglist 1 ........................... <PageList>
+  [270] extcall 29 .............................. <count(PageList)>
+  [272] lteq
+  [273] jmpifz [326] ............................ repeat with n = 1 to count(PageList)
+  [276] getlocal 2 .............................. <PageList>
+  [278] getlocal 4 .............................. <n>
+  [280] pusharglist 2 ........................... <PageList, n>
+  [282] objcall 44 .............................. <PageList[n]>
+  [284] pushsymb 946 ............................ <#page>
+  [287] pusharglist 2 ........................... <PageList[n], #page>
+  [289] objcall 44 .............................. <PageList[n][#page]>
+  [291] getlocal 1 .............................. <currentpage>
+  [293] eq ...................................... <PageList[n][#page] = currentpage>
+  [294] jmpifz [317] ............................ if PageList[n][#page] = currentpage then
+  [297] getlocal 2 .............................. <PageList>
+  [299] getlocal 4 .............................. <n>
+  [301] pusharglist 2 ........................... <PageList, n>
+  [303] objcall 44 .............................. <PageList[n]>
+  [305] pushsymb 439 ............................ <#catId>
+  [308] pusharglist 2 ........................... <PageList[n], #catId>
+  [310] objcall 44 .............................. <PageList[n][#catId]>
+  [312] setlocal 5 .............................. mypage = PageList[n][#catId]
+  [314] jmp [326] ............................... exit repeat
+  [317] pushint8 1
+  [319] getlocal 4
+  [321] add
+  [322] setlocal 4
+  [324] endrepeat [264]
+  [326] pushcons 6 .............................. <"catalogue_dyntitle2">
+  [328] pusharglist 1 ........................... <"catalogue_dyntitle2">
+  [330] extcall 34 .............................. <member("catalogue_dyntitle2")>
+  [332] getglobal 91 ............................ <TextMgr>
+  [334] pushcons 7 .............................. <"cat_">
+  [336] getlocal 5 .............................. <mypage>
+  [338] joinstr ................................. <"cat_" & mypage>
+  [339] pushcons 8 .............................. <"_title">
+  [341] joinstr ................................. <"cat_" & mypage & "_title">
+  [342] pusharglist 2 ........................... <TextMgr, "cat_" & mypage & "_title">
+  [344] objcall 93 .............................. <TextMgr.GetRefText("cat_" & mypage & "_title")>
+  [346] setobjprop 78 ........................... member("catalogue_dyntitle2").text = TextMgr.GetRefText("cat_" & mypage & "_title")
+  [348] pushcons 9 .............................. <"cc.catalogue.text3.infotext">
+  [350] pusharglist 1 ........................... <"cc.catalogue.text3.infotext">
+  [352] extcall 34 .............................. <member("cc.catalogue.text3.infotext")>
+  [354] getglobal 91 ............................ <TextMgr>
+  [356] pushcons 7 .............................. <"cat_">
+  [358] getlocal 5 .............................. <mypage>
+  [360] joinstr ................................. <"cat_" & mypage>
+  [361] pushcons 10 ............................. <"_desc">
+  [363] joinstr ................................. <"cat_" & mypage & "_desc">
+  [364] pusharglist 2 ........................... <TextMgr, "cat_" & mypage & "_desc">
+  [366] objcall 93 .............................. <TextMgr.GetRefText("cat_" & mypage & "_desc")>
+  [368] setobjprop 78 ........................... member("cc.catalogue.text3.infotext").text = TextMgr.GetRefText("cat_" & mypage & "_desc")
+  [370] jmp [401]
+  [373] getmovieprop 805 ........................ <the milliSeconds>
+  [376] setlocal 0 .............................. milsec = the milliSeconds
+  [378] getprop 590 ............................. <pParentWindow>
+  [381] pusharglistnoret 1 ...................... <pParentWindow>
+  [383] objcall 5 ............................... pParentWindow.closeWindow()
+  [385] getglobal 30 ............................ <ElementMgr>
+  [387] pushcons 11 ............................. <"catalogue.page">
+  [389] getlocal 1 .............................. <currentpage>
+  [391] joinstr ................................. <"catalogue.page" & currentpage>
+  [392] pushcons 12 ............................. <".window">
+  [394] joinstr ................................. <"catalogue.page" & currentpage & ".window">
+  [395] getlocal 3 .............................. <myRect>
+  [397] pusharglistnoret 3 ...................... <ElementMgr, "catalogue.page" & currentpage & ".window", myRect>
+  [399] objcall 239 ............................. ElementMgr.newwindow("catalogue.page" & currentpage & ".window", myRect)
+  [401] pushcons 1 .............................. <"cc.catalogue.text.pagenum">
+  [403] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [405] extcall 34 .............................. <member("cc.catalogue.text.pagenum")>
+  [407] getglobal 91 ............................ <TextMgr>
+  [409] pushcons 4 .............................. <"CAT_PAGE">
+  [411] pusharglist 2 ........................... <TextMgr, "CAT_PAGE">
+  [413] objcall 93 .............................. <TextMgr.GetRefText("CAT_PAGE")>
+  [415] pushcons 0 .............................. <":">
+  [417] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":">
+  [418] getlocal 1 .............................. <currentpage>
+  [420] joinpadstr .............................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage>
+  [421] pushcons 2 .............................. <"/">
+  [423] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/">
+  [424] getlocal 2 .............................. <PageList>
+  [426] pusharglist 1 ........................... <PageList>
+  [428] objcall 29 .............................. <PageList.count()>
+  [430] pushint8 1 .............................. <1>
+  [432] sub ..................................... <PageList.count() - 1>
+  [433] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1>
+  [434] setobjprop 78 ........................... member("cc.catalogue.text.pagenum").text = TextMgr.GetRefText("CAT_PAGE") & ":" && currentpage & "/" & PageList.count() - 1
+  [436] pushzero ................................ <0>
+  [437] setmovieprop 687 ........................ the updateLock = 0
+  [440] ret
+end

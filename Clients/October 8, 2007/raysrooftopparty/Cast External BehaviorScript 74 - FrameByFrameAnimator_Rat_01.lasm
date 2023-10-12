@@ -1,0 +1,220 @@
+property iSprite, sCastLib, iDiameter, iIndexY, iStartY, iStartX, iSpeed, iStartSpeed, iAcceleration, iState, iTimer, iTimeLength, iWaitTimer, iWaitTimeLength, iWaitRandomTimeMax, iWaitRandomTimeLength, bDebug, sBaseName, iFrameCount, iCurrentFrame, iStepFrame, iStepFrameCount
+
+on new me, _iSprite
+  [  0] pushcons 0 .............................. <"rat01_frame0">
+  [  2] setprop 10 .............................. sBaseName = "rat01_frame0"
+  [  4] pushint8 3 .............................. <3>
+  [  6] setprop 11 .............................. iFrameCount = 3
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setprop 12 .............................. iCurrentFrame = 1
+  [ 12] pushzero ................................ <0>
+  [ 13] setprop 13 .............................. iStepFrame = 0
+  [ 15] pushint8 10 ............................. <10>
+  [ 17] setprop 14 .............................. iStepFrameCount = 10
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 15 ........................... me.bDebug = 0
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pushcons 1 .............................. <"new() leakingbubble animator">
+  [ 28] pusharglistnoret 2 ...................... <me, "new() leakingbubble animator">
+  [ 30] objcall 6 ............................... me.debug("new() leakingbubble animator")
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getparam 1 .............................. <_iSprite>
+  [ 36] setobjprop 16 ........................... me.iSprite = _iSprite
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pusharglistnoret 1 ...................... <me>
+  [ 42] objcall 3 ............................... me.Init()
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pusharglistnoret 1 ...................... <me>
+  [ 48] extcall 17 .............................. return me
+  [ 50] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"beginSprite() leakingbubble animator">
+  [  4] pusharglistnoret 2 ...................... <me, "beginSprite() leakingbubble animator">
+  [  6] objcall 6 ............................... me.debug("beginSprite() leakingbubble animator")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 20 ........................... <me.spriteNum>
+  [ 14] setobjprop 16 ........................... me.iSprite = me.spriteNum
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pushsymb 21 ............................. <#authoring>
+  [ 20] pusharglistnoret 2 ...................... <me, #authoring>
+  [ 22] objcall 3 ............................... me.Init(#authoring)
+  [ 24] ret
+end
+
+on endSprite me
+  [  0] pushcons 3 .............................. <"endsprite called">
+  [  2] pusharglistnoret 1 ...................... <"endsprite called">
+  [  4] extcall 22 .............................. put "endsprite called"
+  [  6] ret
+end
+
+on Init me, theMode
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 16 ........................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 23 .............................. <voidp(me.iSprite)>
+  [  8] jmpifz [ 15] ............................ if voidp(me.iSprite) then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 17 .............................. return 
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushzero ................................ <0>
+  [ 18] setobjprop 24 ........................... me.iState = 0
+  [ 20] ret
+end
+
+on exitFrame me
+  [  0] getprop 13 .............................. <iStepFrame>
+  [  2] pushint8 1 .............................. <1>
+  [  4] add ..................................... <iStepFrame + 1>
+  [  5] setprop 13 .............................. iStepFrame = iStepFrame + 1
+  [  7] getprop 13 .............................. <iStepFrame>
+  [  9] getprop 14 .............................. <iStepFrameCount>
+  [ 11] gt ...................................... <iStepFrame > iStepFrameCount>
+  [ 12] jmpifz [ 24] ............................ if iStepFrame > iStepFrameCount then
+  [ 15] pushzero ................................ <0>
+  [ 16] setprop 13 .............................. iStepFrame = 0
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] localcall 9 ............................. nextFrame(me)
+  [ 24] ret
+end
+
+on destroy me
+  [  0] pushcons 4 .............................. <"*********** DESTROY SPRITE leakingbubble ANIMATRIX **********">
+  [  2] pusharglistnoret 1 ...................... <"*********** DESTROY SPRITE leakingbubble ANIMATRIX **********">
+  [  4] extcall 22 .............................. put "*********** DESTROY SPRITE leakingbubble ANIMATRIX **********"
+  [  6] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] ret
+end
+
+on startPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 28 ......................... <the milliSeconds>
+  [  4] setobjprop 29 ........................... me.iTimer = the milliSeconds
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 16 ........................... <me.iSprite>
+  [ 10] pusharglist 1 ........................... <me.iSprite>
+  [ 12] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 14] getprop 10 .............................. <sBaseName>
+  [ 16] getprop 12 .............................. <iCurrentFrame>
+  [ 18] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 19] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 21] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 23] setobjprop 31 ........................... sprite(me.iSprite).member = member(sBaseName & iCurrentFrame)
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 16 ........................... <me.iSprite>
+  [ 29] pusharglist 1 ........................... <me.iSprite>
+  [ 31] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 33] getprop 10 .............................. <sBaseName>
+  [ 35] getprop 12 .............................. <iCurrentFrame>
+  [ 37] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 38] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 40] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 42] getobjprop 32 ........................... <member(sBaseName & iCurrentFrame).width>
+  [ 44] setobjprop 32 ........................... sprite(me.iSprite).width = member(sBaseName & iCurrentFrame).width
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getobjprop 16 ........................... <me.iSprite>
+  [ 50] pusharglist 1 ........................... <me.iSprite>
+  [ 52] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 54] getprop 10 .............................. <sBaseName>
+  [ 56] getprop 12 .............................. <iCurrentFrame>
+  [ 58] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 59] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 61] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 63] getobjprop 33 ........................... <member(sBaseName & iCurrentFrame).height>
+  [ 65] setobjprop 33 ........................... sprite(me.iSprite).height = member(sBaseName & iCurrentFrame).height
+  [ 67] ret
+end
+
+on stopPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 12 ........................... me.iCurrentFrame = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 16 ........................... <me.iSprite>
+  [ 10] pusharglist 1 ........................... <me.iSprite>
+  [ 12] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 14] getprop 10 .............................. <sBaseName>
+  [ 16] getprop 12 .............................. <iCurrentFrame>
+  [ 18] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 19] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 21] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 23] setobjprop 31 ........................... sprite(me.iSprite).member = member(sBaseName & iCurrentFrame)
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 16 ........................... <me.iSprite>
+  [ 29] pusharglist 1 ........................... <me.iSprite>
+  [ 31] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 33] getprop 10 .............................. <sBaseName>
+  [ 35] getprop 12 .............................. <iCurrentFrame>
+  [ 37] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 38] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 40] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 42] getobjprop 32 ........................... <member(sBaseName & iCurrentFrame).width>
+  [ 44] setobjprop 32 ........................... sprite(me.iSprite).width = member(sBaseName & iCurrentFrame).width
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getobjprop 16 ........................... <me.iSprite>
+  [ 50] pusharglist 1 ........................... <me.iSprite>
+  [ 52] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 54] getprop 10 .............................. <sBaseName>
+  [ 56] getprop 12 .............................. <iCurrentFrame>
+  [ 58] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 59] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 61] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 63] getobjprop 33 ........................... <member(sBaseName & iCurrentFrame).height>
+  [ 65] setobjprop 33 ........................... sprite(me.iSprite).height = member(sBaseName & iCurrentFrame).height
+  [ 67] ret
+end
+
+on nextFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 16 ........................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 30 .............................. <sprite(me.iSprite)>
+  [  8] getprop 10 .............................. <sBaseName>
+  [ 10] getprop 12 .............................. <iCurrentFrame>
+  [ 12] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 13] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 15] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 17] setobjprop 31 ........................... sprite(me.iSprite).member = member(sBaseName & iCurrentFrame)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 16 ........................... <me.iSprite>
+  [ 23] pusharglist 1 ........................... <me.iSprite>
+  [ 25] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 27] getprop 10 .............................. <sBaseName>
+  [ 29] getprop 12 .............................. <iCurrentFrame>
+  [ 31] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 32] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 34] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 36] getobjprop 32 ........................... <member(sBaseName & iCurrentFrame).width>
+  [ 38] setobjprop 32 ........................... sprite(me.iSprite).width = member(sBaseName & iCurrentFrame).width
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getobjprop 16 ........................... <me.iSprite>
+  [ 44] pusharglist 1 ........................... <me.iSprite>
+  [ 46] extcall 30 .............................. <sprite(me.iSprite)>
+  [ 48] getprop 10 .............................. <sBaseName>
+  [ 50] getprop 12 .............................. <iCurrentFrame>
+  [ 52] joinstr ................................. <sBaseName & iCurrentFrame>
+  [ 53] pusharglist 1 ........................... <sBaseName & iCurrentFrame>
+  [ 55] extcall 31 .............................. <member(sBaseName & iCurrentFrame)>
+  [ 57] getobjprop 33 ........................... <member(sBaseName & iCurrentFrame).height>
+  [ 59] setobjprop 33 ........................... sprite(me.iSprite).height = member(sBaseName & iCurrentFrame).height
+  [ 61] getprop 12 .............................. <iCurrentFrame>
+  [ 63] pushint8 1 .............................. <1>
+  [ 65] add ..................................... <iCurrentFrame + 1>
+  [ 66] setprop 12 .............................. iCurrentFrame = iCurrentFrame + 1
+  [ 68] getprop 12 .............................. <iCurrentFrame>
+  [ 70] getprop 11 .............................. <iFrameCount>
+  [ 72] gt ...................................... <iCurrentFrame > iFrameCount>
+  [ 73] jmpifz [ 80] ............................ if iCurrentFrame > iFrameCount then
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] setprop 12 .............................. iCurrentFrame = 1
+  [ 80] ret
+end

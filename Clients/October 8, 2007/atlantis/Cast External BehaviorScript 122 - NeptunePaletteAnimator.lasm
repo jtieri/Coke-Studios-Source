@@ -1,0 +1,726 @@
+property sPaletteBase, sImageBase, iSprite, sCastLib, aMembers, aPalettes, aActivePrograms, iActiveProgramIndex, aAmbientPrograms, iAmbientProgramIndex, aCurrentPrograms, iCurrentProgramIndex, iIndex, iState, iTimer, iTimeLength, iProgramTimer, iProgramTimeLength, iProgramTimeRandomizerMax, iProgramTimeRandomizer, bDebug
+
+on new me, _iSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 12 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 0 .............................. <"new() palette animator">
+  [  9] pusharglistnoret 2 ...................... <me, "new() palette animator">
+  [ 11] objcall 6 ............................... me.debug("new() palette animator")
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <_iSprite>
+  [ 17] setobjprop 13 ........................... me.iSprite = _iSprite
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] objcall 3 ............................... me.init()
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pusharglistnoret 1 ...................... <me>
+  [ 29] extcall 14 .............................. return me
+  [ 31] ret
+end
+
+on endSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"000">
+  [  4] pusharglistnoret 2 ...................... <me, "000">
+  [  6] objcall 86 .............................. me.setFrame("000")
+  [  8] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"beginSprite() palette animator">
+  [  4] pusharglistnoret 2 ...................... <me, "beginSprite() palette animator">
+  [  6] objcall 6 ............................... me.debug("beginSprite() palette animator")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 17 ........................... <me.spriteNum>
+  [ 14] setobjprop 13 ........................... me.iSprite = me.spriteNum
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 1 ...................... <me>
+  [ 20] objcall 3 ............................... me.init()
+  [ 22] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 26 .............................. <voidp(me.iSprite)>
+  [  8] jmpifz [ 15] ............................ if voidp(me.iSprite) then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 14 .............................. return 
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 13 ........................... <me.iSprite>
+  [ 21] pusharglist 1 ........................... <me.iSprite>
+  [ 23] extcall 20 .............................. <sprite(me.iSprite)>
+  [ 25] getchainedprop 21 ....................... <sprite(me.iSprite).member>
+  [ 27] getobjprop 29 ........................... <sprite(me.iSprite).member.castLibNum>
+  [ 29] pusharglist 1 ........................... <sprite(me.iSprite).member.castLibNum>
+  [ 31] extcall 28 .............................. <castLib(sprite(me.iSprite).member.castLibNum)>
+  [ 33] getobjprop 30 ........................... <castLib(sprite(me.iSprite).member.castLibNum).name>
+  [ 35] setobjprop 23 ........................... me.sCastLib = castLib(sprite(me.iSprite).member.castLibNum).name
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglist 1 ........................... <me>
+  [ 43] objcall 73 .............................. <me.getPaletteBase()>
+  [ 45] setobjprop 76 ........................... me.sPaletteBase = me.getPaletteBase()
+  [ 47] getparam 0 .............................. <me>
+  [ 49] getparam 0 .............................. <me>
+  [ 51] pusharglist 1 ........................... <me>
+  [ 53] objcall 7 ............................... <me.getImageBase()>
+  [ 55] setobjprop 88 ........................... me.sImageBase = me.getImageBase()
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 76 ........................... <me.sPaletteBase>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getobjprop 23 ........................... <me.sCastLib>
+  [ 69] pushsymb 77 ............................. <#palette>
+  [ 71] pusharglist 4 ........................... <me, me.sPaletteBase, me.sCastLib, #palette>
+  [ 73] objcall 11 .............................. <me.getMembers(me.sPaletteBase, me.sCastLib, #palette)>
+  [ 75] setobjprop 89 ........................... me.aPalettes = me.getMembers(me.sPaletteBase, me.sCastLib, #palette)
+  [ 77] getparam 0 .............................. <me>
+  [ 79] getparam 0 .............................. <me>
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getobjprop 88 ........................... <me.sImageBase>
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getobjprop 23 ........................... <me.sCastLib>
+  [ 89] pushsymb 58 ............................. <#bitmap>
+  [ 91] pusharglist 4 ........................... <me, me.sImageBase, me.sCastLib, #bitmap>
+  [ 93] objcall 11 .............................. <me.getMembers(me.sImageBase, me.sCastLib, #bitmap)>
+  [ 95] setobjprop 31 ........................... me.aMembers = me.getMembers(me.sImageBase, me.sCastLib, #bitmap)
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getparam 0 .............................. <me>
+  [101] pushsymb 90 ............................. <#Active>
+  [103] pusharglist 2 ........................... <me, #Active>
+  [105] objcall 87 .............................. <me.getPrograms(#Active)>
+  [107] setobjprop 91 ........................... me.aActivePrograms = me.getPrograms(#Active)
+  [109] getparam 0 .............................. <me>
+  [111] getparam 0 .............................. <me>
+  [113] pushsymb 92 ............................. <#ambient>
+  [115] pusharglist 2 ........................... <me, #ambient>
+  [117] objcall 87 .............................. <me.getPrograms(#ambient)>
+  [119] setobjprop 93 ........................... me.aAmbientPrograms = me.getPrograms(#ambient)
+  [121] getparam 0 .............................. <me>
+  [123] getparam 0 .............................. <me>
+  [125] getobjprop 93 ........................... <me.aAmbientPrograms>
+  [127] setobjprop 94 ........................... me.aCurrentPrograms = me.aAmbientPrograms
+  [129] getparam 0 .............................. <me>
+  [131] pushint8 1 .............................. <1>
+  [133] setobjprop 95 ........................... me.iCurrentProgramIndex = 1
+  [135] getparam 0 .............................. <me>
+  [137] pushzero ................................ <0>
+  [138] setobjprop 32 ........................... me.iIndex = 0
+  [140] getparam 0 .............................. <me>
+  [142] pushzero ................................ <0>
+  [143] setobjprop 33 ........................... me.iState = 0
+  [145] getparam 0 .............................. <me>
+  [147] getmovieprop 34 ......................... <the milliSeconds>
+  [149] setobjprop 35 ........................... me.iTimer = the milliSeconds
+  [151] getparam 0 .............................. <me>
+  [153] pushint16 1000 .......................... <1000>
+  [156] setobjprop 36 ........................... me.iTimeLength = 1000
+  [158] getparam 0 .............................. <me>
+  [160] getmovieprop 34 ......................... <the milliSeconds>
+  [162] setobjprop 96 ........................... me.iProgramTimer = the milliSeconds
+  [164] getparam 0 .............................. <me>
+  [166] pushint16 9000 .......................... <9000>
+  [169] setobjprop 97 ........................... me.iProgramTimeLength = 9000
+  [171] getparam 0 .............................. <me>
+  [173] pushint8 1 .............................. <1>
+  [175] setobjprop 98 ........................... me.iProgramTimeRandomizerMax = 1
+  [177] getparam 0 .............................. <me>
+  [179] getparam 0 .............................. <me>
+  [181] getobjprop 98 ........................... <me.iProgramTimeRandomizerMax>
+  [183] pusharglist 1 ........................... <me.iProgramTimeRandomizerMax>
+  [185] extcall 38 .............................. <random(me.iProgramTimeRandomizerMax)>
+  [187] setobjprop 99 ........................... me.iProgramTimeRandomizer = random(me.iProgramTimeRandomizerMax)
+  [189] getparam 0 .............................. <me>
+  [191] pushcons 3 .............................. <"finished init palette animator">
+  [193] pusharglistnoret 2 ...................... <me, "finished init palette animator">
+  [195] objcall 6 ............................... me.debug("finished init palette animator")
+  [197] ret
+end
+
+on setRandomProgramIndex me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 32 ........................... me.iIndex = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] getparam 0 .............................. <me>
+  [  9] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 11] pusharglist 2 ........................... <me, #aCurrentPrograms>
+  [ 13] objcall 52 .............................. <me.aCurrentPrograms.count>
+  [ 15] pusharglist 1 ........................... <me.aCurrentPrograms.count>
+  [ 17] extcall 38 .............................. <random(me.aCurrentPrograms.count)>
+  [ 19] setobjprop 95 ........................... me.iCurrentProgramIndex = random(me.aCurrentPrograms.count)
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushcons 4 .............................. <"program: ">
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 95 ........................... <me.iCurrentProgramIndex>
+  [ 33] pusharglist 3 ........................... <me, #aCurrentPrograms, me.iCurrentProgramIndex>
+  [ 35] objcall 84 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex]>
+  [ 37] getobjprop 30 ........................... <me.aCurrentPrograms[me.iCurrentProgramIndex].name>
+  [ 39] joinstr ................................. <"program: " & me.aCurrentPrograms[me.iCurrentProgramIndex].name>
+  [ 40] pusharglistnoret 2 ...................... <me, "program: " & me.aCurrentPrograms[me.iCurrentProgramIndex].name>
+  [ 42] objcall 6 ............................... me.debug("program: " & me.aCurrentPrograms[me.iCurrentProgramIndex].name)
+  [ 44] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.iState>
+  [  4] pushint8 1 .............................. <1>
+  [  6] eq ...................................... <me.iState = 1>
+  [  7] jmpifz [ 13] ............................ if me.iState = 1 then / else
+  [ 10] jmp [ 13]
+  [ 13] getmovieprop 34 ......................... <the milliSeconds>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 96 ........................... <me.iProgramTimer>
+  [ 19] sub ..................................... <the milliSeconds - me.iProgramTimer>
+  [ 20] setlocal 0 .............................. iPElapsedTime = the milliSeconds - me.iProgramTimer
+  [ 22] getlocal 0 .............................. <iPElapsedTime>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 97 ........................... <me.iProgramTimeLength>
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getobjprop 99 ........................... <me.iProgramTimeRandomizer>
+  [ 32] add ..................................... <me.iProgramTimeLength + me.iProgramTimeRandomizer>
+  [ 33] gteq .................................... <iPElapsedTime >= (me.iProgramTimeLength + me.iProgramTimeRandomizer)>
+  [ 34] jmpifz [ 61] ............................ if iPElapsedTime >= (me.iProgramTimeLength + me.iProgramTimeRandomizer) then
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getobjprop 98 ........................... <me.iProgramTimeRandomizerMax>
+  [ 43] pusharglist 1 ........................... <me.iProgramTimeRandomizerMax>
+  [ 45] extcall 38 .............................. <random(me.iProgramTimeRandomizerMax)>
+  [ 47] setobjprop 99 ........................... me.iProgramTimeRandomizer = random(me.iProgramTimeRandomizerMax)
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getmovieprop 34 ......................... <the milliSeconds>
+  [ 53] setobjprop 96 ........................... me.iProgramTimer = the milliSeconds
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pusharglistnoret 1 ...................... <me>
+  [ 59] objcall 85 .............................. me.setRandomProgramIndex()
+  [ 61] getmovieprop 34 ......................... <the milliSeconds>
+  [ 63] getparam 0 .............................. <me>
+  [ 65] getobjprop 35 ........................... <me.iTimer>
+  [ 67] sub ..................................... <the milliSeconds - me.iTimer>
+  [ 68] setlocal 1 .............................. iElapsedTime = the milliSeconds - me.iTimer
+  [ 70] getlocal 1 .............................. <iElapsedTime>
+  [ 72] getparam 0 .............................. <me>
+  [ 74] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getobjprop 95 ........................... <me.iCurrentProgramIndex>
+  [ 80] pusharglist 3 ........................... <me, #aCurrentPrograms, me.iCurrentProgramIndex>
+  [ 82] objcall 84 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex]>
+  [ 84] getobjprop 100 .......................... <me.aCurrentPrograms[me.iCurrentProgramIndex].rate>
+  [ 86] gteq .................................... <iElapsedTime >= me.aCurrentPrograms[me.iCurrentProgramIndex].rate>
+  [ 87] jmpifz [104] ............................ if iElapsedTime >= me.aCurrentPrograms[me.iCurrentProgramIndex].rate then
+  [ 90] getparam 0 .............................. <me>
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] pusharglistnoret 2 ...................... <me, 1>
+  [ 96] objcall 10 .............................. me.nextFrame(1)
+  [ 98] getparam 0 .............................. <me>
+  [100] getmovieprop 34 ......................... <the milliSeconds>
+  [102] setobjprop 35 ........................... me.iTimer = the milliSeconds
+  [104] ret
+end
+
+on setFrame me, sFrameCode
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 89 ............................. <#aPalettes>
+  [  4] pusharglist 2 ........................... <me, #aPalettes>
+  [  6] objcall 52 .............................. <me.aPalettes.count>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] sub ..................................... <me.aPalettes.count - 1>
+  [ 11] pusharglist 1 ........................... <me.aPalettes.count - 1>
+  [ 13] extcall 38 .............................. <random(me.aPalettes.count - 1)>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] add ..................................... <random(me.aPalettes.count - 1) + 1>
+  [ 18] setlocal 0 .............................. iUniversalRandom = random(me.aPalettes.count - 1) + 1
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] setlocal 1
+  [ 24] getlocal 1
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pushsymb 31 ............................. <#aMembers>
+  [ 30] pusharglist 2 ........................... <me, #aMembers>
+  [ 32] objcall 52 .............................. <me.aMembers.count>
+  [ 34] lteq
+  [ 35] jmpifz [187] ............................ repeat with i = 1 to me.aMembers.count
+  [ 38] getparam 1 .............................. <sFrameCode>
+  [ 40] pushsymb 72 ............................. <#char>
+  [ 42] getlocal 1 .............................. <i>
+  [ 44] pusharglist 3 ........................... <sFrameCode, #char, i>
+  [ 46] objcall 53 .............................. <sFrameCode.char[i]>
+  [ 48] peek 0 .................................. case sFrameCode.char[i] of
+  [ 50] pushcons 5 .............................. <"u">
+  [ 52] eq
+  [ 53] jmpifz [ 63] ............................ (case) "u":
+  [ 56] getlocal 0 .............................. <iUniversalRandom>
+  [ 58] setlocal 2 .............................. palIndex = iUniversalRandom
+  [ 60] jmp [138]
+  [ 63] peek 0
+  [ 65] pushcons 6 .............................. <"r">
+  [ 67] eq
+  [ 68] jmpifz [ 88] ............................ (case) "r":
+  [ 71] getparam 0 .............................. <me>
+  [ 73] pushsymb 89 ............................. <#aPalettes>
+  [ 75] pusharglist 2 ........................... <me, #aPalettes>
+  [ 77] objcall 52 .............................. <me.aPalettes.count>
+  [ 79] pusharglist 1 ........................... <me.aPalettes.count>
+  [ 81] extcall 38 .............................. <random(me.aPalettes.count)>
+  [ 83] setlocal 2 .............................. palIndex = random(me.aPalettes.count)
+  [ 85] jmp [138]
+  [ 88] peek 0
+  [ 90] pushcons 7 .............................. <"s">
+  [ 92] eq
+  [ 93] jmpifz [119] ............................ (case) "s":
+  [ 96] getparam 0 .............................. <me>
+  [ 98] pushsymb 89 ............................. <#aPalettes>
+  [100] pusharglist 2 ........................... <me, #aPalettes>
+  [102] objcall 52 .............................. <me.aPalettes.count>
+  [104] pushint8 1 .............................. <1>
+  [106] sub ..................................... <me.aPalettes.count - 1>
+  [107] pusharglist 1 ........................... <me.aPalettes.count - 1>
+  [109] extcall 38 .............................. <random(me.aPalettes.count - 1)>
+  [111] pushint8 1 .............................. <1>
+  [113] add ..................................... <random(me.aPalettes.count - 1) + 1>
+  [114] setlocal 2 .............................. palIndex = random(me.aPalettes.count - 1) + 1
+  [116] jmp [138] ............................... (case) otherwise:
+  [119] getparam 1 .............................. <sFrameCode>
+  [121] pushsymb 72 ............................. <#char>
+  [123] getlocal 1 .............................. <i>
+  [125] pusharglist 3 ........................... <sFrameCode, #char, i>
+  [127] objcall 53 .............................. <sFrameCode.char[i]>
+  [129] pusharglist 1 ........................... <sFrameCode.char[i]>
+  [131] extcall 102 ............................. <value(sFrameCode.char[i])>
+  [133] pushint8 1 .............................. <1>
+  [135] add ..................................... <value(sFrameCode.char[i]) + 1>
+  [136] setlocal 2 .............................. palIndex = value(sFrameCode.char[i]) + 1
+  [138] pop 1 ................................... end case
+  [140] getparam 0 .............................. <me>
+  [142] pushsymb 89 ............................. <#aPalettes>
+  [144] getlocal 2 .............................. <palIndex>
+  [146] pusharglist 3 ........................... <me, #aPalettes, palIndex>
+  [148] objcall 53 .............................. <me.aPalettes[palIndex]>
+  [150] setlocal 3 .............................. sMember = me.aPalettes[palIndex]
+  [152] getparam 0 .............................. <me>
+  [154] pushsymb 31 ............................. <#aMembers>
+  [156] getlocal 1 .............................. <i>
+  [158] pusharglist 3 ........................... <me, #aMembers, i>
+  [160] objcall 53 .............................. <me.aMembers[i]>
+  [162] pusharglist 1 ........................... <me.aMembers[i]>
+  [164] extcall 21 .............................. <member(me.aMembers[i])>
+  [166] getlocal 3 .............................. <sMember>
+  [168] getparam 0 .............................. <me>
+  [170] getobjprop 23 ........................... <me.sCastLib>
+  [172] pusharglist 2 ........................... <sMember, me.sCastLib>
+  [174] extcall 21 .............................. <member(sMember, me.sCastLib)>
+  [176] setobjprop 75 ........................... member(me.aMembers[i]).paletteRef = member(sMember, me.sCastLib)
+  [178] pushint8 1
+  [180] getlocal 1
+  [182] add
+  [183] setlocal 1
+  [185] endrepeat [ 24]
+  [187] ret
+end
+
+on destroy me
+  [  0] pushcons 8 .............................. <"*********** DESTROY SPRITE PALETTE ANIMATRIX **********">
+  [  2] pusharglistnoret 1 ...................... <"*********** DESTROY SPRITE PALETTE ANIMATRIX **********">
+  [  4] extcall 18 .............................. put "*********** DESTROY SPRITE PALETTE ANIMATRIX **********"
+  [  6] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 12 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 9 .............................. <"London Lights: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"London Lights: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"London Lights: " & sMessage>
+  [ 17] extcall 18 .............................. put "London Lights: " & sMessage
+  [ 19] ret
+end
+
+on getPaletteBase me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 20 .............................. <sprite(me.iSprite)>
+  [  8] getchainedprop 21 ....................... <sprite(me.iSprite).member>
+  [ 10] getchainedprop 75 ....................... <sprite(me.iSprite).member.paletteRef>
+  [ 12] getobjprop 30 ........................... <sprite(me.iSprite).member.paletteRef.name>
+  [ 14] setlocal 0 .............................. sName = sprite(me.iSprite).member.paletteRef.name
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setlocal 1 .............................. iFirstChar = 1
+  [ 20] getlocal 0 .............................. <sName>
+  [ 22] getobjprop 47 ........................... <sName.length>
+  [ 24] setlocal 2 .............................. iLastChar = sName.length
+  [ 26] getlocal 0 .............................. <sName>
+  [ 28] pushsymb 72 ............................. <#char>
+  [ 30] getlocal 1 .............................. <iFirstChar>
+  [ 32] getlocal 2 .............................. <iLastChar>
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] sub ..................................... <iLastChar - 1>
+  [ 37] pusharglist 4 ........................... <sName, #char, iFirstChar, iLastChar - 1>
+  [ 39] objcall 53 .............................. <sName.char[iFirstChar..iLastChar - 1]>
+  [ 41] setprop 76 .............................. sPaletteBase = sName.char[iFirstChar..iLastChar - 1]
+  [ 43] getprop 76 .............................. <sPaletteBase>
+  [ 45] pusharglistnoret 1 ...................... <sPaletteBase>
+  [ 47] extcall 14 .............................. return sPaletteBase
+  [ 49] ret
+end
+
+on getImageBase me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 20 .............................. <sprite(me.iSprite)>
+  [  8] getchainedprop 21 ....................... <sprite(me.iSprite).member>
+  [ 10] getobjprop 30 ........................... <sprite(me.iSprite).member.name>
+  [ 12] setlocal 0 .............................. sName = sprite(me.iSprite).member.name
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 1 .............................. iFirstChar = 1
+  [ 18] getlocal 0 .............................. <sName>
+  [ 20] getobjprop 47 ........................... <sName.length>
+  [ 22] setlocal 2 .............................. iLastChar = sName.length
+  [ 24] getlocal 0 .............................. <sName>
+  [ 26] pushsymb 72 ............................. <#char>
+  [ 28] getlocal 1 .............................. <iFirstChar>
+  [ 30] getlocal 2 .............................. <iLastChar>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] sub ..................................... <iLastChar - 1>
+  [ 35] pusharglist 4 ........................... <sName, #char, iFirstChar, iLastChar - 1>
+  [ 37] objcall 53 .............................. <sName.char[iFirstChar..iLastChar - 1]>
+  [ 39] setlocal 3 .............................. sNameBase = sName.char[iFirstChar..iLastChar - 1]
+  [ 41] getlocal 3 .............................. <sNameBase>
+  [ 43] pusharglistnoret 1 ...................... <sNameBase>
+  [ 45] extcall 14 .............................. return sNameBase
+  [ 47] ret
+end
+
+on startPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 34 ......................... <the milliSeconds>
+  [  4] setobjprop 35 ........................... me.iTimer = the milliSeconds
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setobjprop 33 ........................... me.iState = 1
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getmovieprop 34 ......................... <the milliSeconds>
+  [ 16] setobjprop 96 ........................... me.iProgramTimer = the milliSeconds
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 91 ........................... <me.aActivePrograms>
+  [ 24] setobjprop 94 ........................... me.aCurrentPrograms = me.aActivePrograms
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pushint16 3000 .......................... <3000>
+  [ 31] setobjprop 97 ........................... me.iProgramTimeLength = 3000
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pushint16 3000 .......................... <3000>
+  [ 38] setobjprop 98 ........................... me.iProgramTimeRandomizerMax = 3000
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 98 ........................... <me.iProgramTimeRandomizerMax>
+  [ 46] pusharglist 1 ........................... <me.iProgramTimeRandomizerMax>
+  [ 48] extcall 38 .............................. <random(me.iProgramTimeRandomizerMax)>
+  [ 50] setobjprop 99 ........................... me.iProgramTimeRandomizer = random(me.iProgramTimeRandomizerMax)
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] objcall 85 .............................. me.setRandomProgramIndex()
+  [ 58] ret
+end
+
+on stopPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 33 ........................... me.iState = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 1 .............................. <"000">
+  [  9] pusharglistnoret 2 ...................... <me, "000">
+  [ 11] objcall 86 .............................. me.setFrame("000")
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 93 ........................... <me.aAmbientPrograms>
+  [ 19] setobjprop 94 ........................... me.aCurrentPrograms = me.aAmbientPrograms
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getmovieprop 34 ......................... <the milliSeconds>
+  [ 25] setobjprop 96 ........................... me.iProgramTimer = the milliSeconds
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pushint16 7000 .......................... <7000>
+  [ 32] setobjprop 97 ........................... me.iProgramTimeLength = 7000
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] setobjprop 98 ........................... me.iProgramTimeRandomizerMax = 1
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 98 ........................... <me.iProgramTimeRandomizerMax>
+  [ 46] pusharglist 1 ........................... <me.iProgramTimeRandomizerMax>
+  [ 48] extcall 38 .............................. <random(me.iProgramTimeRandomizerMax)>
+  [ 50] setobjprop 99 ........................... me.iProgramTimeRandomizer = random(me.iProgramTimeRandomizerMax)
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] objcall 85 .............................. me.setRandomProgramIndex()
+  [ 58] ret
+end
+
+on nextFrame me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 32 ........................... <me.iIndex>
+  [  4] getparam 1 .............................. <iDir>
+  [  6] add ..................................... <me.iIndex + iDir>
+  [  7] setlocal 0 .............................. iNextIndex = me.iIndex + iDir
+  [  9] getlocal 0 .............................. <iNextIndex>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 95 ........................... <me.iCurrentProgramIndex>
+  [ 19] pusharglist 3 ........................... <me, #aCurrentPrograms, me.iCurrentProgramIndex>
+  [ 21] objcall 84 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex]>
+  [ 23] pushsymb 106 ............................ <#sequence>
+  [ 25] pusharglist 2 ........................... <me.aCurrentPrograms[me.iCurrentProgramIndex], #sequence>
+  [ 27] objcall 52 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex].sequence.count>
+  [ 29] gt ...................................... <iNextIndex > me.aCurrentPrograms[me.iCurrentProgramIndex].sequence.count>
+  [ 30] jmpifz [ 37] ............................ if iNextIndex > me.aCurrentPrograms[me.iCurrentProgramIndex].sequence.count then
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] setlocal 0 .............................. iNextIndex = 1
+  [ 37] getlocal 0 .............................. <iNextIndex>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] lt ...................................... <iNextIndex < 1>
+  [ 42] jmpifz [ 65] ............................ if iNextIndex < 1 then
+  [ 45] getparam 0 .............................. <me>
+  [ 47] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getobjprop 95 ........................... <me.iCurrentProgramIndex>
+  [ 53] pusharglist 3 ........................... <me, #aCurrentPrograms, me.iCurrentProgramIndex>
+  [ 55] objcall 84 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex]>
+  [ 57] pushsymb 106 ............................ <#sequence>
+  [ 59] pusharglist 2 ........................... <me.aCurrentPrograms[me.iCurrentProgramIndex], #sequence>
+  [ 61] objcall 52 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex].sequence.count>
+  [ 63] setlocal 0 .............................. iNextIndex = me.aCurrentPrograms[me.iCurrentProgramIndex].sequence.count
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getlocal 0 .............................. <iNextIndex>
+  [ 69] setobjprop 32 ........................... me.iIndex = iNextIndex
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getparam 0 .............................. <me>
+  [ 75] pushsymb 94 ............................. <#aCurrentPrograms>
+  [ 77] getparam 0 .............................. <me>
+  [ 79] getobjprop 95 ........................... <me.iCurrentProgramIndex>
+  [ 81] pusharglist 3 ........................... <me, #aCurrentPrograms, me.iCurrentProgramIndex>
+  [ 83] objcall 84 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex]>
+  [ 85] pushsymb 106 ............................ <#sequence>
+  [ 87] getparam 0 .............................. <me>
+  [ 89] getobjprop 32 ........................... <me.iIndex>
+  [ 91] pusharglist 3 ........................... <me.aCurrentPrograms[me.iCurrentProgramIndex], #sequence, me.iIndex>
+  [ 93] objcall 53 .............................. <me.aCurrentPrograms[me.iCurrentProgramIndex].sequence[me.iIndex]>
+  [ 95] pusharglistnoret 2 ...................... <me, me.aCurrentPrograms[me.iCurrentProgramIndex].sequence[me.iIndex]>
+  [ 97] objcall 86 .............................. me.setFrame(me.aCurrentPrograms[me.iCurrentProgramIndex].sequence[me.iIndex])
+  [ 99] ret
+end
+
+on getMembers me, _sImageBase, _sCastLib, memberType
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. _aMembers = []
+  [  5] getparam 2 .............................. <_sCastLib>
+  [  7] pushint8 2 .............................. <2>
+  [  9] get 8 ................................... <the number of castMembers of castLib _sCastLib>
+  [ 11] setlocal 1 .............................. iLength = the number of castMembers of castLib _sCastLib
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setlocal 2
+  [ 17] getlocal 2
+  [ 19] getlocal 1 .............................. <iLength>
+  [ 21] lteq
+  [ 22] jmpifz [ 80] ............................ repeat with i = 1 to iLength
+  [ 25] getlocal 2 .............................. <i>
+  [ 27] getparam 2 .............................. <_sCastLib>
+  [ 29] pusharglist 2 ........................... <i, _sCastLib>
+  [ 31] extcall 21 .............................. <member(i, _sCastLib)>
+  [ 33] setlocal 3 .............................. oMember = member(i, _sCastLib)
+  [ 35] getlocal 3 .............................. <oMember>
+  [ 37] getobjprop 57 ........................... <oMember.type>
+  [ 39] setlocal 4 .............................. sType = oMember.type
+  [ 41] getlocal 4 .............................. <sType>
+  [ 43] getparam 3 .............................. <memberType>
+  [ 45] eq ...................................... <sType = memberType>
+  [ 46] jmpifz [ 71] ............................ if sType = memberType then
+  [ 49] getlocal 3 .............................. <oMember>
+  [ 51] getobjprop 30 ........................... <oMember.name>
+  [ 53] setlocal 5 .............................. sName = oMember.name
+  [ 55] getlocal 5 .............................. <sName>
+  [ 57] getparam 1 .............................. <_sImageBase>
+  [ 59] containsstr ............................. <sName contains _sImageBase>
+  [ 60] jmpifz [ 71] ............................ if sName contains _sImageBase then
+  [ 63] getlocal 0 .............................. <_aMembers>
+  [ 65] getlocal 5 .............................. <sName>
+  [ 67] pusharglistnoret 2 ...................... <_aMembers, sName>
+  [ 69] objcall 59 .............................. _aMembers.add(sName)
+  [ 71] pushint8 1
+  [ 73] getlocal 2
+  [ 75] add
+  [ 76] setlocal 2
+  [ 78] endrepeat [ 17]
+  [ 80] getlocal 0 .............................. <_aMembers>
+  [ 82] pusharglistnoret 1 ...................... <_aMembers>
+  [ 84] extcall 14 .............................. return _aMembers
+  [ 86] ret
+end
+
+on getPrograms me, whichSet
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. thePrograms = []
+  [  5] getparam 1 .............................. <whichSet>
+  [  7] pushsymb 90 ............................. <#Active>
+  [  9] eq ...................................... <whichSet = #Active>
+  [ 10] jmpifz [210] ............................ if whichSet = #Active then / else
+  [ 13] getlocal 0 .............................. <thePrograms>
+  [ 15] pushsymb 30 ............................. <#name>
+  [ 17] pushcons 10 ............................. <"independent_random">
+  [ 19] pushsymb 100 ............................ <#rate>
+  [ 21] pushint16 200 ........................... <200>
+  [ 24] pushsymb 106 ............................ <#sequence>
+  [ 26] pushcons 11 ............................. <"rrr">
+  [ 28] pusharglist 1 ........................... <["rrr"]>
+  [ 30] pushlist ................................ <["rrr"]>
+  [ 31] pusharglist 6 ........................... <[#name: "independent_random", #rate: 200, #sequence: ["rrr"]]>
+  [ 33] pushproplist ............................ <[#name: "independent_random", #rate: 200, #sequence: ["rrr"]]>
+  [ 34] pusharglistnoret 2 ...................... <thePrograms, [#name: "independent_random", #rate: 200, #sequence: ["rrr"]]>
+  [ 36] objcall 59 .............................. thePrograms.add([#name: "independent_random", #rate: 200, #sequence: ["rrr"]])
+  [ 38] getlocal 0 .............................. <thePrograms>
+  [ 40] pushsymb 30 ............................. <#name>
+  [ 42] pushcons 12 ............................. <"sync_blink">
+  [ 44] pushsymb 100 ............................ <#rate>
+  [ 46] pushint16 500 ........................... <500>
+  [ 49] pushsymb 106 ............................ <#sequence>
+  [ 51] pushcons 13 ............................. <"uuu">
+  [ 53] pushcons 1 .............................. <"000">
+  [ 55] pusharglist 2 ........................... <["uuu", "000"]>
+  [ 57] pushlist ................................ <["uuu", "000"]>
+  [ 58] pusharglist 6 ........................... <[#name: "sync_blink", #rate: 500, #sequence: ["uuu", "000"]]>
+  [ 60] pushproplist ............................ <[#name: "sync_blink", #rate: 500, #sequence: ["uuu", "000"]]>
+  [ 61] pusharglistnoret 2 ...................... <thePrograms, [#name: "sync_blink", #rate: 500, #sequence: ["uuu", "000"]]>
+  [ 63] objcall 59 .............................. thePrograms.add([#name: "sync_blink", #rate: 500, #sequence: ["uuu", "000"]])
+  [ 65] getlocal 0 .............................. <thePrograms>
+  [ 67] pushsymb 30 ............................. <#name>
+  [ 69] pushcons 14 ............................. <"blinky_123">
+  [ 71] pushsymb 100 ............................ <#rate>
+  [ 73] pushint16 250 ........................... <250>
+  [ 76] pushsymb 106 ............................ <#sequence>
+  [ 78] pushcons 15 ............................. <"u00">
+  [ 80] pushcons 1 .............................. <"000">
+  [ 82] pushcons 16 ............................. <"uu0">
+  [ 84] pushcons 1 .............................. <"000">
+  [ 86] pushcons 13 ............................. <"uuu">
+  [ 88] pushcons 1 .............................. <"000">
+  [ 90] pushcons 17 ............................. <"0uu">
+  [ 92] pushcons 1 .............................. <"000">
+  [ 94] pushcons 18 ............................. <"00u">
+  [ 96] pushcons 1 .............................. <"000">
+  [ 98] pusharglist 10 .......................... <["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]>
+  [100] pushlist ................................ <["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]>
+  [101] pusharglist 6 ........................... <[#name: "blinky_123", #rate: 250, #sequence: ["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]]>
+  [103] pushproplist ............................ <[#name: "blinky_123", #rate: 250, #sequence: ["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]]>
+  [104] pusharglistnoret 2 ...................... <thePrograms, [#name: "blinky_123", #rate: 250, #sequence: ["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]]>
+  [106] objcall 59 .............................. thePrograms.add([#name: "blinky_123", #rate: 250, #sequence: ["u00", "000", "uu0", "000", "uuu", "000", "0uu", "000", "00u", "000"]])
+  [108] getlocal 0 .............................. <thePrograms>
+  [110] pushsymb 30 ............................. <#name>
+  [112] pushcons 19 ............................. <"outer_inner">
+  [114] pushsymb 100 ............................ <#rate>
+  [116] pushint16 500 ........................... <500>
+  [119] pushsymb 106 ............................ <#sequence>
+  [121] pushcons 20 ............................. <"u0u">
+  [123] pushcons 21 ............................. <"0u0">
+  [125] pusharglist 2 ........................... <["u0u", "0u0"]>
+  [127] pushlist ................................ <["u0u", "0u0"]>
+  [128] pusharglist 6 ........................... <[#name: "outer_inner", #rate: 500, #sequence: ["u0u", "0u0"]]>
+  [130] pushproplist ............................ <[#name: "outer_inner", #rate: 500, #sequence: ["u0u", "0u0"]]>
+  [131] pusharglistnoret 2 ...................... <thePrograms, [#name: "outer_inner", #rate: 500, #sequence: ["u0u", "0u0"]]>
+  [133] objcall 59 .............................. thePrograms.add([#name: "outer_inner", #rate: 500, #sequence: ["u0u", "0u0"]])
+  [135] getlocal 0 .............................. <thePrograms>
+  [137] pushsymb 30 ............................. <#name>
+  [139] pushcons 22 ............................. <"crazy_train">
+  [141] pushsymb 100 ............................ <#rate>
+  [143] pushint8 100 ............................ <100>
+  [145] pushsymb 106 ............................ <#sequence>
+  [147] pushcons 15 ............................. <"u00">
+  [149] pushcons 21 ............................. <"0u0">
+  [151] pushcons 18 ............................. <"00u">
+  [153] pushcons 21 ............................. <"0u0">
+  [155] pusharglist 4 ........................... <["u00", "0u0", "00u", "0u0"]>
+  [157] pushlist ................................ <["u00", "0u0", "00u", "0u0"]>
+  [158] pusharglist 6 ........................... <[#name: "crazy_train", #rate: 100, #sequence: ["u00", "0u0", "00u", "0u0"]]>
+  [160] pushproplist ............................ <[#name: "crazy_train", #rate: 100, #sequence: ["u00", "0u0", "00u", "0u0"]]>
+  [161] pusharglistnoret 2 ...................... <thePrograms, [#name: "crazy_train", #rate: 100, #sequence: ["u00", "0u0", "00u", "0u0"]]>
+  [163] objcall 59 .............................. thePrograms.add([#name: "crazy_train", #rate: 100, #sequence: ["u00", "0u0", "00u", "0u0"]])
+  [165] getlocal 0 .............................. <thePrograms>
+  [167] pushsymb 30 ............................. <#name>
+  [169] pushcons 23 ............................. <"loco_strobo">
+  [171] pushsymb 100 ............................ <#rate>
+  [173] pushint8 100 ............................ <100>
+  [175] pushsymb 106 ............................ <#sequence>
+  [177] pushcons 24 ............................. <"100">
+  [179] pushcons 25 ............................. <"010">
+  [181] pushcons 26 ............................. <"001">
+  [183] pushcons 24 ............................. <"100">
+  [185] pushcons 25 ............................. <"010">
+  [187] pushcons 26 ............................. <"001">
+  [189] pushcons 24 ............................. <"100">
+  [191] pushcons 25 ............................. <"010">
+  [193] pushcons 25 ............................. <"010">
+  [195] pushcons 26 ............................. <"001">
+  [197] pusharglist 10 .......................... <["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]>
+  [199] pushlist ................................ <["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]>
+  [200] pusharglist 6 ........................... <[#name: "loco_strobo", #rate: 100, #sequence: ["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]]>
+  [202] pushproplist ............................ <[#name: "loco_strobo", #rate: 100, #sequence: ["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]]>
+  [203] pusharglistnoret 2 ...................... <thePrograms, [#name: "loco_strobo", #rate: 100, #sequence: ["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]]>
+  [205] objcall 59 .............................. thePrograms.add([#name: "loco_strobo", #rate: 100, #sequence: ["100", "010", "001", "100", "010", "001", "100", "010", "010", "001"]])
+  [207] jmp [280]
+  [210] getparam 1 .............................. <whichSet>
+  [212] pushsymb 92 ............................. <#ambient>
+  [214] eq ...................................... <whichSet = #ambient>
+  [215] jmpifz [280] ............................ if whichSet = #ambient then
+  [218] getlocal 0 .............................. <thePrograms>
+  [220] pushsymb 30 ............................. <#name>
+  [222] pushcons 27 ............................. <"blanko">
+  [224] pushsymb 100 ............................ <#rate>
+  [226] pushint16 2000 .......................... <2000>
+  [229] pushsymb 106 ............................ <#sequence>
+  [231] pushcons 1 .............................. <"000">
+  [233] pushcons 28 ............................. <"111">
+  [235] pushcons 1 .............................. <"000">
+  [237] pushcons 1 .............................. <"000">
+  [239] pusharglist 4 ........................... <["000", "111", "000", "000"]>
+  [241] pushlist ................................ <["000", "111", "000", "000"]>
+  [242] pusharglist 6 ........................... <[#name: "blanko", #rate: 2000, #sequence: ["000", "111", "000", "000"]]>
+  [244] pushproplist ............................ <[#name: "blanko", #rate: 2000, #sequence: ["000", "111", "000", "000"]]>
+  [245] pusharglistnoret 2 ...................... <thePrograms, [#name: "blanko", #rate: 2000, #sequence: ["000", "111", "000", "000"]]>
+  [247] objcall 59 .............................. thePrograms.add([#name: "blanko", #rate: 2000, #sequence: ["000", "111", "000", "000"]])
+  [249] getlocal 0 .............................. <thePrograms>
+  [251] pushsymb 30 ............................. <#name>
+  [253] pushcons 29 ............................. <"slow_train">
+  [255] pushsymb 100 ............................ <#rate>
+  [257] pushint16 2000 .......................... <2000>
+  [260] pushsymb 106 ............................ <#sequence>
+  [262] pushcons 24 ............................. <"100">
+  [264] pushcons 25 ............................. <"010">
+  [266] pushcons 26 ............................. <"001">
+  [268] pushcons 25 ............................. <"010">
+  [270] pusharglist 4 ........................... <["100", "010", "001", "010"]>
+  [272] pushlist ................................ <["100", "010", "001", "010"]>
+  [273] pusharglist 6 ........................... <[#name: "slow_train", #rate: 2000, #sequence: ["100", "010", "001", "010"]]>
+  [275] pushproplist ............................ <[#name: "slow_train", #rate: 2000, #sequence: ["100", "010", "001", "010"]]>
+  [276] pusharglistnoret 2 ...................... <thePrograms, [#name: "slow_train", #rate: 2000, #sequence: ["100", "010", "001", "010"]]>
+  [278] objcall 59 .............................. thePrograms.add([#name: "slow_train", #rate: 2000, #sequence: ["100", "010", "001", "010"]])
+  [280] getlocal 0 .............................. <thePrograms>
+  [282] pusharglistnoret 1 ...................... <thePrograms>
+  [284] extcall 14 .............................. return thePrograms
+  [286] ret
+end

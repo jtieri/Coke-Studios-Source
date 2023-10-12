@@ -1,0 +1,334 @@
+property iSprite, iRow, iCol, iDepth
+global oIsoScene, ElementMgr, oStudioMap
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <>
+  [  4] extcall 132 ............................. <VOID>
+  [  6] setobjprop 636 .......................... me.iSprite = VOID
+  [  9] getparam 0 .............................. <me>
+  [ 11] pusharglistnoret 1 ...................... <me>
+  [ 13] extcall 93 .............................. return me
+  [ 15] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getglobal 88 ............................ <oIsoScene>
+  [  4] getobjprop 149 .......................... <oIsoScene.oMouseSquare>
+  [  6] pusharglistnoret 2 ...................... <me, oIsoScene.oMouseSquare>
+  [  8] objcall 1142 ............................ me.updatePosition(oIsoScene.oMouseSquare)
+  [ 11] ret
+end
+
+on updatePosition me, oSquare
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 636 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 106 ............................. <voidp(me.iSprite)>
+  [  9] jmpifz [ 16] ............................ if voidp(me.iSprite) then
+  [ 12] pusharglistnoret 0 ...................... <>
+  [ 14] extcall 93 .............................. return 
+  [ 16] pushzero ................................ <0>
+  [ 17] setlocal 0 .............................. bRollover = 0
+  [ 19] getglobal 174 ........................... <ElementMgr>
+  [ 21] pusharglist 1 ........................... <ElementMgr>
+  [ 23] objcall 305 ............................. <ElementMgr.mouseIsOverBackpack()>
+  [ 26] setlocal 1 .............................. bMouseIsOverBackpack = ElementMgr.mouseIsOverBackpack()
+  [ 28] getlocal 1 .............................. <bMouseIsOverBackpack>
+  [ 30] jmpifz [ 44] ............................ if bMouseIsOverBackpack then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 1143 ............................ me.dragFurniPreview()
+  [ 40] pusharglistnoret 0 ...................... <>
+  [ 42] extcall 93 .............................. return 
+  [ 44] getparam 1 .............................. <oSquare>
+  [ 46] pusharglist 1 ........................... <oSquare>
+  [ 48] extcall 106 ............................. <voidp(oSquare)>
+  [ 50] not ..................................... <not voidp(oSquare)>
+  [ 51] jmpifz [ 65] ............................ if not voidp(oSquare) then
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getparam 1 .............................. <oSquare>
+  [ 58] pusharglist 2 ........................... <me, oSquare>
+  [ 60] objcall 1146 ............................ <me.canDisplaySquare(oSquare)>
+  [ 63] setlocal 0 .............................. bRollover = me.canDisplaySquare(oSquare)
+  [ 65] getglobal 174 ........................... <ElementMgr>
+  [ 67] pusharglist 1 ........................... <ElementMgr>
+  [ 69] objcall 264 ............................. <ElementMgr.getTrader()>
+  [ 72] pusharglist 1 ........................... <ElementMgr.getTrader()>
+  [ 74] extcall 106 ............................. <voidp(ElementMgr.getTrader())>
+  [ 76] not ..................................... <not voidp(ElementMgr.getTrader())>
+  [ 77] setlocal 2 .............................. bTradingOpen = not voidp(ElementMgr.getTrader())
+  [ 79] getlocal 0 .............................. <bRollover>
+  [ 81] not ..................................... <not bRollover>
+  [ 82] getlocal 2 .............................. <bTradingOpen>
+  [ 84] or ...................................... <not bRollover or bTradingOpen>
+  [ 85] jmpifz [106] ............................ if not bRollover or bTradingOpen then
+  [ 88] getparam 0 .............................. <me>
+  [ 90] pusharglistnoret 1 ...................... <me>
+  [ 92] objcall 1145 ............................ me.hide()
+  [ 95] getparam 0 .............................. <me>
+  [ 97] pusharglistnoret 1 ...................... <me>
+  [ 99] objcall 1143 ............................ me.dragFurniPreview()
+  [102] pusharglistnoret 0 ...................... <>
+  [104] extcall 93 .............................. return 
+  [106] getparam 1 .............................. <oSquare>
+  [108] pusharglist 1 ........................... <oSquare>
+  [110] extcall 106 ............................. <voidp(oSquare)>
+  [112] jmpifz [126] ............................ if voidp(oSquare) then
+  [115] getparam 0 .............................. <me>
+  [117] pusharglistnoret 1 ...................... <me>
+  [119] objcall 1145 ............................ me.hide()
+  [122] pusharglistnoret 0 ...................... <>
+  [124] extcall 93 .............................. return 
+  [126] getparam 1 .............................. <oSquare>
+  [128] getobjprop 178 .......................... <oSquare.iRow>
+  [130] getparam 0 .............................. <me>
+  [132] getobjprop 178 .......................... <me.iRow>
+  [134] nteq .................................... <oSquare.iRow <> me.iRow>
+  [135] getparam 1 .............................. <oSquare>
+  [137] getobjprop 179 .......................... <oSquare.iCol>
+  [139] getparam 0 .............................. <me>
+  [141] getobjprop 179 .......................... <me.iCol>
+  [143] nteq .................................... <oSquare.iCol <> me.iCol>
+  [144] or ...................................... <(oSquare.iRow <> me.iRow) or (oSquare.iCol <> me.iCol)>
+  [145] jmpifz [202] ............................ if (oSquare.iRow <> me.iRow) or (oSquare.iCol <> me.iCol) then
+  [148] getlocal 0 .............................. <bRollover>
+  [150] jmpifz [179] ............................ if bRollover then / else
+  [153] getparam 0 .............................. <me>
+  [155] getparam 1 .............................. <oSquare>
+  [157] pusharglistnoret 2 ...................... <me, oSquare>
+  [159] objcall 1144 ............................ me.show(oSquare)
+  [162] getlocal 2 .............................. <bTradingOpen>
+  [164] not ..................................... <not bTradingOpen>
+  [165] jmpifz [176] ............................ if not bTradingOpen then
+  [168] getglobal 88 ............................ <oIsoScene>
+  [170] getparam 1 .............................. <oSquare>
+  [172] pusharglistnoret 2 ...................... <oIsoScene, oSquare>
+  [174] objcall 34 .............................. oIsoScene.updateSelectedItem(oSquare)
+  [176] jmp [186]
+  [179] getparam 0 .............................. <me>
+  [181] pusharglistnoret 1 ...................... <me>
+  [183] objcall 1145 ............................ me.hide()
+  [186] getparam 0 .............................. <me>
+  [188] getparam 1 .............................. <oSquare>
+  [190] getobjprop 178 .......................... <oSquare.iRow>
+  [192] setobjprop 178 .......................... me.iRow = oSquare.iRow
+  [194] getparam 0 .............................. <me>
+  [196] getparam 1 .............................. <oSquare>
+  [198] getobjprop 179 .......................... <oSquare.iCol>
+  [200] setobjprop 179 .......................... me.iCol = oSquare.iCol
+  [202] ret
+end
+
+on dragFurniPreview me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getobjprop 133 .......................... <oIsoScene.oSelectedItem>
+  [  4] pusharglist 1 ........................... <oIsoScene.oSelectedItem>
+  [  6] extcall 106 ............................. <voidp(oIsoScene.oSelectedItem)>
+  [  8] not ..................................... <not voidp(oIsoScene.oSelectedItem)>
+  [  9] jmpifz [ 43] ............................ if not voidp(oIsoScene.oSelectedItem) then
+  [ 12] getglobal 88 ............................ <oIsoScene>
+  [ 14] getchainedprop 133 ...................... <oIsoScene.oSelectedItem>
+  [ 16] pusharglist 1 ........................... <oIsoScene.oSelectedItem>
+  [ 18] objcall 220 ............................. <oIsoScene.oSelectedItem.isFurniItem()>
+  [ 20] jmpifz [ 43] ............................ if oIsoScene.oSelectedItem.isFurniItem() then
+  [ 23] getglobal 88 ............................ <oIsoScene>
+  [ 25] getchainedprop 133 ...................... <oIsoScene.oSelectedItem>
+  [ 27] pusharglist 1 ........................... <oIsoScene.oSelectedItem>
+  [ 29] objcall 171 ............................. <oIsoScene.oSelectedItem.getDrag()>
+  [ 31] jmpifz [ 43] ............................ if oIsoScene.oSelectedItem.getDrag() then
+  [ 34] getglobal 88 ............................ <oIsoScene>
+  [ 36] getchainedprop 133 ...................... <oIsoScene.oSelectedItem>
+  [ 38] pusharglistnoret 1 ...................... <oIsoScene.oSelectedItem>
+  [ 40] objcall 1150 ............................ oIsoScene.oSelectedItem.updatePreview()
+  [ 43] ret
+end
+
+on show me, oSquare
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 636 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 10] getparam 1 .............................. <oSquare>
+  [ 12] getchainedprop 342 ...................... <oSquare.oViewPoints>
+  [ 15] getchainedprop 340 ...................... <oSquare.oViewPoints.bl>
+  [ 18] getobjprop 328 .......................... <oSquare.oViewPoints.bl.locH>
+  [ 21] setobjprop 328 .......................... sprite(me.iSprite).locH = oSquare.oViewPoints.bl.locH
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 636 .......................... <me.iSprite>
+  [ 29] pusharglist 1 ........................... <me.iSprite>
+  [ 31] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 34] getparam 1 .............................. <oSquare>
+  [ 36] getchainedprop 342 ...................... <oSquare.oViewPoints>
+  [ 39] getchainedprop 340 ...................... <oSquare.oViewPoints.bl>
+  [ 42] getobjprop 329 .......................... <oSquare.oViewPoints.bl.locV>
+  [ 45] setobjprop 329 .......................... sprite(me.iSprite).locV = oSquare.oViewPoints.bl.locV
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 636 .......................... <me.iSprite>
+  [ 53] pusharglist 1 ........................... <me.iSprite>
+  [ 55] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 501 .......................... <me.iDepth>
+  [ 63] setobjprop 511 .......................... sprite(me.iSprite).locZ = me.iDepth
+  [ 66] getglobal 156 ........................... <oStudioMap>
+  [ 68] pusharglist 1 ........................... <oStudioMap>
+  [ 70] objcall 157 ............................. <oStudioMap.isPrivate()>
+  [ 72] jmpifz [115] ............................ if oStudioMap.isPrivate() then
+  [ 75] getparam 1 .............................. <oSquare>
+  [ 77] getglobal 88 ............................ <oIsoScene>
+  [ 79] getchainedprop 120 ...................... <oIsoScene.oDoor>
+  [ 81] getobjprop 242 .......................... <oIsoScene.oDoor.oSquare>
+  [ 83] pusharglist 2 ........................... <oSquare, oIsoScene.oDoor.oSquare>
+  [ 85] objcall 243 ............................. <oSquare.equals(oIsoScene.oDoor.oSquare)>
+  [ 87] jmpifz [115] ............................ if oSquare.equals(oIsoScene.oDoor.oSquare) then
+  [ 90] getparam 0 .............................. <me>
+  [ 92] getobjprop 636 .......................... <me.iSprite>
+  [ 95] pusharglist 1 ........................... <me.iSprite>
+  [ 97] extcall 481 ............................. <sprite(me.iSprite)>
+  [100] getglobal 88 ............................ <oIsoScene>
+  [102] getchainedprop 120 ...................... <oIsoScene.oDoor>
+  [104] pusharglist 1 ........................... <oIsoScene.oDoor>
+  [106] objcall 814 ............................. <oIsoScene.oDoor.getLowestZ()>
+  [109] pushint8 2 .............................. <2>
+  [111] sub ..................................... <oIsoScene.oDoor.getLowestZ() - 2>
+  [112] setobjprop 511 .......................... sprite(me.iSprite).locZ = oIsoScene.oDoor.getLowestZ() - 2
+  [115] getparam 0 .............................. <me>
+  [117] getobjprop 636 .......................... <me.iSprite>
+  [120] pusharglist 1 ........................... <me.iSprite>
+  [122] extcall 481 ............................. <sprite(me.iSprite)>
+  [125] pushint8 1 .............................. <1>
+  [127] setobjprop 493 .......................... sprite(me.iSprite).visible = 1
+  [130] ret
+end
+
+on hide me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 636 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 10] pushzero ................................ <0>
+  [ 11] setobjprop 493 .......................... sprite(me.iSprite).visible = 0
+  [ 14] ret
+end
+
+on canDisplaySquare me, oSquare
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getchainedprop 116 ...................... <oIsoScene.oMap>
+  [  4] getparam 1 .............................. <oSquare>
+  [  6] getobjprop 178 .......................... <oSquare.iRow>
+  [  8] getparam 1 .............................. <oSquare>
+  [ 10] getobjprop 179 .......................... <oSquare.iCol>
+  [ 12] pusharglist 3 ........................... <oIsoScene.oMap, oSquare.iRow, oSquare.iCol>
+  [ 14] objcall 180 ............................. <oIsoScene.oMap.getNode(oSquare.iRow, oSquare.iCol)>
+  [ 16] setlocal 0 .............................. oMapNode = oIsoScene.oMap.getNode(oSquare.iRow, oSquare.iCol)
+  [ 18] getlocal 0 .............................. <oMapNode>
+  [ 20] pusharglist 1 ........................... <oMapNode>
+  [ 22] extcall 106 ............................. <voidp(oMapNode)>
+  [ 24] jmpifz [ 32] ............................ if voidp(oMapNode) then
+  [ 27] pushzero ................................ <0>
+  [ 28] pusharglistnoret 1 ...................... <0>
+  [ 30] extcall 93 .............................. return 0
+  [ 32] getlocal 0 .............................. <oMapNode>
+  [ 34] getobjprop 181 .......................... <oMapNode.w>
+  [ 36] setlocal 1 .............................. iWeight = oMapNode.w
+  [ 38] getlocal 1 .............................. <iWeight>
+  [ 40] getglobal 88 ............................ <oIsoScene>
+  [ 42] getchainedprop 116 ...................... <oIsoScene.oMap>
+  [ 44] getchainedprop 182 ...................... <oIsoScene.oMap.oPathfinder>
+  [ 46] getobjprop 183 .......................... <oIsoScene.oMap.oPathfinder.W_BLOCKED>
+  [ 48] eq ...................................... <iWeight = oIsoScene.oMap.oPathfinder.W_BLOCKED>
+  [ 49] jmpifz [ 60] ............................ if iWeight = oIsoScene.oMap.oPathfinder.W_BLOCKED then / else
+  [ 52] pushzero ................................ <0>
+  [ 53] pusharglistnoret 1 ...................... <0>
+  [ 55] extcall 93 .............................. return 0
+  [ 57] jmp [ 66]
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] pusharglistnoret 1 ...................... <1>
+  [ 64] extcall 93 .............................. return 1
+  [ 66] ret
+end
+
+on Init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 106 ............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 93 .............................. return 
+  [ 13] getglobal 88 ............................ <oIsoScene>
+  [ 15] getchainedprop 114 ...................... <oIsoScene.oSpriteManager>
+  [ 17] getparam 1 .............................. <oXml>
+  [ 19] pusharglist 2 ........................... <oIsoScene.oSpriteManager, oXml>
+  [ 21] objcall 623 ............................. <oIsoScene.oSpriteManager.buildSpriteProps(oXml)>
+  [ 24] setlocal 0 .............................. aProps = oIsoScene.oSpriteManager.buildSpriteProps(oXml)
+  [ 26] getparam 0 .............................. <me>
+  [ 28] getlocal 0 .............................. <aProps>
+  [ 30] pusharglistnoret 2 ...................... <me, aProps>
+  [ 32] objcall 1147 ............................ me.drawHiliter(aProps)
+  [ 35] getmovieprop 134 ........................ <the actorList>
+  [ 37] getparam 0 .............................. <me>
+  [ 39] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 41] objcall 135 ............................. (the actorList).add(me)
+  [ 43] ret
+end
+
+on drawHiliter me, aProps
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 360 ............................. me.destroy()
+  [  7] getparam 0 .............................. <me>
+  [  9] getglobal 88 ............................ <oIsoScene>
+  [ 11] getchainedprop 114 ...................... <oIsoScene.oSpriteManager>
+  [ 13] getparam 1 .............................. <aProps>
+  [ 15] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [ 17] objcall 622 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [ 20] setobjprop 636 .......................... me.iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 636 .......................... <me.iSprite>
+  [ 30] pusharglist 1 ........................... <me.iSprite>
+  [ 32] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 35] getobjprop 511 .......................... <sprite(me.iSprite).locZ>
+  [ 38] setobjprop 501 .......................... me.iDepth = sprite(me.iSprite).locZ
+  [ 41] ret
+end
+
+on destroy me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getchainedprop 114 ...................... <oIsoScene.oSpriteManager>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 636 .......................... <me.iSprite>
+  [  9] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, me.iSprite>
+  [ 11] objcall 535 ............................. oIsoScene.oSpriteManager.returnPooledSprite(me.iSprite)
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglist 0 ........................... <>
+  [ 18] extcall 132 ............................. <VOID>
+  [ 20] setobjprop 636 .......................... me.iSprite = VOID
+  [ 23] getmovieprop 134 ........................ <the actorList>
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 29] objcall 359 ............................. (the actorList).deleteOne(me)
+  [ 32] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 636 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 106 ............................. <voidp(me.iSprite)>
+  [  9] not ..................................... <not voidp(me.iSprite)>
+  [ 10] jmpifz [ 40] ............................ if not voidp(me.iSprite) then
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 636 .......................... <me.iSprite>
+  [ 18] pusharglist 1 ........................... <me.iSprite>
+  [ 20] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 636 .......................... <me.iSprite>
+  [ 28] pusharglist 1 ........................... <me.iSprite>
+  [ 30] extcall 481 ............................. <sprite(me.iSprite)>
+  [ 33] getobjprop 493 .......................... <sprite(me.iSprite).visible>
+  [ 36] not ..................................... <not sprite(me.iSprite).visible>
+  [ 37] setobjprop 493 .......................... sprite(me.iSprite).visible = not sprite(me.iSprite).visible
+  [ 40] ret
+end

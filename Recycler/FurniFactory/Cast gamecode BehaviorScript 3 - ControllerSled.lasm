@@ -1,0 +1,1611 @@
+property iDirection, oPoint, iImageSprite, iFPS, iFPSTimer, iFPSTimerLength, bCarry, iCarryTimer, iCarryTimerLength, iSpriteInk, bMove, bMoving, iStepsToNextTile, iStepsTravelled, pCurrentSquareLoc, pNextSquareLoc, aStepSizes, pLastTileLoc, pCurrentTileLoc, aDirectionPointVectors, iRow, iLastRow, iCol, iLastCol, iLayer, aSteps, aDepths, aRows, aCols, iStartCol, iEndCol, iStartRow, iEndRow, iStepsPerSquare, iPathPosition, bPaused
+global oStudioMap, oAvatar, oIsoScene, iSledTrackValue, iBotSquareValue, oSpriteManager, oMapObject
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 584 .......................... <me.spriteNum>
+  [  5] pusharglist 1 ........................... <me.spriteNum>
+  [  7] extcall 79 .............................. <sprite(me.spriteNum)>
+  [  9] pushint8 1 .............................. <1>
+  [ 11] setobjprop 134 .......................... sprite(me.spriteNum).locZ = 1
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushzero ................................ <0>
+  [ 16] setobjprop 459 .......................... me.bMove = 0
+  [ 19] ret
+end
+
+on initMachine me, _sAttributes, _iScale, _bPreviewOnly
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 296 .......................... me.bPaused = 1
+  [  7] getparam 0 .............................. <me>
+  [  9] pusharglist 0 ........................... <[]>
+  [ 11] pushlist ................................ <[]>
+  [ 12] setobjprop 585 .......................... me.aSteps = []
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglist 0 ........................... <[]>
+  [ 19] pushlist ................................ <[]>
+  [ 20] setobjprop 586 .......................... me.aDepths = []
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pusharglist 0 ........................... <[]>
+  [ 27] pushlist ................................ <[]>
+  [ 28] setobjprop 587 .......................... me.aRows = []
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pusharglist 0 ........................... <[]>
+  [ 35] pushlist ................................ <[]>
+  [ 36] setobjprop 588 .......................... me.aCols = []
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pushzero ................................ <0>
+  [ 42] setobjprop 589 .......................... me.iStartCol = 0
+  [ 45] getparam 0 .............................. <me>
+  [ 47] pushint8 30 ............................. <30>
+  [ 49] setobjprop 590 .......................... me.iEndCol = 30
+  [ 52] getparam 0 .............................. <me>
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getobjprop 460 .......................... <me.iRow>
+  [ 59] setobjprop 591 .......................... me.iStartRow = me.iRow
+  [ 62] getparam 0 .............................. <me>
+  [ 64] pushint8 4 .............................. <4>
+  [ 66] setobjprop 592 .......................... me.iStepsPerSquare = 4
+  [ 69] pushzero ................................ <0>
+  [ 70] setlocal 0 .............................. startFound = 0
+  [ 72] pushzero ................................ <0>
+  [ 73] setlocal 1 .............................. endFound = 0
+  [ 75] pushint8 1 .............................. <1>
+  [ 77] setlocal 2
+  [ 79] getlocal 2
+  [ 81] pushint8 30 ............................. <30>
+  [ 83] lteq
+  [ 84] jmpifz [164] ............................ repeat with i = 1 to 30
+  [ 87] getglobal 464 ........................... <oMapObject>
+  [ 90] pushsymb 465 ............................ <#oGridVals>
+  [ 93] getparam 0 .............................. <me>
+  [ 95] getobjprop 591 .......................... <me.iStartRow>
+  [ 98] pusharglist 3 ........................... <oMapObject, #oGridVals, me.iStartRow>
+  [100] objcall 274 ............................. <oMapObject.oGridVals[me.iStartRow]>
+  [103] getlocal 2 .............................. <i>
+  [105] pusharglist 2 ........................... <oMapObject.oGridVals[me.iStartRow], i>
+  [107] objcall 86 .............................. <oMapObject.oGridVals[me.iStartRow][i]>
+  [109] pushint8 110 ............................ <110>
+  [111] eq ...................................... <oMapObject.oGridVals[me.iStartRow][i] = 110>
+  [112] jmpifz [135] ............................ if oMapObject.oGridVals[me.iStartRow][i] = 110 then
+  [115] getlocal 0 .............................. <startFound>
+  [117] not ..................................... <not startFound>
+  [118] jmpifz [132] ............................ if not startFound then
+  [121] pushint8 1 .............................. <1>
+  [123] setlocal 0 .............................. startFound = 1
+  [125] getparam 0 .............................. <me>
+  [127] getlocal 2 .............................. <i>
+  [129] setobjprop 589 .......................... me.iStartCol = i
+  [132] jmp [155] ............................... next repeat
+  [135] getlocal 0 .............................. <startFound>
+  [137] getlocal 1 .............................. <endFound>
+  [139] not ..................................... <not endFound>
+  [140] and ..................................... <startFound and not endFound>
+  [141] jmpifz [155] ............................ if startFound and not endFound then
+  [144] pushint8 1 .............................. <1>
+  [146] setlocal 1 .............................. endFound = 1
+  [148] getparam 0 .............................. <me>
+  [150] getlocal 2 .............................. <i>
+  [152] setobjprop 590 .......................... me.iEndCol = i
+  [155] pushint8 1
+  [157] getlocal 2
+  [159] add
+  [160] setlocal 2
+  [162] endrepeat [ 79]
+  [164] pushcons 0 .............................. <"column range:">
+  [166] getparam 0 .............................. <me>
+  [168] getobjprop 589 .......................... <me.iStartCol>
+  [171] joinpadstr .............................. <"column range:" && me.iStartCol>
+  [172] getparam 0 .............................. <me>
+  [174] getobjprop 590 .......................... <me.iEndCol>
+  [177] joinpadstr .............................. <"column range:" && me.iStartCol && me.iEndCol>
+  [178] pusharglistnoret 1 ...................... <"column range:" && me.iStartCol && me.iEndCol>
+  [180] extcall 49 .............................. put "column range:" && me.iStartCol && me.iEndCol
+  [182] getparam 0 .............................. <me>
+  [184] getobjprop 589 .......................... <me.iStartCol>
+  [187] setlocal 2
+  [189] getlocal 2
+  [191] getparam 0 .............................. <me>
+  [193] getobjprop 590 .......................... <me.iEndCol>
+  [196] pushint8 1 .............................. <1>
+  [198] sub ..................................... <me.iEndCol - 1>
+  [199] lteq
+  [200] jmpifz [411] ............................ repeat with i = me.iStartCol to me.iEndCol - 1
+  [203] getglobal 271 ........................... <oIsoScene>
+  [206] getchainedprop 272 ...................... <oIsoScene.oGrid>
+  [209] pushsymb 273 ............................ <#aSquares>
+  [212] getparam 0 .............................. <me>
+  [214] getobjprop 591 .......................... <me.iStartRow>
+  [217] pusharglist 3 ........................... <oIsoScene.oGrid, #aSquares, me.iStartRow>
+  [219] objcall 274 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow]>
+  [222] getlocal 2 .............................. <i>
+  [224] pushint8 1 .............................. <1>
+  [226] add ..................................... <i + 1>
+  [227] pusharglist 2 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow], i + 1>
+  [229] objcall 86 .............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i + 1]>
+  [231] pusharglist 1 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow][i + 1]>
+  [233] objcall 474 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i + 1].calcViewCenter()>
+  [236] getglobal 271 ........................... <oIsoScene>
+  [239] getchainedprop 272 ...................... <oIsoScene.oGrid>
+  [242] pushsymb 273 ............................ <#aSquares>
+  [245] getparam 0 .............................. <me>
+  [247] getobjprop 591 .......................... <me.iStartRow>
+  [250] pusharglist 3 ........................... <oIsoScene.oGrid, #aSquares, me.iStartRow>
+  [252] objcall 274 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow]>
+  [255] getlocal 2 .............................. <i>
+  [257] pusharglist 2 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow], i>
+  [259] objcall 86 .............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i]>
+  [261] pusharglist 1 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow][i]>
+  [263] objcall 474 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter()>
+  [266] sub ..................................... <oIsoScene.oGrid.aSquares[me.iStartRow][i + 1].calcViewCenter() - oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter()>
+  [267] setlocal 3 .............................. interDist = oIsoScene.oGrid.aSquares[me.iStartRow][i + 1].calcViewCenter() - oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter()
+  [269] pushzero ................................ <0>
+  [270] setlocal 4
+  [272] getlocal 4
+  [274] getparam 0 .............................. <me>
+  [276] getobjprop 592 .......................... <me.iStepsPerSquare>
+  [279] pushint8 1 .............................. <1>
+  [281] sub ..................................... <me.iStepsPerSquare - 1>
+  [282] lteq
+  [283] jmpifz [402] ............................ repeat with j = 0 to me.iStepsPerSquare - 1
+  [286] getparam 0 .............................. <me>
+  [288] getobjprop 591 .......................... <me.iStartRow>
+  [291] setlocal 5 .............................. jRow = me.iStartRow
+  [293] getlocal 2 .............................. <i>
+  [295] setlocal 6 .............................. jCol = i
+  [297] getparam 0 .............................. <me>
+  [299] getchainedprop 587 ...................... <me.aRows>
+  [302] getlocal 5 .............................. <jRow>
+  [304] pusharglistnoret 2 ...................... <me.aRows, jRow>
+  [306] objcall 81 .............................. me.aRows.add(jRow)
+  [308] getparam 0 .............................. <me>
+  [310] getchainedprop 588 ...................... <me.aCols>
+  [313] getlocal 6 .............................. <jCol>
+  [315] pusharglistnoret 2 ...................... <me.aCols, jCol>
+  [317] objcall 81 .............................. me.aCols.add(jCol)
+  [319] getparam 0 .............................. <me>
+  [321] getchainedprop 586 ...................... <me.aDepths>
+  [324] getlocal 5 .............................. <jRow>
+  [326] pushint8 100 ............................ <100>
+  [328] mul ..................................... <jRow * 100>
+  [329] getlocal 6 .............................. <jCol>
+  [331] add ..................................... <(jRow * 100) + jCol>
+  [332] pusharglistnoret 2 ...................... <me.aDepths, (jRow * 100) + jCol>
+  [334] objcall 81 .............................. me.aDepths.add((jRow * 100) + jCol)
+  [336] getparam 0 .............................. <me>
+  [338] getchainedprop 585 ...................... <me.aSteps>
+  [341] getglobal 271 ........................... <oIsoScene>
+  [344] getchainedprop 272 ...................... <oIsoScene.oGrid>
+  [347] pushsymb 273 ............................ <#aSquares>
+  [350] getparam 0 .............................. <me>
+  [352] getobjprop 591 .......................... <me.iStartRow>
+  [355] pusharglist 3 ........................... <oIsoScene.oGrid, #aSquares, me.iStartRow>
+  [357] objcall 274 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow]>
+  [360] getlocal 2 .............................. <i>
+  [362] pusharglist 2 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow], i>
+  [364] objcall 86 .............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i]>
+  [366] pusharglist 1 ........................... <oIsoScene.oGrid.aSquares[me.iStartRow][i]>
+  [368] objcall 474 ............................. <oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter()>
+  [371] getlocal 3 .............................. <interDist>
+  [373] pushfloat32 1.0 ......................... <1.0>
+  [378] mul ..................................... <interDist * 1.0>
+  [379] getparam 0 .............................. <me>
+  [381] getobjprop 592 .......................... <me.iStepsPerSquare>
+  [384] div ..................................... <interDist * 1.0 / me.iStepsPerSquare>
+  [385] getlocal 4 .............................. <j>
+  [387] mul ..................................... <interDist * 1.0 / me.iStepsPerSquare * j>
+  [388] add ..................................... <oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter() + (interDist * 1.0 / me.iStepsPerSquare * j)>
+  [389] pusharglistnoret 2 ...................... <me.aSteps, oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter() + (interDist * 1.0 / me.iStepsPerSquare * j)>
+  [391] objcall 81 .............................. me.aSteps.add(oIsoScene.oGrid.aSquares[me.iStartRow][i].calcViewCenter() + (interDist * 1.0 / me.iStepsPerSquare * j))
+  [393] pushint8 1
+  [395] getlocal 4
+  [397] add
+  [398] setlocal 4
+  [400] endrepeat [272]
+  [402] pushint8 1
+  [404] getlocal 2
+  [406] add
+  [407] setlocal 2
+  [409] endrepeat [189]
+  [411] getparam 0 .............................. <me>
+  [413] getparam 0 .............................. <me>
+  [415] getobjprop 584 .......................... <me.spriteNum>
+  [418] setobjprop 368 .......................... me.iImageSprite = me.spriteNum
+  [421] getparam 0 .............................. <me>
+  [423] pushint8 1 .............................. <1>
+  [425] pushint8 1 .............................. <1>
+  [427] inv ..................................... <-1>
+  [428] pusharglist 2 ........................... <[1, -1]>
+  [430] pushlist ................................ <[1, -1]>
+  [431] pushint8 2 .............................. <2>
+  [433] pusharglist 1 ........................... <2>
+  [435] extcall 55 .............................. <random(2)>
+  [437] pusharglist 2 ........................... <[1, -1], random(2)>
+  [439] objcall 86 .............................. <[1, -1][random(2)]>
+  [441] setobjprop 295 .......................... me.iDirection = [1, -1][random(2)]
+  [444] getparam 0 .............................. <me>
+  [446] getparam 0 .............................. <me>
+  [448] pushsymb 585 ............................ <#aSteps>
+  [451] pusharglist 2 ........................... <me, #aSteps>
+  [453] objcall 88 .............................. <me.aSteps.count>
+  [455] pushint8 2 .............................. <2>
+  [457] sub ..................................... <me.aSteps.count - 2>
+  [458] pusharglist 1 ........................... <me.aSteps.count - 2>
+  [460] extcall 55 .............................. <random(me.aSteps.count - 2)>
+  [462] pushint8 1 .............................. <1>
+  [464] add ..................................... <random(me.aSteps.count - 2) + 1>
+  [465] setobjprop 593 .......................... me.iPathPosition = random(me.aSteps.count - 2) + 1
+  [468] getparam 0 .............................. <me>
+  [470] getobjprop 368 .......................... <me.iImageSprite>
+  [473] pusharglist 1 ........................... <me.iImageSprite>
+  [475] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [477] getparam 0 .............................. <me>
+  [479] pushsymb 586 ............................ <#aDepths>
+  [482] getparam 0 .............................. <me>
+  [484] getobjprop 593 .......................... <me.iPathPosition>
+  [487] pusharglist 3 ........................... <me, #aDepths, me.iPathPosition>
+  [489] objcall 54 .............................. <me.aDepths[me.iPathPosition]>
+  [491] setobjprop 134 .......................... sprite(me.iImageSprite).locZ = me.aDepths[me.iPathPosition]
+  [493] getparam 0 .............................. <me>
+  [495] getparam 0 .............................. <me>
+  [497] pushsymb 587 ............................ <#aRows>
+  [500] getparam 0 .............................. <me>
+  [502] getobjprop 593 .......................... <me.iPathPosition>
+  [505] pusharglist 3 ........................... <me, #aRows, me.iPathPosition>
+  [507] objcall 54 .............................. <me.aRows[me.iPathPosition]>
+  [509] setobjprop 460 .......................... me.iRow = me.aRows[me.iPathPosition]
+  [512] getparam 0 .............................. <me>
+  [514] getparam 0 .............................. <me>
+  [516] pushsymb 588 ............................ <#aCols>
+  [519] getparam 0 .............................. <me>
+  [521] getobjprop 593 .......................... <me.iPathPosition>
+  [524] pusharglist 3 ........................... <me, #aCols, me.iPathPosition>
+  [526] objcall 54 .............................. <me.aCols[me.iPathPosition]>
+  [528] setobjprop 461 .......................... me.iCol = me.aCols[me.iPathPosition]
+  [531] getparam 0 .............................. <me>
+  [533] getparam 0 .............................. <me>
+  [535] getobjprop 460 .......................... <me.iRow>
+  [538] setobjprop 594 .......................... me.iLastRow = me.iRow
+  [541] getparam 0 .............................. <me>
+  [543] getparam 0 .............................. <me>
+  [545] getobjprop 461 .......................... <me.iCol>
+  [548] setobjprop 595 .......................... me.iLastCol = me.iCol
+  [551] getparam 0 .............................. <me>
+  [553] getparam 0 .............................. <me>
+  [555] pushsymb 585 ............................ <#aSteps>
+  [558] getparam 0 .............................. <me>
+  [560] getobjprop 593 .......................... <me.iPathPosition>
+  [563] pusharglist 3 ........................... <me, #aSteps, me.iPathPosition>
+  [565] objcall 54 .............................. <me.aSteps[me.iPathPosition]>
+  [567] pusharglistnoret 2 ...................... <me, me.aSteps[me.iPathPosition]>
+  [569] objcall 214 ............................. me.setLoc(me.aSteps[me.iPathPosition])
+  [571] getglobal 464 ........................... <oMapObject>
+  [574] pushsymb 465 ............................ <#oGridVals>
+  [577] getparam 0 .............................. <me>
+  [579] getobjprop 460 .......................... <me.iRow>
+  [582] pusharglist 3 ........................... <oMapObject, #oGridVals, me.iRow>
+  [584] objcall 274 ............................. <oMapObject.oGridVals[me.iRow]>
+  [587] getparam 0 .............................. <me>
+  [589] getobjprop 461 .......................... <me.iCol>
+  [592] getglobal 466 ........................... <iSledTrackValue>
+  [595] pushint8 1 .............................. <1>
+  [597] add ..................................... <iSledTrackValue + 1>
+  [598] pusharglistnoret 3 ...................... <oMapObject.oGridVals[me.iRow], me.iCol, iSledTrackValue + 1>
+  [600] objcall 443 ............................. oMapObject.oGridVals[me.iRow][me.iCol] = iSledTrackValue + 1
+  [603] getparam 0 .............................. <me>
+  [605] pushint8 15 ............................. <15>
+  [607] setobjprop 311 .......................... me.iFPS = 15
+  [610] getparam 0 .............................. <me>
+  [612] getmovieprop 281 ........................ <the milliSeconds>
+  [615] setobjprop 312 .......................... me.iFPSTimer = the milliSeconds
+  [618] getparam 0 .............................. <me>
+  [620] pushint16 1000 .......................... <1000>
+  [623] getparam 0 .............................. <me>
+  [625] getobjprop 311 .......................... <me.iFPS>
+  [628] div ..................................... <1000 / me.iFPS>
+  [629] setobjprop 313 .......................... me.iFPSTimerLength = 1000 / me.iFPS
+  [632] getglobal 97 ............................ <oAvatar>
+  [634] getchainedprop 267 ...................... <oAvatar.aSleds>
+  [637] getparam 0 .............................. <me>
+  [639] pusharglistnoret 2 ...................... <oAvatar.aSleds, me>
+  [641] objcall 81 .............................. oAvatar.aSleds.add(me)
+  [643] getmovieprop 60 ......................... <the actorList>
+  [645] getparam 0 .............................. <me>
+  [647] pusharglistnoret 2 ...................... <the actorList, me>
+  [649] objcall 81 .............................. (the actorList).add(me)
+  [651] ret
+end
+
+on pauseMachine me, bPauseValue
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <bPauseValue>
+  [  4] setobjprop 296 .......................... me.bPaused = bPauseValue
+  [  7] ret
+end
+
+on getDirectionPoint me, dirVal
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 277 ...................... <me.aDirectionPointVectors>
+  [  5] getparam 1 .............................. <dirVal>
+  [  7] pusharglist 1 ........................... <dirVal>
+  [  9] extcall 121 ............................. <string(dirVal)>
+  [ 11] pusharglist 1 ........................... <string(dirVal)>
+  [ 13] extcall 358 ............................. <symbol(string(dirVal))>
+  [ 16] pusharglist 2 ........................... <me.aDirectionPointVectors, symbol(string(dirVal))>
+  [ 18] objcall 54 .............................. <me.aDirectionPointVectors.getProp(symbol(string(dirVal)))>
+  [ 20] pusharglistnoret 1 ...................... <me.aDirectionPointVectors.getProp(symbol(string(dirVal)))>
+  [ 22] extcall 63 .............................. return me.aDirectionPointVectors.getProp(symbol(string(dirVal)))
+  [ 24] ret
+end
+
+on calcViewCenter me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 368 .......................... <me.iImageSprite>
+  [  5] pusharglist 1 ........................... <me.iImageSprite>
+  [  7] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [  9] getobjprop 80 ........................... <sprite(me.iImageSprite).loc>
+  [ 11] pusharglistnoret 1 ...................... <sprite(me.iImageSprite).loc>
+  [ 13] extcall 63 .............................. return sprite(me.iImageSprite).loc
+  [ 15] ret
+end
+
+on getFPS me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 311 .......................... <me.iFPS>
+  [  5] pusharglistnoret 1 ...................... <me.iFPS>
+  [  7] extcall 63 .............................. return me.iFPS
+  [  9] ret
+end
+
+on initSprites me, _iImageSprite, _iShadowSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_iImageSprite>
+  [  4] setobjprop 368 .......................... me.iImageSprite = _iImageSprite
+  [  7] getparam 0 .............................. <me>
+  [  9] getparam 2 .............................. <_iShadowSprite>
+  [ 11] setobjprop 369 .......................... me.iShadowSprite = _iShadowSprite
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 178 ............................. me.createMember()
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] objcall 179 ............................. me.createSprites()
+  [ 26] ret
+end
+
+on getPreviewImage me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 353 .......................... <me.oPreviewImage>
+  [  5] pusharglistnoret 1 ...................... <me.oPreviewImage>
+  [  7] extcall 63 .............................. return me.oPreviewImage
+  [  9] ret
+end
+
+on end me
+  [  0] ret
+end
+
+on createBuffer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 292 .......................... <me.iWidth>
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 293 .......................... <me.iHeight>
+  [ 12] pushint8 20 ............................. <20>
+  [ 14] add ..................................... <me.iHeight + 20>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 299 .......................... <me.iColorDepth>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 300 .......................... <me.iAlphaDepth>
+  [ 25] pusharglist 4 ........................... <me.iWidth, me.iHeight + 20, me.iColorDepth, me.iAlphaDepth>
+  [ 27] extcall 284 ............................. <image(me.iWidth, me.iHeight + 20, me.iColorDepth, me.iAlphaDepth)>
+  [ 30] setobjprop 352 .......................... me.oBuffer = image(me.iWidth, me.iHeight + 20, me.iColorDepth, me.iAlphaDepth)
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getchainedprop 352 ...................... <me.oBuffer>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getchainedprop 352 ...................... <me.oBuffer>
+  [ 43] getobjprop 133 .......................... <me.oBuffer.rect>
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getobjprop 304 .......................... <me.oBufferBGColor>
+  [ 50] pusharglistnoret 3 ...................... <me.oBuffer, me.oBuffer.rect, me.oBufferBGColor>
+  [ 52] objcall 287 ............................. me.oBuffer.fill(me.oBuffer.rect, me.oBufferBGColor)
+  [ 55] ret
+end
+
+on createMember me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 368 .......................... <me.iImageSprite>
+  [  5] pusharglist 1 ........................... <me.iImageSprite>
+  [  7] extcall 121 ............................. <string(me.iImageSprite)>
+  [  9] setlocal 0 .............................. sName = string(me.iImageSprite)
+  [ 11] getlocal 0 .............................. <sName>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 291 .......................... <me.sAvatarCast>
+  [ 18] pusharglist 2 ........................... <sName, me.sAvatarCast>
+  [ 20] extcall 142 ............................. <member(sName, me.sAvatarCast)>
+  [ 22] setlocal 1 .............................. oExistingMember = member(sName, me.sAvatarCast)
+  [ 24] getlocal 1 .............................. <oExistingMember>
+  [ 26] getobjprop 372 .......................... <oExistingMember.memberNum>
+  [ 29] pushzero ................................ <0>
+  [ 30] lteq .................................... <oExistingMember.memberNum <= 0>
+  [ 31] jmpifz [ 59] ............................ if oExistingMember.memberNum <= 0 then / else
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushsymb 373 ............................ <#bitmap>
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getobjprop 291 .......................... <me.sAvatarCast>
+  [ 44] pusharglist 1 ........................... <me.sAvatarCast>
+  [ 46] extcall 374 ............................. <castLib(me.sAvatarCast)>
+  [ 49] pusharglist 2 ........................... <#bitmap, castLib(me.sAvatarCast)>
+  [ 51] extcall 2 ............................... <new(#bitmap, castLib(me.sAvatarCast))>
+  [ 53] setobjprop 375 .......................... me.oImageMember = new(#bitmap, castLib(me.sAvatarCast))
+  [ 56] jmp [ 66]
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getlocal 1 .............................. <oExistingMember>
+  [ 63] setobjprop 375 .......................... me.oImageMember = oExistingMember
+  [ 66] getparam 0 .............................. <me>
+  [ 68] getchainedprop 375 ...................... <me.oImageMember>
+  [ 71] getlocal 0 .............................. <sName>
+  [ 73] setobjprop 376 .......................... me.oImageMember.name = sName
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getchainedprop 352 ...................... <me.oBuffer>
+  [ 81] getobjprop 377 .......................... <me.oBuffer.width>
+  [ 84] getparam 0 .............................. <me>
+  [ 86] getobjprop 294 .......................... <me.iScale>
+  [ 89] pushcons 1 .............................. <0.01>
+  [ 91] mul ..................................... <me.iScale * 0.01>
+  [ 92] mul ..................................... <me.oBuffer.width * (me.iScale * 0.01)>
+  [ 93] getparam 0 .............................. <me>
+  [ 95] getchainedprop 352 ...................... <me.oBuffer>
+  [ 98] getobjprop 378 .......................... <me.oBuffer.height>
+  [101] getparam 0 .............................. <me>
+  [103] getobjprop 294 .......................... <me.iScale>
+  [106] pushcons 1 .............................. <0.01>
+  [108] mul ..................................... <me.iScale * 0.01>
+  [109] mul ..................................... <me.oBuffer.height * (me.iScale * 0.01)>
+  [110] getparam 0 .............................. <me>
+  [112] getobjprop 299 .......................... <me.iColorDepth>
+  [115] getparam 0 .............................. <me>
+  [117] getobjprop 300 .......................... <me.iAlphaDepth>
+  [120] pusharglist 4 ........................... <me.oBuffer.width * (me.iScale * 0.01), me.oBuffer.height * (me.iScale * 0.01), me.iColorDepth, me.iAlphaDepth>
+  [122] extcall 284 ............................. <image(me.oBuffer.width * (me.iScale * 0.01), me.oBuffer.height * (me.iScale * 0.01), me.iColorDepth, me.iAlphaDepth)>
+  [125] setlocal 2 .............................. oMemberImage = image(me.oBuffer.width * (me.iScale * 0.01), me.oBuffer.height * (me.iScale * 0.01), me.iColorDepth, me.iAlphaDepth)
+  [127] getlocal 2 .............................. <oMemberImage>
+  [129] getparam 0 .............................. <me>
+  [131] getobjprop 352 .......................... <me.oBuffer>
+  [134] getparam 0 .............................. <me>
+  [136] getchainedprop 352 ...................... <me.oBuffer>
+  [139] getobjprop 133 .......................... <me.oBuffer.rect>
+  [141] getparam 0 .............................. <me>
+  [143] getobjprop 294 .......................... <me.iScale>
+  [146] pushcons 1 .............................. <0.01>
+  [148] mul ..................................... <me.iScale * 0.01>
+  [149] mul ..................................... <me.oBuffer.rect * (me.iScale * 0.01)>
+  [150] getparam 0 .............................. <me>
+  [152] getchainedprop 352 ...................... <me.oBuffer>
+  [155] getobjprop 133 .......................... <me.oBuffer.rect>
+  [157] pusharglistnoret 4 ...................... <oMemberImage, me.oBuffer, me.oBuffer.rect * (me.iScale * 0.01), me.oBuffer.rect>
+  [159] objcall 379 ............................. oMemberImage.copyPixels(me.oBuffer, me.oBuffer.rect * (me.iScale * 0.01), me.oBuffer.rect)
+  [162] getparam 0 .............................. <me>
+  [164] getchainedprop 375 ...................... <me.oImageMember>
+  [167] getlocal 2 .............................. <oMemberImage>
+  [169] setobjprop 284 .......................... me.oImageMember.image = oMemberImage
+  [172] getparam 0 .............................. <me>
+  [174] getchainedprop 375 ...................... <me.oImageMember>
+  [177] getparam 0 .............................. <me>
+  [179] getobjprop 292 .......................... <me.iWidth>
+  [182] getparam 0 .............................. <me>
+  [184] getobjprop 294 .......................... <me.iScale>
+  [187] pushcons 1 .............................. <0.01>
+  [189] mul ..................................... <me.iScale * 0.01>
+  [190] mul ..................................... <me.iWidth * (me.iScale * 0.01)>
+  [191] pushint8 2 .............................. <2>
+  [193] div ..................................... <me.iWidth * (me.iScale * 0.01) / 2>
+  [194] getparam 0 .............................. <me>
+  [196] getobjprop 293 .......................... <me.iHeight>
+  [199] getparam 0 .............................. <me>
+  [201] getobjprop 294 .......................... <me.iScale>
+  [204] pushcons 1 .............................. <0.01>
+  [206] mul ..................................... <me.iScale * 0.01>
+  [207] mul ..................................... <me.iHeight * (me.iScale * 0.01)>
+  [208] pusharglist 2 ........................... <me.iWidth * (me.iScale * 0.01) / 2, me.iHeight * (me.iScale * 0.01)>
+  [210] extcall 132 ............................. <point(me.iWidth * (me.iScale * 0.01) / 2, me.iHeight * (me.iScale * 0.01))>
+  [212] setobjprop 380 .......................... me.oImageMember.regPoint = point(me.iWidth * (me.iScale * 0.01) / 2, me.iHeight * (me.iScale * 0.01))
+  [215] ret
+end
+
+on createSprites me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 368 .......................... <me.iImageSprite>
+  [  5] pushint8 1 .............................. <1>
+  [  7] pusharglistnoret 2 ...................... <me.iImageSprite, 1>
+  [  9] extcall 384 ............................. puppetSprite(me.iImageSprite, 1)
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 368 .......................... <me.iImageSprite>
+  [ 17] pusharglist 1 ........................... <me.iImageSprite>
+  [ 19] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getobjprop 375 .......................... <me.oImageMember>
+  [ 26] setobjprop 142 .......................... sprite(me.iImageSprite).member = me.oImageMember
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getobjprop 364 .......................... <me.bDoFloodFill>
+  [ 33] jmpifz [ 56] ............................ if me.bDoFloodFill then / else
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getobjprop 368 .......................... <me.iImageSprite>
+  [ 41] pusharglist 1 ........................... <me.iImageSprite>
+  [ 43] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getobjprop 303 .......................... <me.oSpriteBgColor>
+  [ 50] setobjprop 385 .......................... sprite(me.iImageSprite).bgColor = me.oSpriteBgColor
+  [ 53] jmp [ 73]
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getobjprop 368 .......................... <me.iImageSprite>
+  [ 61] pusharglist 1 ........................... <me.iImageSprite>
+  [ 63] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getobjprop 304 .......................... <me.oBufferBGColor>
+  [ 70] setobjprop 385 .......................... sprite(me.iImageSprite).bgColor = me.oBufferBGColor
+  [ 73] getparam 0 .............................. <me>
+  [ 75] getobjprop 368 .......................... <me.iImageSprite>
+  [ 78] pusharglist 1 ........................... <me.iImageSprite>
+  [ 80] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 82] getparam 0 .............................. <me>
+  [ 84] getobjprop 305 .......................... <me.iSpriteInk>
+  [ 87] setobjprop 386 .......................... sprite(me.iImageSprite).ink = me.iSpriteInk
+  [ 90] getparam 0 .............................. <me>
+  [ 92] getobjprop 369 .......................... <me.iShadowSprite>
+  [ 95] pushint8 1 .............................. <1>
+  [ 97] pusharglistnoret 2 ...................... <me.iShadowSprite, 1>
+  [ 99] extcall 384 ............................. puppetSprite(me.iShadowSprite, 1)
+  [102] pushcons 2 .............................. <"human_shadow_sh">
+  [104] setlocal 0 .............................. sShadowMember = "human_shadow_sh"
+  [106] getglobal 366 ........................... <oStudioMap>
+  [109] pusharglist 1 ........................... <oStudioMap>
+  [111] extcall 365 ............................. <voidp(oStudioMap)>
+  [114] not ..................................... <not voidp(oStudioMap)>
+  [115] jmpifz [133] ............................ if not voidp(oStudioMap) then
+  [118] getglobal 366 ........................... <oStudioMap>
+  [121] pusharglist 1 ........................... <oStudioMap>
+  [123] objcall 367 ............................. <oStudioMap.isPrivate()>
+  [126] jmpifz [133] ............................ if oStudioMap.isPrivate() then
+  [129] pushcons 3 .............................. <"human_shadow_h">
+  [131] setlocal 0 .............................. sShadowMember = "human_shadow_h"
+  [133] getparam 0 .............................. <me>
+  [135] getobjprop 369 .......................... <me.iShadowSprite>
+  [138] pusharglist 1 ........................... <me.iShadowSprite>
+  [140] extcall 79 .............................. <sprite(me.iShadowSprite)>
+  [142] getlocal 0 .............................. <sShadowMember>
+  [144] pushcons 4 .............................. <"Internal">
+  [146] pusharglist 2 ........................... <sShadowMember, "Internal">
+  [148] extcall 142 ............................. <member(sShadowMember, "Internal")>
+  [150] setobjprop 142 .......................... sprite(me.iShadowSprite).member = member(sShadowMember, "Internal")
+  [152] ret
+end
+
+on getBuffer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 352 .......................... <me.oBuffer>
+  [  5] pusharglistnoret 1 ...................... <me.oBuffer>
+  [  7] extcall 63 .............................. return me.oBuffer
+  [  9] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 296 .......................... <me.bPaused>
+  [  5] not ..................................... <not me.bPaused>
+  [  6] jmpifz [ 53] ............................ if not me.bPaused then
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 311 .......................... <me.iFPS>
+  [ 14] pushzero ................................ <0>
+  [ 15] gt ...................................... <me.iFPS > 0>
+  [ 16] jmpifz [ 53] ............................ if me.iFPS > 0 then
+  [ 19] getmovieprop 281 ........................ <the milliSeconds>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 312 .......................... <me.iFPSTimer>
+  [ 27] sub ..................................... <the milliSeconds - me.iFPSTimer>
+  [ 28] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iFPSTimer
+  [ 30] getlocal 0 .............................. <iElapsedTime>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 313 .......................... <me.iFPSTimerLength>
+  [ 37] gteq .................................... <iElapsedTime >= me.iFPSTimerLength>
+  [ 38] jmpifz [ 53] ............................ if iElapsedTime >= me.iFPSTimerLength then
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 1 ...................... <me>
+  [ 45] objcall 196 ............................. me.doFrameEvent()
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] pusharglistnoret 1 ...................... <1>
+  [ 51] extcall 63 .............................. return 1
+  [ 53] pushzero ................................ <0>
+  [ 54] pusharglistnoret 1 ...................... <0>
+  [ 56] extcall 63 .............................. return 0
+  [ 58] ret
+end
+
+on evaluateMove me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 269 .......................... <me.iStepsTravelled>
+  [  5] pushzero ................................ <0>
+  [  6] eq ...................................... <me.iStepsTravelled = 0>
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 269 .......................... <me.iStepsTravelled>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 602 .......................... <me.iStepsToNextTile>
+  [ 17] pusharglist 1 ........................... <me.iStepsToNextTile>
+  [ 19] extcall 123 ............................. <integer(me.iStepsToNextTile)>
+  [ 21] eq ...................................... <me.iStepsTravelled = integer(me.iStepsToNextTile)>
+  [ 22] or ...................................... <(me.iStepsTravelled = 0) or (me.iStepsTravelled = integer(me.iStepsToNextTile))>
+  [ 23] jmpifz [410] ............................ if (me.iStepsTravelled = 0) or (me.iStepsTravelled = integer(me.iStepsToNextTile)) then / else
+  [ 26] getglobal 271 ........................... <oIsoScene>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 368 .......................... <me.iImageSprite>
+  [ 34] pusharglist 1 ........................... <me.iImageSprite>
+  [ 36] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 38] getobjprop 80 ........................... <sprite(me.iImageSprite).loc>
+  [ 40] pusharglist 2 ........................... <oIsoScene, sprite(me.iImageSprite).loc>
+  [ 42] objcall 603 ............................. <oIsoScene.calcPointToSquare(sprite(me.iImageSprite).loc)>
+  [ 45] setlocal 0 .............................. oCurrentSquare = oIsoScene.calcPointToSquare(sprite(me.iImageSprite).loc)
+  [ 47] getlocal 0 .............................. <oCurrentSquare>
+  [ 49] getobjprop 460 .......................... <oCurrentSquare.iRow>
+  [ 52] getlocal 0 .............................. <oCurrentSquare>
+  [ 54] getobjprop 461 .......................... <oCurrentSquare.iCol>
+  [ 57] pusharglist 2 ........................... <oCurrentSquare.iRow, oCurrentSquare.iCol>
+  [ 59] extcall 132 ............................. <point(oCurrentSquare.iRow, oCurrentSquare.iCol)>
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getparam 0 .............................. <me>
+  [ 65] getobjprop 295 .......................... <me.iDirection>
+  [ 68] pusharglist 2 ........................... <me, me.iDirection>
+  [ 70] objcall 166 ............................. <me.getDirectionPoint(me.iDirection)>
+  [ 72] add ..................................... <point(oCurrentSquare.iRow, oCurrentSquare.iCol) + me.getDirectionPoint(me.iDirection)>
+  [ 73] setlocal 1 .............................. testNext = point(oCurrentSquare.iRow, oCurrentSquare.iCol) + me.getDirectionPoint(me.iDirection)
+  [ 75] getglobal 464 ........................... <oMapObject>
+  [ 78] pushsymb 465 ............................ <#oGridVals>
+  [ 81] getlocal 1 .............................. <testNext>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] pusharglist 2 ........................... <testNext, 1>
+  [ 87] objcall 86 .............................. <testNext[1]>
+  [ 89] pusharglist 3 ........................... <oMapObject, #oGridVals, testNext[1]>
+  [ 91] objcall 274 ............................. <oMapObject.oGridVals[testNext[1]]>
+  [ 94] getlocal 1 .............................. <testNext>
+  [ 96] pushint8 2 .............................. <2>
+  [ 98] pusharglist 2 ........................... <testNext, 2>
+  [100] objcall 86 .............................. <testNext[2]>
+  [102] pusharglist 2 ........................... <oMapObject.oGridVals[testNext[1]], testNext[2]>
+  [104] objcall 86 .............................. <oMapObject.oGridVals[testNext[1]][testNext[2]]>
+  [106] getglobal 466 ........................... <iSledTrackValue>
+  [109] lt ...................................... <oMapObject.oGridVals[testNext[1]][testNext[2]] < iSledTrackValue>
+  [110] jmpifz [151] ............................ if oMapObject.oGridVals[testNext[1]][testNext[2]] < iSledTrackValue then
+  [113] getprop 295 ............................. <iDirection>
+  [116] peek 0 .................................. case iDirection of
+  [118] pushint8 2 .............................. <2>
+  [120] eq
+  [121] jmpifz [134] ............................ (case) 2:
+  [124] getparam 0 .............................. <me>
+  [126] pushint8 6 .............................. <6>
+  [128] setobjprop 295 .......................... me.iDirection = 6
+  [131] jmp [149]
+  [134] peek 0
+  [136] pushint8 6 .............................. <6>
+  [138] eq
+  [139] jmpifz [149] ............................ (case) 6:
+  [142] getparam 0 .............................. <me>
+  [144] pushint8 2 .............................. <2>
+  [146] setobjprop 295 .......................... me.iDirection = 2
+  [149] pop 1 ................................... end case
+  [151] getparam 0 .............................. <me>
+  [153] getlocal 0 .............................. <oCurrentSquare>
+  [155] getobjprop 460 .......................... <oCurrentSquare.iRow>
+  [158] setobjprop 460 .......................... me.iRow = oCurrentSquare.iRow
+  [161] getparam 0 .............................. <me>
+  [163] getlocal 0 .............................. <oCurrentSquare>
+  [165] getobjprop 461 .......................... <oCurrentSquare.iCol>
+  [168] setobjprop 461 .......................... me.iCol = oCurrentSquare.iCol
+  [171] getparam 0 .............................. <me>
+  [173] getlocal 0 .............................. <oCurrentSquare>
+  [175] getobjprop 460 .......................... <oCurrentSquare.iRow>
+  [178] getlocal 0 .............................. <oCurrentSquare>
+  [180] getobjprop 461 .......................... <oCurrentSquare.iCol>
+  [183] pusharglist 2 ........................... <oCurrentSquare.iRow, oCurrentSquare.iCol>
+  [185] extcall 132 ............................. <point(oCurrentSquare.iRow, oCurrentSquare.iCol)>
+  [187] setobjprop 462 .......................... me.pCurrentSquareLoc = point(oCurrentSquare.iRow, oCurrentSquare.iCol)
+  [190] getprop 368 ............................. <iImageSprite>
+  [193] pusharglist 1 ........................... <iImageSprite>
+  [195] extcall 79 .............................. <sprite(iImageSprite)>
+  [197] getlocal 0 .............................. <oCurrentSquare>
+  [199] getobjprop 460 .......................... <oCurrentSquare.iRow>
+  [202] pushint8 100 ............................ <100>
+  [204] mul ..................................... <oCurrentSquare.iRow * 100>
+  [205] getlocal 0 .............................. <oCurrentSquare>
+  [207] getobjprop 461 .......................... <oCurrentSquare.iCol>
+  [210] add ..................................... <(oCurrentSquare.iRow * 100) + oCurrentSquare.iCol>
+  [211] setobjprop 134 .......................... sprite(iImageSprite).locZ = (oCurrentSquare.iRow * 100) + oCurrentSquare.iCol
+  [213] getparam 0 .............................. <me>
+  [215] getobjprop 295 .......................... <me.iDirection>
+  [218] pushzero ................................ <0>
+  [219] eq ...................................... <me.iDirection = 0>
+  [220] jmpifz [255] ............................ if me.iDirection = 0 then / else
+  [223] getparam 0 .............................. <me>
+  [225] getparam 0 .............................. <me>
+  [227] getobjprop 462 .......................... <me.pCurrentSquareLoc>
+  [230] getparam 0 .............................. <me>
+  [232] getparam 0 .............................. <me>
+  [234] getobjprop 295 .......................... <me.iDirection>
+  [237] pusharglist 2 ........................... <me, me.iDirection>
+  [239] objcall 166 ............................. <me.getDirectionPoint(me.iDirection)>
+  [241] add ..................................... <me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)>
+  [242] setobjprop 463 .......................... me.pNextSquareLoc = me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)
+  [245] getparam 0 .............................. <me>
+  [247] pushint8 1 .............................. <1>
+  [249] setobjprop 269 .......................... me.iStepsTravelled = 1
+  [252] jmp [400]
+  [255] getparam 0 .............................. <me>
+  [257] getobjprop 295 .......................... <me.iDirection>
+  [260] pushint8 2 .............................. <2>
+  [262] eq ...................................... <me.iDirection = 2>
+  [263] jmpifz [298] ............................ if me.iDirection = 2 then / else
+  [266] getparam 0 .............................. <me>
+  [268] getparam 0 .............................. <me>
+  [270] getobjprop 462 .......................... <me.pCurrentSquareLoc>
+  [273] getparam 0 .............................. <me>
+  [275] getparam 0 .............................. <me>
+  [277] getobjprop 295 .......................... <me.iDirection>
+  [280] pusharglist 2 ........................... <me, me.iDirection>
+  [282] objcall 166 ............................. <me.getDirectionPoint(me.iDirection)>
+  [284] add ..................................... <me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)>
+  [285] setobjprop 463 .......................... me.pNextSquareLoc = me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)
+  [288] getparam 0 .............................. <me>
+  [290] pushint8 1 .............................. <1>
+  [292] setobjprop 269 .......................... me.iStepsTravelled = 1
+  [295] jmp [400]
+  [298] getparam 0 .............................. <me>
+  [300] getobjprop 295 .......................... <me.iDirection>
+  [303] pushint8 6 .............................. <6>
+  [305] eq ...................................... <me.iDirection = 6>
+  [306] jmpifz [341] ............................ if me.iDirection = 6 then / else
+  [309] getparam 0 .............................. <me>
+  [311] getparam 0 .............................. <me>
+  [313] getobjprop 462 .......................... <me.pCurrentSquareLoc>
+  [316] getparam 0 .............................. <me>
+  [318] getparam 0 .............................. <me>
+  [320] getobjprop 295 .......................... <me.iDirection>
+  [323] pusharglist 2 ........................... <me, me.iDirection>
+  [325] objcall 166 ............................. <me.getDirectionPoint(me.iDirection)>
+  [327] add ..................................... <me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)>
+  [328] setobjprop 463 .......................... me.pNextSquareLoc = me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)
+  [331] getparam 0 .............................. <me>
+  [333] pushint8 1 .............................. <1>
+  [335] setobjprop 269 .......................... me.iStepsTravelled = 1
+  [338] jmp [400]
+  [341] getparam 0 .............................. <me>
+  [343] getobjprop 295 .......................... <me.iDirection>
+  [346] pushint8 4 .............................. <4>
+  [348] eq ...................................... <me.iDirection = 4>
+  [349] jmpifz [384] ............................ if me.iDirection = 4 then / else
+  [352] getparam 0 .............................. <me>
+  [354] getparam 0 .............................. <me>
+  [356] getobjprop 462 .......................... <me.pCurrentSquareLoc>
+  [359] getparam 0 .............................. <me>
+  [361] getparam 0 .............................. <me>
+  [363] getobjprop 295 .......................... <me.iDirection>
+  [366] pusharglist 2 ........................... <me, me.iDirection>
+  [368] objcall 166 ............................. <me.getDirectionPoint(me.iDirection)>
+  [370] add ..................................... <me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)>
+  [371] setobjprop 463 .......................... me.pNextSquareLoc = me.pCurrentSquareLoc + me.getDirectionPoint(me.iDirection)
+  [374] getparam 0 .............................. <me>
+  [376] pushint8 1 .............................. <1>
+  [378] setobjprop 269 .......................... me.iStepsTravelled = 1
+  [381] jmp [400]
+  [384] getparam 0 .............................. <me>
+  [386] pushzero ................................ <0>
+  [387] setobjprop 459 .......................... me.bMove = 0
+  [390] getparam 0 .............................. <me>
+  [392] getparam 0 .............................. <me>
+  [394] getobjprop 462 .......................... <me.pCurrentSquareLoc>
+  [397] setobjprop 463 .......................... me.pNextSquareLoc = me.pCurrentSquareLoc
+  [400] getparam 0 .............................. <me>
+  [402] pusharglistnoret 1 ...................... <me>
+  [404] objcall 582 ............................. me.doTheMove()
+  [407] jmp [423]
+  [410] getparam 0 .............................. <me>
+  [412] getparam 0 .............................. <me>
+  [414] getobjprop 269 .......................... <me.iStepsTravelled>
+  [417] pushint8 1 .............................. <1>
+  [419] add ..................................... <me.iStepsTravelled + 1>
+  [420] setobjprop 269 .......................... me.iStepsTravelled = me.iStepsTravelled + 1
+  [423] ret
+end
+
+on doTheMove me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 593 .......................... <me.iPathPosition>
+  [  5] pushint8 1 .............................. <1>
+  [  7] eq ...................................... <me.iPathPosition = 1>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 593 .......................... <me.iPathPosition>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushsymb 585 ............................ <#aSteps>
+  [ 18] pusharglist 2 ........................... <me, #aSteps>
+  [ 20] objcall 88 .............................. <me.aSteps.count>
+  [ 22] eq ...................................... <me.iPathPosition = me.aSteps.count>
+  [ 23] or ...................................... <(me.iPathPosition = 1) or (me.iPathPosition = me.aSteps.count)>
+  [ 24] jmpifz [ 90] ............................ if (me.iPathPosition = 1) or (me.iPathPosition = me.aSteps.count) then
+  [ 27] getglobal 138 ........................... <oSpriteManager>
+  [ 29] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [ 31] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [ 33] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [ 35] pushint16 200 ........................... <200>
+  [ 38] setobjprop 140 .......................... sound(oSpriteManager.iEffectSound).volume = 200
+  [ 40] getglobal 138 ........................... <oSpriteManager>
+  [ 42] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [ 44] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [ 46] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [ 48] pushint8 100 ............................ <100>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 295 .......................... <me.iDirection>
+  [ 55] mul ..................................... <100 * me.iDirection>
+  [ 56] setobjprop 141 .......................... sound(oSpriteManager.iEffectSound).pan = 100 * me.iDirection
+  [ 58] getglobal 138 ........................... <oSpriteManager>
+  [ 60] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [ 62] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [ 64] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [ 66] pushcons 5 .............................. <"sedn_i25">
+  [ 68] pusharglist 1 ........................... <"sedn_i25">
+  [ 70] extcall 142 ............................. <member("sedn_i25")>
+  [ 72] pusharglistnoret 2 ...................... <sound(oSpriteManager.iEffectSound), member("sedn_i25")>
+  [ 74] objcall 143 ............................. sound(oSpriteManager.iEffectSound).play(member("sedn_i25"))
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getparam 0 .............................. <me>
+  [ 80] getobjprop 295 .......................... <me.iDirection>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] inv ..................................... <-1>
+  [ 86] mul ..................................... <me.iDirection * -1>
+  [ 87] setobjprop 295 .......................... me.iDirection = me.iDirection * -1
+  [ 90] getparam 0 .............................. <me>
+  [ 92] getparam 0 .............................. <me>
+  [ 94] getobjprop 593 .......................... <me.iPathPosition>
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getobjprop 295 .......................... <me.iDirection>
+  [102] add ..................................... <me.iPathPosition + me.iDirection>
+  [103] setobjprop 593 .......................... me.iPathPosition = me.iPathPosition + me.iDirection
+  [106] getparam 0 .............................. <me>
+  [108] getparam 0 .............................. <me>
+  [110] pushsymb 585 ............................ <#aSteps>
+  [113] getparam 0 .............................. <me>
+  [115] getobjprop 593 .......................... <me.iPathPosition>
+  [118] pusharglist 3 ........................... <me, #aSteps, me.iPathPosition>
+  [120] objcall 54 .............................. <me.aSteps[me.iPathPosition]>
+  [122] pusharglistnoret 2 ...................... <me, me.aSteps[me.iPathPosition]>
+  [124] objcall 214 ............................. me.setLoc(me.aSteps[me.iPathPosition])
+  [126] getparam 0 .............................. <me>
+  [128] getobjprop 368 .......................... <me.iImageSprite>
+  [131] pusharglist 1 ........................... <me.iImageSprite>
+  [133] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [135] pushint8 100 ............................ <100>
+  [137] setobjprop 134 .......................... sprite(me.iImageSprite).locZ = 100
+  [139] getparam 0 .............................. <me>
+  [141] getparam 0 .............................. <me>
+  [143] pushsymb 587 ............................ <#aRows>
+  [146] getparam 0 .............................. <me>
+  [148] getobjprop 593 .......................... <me.iPathPosition>
+  [151] pusharglist 3 ........................... <me, #aRows, me.iPathPosition>
+  [153] objcall 54 .............................. <me.aRows[me.iPathPosition]>
+  [155] setobjprop 460 .......................... me.iRow = me.aRows[me.iPathPosition]
+  [158] getparam 0 .............................. <me>
+  [160] getparam 0 .............................. <me>
+  [162] pushsymb 588 ............................ <#aCols>
+  [165] getparam 0 .............................. <me>
+  [167] getobjprop 593 .......................... <me.iPathPosition>
+  [170] pusharglist 3 ........................... <me, #aCols, me.iPathPosition>
+  [172] objcall 54 .............................. <me.aCols[me.iPathPosition]>
+  [174] setobjprop 461 .......................... me.iCol = me.aCols[me.iPathPosition]
+  [177] getparam 0 .............................. <me>
+  [179] getobjprop 460 .......................... <me.iRow>
+  [182] getparam 0 .............................. <me>
+  [184] getobjprop 594 .......................... <me.iLastRow>
+  [187] nteq .................................... <me.iRow <> me.iLastRow>
+  [188] getparam 0 .............................. <me>
+  [190] getobjprop 461 .......................... <me.iCol>
+  [193] getparam 0 .............................. <me>
+  [195] getobjprop 595 .......................... <me.iLastCol>
+  [198] nteq .................................... <me.iCol <> me.iLastCol>
+  [199] or ...................................... <(me.iRow <> me.iLastRow) or (me.iCol <> me.iLastCol)>
+  [200] jmpifz [284] ............................ if (me.iRow <> me.iLastRow) or (me.iCol <> me.iLastCol) then
+  [203] getglobal 464 ........................... <oMapObject>
+  [206] pushsymb 465 ............................ <#oGridVals>
+  [209] getparam 0 .............................. <me>
+  [211] getobjprop 460 .......................... <me.iRow>
+  [214] pusharglist 3 ........................... <oMapObject, #oGridVals, me.iRow>
+  [216] objcall 274 ............................. <oMapObject.oGridVals[me.iRow]>
+  [219] getparam 0 .............................. <me>
+  [221] getobjprop 461 .......................... <me.iCol>
+  [224] getglobal 466 ........................... <iSledTrackValue>
+  [227] pushint8 1 .............................. <1>
+  [229] add ..................................... <iSledTrackValue + 1>
+  [230] pusharglistnoret 3 ...................... <oMapObject.oGridVals[me.iRow], me.iCol, iSledTrackValue + 1>
+  [232] objcall 443 ............................. oMapObject.oGridVals[me.iRow][me.iCol] = iSledTrackValue + 1
+  [235] getglobal 464 ........................... <oMapObject>
+  [238] pushsymb 465 ............................ <#oGridVals>
+  [241] getparam 0 .............................. <me>
+  [243] getobjprop 594 .......................... <me.iLastRow>
+  [246] pusharglist 3 ........................... <oMapObject, #oGridVals, me.iLastRow>
+  [248] objcall 274 ............................. <oMapObject.oGridVals[me.iLastRow]>
+  [251] getparam 0 .............................. <me>
+  [253] getobjprop 595 .......................... <me.iLastCol>
+  [256] getglobal 466 ........................... <iSledTrackValue>
+  [259] pusharglistnoret 3 ...................... <oMapObject.oGridVals[me.iLastRow], me.iLastCol, iSledTrackValue>
+  [261] objcall 443 ............................. oMapObject.oGridVals[me.iLastRow][me.iLastCol] = iSledTrackValue
+  [264] getparam 0 .............................. <me>
+  [266] getparam 0 .............................. <me>
+  [268] getobjprop 460 .......................... <me.iRow>
+  [271] setobjprop 594 .......................... me.iLastRow = me.iRow
+  [274] getparam 0 .............................. <me>
+  [276] getparam 0 .............................. <me>
+  [278] getobjprop 461 .......................... <me.iCol>
+  [281] setobjprop 595 .......................... me.iLastCol = me.iCol
+  [284] ret
+end
+
+on doFrameEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 582 ............................. me.doTheMove()
+  [  7] getparam 0 .............................. <me>
+  [  9] pushint8 1 .............................. <1>
+  [ 11] setobjprop 459 .......................... me.bMove = 1
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setobjprop 485 .......................... me.bMoving = 1
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getmovieprop 281 ........................ <the milliSeconds>
+  [ 26] setobjprop 312 .......................... me.iFPSTimer = the milliSeconds
+  [ 29] pusharglistnoret 0 ...................... <>
+  [ 31] extcall 475 ............................. updateStage()
+  [ 34] ret
+end
+
+on advanceAnimFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 306 .......................... <me.iAnimStep>
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 307 .......................... <me.iAnimStepMax>
+  [ 10] eq ...................................... <me.iAnimStep = me.iAnimStepMax>
+  [ 11] jmpifz [ 23] ............................ if me.iAnimStep = me.iAnimStepMax then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushzero ................................ <0>
+  [ 17] setobjprop 306 .......................... me.iAnimStep = 0
+  [ 20] jmp [ 36]
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 306 .......................... <me.iAnimStep>
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] add ..................................... <me.iAnimStep + 1>
+  [ 33] setobjprop 306 .......................... me.iAnimStep = me.iAnimStep + 1
+  [ 36] ret
+end
+
+on calcAnim me
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. bDrawAnim = 0
+  [  3] pushint8 1 .............................. <1>
+  [  5] setlocal 1
+  [  7] getlocal 1
+  [  9] getparam 0 .............................. <me>
+  [ 11] pushsymb 432 ............................ <#aRuntimeConfig>
+  [ 14] pusharglist 2 ........................... <me, #aRuntimeConfig>
+  [ 16] objcall 88 .............................. <me.aRuntimeConfig.count>
+  [ 18] lteq
+  [ 19] jmpifz [163] ............................ repeat with i = 1 to me.aRuntimeConfig.count
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getchainedprop 432 ...................... <me.aRuntimeConfig>
+  [ 27] getlocal 1 .............................. <i>
+  [ 29] pusharglist 2 ........................... <me.aRuntimeConfig, i>
+  [ 31] objcall 424 ............................. <me.aRuntimeConfig.getPropAt(i)>
+  [ 34] setlocal 2 .............................. sPart = me.aRuntimeConfig.getPropAt(i)
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pushsymb 432 ............................ <#aRuntimeConfig>
+  [ 41] getlocal 2 .............................. <sPart>
+  [ 43] pusharglist 3 ........................... <me, #aRuntimeConfig, sPart>
+  [ 45] objcall 54 .............................. <me.aRuntimeConfig[sPart]>
+  [ 47] setlocal 3 .............................. aPartConfig = me.aRuntimeConfig[sPart]
+  [ 49] getlocal 3 .............................. <aPartConfig>
+  [ 51] pushsymb 433 ............................ <#act>
+  [ 54] pusharglist 2 ........................... <aPartConfig, #act>
+  [ 56] objcall 86 .............................. <aPartConfig[#act]>
+  [ 58] setlocal 4 .............................. sAction = aPartConfig[#act]
+  [ 60] getlocal 3 .............................. <aPartConfig>
+  [ 62] pushsymb 435 ............................ <#anim>
+  [ 65] pusharglist 2 ........................... <aPartConfig, #anim>
+  [ 67] objcall 86 .............................. <aPartConfig[#anim]>
+  [ 69] setlocal 5 .............................. bAnim = aPartConfig[#anim]
+  [ 71] getlocal 5 .............................. <bAnim>
+  [ 73] jmpifz [154] ............................ if bAnim then
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] setlocal 0 .............................. bDrawAnim = 1
+  [ 80] getparam 0 .............................. <me>
+  [ 82] pushsymb 431 ............................ <#aConfigSettings>
+  [ 85] getlocal 2 .............................. <sPart>
+  [ 87] pusharglist 3 ........................... <me, #aConfigSettings, sPart>
+  [ 89] objcall 274 ............................. <me.aConfigSettings[sPart]>
+  [ 92] getlocal 4 .............................. <sAction>
+  [ 94] pusharglist 2 ........................... <me.aConfigSettings[sPart], sAction>
+  [ 96] objcall 86 .............................. <me.aConfigSettings[sPart][sAction]>
+  [ 98] pushsymb 442 ............................ <#fr>
+  [101] pusharglist 2 ........................... <me.aConfigSettings[sPart][sAction], #fr>
+  [103] objcall 86 .............................. <me.aConfigSettings[sPart][sAction][#fr]>
+  [105] setlocal 6 .............................. aAnimFrames = me.aConfigSettings[sPart][sAction][#fr]
+  [107] getlocal 6 .............................. <aAnimFrames>
+  [109] getparam 0 .............................. <me>
+  [111] getobjprop 306 .......................... <me.iAnimStep>
+  [114] pushint8 4 .............................. <4>
+  [116] mod ..................................... <me.iAnimStep mod 4>
+  [117] pusharglist 2 ........................... <aAnimFrames, me.iAnimStep mod 4>
+  [119] objcall 130 ............................. <aAnimFrames.getPos(me.iAnimStep mod 4)>
+  [121] pushzero ................................ <0>
+  [122] gt ...................................... <aAnimFrames.getPos(me.iAnimStep mod 4) > 0>
+  [123] jmpifz [154] ............................ if aAnimFrames.getPos(me.iAnimStep mod 4) > 0 then
+  [126] getparam 0 .............................. <me>
+  [128] pushsymb 432 ............................ <#aRuntimeConfig>
+  [131] getlocal 2 .............................. <sPart>
+  [133] pusharglist 3 ........................... <me, #aRuntimeConfig, sPart>
+  [135] objcall 274 ............................. <me.aRuntimeConfig[sPart]>
+  [138] pushsymb 436 ............................ <#animIndex>
+  [141] getparam 0 .............................. <me>
+  [143] getobjprop 306 .......................... <me.iAnimStep>
+  [146] pushint8 4 .............................. <4>
+  [148] mod ..................................... <me.iAnimStep mod 4>
+  [149] pusharglistnoret 3 ...................... <me.aRuntimeConfig[sPart], #animIndex, me.iAnimStep mod 4>
+  [151] objcall 443 ............................. me.aRuntimeConfig[sPart][#animIndex] = me.iAnimStep mod 4
+  [154] pushint8 1
+  [156] getlocal 1
+  [158] add
+  [159] setlocal 1
+  [161] endrepeat [  7]
+  [163] getlocal 0 .............................. <bDrawAnim>
+  [165] pusharglistnoret 1 ...................... <bDrawAnim>
+  [167] extcall 63 .............................. return bDrawAnim
+  [169] ret
+end
+
+on display me, bForce
+  [  0] getmovieprop 281 ........................ <the milliSeconds>
+  [  3] setlocal 0 .............................. iStartTime = the milliSeconds
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 375 .......................... <me.oImageMember>
+  [ 10] pusharglist 1 ........................... <me.oImageMember>
+  [ 12] extcall 365 ............................. <voidp(me.oImageMember)>
+  [ 15] jmpifz [ 22] ............................ if voidp(me.oImageMember) then
+  [ 18] pusharglistnoret 0 ...................... <>
+  [ 20] extcall 63 .............................. return 
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getchainedprop 375 ...................... <me.oImageMember>
+  [ 27] getchainedprop 284 ...................... <me.oImageMember.image>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 352 .......................... <me.oBuffer>
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getchainedprop 352 ...................... <me.oBuffer>
+  [ 40] getobjprop 133 .......................... <me.oBuffer.rect>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 294 .......................... <me.iScale>
+  [ 47] pushcons 1 .............................. <0.01>
+  [ 49] mul ..................................... <me.iScale * 0.01>
+  [ 50] mul ..................................... <me.oBuffer.rect * (me.iScale * 0.01)>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getchainedprop 352 ...................... <me.oBuffer>
+  [ 56] getobjprop 133 .......................... <me.oBuffer.rect>
+  [ 58] pushsymb 495 ............................ <#dither>
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 350 .......................... <me.iDither>
+  [ 66] pusharglist 2 ........................... <[#dither: me.iDither]>
+  [ 68] pushproplist ............................ <[#dither: me.iDither]>
+  [ 69] pusharglistnoret 5 ...................... <me.oImageMember.image, me.oBuffer, me.oBuffer.rect * (me.iScale * 0.01), me.oBuffer.rect, [#dither: me.iDither]>
+  [ 71] objcall 379 ............................. me.oImageMember.image.copyPixels(me.oBuffer, me.oBuffer.rect * (me.iScale * 0.01), me.oBuffer.rect, [#dither: me.iDither])
+  [ 74] getparam 0 .............................. <me>
+  [ 76] getobjprop 364 .......................... <me.bDoFloodFill>
+  [ 79] jmpifz [102] ............................ if me.bDoFloodFill then
+  [ 82] getparam 0 .............................. <me>
+  [ 84] getchainedprop 375 ...................... <me.oImageMember>
+  [ 87] getchainedprop 284 ...................... <me.oImageMember.image>
+  [ 90] pushzero ................................ <0>
+  [ 91] pushzero ................................ <0>
+  [ 92] getparam 0 .............................. <me>
+  [ 94] getobjprop 303 .......................... <me.oSpriteBgColor>
+  [ 97] pusharglistnoret 4 ...................... <me.oImageMember.image, 0, 0, me.oSpriteBgColor>
+  [ 99] objcall 496 ............................. me.oImageMember.image.floodFill(0, 0, me.oSpriteBgColor)
+  [102] getparam 0 .............................. <me>
+  [104] getmovieprop 281 ........................ <the milliSeconds>
+  [107] getlocal 0 .............................. <iStartTime>
+  [109] sub ..................................... <the milliSeconds - iStartTime>
+  [110] setobjprop 453 .......................... me.iDisplayTime = the milliSeconds - iStartTime
+  [113] getparam 0 .............................. <me>
+  [115] getparam 0 .............................. <me>
+  [117] getobjprop 454 .......................... <me.iDisplayCount>
+  [120] pushint8 1 .............................. <1>
+  [122] add ..................................... <me.iDisplayCount + 1>
+  [123] setobjprop 454 .......................... me.iDisplayCount = me.iDisplayCount + 1
+  [126] ret
+end
+
+on createQuadFromRect me, rRect, bFlip
+  [  0] getparam 1 .............................. <rRect>
+  [  2] getobjprop 516 .......................... <rRect.left>
+  [  5] getparam 1 .............................. <rRect>
+  [  7] getobjprop 517 .......................... <rRect.top>
+  [ 10] pusharglist 2 ........................... <rRect.left, rRect.top>
+  [ 12] extcall 132 ............................. <point(rRect.left, rRect.top)>
+  [ 14] setlocal 0 .............................. oP1 = point(rRect.left, rRect.top)
+  [ 16] getparam 1 .............................. <rRect>
+  [ 18] getobjprop 518 .......................... <rRect.right>
+  [ 21] getparam 1 .............................. <rRect>
+  [ 23] getobjprop 517 .......................... <rRect.top>
+  [ 26] pusharglist 2 ........................... <rRect.right, rRect.top>
+  [ 28] extcall 132 ............................. <point(rRect.right, rRect.top)>
+  [ 30] setlocal 1 .............................. oP2 = point(rRect.right, rRect.top)
+  [ 32] getparam 1 .............................. <rRect>
+  [ 34] getobjprop 518 .......................... <rRect.right>
+  [ 37] getparam 1 .............................. <rRect>
+  [ 39] getobjprop 519 .......................... <rRect.bottom>
+  [ 42] pusharglist 2 ........................... <rRect.right, rRect.bottom>
+  [ 44] extcall 132 ............................. <point(rRect.right, rRect.bottom)>
+  [ 46] setlocal 2 .............................. oP3 = point(rRect.right, rRect.bottom)
+  [ 48] getparam 1 .............................. <rRect>
+  [ 50] getobjprop 516 .......................... <rRect.left>
+  [ 53] getparam 1 .............................. <rRect>
+  [ 55] getobjprop 519 .......................... <rRect.bottom>
+  [ 58] pusharglist 2 ........................... <rRect.left, rRect.bottom>
+  [ 60] extcall 132 ............................. <point(rRect.left, rRect.bottom)>
+  [ 62] setlocal 3 .............................. oP4 = point(rRect.left, rRect.bottom)
+  [ 64] getparam 2 .............................. <bFlip>
+  [ 66] jmpifz [ 87] ............................ if bFlip then / else
+  [ 69] getlocal 1 .............................. <oP2>
+  [ 71] getlocal 0 .............................. <oP1>
+  [ 73] getlocal 3 .............................. <oP4>
+  [ 75] getlocal 2 .............................. <oP3>
+  [ 77] pusharglist 4 ........................... <[oP2, oP1, oP4, oP3]>
+  [ 79] pushlist ................................ <[oP2, oP1, oP4, oP3]>
+  [ 80] pusharglistnoret 1 ...................... <[oP2, oP1, oP4, oP3]>
+  [ 82] extcall 63 .............................. return [oP2, oP1, oP4, oP3]
+  [ 84] jmp [102]
+  [ 87] getlocal 0 .............................. <oP1>
+  [ 89] getlocal 1 .............................. <oP2>
+  [ 91] getlocal 2 .............................. <oP3>
+  [ 93] getlocal 3 .............................. <oP4>
+  [ 95] pusharglist 4 ........................... <[oP1, oP2, oP3, oP4]>
+  [ 97] pushlist ................................ <[oP1, oP2, oP3, oP4]>
+  [ 98] pusharglistnoret 1 ...................... <[oP1, oP2, oP3, oP4]>
+  [100] extcall 63 .............................. return [oP1, oP2, oP3, oP4]
+  [102] ret
+end
+
+on getMemberRect me, oMember
+  [  0] getparam 1 .............................. <oMember>
+  [  2] getobjprop 380 .......................... <oMember.regPoint>
+  [  5] setlocal 0 .............................. oRegPoint = oMember.regPoint
+  [  7] pushzero ................................ <0>
+  [  8] setlocal 1 .............................. vAdd = 0
+  [ 10] getlocal 0 .............................. <oRegPoint>
+  [ 12] getobjprop 525 .......................... <oRegPoint.locV>
+  [ 15] getparam 1 .............................. <oMember>
+  [ 17] getchainedprop 133 ...................... <oMember.rect>
+  [ 19] getobjprop 519 .......................... <oMember.rect.bottom>
+  [ 22] lt ...................................... <oRegPoint.locV < oMember.rect.bottom>
+  [ 23] jmpifz [ 41] ............................ if oRegPoint.locV < oMember.rect.bottom then
+  [ 26] getparam 1 .............................. <oMember>
+  [ 28] getchainedprop 133 ...................... <oMember.rect>
+  [ 30] getobjprop 519 .......................... <oMember.rect.bottom>
+  [ 33] getlocal 0 .............................. <oRegPoint>
+  [ 35] getobjprop 525 .......................... <oRegPoint.locV>
+  [ 38] sub ..................................... <oMember.rect.bottom - oRegPoint.locV>
+  [ 39] setlocal 1 .............................. vAdd = oMember.rect.bottom - oRegPoint.locV
+  [ 41] getlocal 0 .............................. <oRegPoint>
+  [ 43] getobjprop 468 .......................... <oRegPoint.locH>
+  [ 46] getlocal 0 .............................. <oRegPoint>
+  [ 48] getobjprop 525 .......................... <oRegPoint.locV>
+  [ 51] pushint8 110 ............................ <110>
+  [ 53] sub ..................................... <oRegPoint.locV - 110>
+  [ 54] getlocal 0 .............................. <oRegPoint>
+  [ 56] getobjprop 468 .......................... <oRegPoint.locH>
+  [ 59] pushint8 77 ............................. <77>
+  [ 61] add ..................................... <oRegPoint.locH + 77>
+  [ 62] getlocal 0 .............................. <oRegPoint>
+  [ 64] getobjprop 525 .......................... <oRegPoint.locV>
+  [ 67] getlocal 1 .............................. <vAdd>
+  [ 69] add ..................................... <oRegPoint.locV + vAdd>
+  [ 70] pusharglist 4 ........................... <oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV + vAdd>
+  [ 72] extcall 133 ............................. <rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV + vAdd)>
+  [ 74] pusharglistnoret 1 ...................... <rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV + vAdd)>
+  [ 76] extcall 63 .............................. return rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV + vAdd)
+  [ 78] ret
+end
+
+on setLoc me, oLoc
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oLoc>
+  [  4] setobjprop 297 .......................... me.oPoint = oLoc
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 368 .......................... <me.iImageSprite>
+  [ 12] pusharglist 1 ........................... <me.iImageSprite>
+  [ 14] extcall 365 ............................. <voidp(me.iImageSprite)>
+  [ 17] jmpifz [ 24] ............................ if voidp(me.iImageSprite) then
+  [ 20] pusharglistnoret 0 ...................... <>
+  [ 22] extcall 63 .............................. return 
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 368 .......................... <me.iImageSprite>
+  [ 29] pusharglist 1 ........................... <me.iImageSprite>
+  [ 31] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 33] getparam 0 .............................. <me>
+  [ 35] getchainedprop 297 ...................... <me.oPoint>
+  [ 38] getobjprop 468 .......................... <me.oPoint.locH>
+  [ 41] setobjprop 468 .......................... sprite(me.iImageSprite).locH = me.oPoint.locH
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getobjprop 368 .......................... <me.iImageSprite>
+  [ 49] pusharglist 1 ........................... <me.iImageSprite>
+  [ 51] extcall 79 .............................. <sprite(me.iImageSprite)>
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getchainedprop 297 ...................... <me.oPoint>
+  [ 58] getobjprop 525 .......................... <me.oPoint.locV>
+  [ 61] setobjprop 525 .......................... sprite(me.iImageSprite).locV = me.oPoint.locV
+  [ 64] ret
+end
+
+on getLoc me, oLoc
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 297 .......................... <me.oPoint>
+  [  5] pusharglistnoret 1 ...................... <me.oPoint>
+  [  7] extcall 63 .............................. return me.oPoint
+  [  9] ret
+end
+
+on getRealDirection me, iDir, aDirs
+  [  0] getparam 2 .............................. <aDirs>
+  [  2] getparam 1 .............................. <iDir>
+  [  4] pusharglist 2 ........................... <aDirs, iDir>
+  [  6] objcall 130 ............................. <aDirs.getPos(iDir)>
+  [  8] pushzero ................................ <0>
+  [  9] gt ...................................... <aDirs.getPos(iDir) > 0>
+  [ 10] setlocal 0 .............................. bRealExists = aDirs.getPos(iDir) > 0
+  [ 12] getlocal 0 .............................. <bRealExists>
+  [ 14] jmpifz [ 23] ............................ if bRealExists then
+  [ 17] getparam 1 .............................. <iDir>
+  [ 19] pusharglistnoret 1 ...................... <iDir>
+  [ 21] extcall 63 .............................. return iDir
+  [ 23] getparam 1 .............................. <iDir>
+  [ 25] pushint8 7 .............................. <7>
+  [ 27] eq ...................................... <iDir = 7>
+  [ 28] jmpifz [ 39] ............................ if iDir = 7 then
+  [ 31] pusharglist 0 ........................... <>
+  [ 33] extcall 59 .............................. <VOID>
+  [ 35] pusharglistnoret 1 ...................... <VOID>
+  [ 37] extcall 63 .............................. return VOID
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getchainedprop 447 ...................... <me.aDirectionMap>
+  [ 44] getparam 1 .............................. <iDir>
+  [ 46] pusharglist 2 ........................... <me.aDirectionMap, iDir>
+  [ 48] objcall 54 .............................. <me.aDirectionMap.getProp(iDir)>
+  [ 50] setlocal 1 .............................. iFakeDir = me.aDirectionMap.getProp(iDir)
+  [ 52] getparam 2 .............................. <aDirs>
+  [ 54] getlocal 1 .............................. <iFakeDir>
+  [ 56] pusharglist 2 ........................... <aDirs, iFakeDir>
+  [ 58] objcall 130 ............................. <aDirs.getPos(iFakeDir)>
+  [ 60] pushzero ................................ <0>
+  [ 61] gt ...................................... <aDirs.getPos(iFakeDir) > 0>
+  [ 62] setlocal 2 .............................. bFakeExists = aDirs.getPos(iFakeDir) > 0
+  [ 64] getlocal 2 .............................. <bFakeExists>
+  [ 66] jmpifz [ 78] ............................ if bFakeExists then / else
+  [ 69] getlocal 1 .............................. <iFakeDir>
+  [ 71] pusharglistnoret 1 ...................... <iFakeDir>
+  [ 73] extcall 63 .............................. return iFakeDir
+  [ 75] jmp [ 86]
+  [ 78] pusharglist 0 ........................... <>
+  [ 80] extcall 59 .............................. <VOID>
+  [ 82] pusharglistnoret 1 ...................... <VOID>
+  [ 84] extcall 63 .............................. return VOID
+  [ 86] ret
+end
+
+on getDirectionOffset me, iDir, iDirOff
+  [  0] getparam 1 .............................. <iDir>
+  [  2] getparam 2 .............................. <iDirOff>
+  [  4] add ..................................... <iDir + iDirOff>
+  [  5] setlocal 0 .............................. iNewDir = iDir + iDirOff
+  [  7] getlocal 0 .............................. <iNewDir>
+  [  9] pushzero ................................ <0>
+  [ 10] lt ...................................... <iNewDir < 0>
+  [ 11] jmpifz [ 21] ............................ if iNewDir < 0 then
+  [ 14] pushint8 8 .............................. <8>
+  [ 16] getlocal 0 .............................. <iNewDir>
+  [ 18] add ..................................... <8 + iNewDir>
+  [ 19] setlocal 0 .............................. iNewDir = 8 + iNewDir
+  [ 21] getlocal 0 .............................. <iNewDir>
+  [ 23] pushint8 7 .............................. <7>
+  [ 25] gt ...................................... <iNewDir > 7>
+  [ 26] jmpifz [ 36] ............................ if iNewDir > 7 then
+  [ 29] getlocal 0 .............................. <iNewDir>
+  [ 31] pushint8 8 .............................. <8>
+  [ 33] mod ..................................... <iNewDir mod 8>
+  [ 34] setlocal 0 .............................. iNewDir = iNewDir mod 8
+  [ 36] getlocal 0 .............................. <iNewDir>
+  [ 38] pusharglistnoret 1 ...................... <iNewDir>
+  [ 40] extcall 63 .............................. return iNewDir
+  [ 42] ret
+end
+
+on setDirection me, iDir, bDisplay
+  [  0] getparam 1 .............................. <iDir>
+  [  2] pusharglist 1 ........................... <iDir>
+  [  4] extcall 365 ............................. <voidp(iDir)>
+  [  7] jmpifz [ 14] ............................ if voidp(iDir) then
+  [ 10] pushint8 2 .............................. <2>
+  [ 12] setparam 1 .............................. iDir = 2
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 295 .......................... <me.iDirection>
+  [ 19] getparam 1 .............................. <iDir>
+  [ 21] eq ...................................... <me.iDirection = iDir>
+  [ 22] jmpifz [ 29] ............................ if me.iDirection = iDir then
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 63 .............................. return 
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getparam 1 .............................. <iDir>
+  [ 33] setobjprop 295 .......................... me.iDirection = iDir
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pusharglistnoret 1 ...................... <me>
+  [ 40] objcall 189 ............................. me.setDrawOrder()
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 1 ...................... <me>
+  [ 46] objcall 200 ............................. me.display()
+  [ 48] ret
+end
+
+on setFPS me, _iFPS, bDisplay
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_iFPS>
+  [  4] setobjprop 311 .......................... me.iFPS = _iFPS
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 311 .......................... <me.iFPS>
+  [ 12] pushzero ................................ <0>
+  [ 13] eq ...................................... <me.iFPS = 0>
+  [ 14] jmpifz [ 30] ............................ if me.iFPS = 0 then / else
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglist 0 ........................... <>
+  [ 21] thebuiltin 558 .......................... <the maxinteger>
+  [ 24] setobjprop 313 .......................... me.iFPSTimerLength = the maxinteger
+  [ 27] jmp [ 44]
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushint16 1000 .......................... <1000>
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getobjprop 311 .......................... <me.iFPS>
+  [ 40] div ..................................... <1000 / me.iFPS>
+  [ 41] setobjprop 313 .......................... me.iFPSTimerLength = 1000 / me.iFPS
+  [ 44] ret
+end
+
+on setAnimFrame me, iFrame, bDisplay
+  [  0] getparam 1 .............................. <iFrame>
+  [  2] pushzero ................................ <0>
+  [  3] gteq .................................... <iFrame >= 0>
+  [  4] getparam 1 .............................. <iFrame>
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 307 .......................... <me.iAnimStepMax>
+  [ 11] lteq .................................... <iFrame <= me.iAnimStepMax>
+  [ 12] and ..................................... <(iFrame >= 0) and (iFrame <= me.iAnimStepMax)>
+  [ 13] jmpifz [ 23] ............................ if (iFrame >= 0) and (iFrame <= me.iAnimStepMax) then
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getparam 1 .............................. <iFrame>
+  [ 20] setobjprop 306 .......................... me.iAnimStep = iFrame
+  [ 23] ret
+end
+
+on flipHSpriteRect me, oSprite
+  [  0] getparam 1 .............................. <oSprite>
+  [  2] getobjprop 133 .......................... <oSprite.rect>
+  [  4] setlocal 0 .............................. oOrigSpriteRect = oSprite.rect
+  [  6] getlocal 0 .............................. <oOrigSpriteRect>
+  [  8] getobjprop 516 .......................... <oOrigSpriteRect.left>
+  [ 11] setlocal 1 .............................. iLeft = oOrigSpriteRect.left
+  [ 13] getparam 1 .............................. <oSprite>
+  [ 15] getobjprop 468 .......................... <oSprite.locH>
+  [ 18] setlocal 2 .............................. iLocH = oSprite.locH
+  [ 20] getlocal 2 .............................. <iLocH>
+  [ 22] getlocal 1 .............................. <iLeft>
+  [ 24] sub ..................................... <iLocH - iLeft>
+  [ 25] pushint8 2 .............................. <2>
+  [ 27] mul ..................................... <(iLocH - iLeft) * 2>
+  [ 28] getlocal 0 .............................. <oOrigSpriteRect>
+  [ 30] getobjprop 377 .......................... <oOrigSpriteRect.width>
+  [ 33] sub ..................................... <((iLocH - iLeft) * 2) - oOrigSpriteRect.width>
+  [ 34] setlocal 3 .............................. iHDif = ((iLocH - iLeft) * 2) - oOrigSpriteRect.width
+  [ 36] getlocal 3 .............................. <iHDif>
+  [ 38] pushzero ................................ <0>
+  [ 39] getlocal 3 .............................. <iHDif>
+  [ 41] pushzero ................................ <0>
+  [ 42] pusharglist 4 ........................... <iHDif, 0, iHDif, 0>
+  [ 44] extcall 133 ............................. <rect(iHDif, 0, iHDif, 0)>
+  [ 46] setlocal 4 .............................. rDifRect = rect(iHDif, 0, iHDif, 0)
+  [ 48] getlocal 0 .............................. <oOrigSpriteRect>
+  [ 50] getlocal 4 .............................. <rDifRect>
+  [ 52] add ..................................... <oOrigSpriteRect + rDifRect>
+  [ 53] setlocal 5 .............................. oNewRect = oOrigSpriteRect + rDifRect
+  [ 55] getlocal 5 .............................. <oNewRect>
+  [ 57] pusharglistnoret 1 ...................... <oNewRect>
+  [ 59] extcall 63 .............................. return oNewRect
+  [ 61] ret
+end
+
+on calcViewRect me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 297 ...................... <me.oPoint>
+  [  5] getobjprop 468 .......................... <me.oPoint.locH>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 567 ...................... <me.oScaledRect>
+  [ 13] getobjprop 377 .......................... <me.oScaledRect.width>
+  [ 16] pushint8 2 .............................. <2>
+  [ 18] div ..................................... <me.oScaledRect.width / 2>
+  [ 19] sub ..................................... <me.oPoint.locH - (me.oScaledRect.width / 2)>
+  [ 20] setlocal 0 .............................. iLeft = me.oPoint.locH - (me.oScaledRect.width / 2)
+  [ 22] getlocal 0 .............................. <iLeft>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 567 ...................... <me.oScaledRect>
+  [ 29] getobjprop 377 .......................... <me.oScaledRect.width>
+  [ 32] add ..................................... <iLeft + me.oScaledRect.width>
+  [ 33] setlocal 1 .............................. iRight = iLeft + me.oScaledRect.width
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getchainedprop 297 ...................... <me.oPoint>
+  [ 40] getobjprop 525 .......................... <me.oPoint.locV>
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getchainedprop 567 ...................... <me.oScaledRect>
+  [ 48] getobjprop 378 .......................... <me.oScaledRect.height>
+  [ 51] sub ..................................... <me.oPoint.locV - me.oScaledRect.height>
+  [ 52] setlocal 2 .............................. iTop = me.oPoint.locV - me.oScaledRect.height
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getchainedprop 297 ...................... <me.oPoint>
+  [ 59] getobjprop 525 .......................... <me.oPoint.locV>
+  [ 62] setlocal 3 .............................. iBottom = me.oPoint.locV
+  [ 64] getlocal 0 .............................. <iLeft>
+  [ 66] getlocal 2 .............................. <iTop>
+  [ 68] getlocal 1 .............................. <iRight>
+  [ 70] getlocal 3 .............................. <iBottom>
+  [ 72] pusharglist 4 ........................... <iLeft, iTop, iRight, iBottom>
+  [ 74] extcall 133 ............................. <rect(iLeft, iTop, iRight, iBottom)>
+  [ 76] pusharglistnoret 1 ...................... <rect(iLeft, iTop, iRight, iBottom)>
+  [ 78] extcall 63 .............................. return rect(iLeft, iTop, iRight, iBottom)
+  [ 80] ret
+end
+
+on changeDirection me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <iDir>
+  [  4] pusharglistnoret 2 ...................... <me, iDir>
+  [  6] objcall 224 ............................. me.setDirection(iDir)
+  [  8] ret
+end
+
+on carry me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"ri">
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglistnoret 3 ...................... <me, "ri", 1>
+  [  8] objcall 218 ............................. me.setPartActive("ri", 1)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getmovieprop 281 ........................ <the milliSeconds>
+  [ 15] setobjprop 605 .......................... me.iCarryTimer = the milliSeconds
+  [ 18] ret
+end
+
+on isCarrying me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 324 .......................... <me.bCarry>
+  [  5] pusharglistnoret 1 ...................... <me.bCarry>
+  [  7] extcall 63 .............................. return me.bCarry
+  [  9] ret
+end
+
+on setHeightOffset me, _iHeightOffset
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_iHeightOffset>
+  [  4] setobjprop 351 .......................... me.iHeightOffset = _iHeightOffset
+  [  7] ret
+end
+
+on getHeightOffset me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 351 .......................... <me.iHeightOffset>
+  [  5] pusharglistnoret 1 ...................... <me.iHeightOffset>
+  [  7] extcall 63 .............................. return me.iHeightOffset
+  [  9] ret
+end
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. vRowColRange = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] pushint8 30 ............................. <30>
+  [ 13] lteq
+  [ 14] jmpifz [ 34] ............................ repeat with i = 1 to 30
+  [ 17] getlocal 0 .............................. <vRowColRange>
+  [ 19] getlocal 1 .............................. <i>
+  [ 21] pusharglistnoret 2 ...................... <vRowColRange, i>
+  [ 23] objcall 81 .............................. vRowColRange.add(i)
+  [ 25] pushint8 1
+  [ 27] getlocal 1
+  [ 29] add
+  [ 30] setlocal 1
+  [ 32] endrepeat [  9]
+  [ 34] pusharglist 0 ........................... <[]>
+  [ 36] pushlist ................................ <[]>
+  [ 37] setlocal 2 .............................. vLayerRange = []
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] setlocal 1
+  [ 43] getlocal 1
+  [ 45] pushint8 10 ............................. <10>
+  [ 47] lteq
+  [ 48] jmpifz [ 68] ............................ repeat with i = 1 to 10
+  [ 51] getlocal 2 .............................. <vLayerRange>
+  [ 53] getlocal 1 .............................. <i>
+  [ 55] pusharglistnoret 2 ...................... <vLayerRange, i>
+  [ 57] objcall 81 .............................. vLayerRange.add(i)
+  [ 59] pushint8 1
+  [ 61] getlocal 1
+  [ 63] add
+  [ 64] setlocal 1
+  [ 66] endrepeat [ 43]
+  [ 68] pusharglist 0 ........................... <[:]>
+  [ 70] pushproplist ............................ <[:]>
+  [ 71] setlocal 3 .............................. vList = [:]
+  [ 73] getlocal 3 .............................. <vList>
+  [ 75] pushsymb 460 ............................ <#iRow>
+  [ 78] pushsymb 606 ............................ <#comment>
+  [ 81] pushcons 7 .............................. <"Row">
+  [ 83] pushsymb 607 ............................ <#range>
+  [ 86] getlocal 0 .............................. <vRowColRange>
+  [ 88] pushsymb 608 ............................ <#format>
+  [ 91] pushsymb 123 ............................ <#integer>
+  [ 93] pushsymb 609 ............................ <#default>
+  [ 96] getlocal 0 .............................. <vRowColRange>
+  [ 98] pushint8 1 .............................. <1>
+  [100] pusharglist 2 ........................... <vRowColRange, 1>
+  [102] objcall 86 .............................. <vRowColRange[1]>
+  [104] pusharglist 8 ........................... <[#comment: "Row", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [106] pushproplist ............................ <[#comment: "Row", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [107] pusharglistnoret 3 ...................... <vList, #iRow, [#comment: "Row", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [109] objcall 610 ............................. vList.addProp(#iRow, [#comment: "Row", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]])
+  [112] getlocal 3 .............................. <vList>
+  [114] pushsymb 461 ............................ <#iCol>
+  [117] pushsymb 606 ............................ <#comment>
+  [120] pushcons 8 .............................. <"Column">
+  [122] pushsymb 607 ............................ <#range>
+  [125] getlocal 0 .............................. <vRowColRange>
+  [127] pushsymb 608 ............................ <#format>
+  [130] pushsymb 123 ............................ <#integer>
+  [132] pushsymb 609 ............................ <#default>
+  [135] getlocal 0 .............................. <vRowColRange>
+  [137] pushint8 1 .............................. <1>
+  [139] pusharglist 2 ........................... <vRowColRange, 1>
+  [141] objcall 86 .............................. <vRowColRange[1]>
+  [143] pusharglist 8 ........................... <[#comment: "Column", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [145] pushproplist ............................ <[#comment: "Column", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [146] pusharglistnoret 3 ...................... <vList, #iCol, [#comment: "Column", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]]>
+  [148] objcall 610 ............................. vList.addProp(#iCol, [#comment: "Column", #range: vRowColRange, #format: #integer, #default: vRowColRange[1]])
+  [151] getlocal 3 .............................. <vList>
+  [153] pushsymb 611 ............................ <#iLayer>
+  [156] pushsymb 606 ............................ <#comment>
+  [159] pushcons 9 .............................. <"Layer">
+  [161] pushsymb 607 ............................ <#range>
+  [164] getlocal 2 .............................. <vLayerRange>
+  [166] pushsymb 608 ............................ <#format>
+  [169] pushsymb 123 ............................ <#integer>
+  [171] pushsymb 609 ............................ <#default>
+  [174] getlocal 2 .............................. <vLayerRange>
+  [176] pushint8 1 .............................. <1>
+  [178] pusharglist 2 ........................... <vLayerRange, 1>
+  [180] objcall 86 .............................. <vLayerRange[1]>
+  [182] pusharglist 8 ........................... <[#comment: "Layer", #range: vLayerRange, #format: #integer, #default: vLayerRange[1]]>
+  [184] pushproplist ............................ <[#comment: "Layer", #range: vLayerRange, #format: #integer, #default: vLayerRange[1]]>
+  [185] pusharglistnoret 3 ...................... <vList, #iLayer, [#comment: "Layer", #range: vLayerRange, #format: #integer, #default: vLayerRange[1]]>
+  [187] objcall 610 ............................. vList.addProp(#iLayer, [#comment: "Layer", #range: vLayerRange, #format: #integer, #default: vLayerRange[1]])
+  [190] getlocal 3 .............................. <vList>
+  [192] pusharglistnoret 1 ...................... <vList>
+  [194] extcall 63 .............................. return vList
+  [196] ret
+end

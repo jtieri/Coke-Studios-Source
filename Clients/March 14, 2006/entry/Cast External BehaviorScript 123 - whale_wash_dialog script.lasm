@@ -1,0 +1,61 @@
+property sButton, bExit
+global ElementMgr, bExitToWhaleWash
+
+on new me, callerID, sID
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 2 .............................. <sID>
+  [  4] setobjprop 957 .......................... me.sButton = sID
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 957 .......................... <me.sButton>
+  [ 12] pushcons 0 .............................. <"OK">
+  [ 14] containsstr ............................. <me.sButton contains "OK">
+  [ 15] jmpifz [ 28] ............................ if me.sButton contains "OK" then / else
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] setobjprop 958 .......................... me.bExit = 1
+  [ 25] jmp [ 34]
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushzero ................................ <0>
+  [ 31] setobjprop 958 .......................... me.bExit = 0
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglistnoret 1 ...................... <me>
+  [ 38] extcall 23 .............................. return me
+  [ 40] ret
+end
+
+on mouseUp me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 30 ............................ <ElementMgr>
+  [  8] getobjprop 31 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 29 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 67] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 30 ............................ <ElementMgr>
+  [ 20] getobjprop 31 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 32 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 1 .............................. <"whale_wash">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "whale_wash">
+  [ 31] jmpifz [ 58] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "whale_wash" then
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getobjprop 958 .......................... <me.bExit>
+  [ 39] setglobal 196 ........................... bExitToWhaleWash = me.bExit
+  [ 41] getglobal 30 ............................ <ElementMgr>
+  [ 43] pushsymb 31 ............................. <#pOpenWindows>
+  [ 45] getlocal 0 .............................. <n>
+  [ 47] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 49] objcall 98 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 51] pusharglistnoret 1 ...................... <ElementMgr.pOpenWindows[n]>
+  [ 53] objcall 5 ............................... ElementMgr.pOpenWindows[n].closeWindow()
+  [ 55] jmp [ 67] ............................... exit repeat
+  [ 58] pushint8 1
+  [ 60] getlocal 0
+  [ 62] add
+  [ 63] setlocal 0
+  [ 65] endrepeat [  4]
+  [ 67] ret
+end

@@ -1,0 +1,735 @@
+property aSprites, iExitSprite, iLowestZ, oSquare, oHitTestColor
+global oIsoScene, oStudio, oStudioMap
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 139 .......................... me.aSprites = []
+  [  7] getparam 0 .............................. <me>
+  [  9] pusharglistnoret 1 ...................... <me>
+  [ 11] extcall 52 .............................. return me
+  [ 13] ret
+end
+
+on Init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 59 .............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <oXml>
+  [ 17] pusharglistnoret 2 ...................... <me, oXml>
+  [ 19] objcall 1207 ............................ me.drawDoor(oXml)
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglist 1 ........................... <me>
+  [ 28] objcall 1208 ............................ <me.calculateLowestZ()>
+  [ 31] setobjprop 1210 ......................... me.iLowestZ = me.calculateLowestZ()
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushzero ................................ <0>
+  [ 37] pusharglist 1 ........................... <0>
+  [ 39] extcall 1211 ............................ <paletteIndex(0)>
+  [ 42] setobjprop 1212 ......................... me.oHitTestColor = paletteIndex(0)
+  [ 45] ret
+end
+
+on drawDoor me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 59 .............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 1 .............................. <oXml>
+  [ 15] getchainedprop 385 ...................... <oXml.attributes>
+  [ 18] getobjprop 831 .......................... <oXml.attributes.row>
+  [ 21] pusharglist 1 ........................... <oXml.attributes.row>
+  [ 23] extcall 69 .............................. <integer(oXml.attributes.row)>
+  [ 25] setlocal 0 .............................. iRow = integer(oXml.attributes.row)
+  [ 27] getparam 1 .............................. <oXml>
+  [ 29] getchainedprop 385 ...................... <oXml.attributes>
+  [ 32] getobjprop 832 .......................... <oXml.attributes.col>
+  [ 35] pusharglist 1 ........................... <oXml.attributes.col>
+  [ 37] extcall 69 .............................. <integer(oXml.attributes.col)>
+  [ 39] setlocal 1 .............................. iCol = integer(oXml.attributes.col)
+  [ 41] getparam 0 .............................. <me>
+  [ 43] getglobal 133 ........................... <oIsoScene>
+  [ 45] getchainedprop 136 ...................... <oIsoScene.oGrid>
+  [ 47] getlocal 0 .............................. <iRow>
+  [ 49] getlocal 1 .............................. <iCol>
+  [ 51] pusharglist 3 ........................... <oIsoScene.oGrid, iRow, iCol>
+  [ 53] objcall 532 ............................. <oIsoScene.oGrid.getSquareByRowCol(iRow, iCol)>
+  [ 56] setobjprop 478 .......................... me.oSquare = oIsoScene.oGrid.getSquareByRowCol(iRow, iCol)
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getchainedprop 478 ...................... <me.oSquare>
+  [ 64] getchainedprop 556 ...................... <me.oSquare.oViewPoints>
+  [ 67] getobjprop 554 .......................... <me.oSquare.oViewPoints.bl>
+  [ 70] setlocal 2 .............................. oLoc = me.oSquare.oViewPoints.bl
+  [ 72] getparam 1 .............................. <oXml>
+  [ 74] pushcons 0 .............................. <"FloorTile">
+  [ 76] pusharglist 2 ........................... <oXml, "FloorTile">
+  [ 78] extcall 433 ............................. <getNode(oXml, "FloorTile")>
+  [ 81] setlocal 3 .............................. oFloorTile = getNode(oXml, "FloorTile")
+  [ 83] getlocal 3 .............................. <oFloorTile>
+  [ 85] pusharglist 1 ........................... <oFloorTile>
+  [ 87] extcall 59 .............................. <voidp(oFloorTile)>
+  [ 89] not ..................................... <not voidp(oFloorTile)>
+  [ 90] jmpifz [122] ............................ if not voidp(oFloorTile) then
+  [ 93] getglobal 133 ........................... <oIsoScene>
+  [ 95] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [ 97] getlocal 3 .............................. <oFloorTile>
+  [ 99] pusharglist 2 ........................... <oIsoScene.oSpriteManager, oFloorTile>
+  [101] objcall 813 ............................. <oIsoScene.oSpriteManager.buildSpriteProps(oFloorTile)>
+  [104] setlocal 4 .............................. aFloorTileProps = oIsoScene.oSpriteManager.buildSpriteProps(oFloorTile)
+  [106] getglobal 133 ........................... <oIsoScene>
+  [108] getchainedprop 392 ...................... <oIsoScene.oFloor>
+  [111] getlocal 0 .............................. <iRow>
+  [113] getlocal 1 .............................. <iCol>
+  [115] getlocal 4 .............................. <aFloorTileProps>
+  [117] pusharglistnoret 4 ...................... <oIsoScene.oFloor, iRow, iCol, aFloorTileProps>
+  [119] objcall 1146 ............................ oIsoScene.oFloor.drawFloortile(iRow, iCol, aFloorTileProps)
+  [122] getparam 1 .............................. <oXml>
+  [124] pushcons 1 .............................. <"Exit">
+  [126] pusharglist 2 ........................... <oXml, "Exit">
+  [128] extcall 433 ............................. <getNode(oXml, "Exit")>
+  [131] setlocal 5 .............................. oExit = getNode(oXml, "Exit")
+  [133] getlocal 5 .............................. <oExit>
+  [135] pusharglist 1 ........................... <oExit>
+  [137] extcall 59 .............................. <voidp(oExit)>
+  [139] not ..................................... <not voidp(oExit)>
+  [140] jmpifz [229] ............................ if not voidp(oExit) then
+  [143] getglobal 133 ........................... <oIsoScene>
+  [145] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [147] getlocal 5 .............................. <oExit>
+  [149] pusharglist 2 ........................... <oIsoScene.oSpriteManager, oExit>
+  [151] objcall 813 ............................. <oIsoScene.oSpriteManager.buildSpriteProps(oExit)>
+  [154] setlocal 6 .............................. aProps = oIsoScene.oSpriteManager.buildSpriteProps(oExit)
+  [156] getlocal 6 .............................. <aProps>
+  [158] pushsymb 35 ............................. <#x>
+  [160] getlocal 2 .............................. <oLoc>
+  [162] getobjprop 143 .......................... <oLoc.locH>
+  [164] pusharglistnoret 3 ...................... <aProps, #x, oLoc.locH>
+  [166] objcall 1085 ............................ aProps[#x] = oLoc.locH
+  [169] getlocal 6 .............................. <aProps>
+  [171] pushsymb 36 ............................. <#y>
+  [173] getlocal 2 .............................. <oLoc>
+  [175] getobjprop 122 .......................... <oLoc.locV>
+  [177] pusharglistnoret 3 ...................... <aProps, #y, oLoc.locV>
+  [179] objcall 1085 ............................ aProps[#y] = oLoc.locV
+  [182] getglobal 133 ........................... <oIsoScene>
+  [184] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [186] getlocal 6 .............................. <aProps>
+  [188] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [190] objcall 135 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [192] setlocal 7 .............................. iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [194] pushcons 2 .............................. <"ExitStudio">
+  [196] pusharglist 1 ........................... <"ExitStudio">
+  [198] extcall 194 ............................. <script("ExitStudio")>
+  [200] getparam 0 .............................. <me>
+  [202] pusharglist 2 ........................... <script("ExitStudio"), me>
+  [204] objcall 0 ............................... <script("ExitStudio").new(me)>
+  [206] setlocal 8 .............................. oExitScript = script("ExitStudio").new(me)
+  [208] getlocal 7 .............................. <iSprite>
+  [210] pusharglist 1 ........................... <iSprite>
+  [212] extcall 119 ............................. <sprite(iSprite)>
+  [214] getchainedprop 193 ...................... <sprite(iSprite).scriptInstanceList>
+  [216] getlocal 8 .............................. <oExitScript>
+  [218] pusharglistnoret 2 ...................... <sprite(iSprite).scriptInstanceList, oExitScript>
+  [220] objcall 140 ............................. sprite(iSprite).scriptInstanceList.add(oExitScript)
+  [222] getparam 0 .............................. <me>
+  [224] getlocal 7 .............................. <iSprite>
+  [226] setobjprop 1213 ......................... me.iExitSprite = iSprite
+  [229] getparam 1 .............................. <oXml>
+  [231] pushcons 3 .............................. <"DoorMask">
+  [233] pusharglist 2 ........................... <oXml, "DoorMask">
+  [235] extcall 433 ............................. <getNode(oXml, "DoorMask")>
+  [238] setlocal 9 .............................. oDoorMask = getNode(oXml, "DoorMask")
+  [240] getlocal 9 .............................. <oDoorMask>
+  [242] pusharglist 1 ........................... <oDoorMask>
+  [244] extcall 59 .............................. <voidp(oDoorMask)>
+  [246] not ..................................... <not voidp(oDoorMask)>
+  [247] jmpifz [885] ............................ if not voidp(oDoorMask) then
+  [250] getlocal 9 .............................. <oDoorMask>
+  [252] pusharglist 1 ........................... <oDoorMask>
+  [254] objcall 498 ............................. <oDoorMask.toString()>
+  [257] setlocal 10 ............................. sDoorMask = oDoorMask.toString()
+  [259] pushzero ................................ <0>
+  [260] setlocal 11 ............................. iXOff = 0
+  [262] pushzero ................................ <0>
+  [263] setlocal 12 ............................. iYOff = 0
+  [265] getlocal 10 ............................. <sDoorMask>
+  [267] pushcons 4 .............................. <"xoff=">
+  [269] containsstr ............................. <sDoorMask contains "xoff=">
+  [270] jmpifz [287] ............................ if sDoorMask contains "xoff=" then
+  [273] getlocal 9 .............................. <oDoorMask>
+  [275] getchainedprop 385 ...................... <oDoorMask.attributes>
+  [278] getobjprop 388 .......................... <oDoorMask.attributes.xoff>
+  [281] pusharglist 1 ........................... <oDoorMask.attributes.xoff>
+  [283] extcall 69 .............................. <integer(oDoorMask.attributes.xoff)>
+  [285] setlocal 11 ............................. iXOff = integer(oDoorMask.attributes.xoff)
+  [287] getlocal 10 ............................. <sDoorMask>
+  [289] pushcons 5 .............................. <"yoff=">
+  [291] containsstr ............................. <sDoorMask contains "yoff=">
+  [292] jmpifz [309] ............................ if sDoorMask contains "yoff=" then
+  [295] getlocal 9 .............................. <oDoorMask>
+  [297] getchainedprop 385 ...................... <oDoorMask.attributes>
+  [300] getobjprop 389 .......................... <oDoorMask.attributes.yoff>
+  [303] pusharglist 1 ........................... <oDoorMask.attributes.yoff>
+  [305] extcall 69 .............................. <integer(oDoorMask.attributes.yoff)>
+  [307] setlocal 12 ............................. iYOff = integer(oDoorMask.attributes.yoff)
+  [309] getglobal 60 ............................ <oStudioMap>
+  [311] getobjprop 380 .......................... <oStudioMap.iLayout>
+  [314] peek 0 .................................. case oStudioMap.iLayout of
+  [316] pushint8 6 .............................. <6>
+  [318] nteq
+  [319] jmpifz [330] ............................ (case) 6, ...
+  [322] peek 0
+  [324] pushint8 10 ............................. <10>
+  [326] eq
+  [327] jmpifz [364] ............................ (case) ..., 10:
+  [330] pushsymb 30 ............................. <#member>
+  [332] pushcons 6 .............................. <"starsuite_doormask_1_c_0_2_0">
+  [334] pushsymb 35 ............................. <#x>
+  [336] getlocal 2 .............................. <oLoc>
+  [338] getobjprop 143 .......................... <oLoc.locH>
+  [340] pushint8 1 .............................. <1>
+  [342] sub ..................................... <oLoc.locH - 1>
+  [343] pushsymb 36 ............................. <#y>
+  [345] getlocal 2 .............................. <oLoc>
+  [347] getobjprop 122 .......................... <oLoc.locV>
+  [349] pushint8 1 .............................. <1>
+  [351] add ..................................... <oLoc.locV + 1>
+  [352] pushsymb 37 ............................. <#ink>
+  [354] pushint8 8 .............................. <8>
+  [356] pusharglist 8 ........................... <[#member: "starsuite_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [358] pushproplist ............................ <[#member: "starsuite_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [359] setlocal 6 .............................. aProps = [#member: "starsuite_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]
+  [361] jmp [487]
+  [364] peek 0
+  [366] pushint8 7 .............................. <7>
+  [368] nteq
+  [369] jmpifz [380] ............................ (case) 7, ...
+  [372] peek 0
+  [374] pushint8 8 .............................. <8>
+  [376] eq
+  [377] jmpifz [414] ............................ (case) ..., 8:
+  [380] pushsymb 30 ............................. <#member>
+  [382] pushcons 7 .............................. <"model_e_f_doormask_1_c_0_2_0">
+  [384] pushsymb 35 ............................. <#x>
+  [386] getlocal 2 .............................. <oLoc>
+  [388] getobjprop 143 .......................... <oLoc.locH>
+  [390] pushint8 5 .............................. <5>
+  [392] add ..................................... <oLoc.locH + 5>
+  [393] pushsymb 36 ............................. <#y>
+  [395] getlocal 2 .............................. <oLoc>
+  [397] getobjprop 122 .......................... <oLoc.locV>
+  [399] pushint8 3 .............................. <3>
+  [401] sub ..................................... <oLoc.locV - 3>
+  [402] pushsymb 37 ............................. <#ink>
+  [404] pushint8 8 .............................. <8>
+  [406] pusharglist 8 ........................... <[#member: "model_e_f_doormask_1_c_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]>
+  [408] pushproplist ............................ <[#member: "model_e_f_doormask_1_c_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]>
+  [409] setlocal 6 .............................. aProps = [#member: "model_e_f_doormask_1_c_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]
+  [411] jmp [487]
+  [414] peek 0
+  [416] pushint8 9 .............................. <9>
+  [418] eq
+  [419] jmpifz [456] ............................ (case) 9:
+  [422] pushsymb 30 ............................. <#member>
+  [424] pushcons 8 .............................. <"model_g_doormask_1_c_0_2_0">
+  [426] pushsymb 35 ............................. <#x>
+  [428] getlocal 2 .............................. <oLoc>
+  [430] getobjprop 143 .......................... <oLoc.locH>
+  [432] pushint8 1 .............................. <1>
+  [434] add ..................................... <oLoc.locH + 1>
+  [435] pushsymb 36 ............................. <#y>
+  [437] getlocal 2 .............................. <oLoc>
+  [439] getobjprop 122 .......................... <oLoc.locV>
+  [441] pushint8 3 .............................. <3>
+  [443] sub ..................................... <oLoc.locV - 3>
+  [444] pushsymb 37 ............................. <#ink>
+  [446] pushint8 8 .............................. <8>
+  [448] pusharglist 8 ........................... <[#member: "model_g_doormask_1_c_0_2_0", #x: oLoc.locH + 1, #y: oLoc.locV - 3, #ink: 8]>
+  [450] pushproplist ............................ <[#member: "model_g_doormask_1_c_0_2_0", #x: oLoc.locH + 1, #y: oLoc.locV - 3, #ink: 8]>
+  [451] setlocal 6 .............................. aProps = [#member: "model_g_doormask_1_c_0_2_0", #x: oLoc.locH + 1, #y: oLoc.locV - 3, #ink: 8]
+  [453] jmp [487] ............................... (case) otherwise:
+  [456] pushsymb 30 ............................. <#member>
+  [458] pushcons 9 .............................. <"wall_doormask_1_c_0_2_0">
+  [460] pushsymb 35 ............................. <#x>
+  [462] getlocal 2 .............................. <oLoc>
+  [464] getobjprop 143 .......................... <oLoc.locH>
+  [466] pushint8 1 .............................. <1>
+  [468] sub ..................................... <oLoc.locH - 1>
+  [469] pushsymb 36 ............................. <#y>
+  [471] getlocal 2 .............................. <oLoc>
+  [473] getobjprop 122 .......................... <oLoc.locV>
+  [475] pushint8 1 .............................. <1>
+  [477] add ..................................... <oLoc.locV + 1>
+  [478] pushsymb 37 ............................. <#ink>
+  [480] pushint8 8 .............................. <8>
+  [482] pusharglist 8 ........................... <[#member: "wall_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [484] pushproplist ............................ <[#member: "wall_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [485] setlocal 6 .............................. aProps = [#member: "wall_doormask_1_c_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]
+  [487] pop 1 ................................... end case
+  [489] getglobal 133 ........................... <oIsoScene>
+  [491] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [493] getlocal 6 .............................. <aProps>
+  [495] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [497] objcall 135 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [499] setlocal 7 .............................. iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [501] getlocal 7 .............................. <iSprite>
+  [503] pusharglist 1 ........................... <iSprite>
+  [505] extcall 119 ............................. <sprite(iSprite)>
+  [507] getlocal 7 .............................. <iSprite>
+  [509] pusharglist 1 ........................... <iSprite>
+  [511] extcall 119 ............................. <sprite(iSprite)>
+  [513] getobjprop 143 .......................... <sprite(iSprite).locH>
+  [515] getlocal 11 ............................. <iXOff>
+  [517] add ..................................... <sprite(iSprite).locH + iXOff>
+  [518] setobjprop 143 .......................... sprite(iSprite).locH = sprite(iSprite).locH + iXOff
+  [520] getlocal 7 .............................. <iSprite>
+  [522] pusharglist 1 ........................... <iSprite>
+  [524] extcall 119 ............................. <sprite(iSprite)>
+  [526] getlocal 7 .............................. <iSprite>
+  [528] pusharglist 1 ........................... <iSprite>
+  [530] extcall 119 ............................. <sprite(iSprite)>
+  [532] getobjprop 122 .......................... <sprite(iSprite).locV>
+  [534] getlocal 12 ............................. <iYOff>
+  [536] add ..................................... <sprite(iSprite).locV + iYOff>
+  [537] setobjprop 122 .......................... sprite(iSprite).locV = sprite(iSprite).locV + iYOff
+  [539] getlocal 7 .............................. <iSprite>
+  [541] pusharglist 1 ........................... <iSprite>
+  [543] extcall 119 ............................. <sprite(iSprite)>
+  [545] getlocal 7 .............................. <iSprite>
+  [547] pusharglist 1 ........................... <iSprite>
+  [549] extcall 119 ............................. <sprite(iSprite)>
+  [551] getobjprop 122 .......................... <sprite(iSprite).locV>
+  [553] pushint8 1 .............................. <1>
+  [555] sub ..................................... <sprite(iSprite).locV - 1>
+  [556] setobjprop 122 .......................... sprite(iSprite).locV = sprite(iSprite).locV - 1
+  [558] getparam 0 .............................. <me>
+  [560] getchainedprop 139 ...................... <me.aSprites>
+  [562] getlocal 7 .............................. <iSprite>
+  [564] pusharglistnoret 2 ...................... <me.aSprites, iSprite>
+  [566] objcall 140 ............................. me.aSprites.add(iSprite)
+  [568] getglobal 60 ............................ <oStudioMap>
+  [570] getobjprop 380 .......................... <oStudioMap.iLayout>
+  [573] peek 0 .................................. case oStudioMap.iLayout of
+  [575] pushint8 6 .............................. <6>
+  [577] nteq
+  [578] jmpifz [589] ............................ (case) 6, ...
+  [581] peek 0
+  [583] pushint8 10 ............................. <10>
+  [585] eq
+  [586] jmpifz [623] ............................ (case) ..., 10:
+  [589] pushsymb 30 ............................. <#member>
+  [591] pushcons 10 ............................. <"starsuite_doormask_1_d_0_2_0">
+  [593] pushsymb 35 ............................. <#x>
+  [595] getlocal 2 .............................. <oLoc>
+  [597] getobjprop 143 .......................... <oLoc.locH>
+  [599] pushint8 1 .............................. <1>
+  [601] sub ..................................... <oLoc.locH - 1>
+  [602] pushsymb 36 ............................. <#y>
+  [604] getlocal 2 .............................. <oLoc>
+  [606] getobjprop 122 .......................... <oLoc.locV>
+  [608] pushint8 1 .............................. <1>
+  [610] add ..................................... <oLoc.locV + 1>
+  [611] pushsymb 37 ............................. <#ink>
+  [613] pushint8 8 .............................. <8>
+  [615] pusharglist 8 ........................... <[#member: "starsuite_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [617] pushproplist ............................ <[#member: "starsuite_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [618] setlocal 6 .............................. aProps = [#member: "starsuite_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]
+  [620] jmp [746]
+  [623] peek 0
+  [625] pushint8 7 .............................. <7>
+  [627] nteq
+  [628] jmpifz [639] ............................ (case) 7, ...
+  [631] peek 0
+  [633] pushint8 8 .............................. <8>
+  [635] eq
+  [636] jmpifz [673] ............................ (case) ..., 8:
+  [639] pushsymb 30 ............................. <#member>
+  [641] pushcons 11 ............................. <"model_e_f_doormask_1_d_0_2_0">
+  [643] pushsymb 35 ............................. <#x>
+  [645] getlocal 2 .............................. <oLoc>
+  [647] getobjprop 143 .......................... <oLoc.locH>
+  [649] pushint8 5 .............................. <5>
+  [651] add ..................................... <oLoc.locH + 5>
+  [652] pushsymb 36 ............................. <#y>
+  [654] getlocal 2 .............................. <oLoc>
+  [656] getobjprop 122 .......................... <oLoc.locV>
+  [658] pushint8 3 .............................. <3>
+  [660] sub ..................................... <oLoc.locV - 3>
+  [661] pushsymb 37 ............................. <#ink>
+  [663] pushint8 8 .............................. <8>
+  [665] pusharglist 8 ........................... <[#member: "model_e_f_doormask_1_d_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]>
+  [667] pushproplist ............................ <[#member: "model_e_f_doormask_1_d_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]>
+  [668] setlocal 6 .............................. aProps = [#member: "model_e_f_doormask_1_d_0_2_0", #x: oLoc.locH + 5, #y: oLoc.locV - 3, #ink: 8]
+  [670] jmp [746]
+  [673] peek 0
+  [675] pushint8 9 .............................. <9>
+  [677] eq
+  [678] jmpifz [715] ............................ (case) 9:
+  [681] pushsymb 30 ............................. <#member>
+  [683] pushcons 12 ............................. <"model_g_doormask_1_d_0_2_0">
+  [685] pushsymb 35 ............................. <#x>
+  [687] getlocal 2 .............................. <oLoc>
+  [689] getobjprop 143 .......................... <oLoc.locH>
+  [691] pushint8 2 .............................. <2>
+  [693] add ..................................... <oLoc.locH + 2>
+  [694] pushsymb 36 ............................. <#y>
+  [696] getlocal 2 .............................. <oLoc>
+  [698] getobjprop 122 .......................... <oLoc.locV>
+  [700] pushint8 3 .............................. <3>
+  [702] sub ..................................... <oLoc.locV - 3>
+  [703] pushsymb 37 ............................. <#ink>
+  [705] pushint8 8 .............................. <8>
+  [707] pusharglist 8 ........................... <[#member: "model_g_doormask_1_d_0_2_0", #x: oLoc.locH + 2, #y: oLoc.locV - 3, #ink: 8]>
+  [709] pushproplist ............................ <[#member: "model_g_doormask_1_d_0_2_0", #x: oLoc.locH + 2, #y: oLoc.locV - 3, #ink: 8]>
+  [710] setlocal 6 .............................. aProps = [#member: "model_g_doormask_1_d_0_2_0", #x: oLoc.locH + 2, #y: oLoc.locV - 3, #ink: 8]
+  [712] jmp [746] ............................... (case) otherwise:
+  [715] pushsymb 30 ............................. <#member>
+  [717] pushcons 13 ............................. <"wall_doormask_1_d_0_2_0">
+  [719] pushsymb 35 ............................. <#x>
+  [721] getlocal 2 .............................. <oLoc>
+  [723] getobjprop 143 .......................... <oLoc.locH>
+  [725] pushint8 1 .............................. <1>
+  [727] sub ..................................... <oLoc.locH - 1>
+  [728] pushsymb 36 ............................. <#y>
+  [730] getlocal 2 .............................. <oLoc>
+  [732] getobjprop 122 .......................... <oLoc.locV>
+  [734] pushint8 1 .............................. <1>
+  [736] add ..................................... <oLoc.locV + 1>
+  [737] pushsymb 37 ............................. <#ink>
+  [739] pushint8 8 .............................. <8>
+  [741] pusharglist 8 ........................... <[#member: "wall_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [743] pushproplist ............................ <[#member: "wall_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]>
+  [744] setlocal 6 .............................. aProps = [#member: "wall_doormask_1_d_0_2_0", #x: oLoc.locH - 1, #y: oLoc.locV + 1, #ink: 8]
+  [746] pop 1 ................................... end case
+  [748] getglobal 133 ........................... <oIsoScene>
+  [750] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [752] getlocal 6 .............................. <aProps>
+  [754] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [756] objcall 135 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [758] setlocal 7 .............................. iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [760] getlocal 7 .............................. <iSprite>
+  [762] pusharglist 1 ........................... <iSprite>
+  [764] extcall 119 ............................. <sprite(iSprite)>
+  [766] getlocal 7 .............................. <iSprite>
+  [768] pusharglist 1 ........................... <iSprite>
+  [770] extcall 119 ............................. <sprite(iSprite)>
+  [772] getobjprop 143 .......................... <sprite(iSprite).locH>
+  [774] getlocal 11 ............................. <iXOff>
+  [776] add ..................................... <sprite(iSprite).locH + iXOff>
+  [777] setobjprop 143 .......................... sprite(iSprite).locH = sprite(iSprite).locH + iXOff
+  [779] getlocal 7 .............................. <iSprite>
+  [781] pusharglist 1 ........................... <iSprite>
+  [783] extcall 119 ............................. <sprite(iSprite)>
+  [785] getlocal 7 .............................. <iSprite>
+  [787] pusharglist 1 ........................... <iSprite>
+  [789] extcall 119 ............................. <sprite(iSprite)>
+  [791] getobjprop 122 .......................... <sprite(iSprite).locV>
+  [793] getlocal 12 ............................. <iYOff>
+  [795] add ..................................... <sprite(iSprite).locV + iYOff>
+  [796] setobjprop 122 .......................... sprite(iSprite).locV = sprite(iSprite).locV + iYOff
+  [798] getlocal 7 .............................. <iSprite>
+  [800] pusharglist 1 ........................... <iSprite>
+  [802] extcall 119 ............................. <sprite(iSprite)>
+  [804] getlocal 7 .............................. <iSprite>
+  [806] pusharglist 1 ........................... <iSprite>
+  [808] extcall 119 ............................. <sprite(iSprite)>
+  [810] getobjprop 122 .......................... <sprite(iSprite).locV>
+  [812] pushint8 1 .............................. <1>
+  [814] sub ..................................... <sprite(iSprite).locV - 1>
+  [815] setobjprop 122 .......................... sprite(iSprite).locV = sprite(iSprite).locV - 1
+  [817] getparam 0 .............................. <me>
+  [819] getchainedprop 139 ...................... <me.aSprites>
+  [821] getlocal 7 .............................. <iSprite>
+  [823] pusharglistnoret 2 ...................... <me.aSprites, iSprite>
+  [825] objcall 140 ............................. me.aSprites.add(iSprite)
+  [827] getglobal 133 ........................... <oIsoScene>
+  [829] getchainedprop 393 ...................... <oIsoScene.oWall>
+  [832] getlocal 0 .............................. <iRow>
+  [834] getlocal 1 .............................. <iCol>
+  [836] pushcons 14 ............................. <"wall_doormask_1_b_0_2_0">
+  [838] pushcons 15 ............................. <"right">
+  [840] pushcons 16 ............................. <"wall_doormask">
+  [842] pushcons 17 ............................. <"color">
+  [844] pusharglist 0 ........................... <>
+  [846] extcall 238 ............................. <VOID>
+  [848] pushzero ................................ <0>
+  [849] pushint8 1 .............................. <1>
+  [851] pusharglistnoret 10 ..................... <oIsoScene.oWall, iRow, iCol, "wall_doormask_1_b_0_2_0", "right", "wall_doormask", "color", VOID, 0, 1>
+  [853] objcall 1186 ............................ oIsoScene.oWall.drawWallTile(iRow, iCol, "wall_doormask_1_b_0_2_0", "right", "wall_doormask", "color", VOID, 0, 1)
+  [856] getglobal 133 ........................... <oIsoScene>
+  [858] getchainedprop 393 ...................... <oIsoScene.oWall>
+  [861] getlocal 0 .............................. <iRow>
+  [863] getlocal 1 .............................. <iCol>
+  [865] pushcons 18 ............................. <"wall_doormask_1_a_0_2_0">
+  [867] pushcons 15 ............................. <"right">
+  [869] pushcons 16 ............................. <"wall_doormask">
+  [871] pushcons 19 ............................. <"texture">
+  [873] pusharglist 0 ........................... <>
+  [875] extcall 238 ............................. <VOID>
+  [877] pushzero ................................ <0>
+  [878] pushint8 1 .............................. <1>
+  [880] pusharglistnoret 10 ..................... <oIsoScene.oWall, iRow, iCol, "wall_doormask_1_a_0_2_0", "right", "wall_doormask", "texture", VOID, 0, 1>
+  [882] objcall 1186 ............................ oIsoScene.oWall.drawWallTile(iRow, iCol, "wall_doormask_1_a_0_2_0", "right", "wall_doormask", "texture", VOID, 0, 1)
+  [885] ret
+end
+
+on mouseDownEvent me, iSprite, oSprite
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] pusharglistnoret 1 ...................... <oIsoScene>
+  [  4] objcall 295 ............................. oIsoScene.mouseDownEvent()
+  [  7] ret
+end
+
+on exitSelected me
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglist 1 ........................... <oStudio>
+  [  4] extcall 59 .............................. <voidp(oStudio)>
+  [  6] jmpifz [ 13] ............................ if voidp(oStudio) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getglobal 64 ............................ <oStudio>
+  [ 15] pusharglistnoret 1 ...................... <oStudio>
+  [ 17] objcall 1219 ............................ oStudio.sendExitStudioViaDoor()
+  [ 20] ret
+end
+
+on mouseOverDoor me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1213 ......................... <me.iExitSprite>
+  [  5] pusharglist 1 ........................... <me.iExitSprite>
+  [  7] extcall 59 .............................. <voidp(me.iExitSprite)>
+  [  9] jmpifz [ 20] ............................ if voidp(me.iExitSprite) then / else
+  [ 12] pushzero ................................ <0>
+  [ 13] pusharglistnoret 1 ...................... <0>
+  [ 15] extcall 52 .............................. return 0
+  [ 17] jmp [ 31]
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 1 ........................... <me>
+  [ 24] objcall 912 ............................. <me.mouseIsOverITem()>
+  [ 27] pusharglistnoret 1 ...................... <me.mouseIsOverITem()>
+  [ 29] extcall 52 .............................. return me.mouseIsOverITem()
+  [ 31] ret
+end
+
+on destroy me
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 139 .......................... <me.aSprites>
+  [  8] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, me.aSprites>
+  [ 10] objcall 154 ............................. oIsoScene.oSpriteManager.returnPooledSprites(me.aSprites)
+  [ 12] getglobal 133 ........................... <oIsoScene>
+  [ 14] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getobjprop 1213 ......................... <me.iExitSprite>
+  [ 21] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, me.iExitSprite>
+  [ 23] objcall 728 ............................. oIsoScene.oSpriteManager.returnPooledSprite(me.iExitSprite)
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pusharglist 0 ........................... <[]>
+  [ 30] pushlist ................................ <[]>
+  [ 31] setobjprop 139 .......................... me.aSprites = []
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglist 0 ........................... <>
+  [ 37] extcall 238 ............................. <VOID>
+  [ 39] setobjprop 1213 ......................... me.iExitSprite = VOID
+  [ 42] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 139 .......................... <me.aSprites>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 155
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 54] ............................ repeat with i in me.aSprites
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 72
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 1 ........................... <i>
+  [ 34] extcall 119 ............................. <sprite(i)>
+  [ 36] getlocal 0 .............................. <i>
+  [ 38] pusharglist 1 ........................... <i>
+  [ 40] extcall 119 ............................. <sprite(i)>
+  [ 42] getobjprop 695 .......................... <sprite(i).visible>
+  [ 45] not ..................................... <not sprite(i).visible>
+  [ 46] setobjprop 695 .......................... sprite(i).visible = not sprite(i).visible
+  [ 49] pushint8 1
+  [ 51] add
+  [ 52] endrepeat [ 12]
+  [ 54] pop 3
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getobjprop 1213 ......................... <me.iExitSprite>
+  [ 61] pusharglist 1 ........................... <me.iExitSprite>
+  [ 63] extcall 59 .............................. <voidp(me.iExitSprite)>
+  [ 65] not ..................................... <not voidp(me.iExitSprite)>
+  [ 66] jmpifz [ 94] ............................ if not voidp(me.iExitSprite) then
+  [ 69] getparam 0 .............................. <me>
+  [ 71] getobjprop 1213 ......................... <me.iExitSprite>
+  [ 74] pusharglist 1 ........................... <me.iExitSprite>
+  [ 76] extcall 119 ............................. <sprite(me.iExitSprite)>
+  [ 78] getparam 0 .............................. <me>
+  [ 80] getobjprop 1213 ......................... <me.iExitSprite>
+  [ 83] pusharglist 1 ........................... <me.iExitSprite>
+  [ 85] extcall 119 ............................. <sprite(me.iExitSprite)>
+  [ 87] getobjprop 695 .......................... <sprite(me.iExitSprite).visible>
+  [ 90] not ..................................... <not sprite(me.iExitSprite).visible>
+  [ 91] setobjprop 695 .......................... sprite(me.iExitSprite).visible = not sprite(me.iExitSprite).visible
+  [ 94] ret
+end
+
+on calculateLowestZ me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 238 ............................. <VOID>
+  [  4] setlocal 0 .............................. _iLowestZ = VOID
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 139 .......................... <me.aSprites>
+  [ 10] peek 0
+  [ 12] pusharglist 1
+  [ 14] extcall 155
+  [ 16] pushint8 1
+  [ 18] peek 0
+  [ 20] peek 2
+  [ 22] lteq
+  [ 23] jmpifz [ 79] ............................ repeat with i in me.aSprites
+  [ 26] peek 2
+  [ 28] peek 1
+  [ 30] pusharglist 2
+  [ 32] extcall 72
+  [ 34] setlocal 1
+  [ 36] getlocal 1 .............................. <i>
+  [ 38] pusharglist 1 ........................... <i>
+  [ 40] extcall 119 ............................. <sprite(i)>
+  [ 42] getobjprop 138 .......................... <sprite(i).locZ>
+  [ 44] setlocal 2 .............................. _iZ = sprite(i).locZ
+  [ 46] getlocal 0 .............................. <_iLowestZ>
+  [ 48] pusharglist 1 ........................... <_iLowestZ>
+  [ 50] extcall 59 .............................. <voidp(_iLowestZ)>
+  [ 52] jmpifz [ 62] ............................ if voidp(_iLowestZ) then
+  [ 55] getlocal 2 .............................. <_iZ>
+  [ 57] setlocal 0 .............................. _iLowestZ = _iZ
+  [ 59] jmp [ 74] ............................... next repeat
+  [ 62] getlocal 2 .............................. <_iZ>
+  [ 64] getlocal 0 .............................. <_iLowestZ>
+  [ 66] lt ...................................... <_iZ < _iLowestZ>
+  [ 67] jmpifz [ 74] ............................ if _iZ < _iLowestZ then
+  [ 70] getlocal 2 .............................. <_iZ>
+  [ 72] setlocal 0 .............................. _iLowestZ = _iZ
+  [ 74] pushint8 1
+  [ 76] add
+  [ 77] endrepeat [ 18]
+  [ 79] pop 3
+  [ 81] getlocal 0 .............................. <_iLowestZ>
+  [ 83] pusharglistnoret 1 ...................... <_iLowestZ>
+  [ 85] extcall 52 .............................. return _iLowestZ
+  [ 87] ret
+end
+
+on getLowestZ me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1210 ......................... <me.iLowestZ>
+  [  5] pusharglistnoret 1 ...................... <me.iLowestZ>
+  [  7] extcall 52 .............................. return me.iLowestZ
+  [  9] ret
+end
+
+on getExitSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1213 ......................... <me.iExitSprite>
+  [  5] pusharglistnoret 1 ...................... <me.iExitSprite>
+  [  7] extcall 52 .............................. return me.iExitSprite
+  [  9] ret
+end
+
+on hitTest me, iSpriteNum
+  [  0] getparam 1 .............................. <iSpriteNum>
+  [  2] pusharglist 1 ........................... <iSpriteNum>
+  [  4] extcall 119 ............................. <sprite(iSpriteNum)>
+  [  6] setlocal 0 .............................. _oSprite = sprite(iSpriteNum)
+  [  8] getlocal 0 .............................. <_oSprite>
+  [ 10] pusharglist 1 ........................... <_oSprite>
+  [ 12] extcall 59 .............................. <voidp(_oSprite)>
+  [ 14] jmpifz [ 22] ............................ if voidp(_oSprite) then
+  [ 17] pushzero ................................ <0>
+  [ 18] pusharglistnoret 1 ...................... <0>
+  [ 20] extcall 52 .............................. return 0
+  [ 22] getlocal 0 .............................. <_oSprite>
+  [ 24] getobjprop 30 ........................... <_oSprite.member>
+  [ 26] setlocal 1 .............................. _oMember = _oSprite.member
+  [ 28] getlocal 1 .............................. <_oMember>
+  [ 30] pusharglist 1 ........................... <_oMember>
+  [ 32] extcall 59 .............................. <voidp(_oMember)>
+  [ 34] jmpifz [ 42] ............................ if voidp(_oMember) then
+  [ 37] pushzero ................................ <0>
+  [ 38] pusharglistnoret 1 ...................... <0>
+  [ 40] extcall 52 .............................. return 0
+  [ 42] getlocal 1 .............................. <_oMember>
+  [ 44] getobjprop 73 ........................... <_oMember.memberNum>
+  [ 46] pushzero ................................ <0>
+  [ 47] lteq .................................... <_oMember.memberNum <= 0>
+  [ 48] jmpifz [ 56] ............................ if _oMember.memberNum <= 0 then
+  [ 51] pushzero ................................ <0>
+  [ 52] pusharglistnoret 1 ...................... <0>
+  [ 54] extcall 52 .............................. return 0
+  [ 56] getlocal 0 .............................. <_oSprite>
+  [ 58] getmovieprop 970 ........................ <the mouseLoc>
+  [ 61] pusharglist 2 ........................... <_oSprite, the mouseLoc>
+  [ 63] objcall 971 ............................. <_oSprite.mapStageToMember(the mouseLoc)>
+  [ 66] setlocal 2 .............................. _oMemberLoc = _oSprite.mapStageToMember(the mouseLoc)
+  [ 68] getlocal 2 .............................. <_oMemberLoc>
+  [ 70] pusharglist 1 ........................... <_oMemberLoc>
+  [ 72] extcall 59 .............................. <voidp(_oMemberLoc)>
+  [ 74] jmpifz [ 82] ............................ if voidp(_oMemberLoc) then
+  [ 77] pushzero ................................ <0>
+  [ 78] pusharglistnoret 1 ...................... <0>
+  [ 80] extcall 52 .............................. return 0
+  [ 82] getlocal 1 .............................. <_oMember>
+  [ 84] getobjprop 117 .......................... <_oMember.image>
+  [ 86] setlocal 3 .............................. _oImage = _oMember.image
+  [ 88] getlocal 3 .............................. <_oImage>
+  [ 90] getlocal 2 .............................. <_oMemberLoc>
+  [ 92] pusharglist 2 ........................... <_oImage, _oMemberLoc>
+  [ 94] objcall 972 ............................. <_oImage.getPixel(_oMemberLoc)>
+  [ 97] setlocal 4 .............................. _oPixelColor = _oImage.getPixel(_oMemberLoc)
+  [ 99] pushzero ................................ <0>
+  [100] setlocal 5 .............................. bHitTest = 0
+  [102] getlocal 4 .............................. <_oPixelColor>
+  [104] getparam 0 .............................. <me>
+  [106] getobjprop 1212 ......................... <me.oHitTestColor>
+  [109] nteq .................................... <_oPixelColor <> me.oHitTestColor>
+  [110] jmpifz [119] ............................ if _oPixelColor <> me.oHitTestColor then
+  [113] pushint8 1 .............................. <1>
+  [115] pusharglistnoret 1 ...................... <1>
+  [117] extcall 52 .............................. return 1
+  [119] pushzero ................................ <0>
+  [120] pusharglistnoret 1 ...................... <0>
+  [122] extcall 52 .............................. return 0
+  [124] ret
+end
+
+on mouseIsOverITem me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 1213 ......................... <me.iExitSprite>
+  [  7] pusharglist 2 ........................... <me, me.iExitSprite>
+  [  9] objcall 913 ............................. <me.hitTest(me.iExitSprite)>
+  [ 12] jmpifz [ 21] ............................ if me.hitTest(me.iExitSprite) then
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] pusharglistnoret 1 ...................... <1>
+  [ 19] extcall 52 .............................. return 1
+  [ 21] ret
+end

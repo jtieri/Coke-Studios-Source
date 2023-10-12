@@ -1,0 +1,1193 @@
+property bDebug, oMap, aAStarMap, bUseDiagonals, aDirections, iDirLength, aOpen, aClosed, W_START, W_END, W_OPEN, W_BLOCKED, W_CHAIR, W_AVATAR, W_POINTER, oStartNode, oEndNode, iElapsedTime, bSmoothPath
+global oIsoScene
+
+on new me, _oMap
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 56 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new AStar()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new AStar()">
+  [ 12] objcall 50 .............................. me.debug("new AStar()")
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getparam 1 .............................. <_oMap>
+  [ 18] setobjprop 115 .......................... me.oMap = _oMap
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 115 ...................... <me.oMap>
+  [ 28] getobjprop 80 ........................... <me.oMap.iRows>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getchainedprop 115 ...................... <me.oMap>
+  [ 34] getobjprop 82 ........................... <me.oMap.iCols>
+  [ 36] pusharglist 3 ........................... <me, me.oMap.iRows, me.oMap.iCols>
+  [ 38] objcall 843 ............................. <me.createAStarMap(me.oMap.iRows, me.oMap.iCols)>
+  [ 41] setobjprop 847 .......................... me.aAStarMap = me.createAStarMap(me.oMap.iRows, me.oMap.iCols)
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] setobjprop 848 .......................... me.bUseDiagonals = 1
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getparam 0 .............................. <me>
+  [ 55] pusharglist 1 ........................... <me>
+  [ 57] objcall 842 ............................. <me.createDirections()>
+  [ 60] setobjprop 671 .......................... me.aDirections = me.createDirections()
+  [ 63] getparam 0 .............................. <me>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] pushsymb 671 ............................ <#aDirections>
+  [ 70] pusharglist 2 ........................... <me, #aDirections>
+  [ 72] objcall 169 ............................. <me.aDirections.count>
+  [ 74] setobjprop 849 .......................... me.iDirLength = me.aDirections.count
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pushcons 1 .............................. <"aDirections: ">
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getobjprop 671 .......................... <me.aDirections>
+  [ 86] joinstr ................................. <"aDirections: " & me.aDirections>
+  [ 87] pusharglistnoret 2 ...................... <me, "aDirections: " & me.aDirections>
+  [ 89] objcall 50 .............................. me.debug("aDirections: " & me.aDirections)
+  [ 91] getparam 0 .............................. <me>
+  [ 93] pusharglist 0 ........................... <[]>
+  [ 95] pushlist ................................ <[]>
+  [ 96] setobjprop 850 .......................... me.aOpen = []
+  [ 99] getparam 0 .............................. <me>
+  [101] pusharglist 0 ........................... <[]>
+  [103] pushlist ................................ <[]>
+  [104] setobjprop 851 .......................... me.aClosed = []
+  [107] getparam 0 .............................. <me>
+  [109] pushint8 2 .............................. <2>
+  [111] inv ..................................... <-2>
+  [112] setobjprop 852 .......................... me.W_START = -2
+  [115] getparam 0 .............................. <me>
+  [117] pushint8 1 .............................. <1>
+  [119] inv ..................................... <-1>
+  [120] setobjprop 853 .......................... me.W_END = -1
+  [123] getparam 0 .............................. <me>
+  [125] pushzero ................................ <0>
+  [126] setobjprop 805 .......................... me.W_OPEN = 0
+  [129] getparam 0 .............................. <me>
+  [131] pushint16 255 ........................... <255>
+  [134] setobjprop 159 .......................... me.W_BLOCKED = 255
+  [136] getparam 0 .............................. <me>
+  [138] pushint8 100 ............................ <100>
+  [140] setobjprop 854 .......................... me.W_CHAIR = 100
+  [143] getparam 0 .............................. <me>
+  [145] pushint16 150 ........................... <150>
+  [148] setobjprop 855 .......................... me.W_POINTER = 150
+  [151] getparam 0 .............................. <me>
+  [153] pushint8 50 ............................. <50>
+  [155] setobjprop 856 .......................... me.W_AVATAR = 50
+  [158] getparam 0 .............................. <me>
+  [160] pushint8 1 .............................. <1>
+  [162] setobjprop 857 .......................... me.bSmoothPath = 1
+  [165] getparam 0 .............................. <me>
+  [167] pusharglistnoret 1 ...................... <me>
+  [169] extcall 92 .............................. return me
+  [171] ret
+end
+
+on findPath me, _oN1, _oN2
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"findPath()">
+  [  4] pusharglistnoret 2 ...................... <me, "findPath()">
+  [  6] objcall 50 .............................. me.debug("findPath()")
+  [  8] getmovieprop 89 ......................... <the milliSeconds>
+  [ 10] setlocal 0 .............................. iStartTime = the milliSeconds
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglist 1 ........................... <me>
+  [ 18] objcall 842 ............................. <me.createDirections()>
+  [ 21] setobjprop 671 .......................... me.aDirections = me.createDirections()
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pushsymb 671 ............................ <#aDirections>
+  [ 31] pusharglist 2 ........................... <me, #aDirections>
+  [ 33] objcall 169 ............................. <me.aDirections.count>
+  [ 35] setobjprop 849 .......................... me.iDirLength = me.aDirections.count
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getchainedprop 115 ...................... <me.oMap>
+  [ 46] getobjprop 80 ........................... <me.oMap.iRows>
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getchainedprop 115 ...................... <me.oMap>
+  [ 52] getobjprop 82 ........................... <me.oMap.iCols>
+  [ 54] pusharglist 3 ........................... <me, me.oMap.iRows, me.oMap.iCols>
+  [ 56] objcall 843 ............................. <me.createAStarMap(me.oMap.iRows, me.oMap.iCols)>
+  [ 59] setobjprop 847 .......................... me.aAStarMap = me.createAStarMap(me.oMap.iRows, me.oMap.iCols)
+  [ 62] getparam 1 .............................. <_oN1>
+  [ 64] getobjprop 155 .......................... <_oN1.iCol>
+  [ 66] getparam 1 .............................. <_oN1>
+  [ 68] getobjprop 154 .......................... <_oN1.iRow>
+  [ 70] pusharglist 2 ........................... <_oN1.iCol, _oN1.iRow>
+  [ 72] extcall 295 ............................. <point(_oN1.iCol, _oN1.iRow)>
+  [ 75] setlocal 1 .............................. pt1 = point(_oN1.iCol, _oN1.iRow)
+  [ 77] getparam 2 .............................. <_oN2>
+  [ 79] getobjprop 155 .......................... <_oN2.iCol>
+  [ 81] getparam 2 .............................. <_oN2>
+  [ 83] getobjprop 154 .......................... <_oN2.iRow>
+  [ 85] pusharglist 2 ........................... <_oN2.iCol, _oN2.iRow>
+  [ 87] extcall 295 ............................. <point(_oN2.iCol, _oN2.iRow)>
+  [ 90] setlocal 2 .............................. pt2 = point(_oN2.iCol, _oN2.iRow)
+  [ 92] getparam 0 .............................. <me>
+  [ 94] getparam 1 .............................. <_oN1>
+  [ 96] setobjprop 859 .......................... me.oStartNode = _oN1
+  [ 99] getparam 0 .............................. <me>
+  [101] getparam 2 .............................. <_oN2>
+  [103] setobjprop 860 .......................... me.oEndNode = _oN2
+  [106] getparam 0 .............................. <me>
+  [108] pusharglist 0 ........................... <[]>
+  [110] pushlist ................................ <[]>
+  [111] setobjprop 850 .......................... me.aOpen = []
+  [114] getparam 0 .............................. <me>
+  [116] pushcons 3 .............................. <"STEP 1">
+  [118] pusharglistnoret 2 ...................... <me, "STEP 1">
+  [120] objcall 50 .............................. me.debug("STEP 1")
+  [122] pushcons 4 .............................. <"AStarNode">
+  [124] pusharglist 1 ........................... <"AStarNode">
+  [126] extcall 57 .............................. <script("AStarNode")>
+  [128] pusharglist 1 ........................... <script("AStarNode")>
+  [130] extcall 0 ............................... <new(script("AStarNode"))>
+  [132] setlocal 3 .............................. s = new(script("AStarNode"))
+  [134] getlocal 3 .............................. <s>
+  [136] getlocal 1 .............................. <pt1>
+  [138] setobjprop 831 .......................... s.pt = pt1
+  [141] getlocal 3 .............................. <s>
+  [143] pushzero ................................ <0>
+  [144] setobjprop 833 .......................... s.g = 0
+  [147] getlocal 3 .............................. <s>
+  [149] pusharglist 0 ........................... <>
+  [151] extcall 130 ............................. <VOID>
+  [153] setobjprop 580 .......................... s.s = VOID
+  [156] getlocal 3 .............................. <s>
+  [158] getparam 0 .............................. <me>
+  [160] getlocal 1 .............................. <pt1>
+  [162] getlocal 2 .............................. <pt2>
+  [164] pusharglist 3 ........................... <me, pt1, pt2>
+  [166] objcall 841 ............................. <me.getHeuristic(pt1, pt2)>
+  [169] setobjprop 834 .......................... s.h = me.getHeuristic(pt1, pt2)
+  [172] getlocal 3 .............................. <s>
+  [174] getlocal 3 .............................. <s>
+  [176] getobjprop 833 .......................... <s.g>
+  [179] getlocal 3 .............................. <s>
+  [181] getobjprop 834 .......................... <s.h>
+  [184] add ..................................... <s.g + s.h>
+  [185] setobjprop 835 .......................... s.f = s.g + s.h
+  [188] getlocal 3 .............................. <s>
+  [190] getparam 1 .............................. <_oN1>
+  [192] getobjprop 157 .......................... <_oN1.w>
+  [194] setobjprop 157 .......................... s.w = _oN1.w
+  [196] getlocal 3 .............................. <s>
+  [198] pusharglist 0 ........................... <>
+  [200] extcall 130 ............................. <VOID>
+  [202] setobjprop 836 .......................... s.parent = VOID
+  [205] getparam 0 .............................. <me>
+  [207] pushcons 5 .............................. <"s: ">
+  [209] getlocal 3 .............................. <s>
+  [211] joinstr ................................. <"s: " & s>
+  [212] pusharglistnoret 2 ...................... <me, "s: " & s>
+  [214] objcall 50 .............................. me.debug("s: " & s)
+  [216] getparam 0 .............................. <me>
+  [218] getchainedprop 850 ...................... <me.aOpen>
+  [221] getlocal 3 .............................. <s>
+  [223] pusharglistnoret 2 ...................... <me.aOpen, s>
+  [225] objcall 387 ............................. me.aOpen.append(s)
+  [228] getparam 0 .............................. <me>
+  [230] pushcons 6 .............................. <"STEP 2">
+  [232] pusharglistnoret 2 ...................... <me, "STEP 2">
+  [234] objcall 50 .............................. me.debug("STEP 2")
+  [236] getparam 0 .............................. <me>
+  [238] pushsymb 850 ............................ <#aOpen>
+  [241] pusharglist 2 ........................... <me, #aOpen>
+  [243] objcall 169 ............................. <me.aOpen.count>
+  [245] pushzero ................................ <0>
+  [246] gt ...................................... <me.aOpen.count > 0>
+  [247] jmpifz [628] ............................ repeat while me.aOpen.count > 0
+  [250] getparam 0 .............................. <me>
+  [252] pushsymb 850 ............................ <#aOpen>
+  [255] pushint8 1 .............................. <1>
+  [257] pusharglist 3 ........................... <me, #aOpen, 1>
+  [259] objcall 577 ............................. <me.aOpen[1]>
+  [262] setlocal 4 .............................. n = me.aOpen[1]
+  [264] getparam 0 .............................. <me>
+  [266] getchainedprop 850 ...................... <me.aOpen>
+  [269] pushint8 1 .............................. <1>
+  [271] pusharglistnoret 2 ...................... <me.aOpen, 1>
+  [273] objcall 598 ............................. me.aOpen.deleteAt(1)
+  [276] getparam 0 .............................. <me>
+  [278] pushcons 7 .............................. <"STEP 2.1 n: ">
+  [280] getlocal 4 .............................. <n>
+  [282] joinstr ................................. <"STEP 2.1 n: " & n>
+  [283] pusharglistnoret 2 ...................... <me, "STEP 2.1 n: " & n>
+  [285] objcall 50 .............................. me.debug("STEP 2.1 n: " & n)
+  [287] getlocal 4 .............................. <n>
+  [289] getobjprop 831 .......................... <n.pt>
+  [292] getlocal 2 .............................. <pt2>
+  [294] eq ...................................... <n.pt = pt2>
+  [295] jmpifz [320] ............................ if n.pt = pt2 then
+  [298] getparam 0 .............................. <me>
+  [300] getmovieprop 89 ......................... <the milliSeconds>
+  [302] getlocal 0 .............................. <iStartTime>
+  [304] sub ..................................... <the milliSeconds - iStartTime>
+  [305] setobjprop 148 .......................... me.iElapsedTime = the milliSeconds - iStartTime
+  [307] getparam 0 .............................. <me>
+  [309] getlocal 4 .............................. <n>
+  [311] pusharglist 2 ........................... <me, n>
+  [313] objcall 844 ............................. <me.constructPath(n)>
+  [316] pusharglistnoret 1 ...................... <me.constructPath(n)>
+  [318] extcall 92 .............................. return me.constructPath(n)
+  [320] getparam 0 .............................. <me>
+  [322] pushcons 8 .............................. <"STEP 2.2">
+  [324] pusharglistnoret 2 ...................... <me, "STEP 2.2">
+  [326] objcall 50 .............................. me.debug("STEP 2.2")
+  [328] getparam 0 .............................. <me>
+  [330] getlocal 4 .............................. <n>
+  [332] getlocal 2 .............................. <pt2>
+  [334] pusharglist 3 ........................... <me, n, pt2>
+  [336] objcall 840 ............................. <me.getSuccessors(n, pt2)>
+  [339] setlocal 5 .............................. aSuccessors = me.getSuccessors(n, pt2)
+  [341] getlocal 5 .............................. <aSuccessors>
+  [343] getobjprop 169 .......................... <aSuccessors.count>
+  [345] setlocal 6 .............................. iLength = aSuccessors.count
+  [347] pushint8 1 .............................. <1>
+  [349] setlocal 7
+  [351] getlocal 7
+  [353] getlocal 6 .............................. <iLength>
+  [355] lteq
+  [356] jmpifz [574] ............................ repeat with i = 1 to iLength
+  [359] getlocal 5 .............................. <aSuccessors>
+  [361] getlocal 7 .............................. <i>
+  [363] pusharglist 2 ........................... <aSuccessors, i>
+  [365] objcall 196 ............................. <aSuccessors[i]>
+  [367] setlocal 8 .............................. nn = aSuccessors[i]
+  [369] getlocal 4 .............................. <n>
+  [371] getobjprop 833 .......................... <n.g>
+  [374] getparam 0 .............................. <me>
+  [376] getlocal 4 .............................. <n>
+  [378] getlocal 8 .............................. <nn>
+  [380] pusharglist 3 ........................... <me, n, nn>
+  [382] objcall 839 ............................. <me.getCost(n, nn)>
+  [385] add ..................................... <n.g + me.getCost(n, nn)>
+  [386] setlocal 9 .............................. newg = n.g + me.getCost(n, nn)
+  [388] getlocal 8 .............................. <nn>
+  [390] getobjprop 580 .......................... <nn.s>
+  [393] getlocal 4 .............................. <n>
+  [395] getobjprop 829 .......................... <n.open>
+  [398] eq ...................................... <nn.s = n.open>
+  [399] setlocal 10 ............................. bInOpen = nn.s = n.open
+  [401] getlocal 8 .............................. <nn>
+  [403] getobjprop 580 .......................... <nn.s>
+  [406] getlocal 4 .............................. <n>
+  [408] getobjprop 830 .......................... <n.closed>
+  [411] eq ...................................... <nn.s = n.closed>
+  [412] setlocal 11 ............................. bInClosed = nn.s = n.closed
+  [414] getlocal 10 ............................. <bInOpen>
+  [416] getlocal 11 ............................. <bInClosed>
+  [418] or ...................................... <bInOpen or bInClosed>
+  [419] jmpifz [444] ............................ if bInOpen or bInClosed then
+  [422] getlocal 8 .............................. <nn>
+  [424] getobjprop 833 .......................... <nn.g>
+  [427] getlocal 9 .............................. <newg>
+  [429] lteq .................................... <nn.g <= newg>
+  [430] jmpifz [444] ............................ if nn.g <= newg then
+  [433] getparam 0 .............................. <me>
+  [435] pushcons 9 .............................. <"nn.g <= newg continue">
+  [437] pusharglistnoret 2 ...................... <me, "nn.g <= newg continue">
+  [439] objcall 50 .............................. me.debug("nn.g <= newg continue")
+  [441] jmp [565] ............................... next repeat
+  [444] getlocal 8 .............................. <nn>
+  [446] getlocal 4 .............................. <n>
+  [448] setobjprop 836 .......................... nn.parent = n
+  [451] getlocal 8 .............................. <nn>
+  [453] getlocal 9 .............................. <newg>
+  [455] setobjprop 833 .......................... nn.g = newg
+  [458] getlocal 8 .............................. <nn>
+  [460] getparam 0 .............................. <me>
+  [462] getlocal 8 .............................. <nn>
+  [464] getobjprop 831 .......................... <nn.pt>
+  [467] getlocal 2 .............................. <pt2>
+  [469] pusharglist 3 ........................... <me, nn.pt, pt2>
+  [471] objcall 841 ............................. <me.getHeuristic(nn.pt, pt2)>
+  [474] setobjprop 834 .......................... nn.h = me.getHeuristic(nn.pt, pt2)
+  [477] getlocal 8 .............................. <nn>
+  [479] getlocal 8 .............................. <nn>
+  [481] getobjprop 833 .......................... <nn.g>
+  [484] getlocal 8 .............................. <nn>
+  [486] getobjprop 834 .......................... <nn.h>
+  [489] add ..................................... <nn.g + nn.h>
+  [490] setobjprop 835 .......................... nn.f = nn.g + nn.h
+  [493] getlocal 8 .............................. <nn>
+  [495] getlocal 8 .............................. <nn>
+  [497] getobjprop 829 .......................... <nn.open>
+  [500] setobjprop 580 .......................... nn.s = nn.open
+  [503] getparam 0 .............................. <me>
+  [505] pushcons 10 ............................. <"STEP 2.4 nn: ">
+  [507] getlocal 8 .............................. <nn>
+  [509] add ..................................... <"STEP 2.4 nn: " + nn>
+  [510] pusharglistnoret 2 ...................... <me, "STEP 2.4 nn: " + nn>
+  [512] objcall 50 .............................. me.debug("STEP 2.4 nn: " + nn)
+  [514] getlocal 10 ............................. <bInOpen>
+  [516] not ..................................... <not bInOpen>
+  [517] jmpifz [532] ............................ if not bInOpen then
+  [520] getparam 0 .............................. <me>
+  [522] getchainedprop 850 ...................... <me.aOpen>
+  [525] getlocal 8 .............................. <nn>
+  [527] pusharglistnoret 2 ...................... <me.aOpen, nn>
+  [529] objcall 387 ............................. me.aOpen.append(nn)
+  [532] getparam 0 .............................. <me>
+  [534] pushsymb 847 ............................ <#aAStarMap>
+  [537] getlocal 8 .............................. <nn>
+  [539] getchainedprop 831 ...................... <nn.pt>
+  [542] getobjprop 299 .......................... <nn.pt.locH>
+  [545] pusharglist 3 ........................... <me, #aAStarMap, nn.pt.locH>
+  [547] objcall 440 ............................. <me.aAStarMap[nn.pt.locH]>
+  [550] getlocal 8 .............................. <nn>
+  [552] getchainedprop 831 ...................... <nn.pt>
+  [555] getobjprop 300 .......................... <nn.pt.locV>
+  [558] getlocal 8 .............................. <nn>
+  [560] pusharglistnoret 3 ...................... <me.aAStarMap[nn.pt.locH], nn.pt.locV, nn>
+  [562] objcall 861 ............................. me.aAStarMap[nn.pt.locH][nn.pt.locV] = nn
+  [565] pushint8 1
+  [567] getlocal 7
+  [569] add
+  [570] setlocal 7
+  [572] endrepeat [351]
+  [574] getparam 0 .............................. <me>
+  [576] pushcons 11 ............................. <"STEP 2.5">
+  [578] pusharglistnoret 2 ...................... <me, "STEP 2.5">
+  [580] objcall 50 .............................. me.debug("STEP 2.5")
+  [582] getlocal 4 .............................. <n>
+  [584] getlocal 4 .............................. <n>
+  [586] getobjprop 830 .......................... <n.closed>
+  [589] setobjprop 580 .......................... n.s = n.closed
+  [592] getparam 0 .............................. <me>
+  [594] pushsymb 847 ............................ <#aAStarMap>
+  [597] getlocal 4 .............................. <n>
+  [599] getchainedprop 831 ...................... <n.pt>
+  [602] getobjprop 299 .......................... <n.pt.locH>
+  [605] pusharglist 3 ........................... <me, #aAStarMap, n.pt.locH>
+  [607] objcall 440 ............................. <me.aAStarMap[n.pt.locH]>
+  [610] getlocal 4 .............................. <n>
+  [612] getchainedprop 831 ...................... <n.pt>
+  [615] getobjprop 300 .......................... <n.pt.locV>
+  [618] getlocal 4 .............................. <n>
+  [620] pusharglistnoret 3 ...................... <me.aAStarMap[n.pt.locH], n.pt.locV, n>
+  [622] objcall 861 ............................. me.aAStarMap[n.pt.locH][n.pt.locV] = n
+  [625] endrepeat [236]
+  [628] getparam 0 .............................. <me>
+  [630] getmovieprop 89 ......................... <the milliSeconds>
+  [632] getlocal 0 .............................. <iStartTime>
+  [634] sub ..................................... <the milliSeconds - iStartTime>
+  [635] setobjprop 148 .......................... me.iElapsedTime = the milliSeconds - iStartTime
+  [637] pusharglist 0 ........................... <>
+  [639] extcall 130 ............................. <VOID>
+  [641] pusharglistnoret 1 ...................... <VOID>
+  [643] extcall 92 .............................. return VOID
+  [645] ret
+end
+
+on smoothPath me, aPath
+  [  0] getparam 1 .............................. <aPath>
+  [  2] getparam 1 .............................. <aPath>
+  [  4] getobjprop 169 .......................... <aPath.count>
+  [  6] pusharglist 2 ........................... <aPath, aPath.count>
+  [  8] objcall 196 ............................. <aPath[aPath.count]>
+  [ 10] setlocal 0 .............................. stPt = aPath[aPath.count]
+  [ 12] pusharglist 0 ........................... <[]>
+  [ 14] pushlist ................................ <[]>
+  [ 15] setlocal 1 .............................. aNewPath = []
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setlocal 2
+  [ 21] getlocal 2
+  [ 23] getparam 1 .............................. <aPath>
+  [ 25] getobjprop 169 .......................... <aPath.count>
+  [ 27] lteq
+  [ 28] jmpifz [124] ............................ repeat with i = 1 to aPath.count
+  [ 31] getparam 1 .............................. <aPath>
+  [ 33] getlocal 2 .............................. <i>
+  [ 35] pusharglist 2 ........................... <aPath, i>
+  [ 37] objcall 196 ............................. <aPath[i]>
+  [ 39] setlocal 3 .............................. pt = aPath[i]
+  [ 41] getlocal 1 .............................. <aNewPath>
+  [ 43] getlocal 3 .............................. <pt>
+  [ 45] pusharglistnoret 2 ...................... <aNewPath, pt>
+  [ 47] objcall 133 ............................. aNewPath.add(pt)
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getlocal 3 .............................. <pt>
+  [ 53] getlocal 0 .............................. <stPt>
+  [ 55] pusharglist 3 ........................... <me, pt, stPt>
+  [ 57] objcall 838 ............................. <me.getDirectPath(pt, stPt)>
+  [ 60] setlocal 4 .............................. aDirectPath = me.getDirectPath(pt, stPt)
+  [ 62] getlocal 4 .............................. <aDirectPath>
+  [ 64] pusharglist 1 ........................... <aDirectPath>
+  [ 66] extcall 105 ............................. <voidp(aDirectPath)>
+  [ 68] not ..................................... <not voidp(aDirectPath)>
+  [ 69] jmpifz [115] ............................ if not voidp(aDirectPath) then
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] setlocal 5
+  [ 76] getlocal 5
+  [ 78] getlocal 4 .............................. <aDirectPath>
+  [ 80] getobjprop 169 .......................... <aDirectPath.count>
+  [ 82] lteq
+  [ 83] jmpifz [109] ............................ repeat with ii = 1 to aDirectPath.count
+  [ 86] getlocal 1 .............................. <aNewPath>
+  [ 88] getlocal 4 .............................. <aDirectPath>
+  [ 90] getlocal 5 .............................. <ii>
+  [ 92] pusharglist 2 ........................... <aDirectPath, ii>
+  [ 94] objcall 196 ............................. <aDirectPath[ii]>
+  [ 96] pusharglistnoret 2 ...................... <aNewPath, aDirectPath[ii]>
+  [ 98] objcall 133 ............................. aNewPath.add(aDirectPath[ii])
+  [100] pushint8 1
+  [102] getlocal 5
+  [104] add
+  [105] setlocal 5
+  [107] endrepeat [ 76]
+  [109] getlocal 1 .............................. <aNewPath>
+  [111] pusharglistnoret 1 ...................... <aNewPath>
+  [113] extcall 92 .............................. return aNewPath
+  [115] pushint8 1
+  [117] getlocal 2
+  [119] add
+  [120] setlocal 2
+  [122] endrepeat [ 21]
+  [124] getlocal 1 .............................. <aNewPath>
+  [126] pusharglistnoret 1 ...................... <aNewPath>
+  [128] extcall 92 .............................. return aNewPath
+  [130] ret
+end
+
+on getDirectPath me, pt1, pt2
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aDirectPath = []
+  [  5] getparam 1 .............................. <pt1>
+  [  7] getobjprop 299 .......................... <pt1.locH>
+  [ 10] getparam 2 .............................. <pt2>
+  [ 12] getobjprop 299 .......................... <pt2.locH>
+  [ 15] eq ...................................... <pt1.locH = pt2.locH>
+  [ 16] jmpifz [185] ............................ if pt1.locH = pt2.locH then
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 1 .............................. iDir = 1
+  [ 23] getparam 2 .............................. <pt2>
+  [ 25] getobjprop 300 .......................... <pt2.locV>
+  [ 28] getparam 1 .............................. <pt1>
+  [ 30] getobjprop 300 .......................... <pt1.locV>
+  [ 33] lt ...................................... <pt2.locV < pt1.locV>
+  [ 34] jmpifz [ 42] ............................ if pt2.locV < pt1.locV then
+  [ 37] pushint8 1 .............................. <1>
+  [ 39] inv ..................................... <-1>
+  [ 40] setlocal 1 .............................. iDir = -1
+  [ 42] getparam 1 .............................. <pt1>
+  [ 44] getobjprop 300 .......................... <pt1.locV>
+  [ 47] getparam 2 .............................. <pt2>
+  [ 49] getobjprop 300 .......................... <pt2.locV>
+  [ 52] sub ..................................... <pt1.locV - pt2.locV>
+  [ 53] pusharglist 1 ........................... <pt1.locV - pt2.locV>
+  [ 55] extcall 467 ............................. <abs(pt1.locV - pt2.locV)>
+  [ 58] setlocal 2 .............................. iDif = abs(pt1.locV - pt2.locV)
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] setlocal 3
+  [ 64] getlocal 3
+  [ 66] getlocal 2 .............................. <iDif>
+  [ 68] lteq
+  [ 69] jmpifz [179] ............................ repeat with i = 1 to iDif
+  [ 72] getparam 1 .............................. <pt1>
+  [ 74] getobjprop 300 .......................... <pt1.locV>
+  [ 77] getlocal 1 .............................. <iDir>
+  [ 79] getlocal 3 .............................. <i>
+  [ 81] mul ..................................... <iDir * i>
+  [ 82] add ..................................... <pt1.locV + (iDir * i)>
+  [ 83] setlocal 4 .............................. iNextV = pt1.locV + (iDir * i)
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getchainedprop 115 ...................... <me.oMap>
+  [ 89] getparam 1 .............................. <pt1>
+  [ 91] getobjprop 299 .......................... <pt1.locH>
+  [ 94] getlocal 4 .............................. <iNextV>
+  [ 96] pusharglist 3 ........................... <me.oMap, pt1.locH, iNextV>
+  [ 98] objcall 156 ............................. <me.oMap.getNode(pt1.locH, iNextV)>
+  [100] setlocal 5 .............................. oMapNode = me.oMap.getNode(pt1.locH, iNextV)
+  [102] getlocal 5 .............................. <oMapNode>
+  [104] pusharglist 1 ........................... <oMapNode>
+  [106] extcall 105 ............................. <voidp(oMapNode)>
+  [108] jmpifz [119] ............................ if voidp(oMapNode) then
+  [111] pusharglist 0 ........................... <>
+  [113] extcall 130 ............................. <VOID>
+  [115] pusharglistnoret 1 ...................... <VOID>
+  [117] extcall 92 .............................. return VOID
+  [119] getparam 1 .............................. <pt1>
+  [121] getobjprop 299 .......................... <pt1.locH>
+  [124] getlocal 4 .............................. <iNextV>
+  [126] pusharglist 2 ........................... <pt1.locH, iNextV>
+  [128] extcall 295 ............................. <point(pt1.locH, iNextV)>
+  [131] setlocal 6 .............................. oNextPt = point(pt1.locH, iNextV)
+  [133] getlocal 6 .............................. <oNextPt>
+  [135] getparam 2 .............................. <pt2>
+  [137] eq ...................................... <oNextPt = pt2>
+  [138] setlocal 7 .............................. bEndNode = oNextPt = pt2
+  [140] getparam 0 .............................. <me>
+  [142] getlocal 5 .............................. <oMapNode>
+  [144] pushzero ................................ <0>
+  [145] pusharglist 3 ........................... <me, oMapNode, 0>
+  [147] objcall 846 ............................. <me.getPassable(oMapNode, 0)>
+  [150] not ..................................... <not me.getPassable(oMapNode, 0)>
+  [151] jmpifz [162] ............................ if not me.getPassable(oMapNode, 0) then
+  [154] pusharglist 0 ........................... <>
+  [156] extcall 130 ............................. <VOID>
+  [158] pusharglistnoret 1 ...................... <VOID>
+  [160] extcall 92 .............................. return VOID
+  [162] getlocal 0 .............................. <aDirectPath>
+  [164] getlocal 6 .............................. <oNextPt>
+  [166] pusharglistnoret 2 ...................... <aDirectPath, oNextPt>
+  [168] objcall 133 ............................. aDirectPath.add(oNextPt)
+  [170] pushint8 1
+  [172] getlocal 3
+  [174] add
+  [175] setlocal 3
+  [177] endrepeat [ 64]
+  [179] getlocal 0 .............................. <aDirectPath>
+  [181] pusharglistnoret 1 ...................... <aDirectPath>
+  [183] extcall 92 .............................. return aDirectPath
+  [185] getparam 1 .............................. <pt1>
+  [187] getobjprop 300 .......................... <pt1.locV>
+  [190] getparam 2 .............................. <pt2>
+  [192] getobjprop 300 .......................... <pt2.locV>
+  [195] eq ...................................... <pt1.locV = pt2.locV>
+  [196] jmpifz [354] ............................ if pt1.locV = pt2.locV then
+  [199] pushint8 1 .............................. <1>
+  [201] setlocal 1 .............................. iDir = 1
+  [203] getparam 2 .............................. <pt2>
+  [205] getobjprop 299 .......................... <pt2.locH>
+  [208] getparam 1 .............................. <pt1>
+  [210] getobjprop 299 .......................... <pt1.locH>
+  [213] lt ...................................... <pt2.locH < pt1.locH>
+  [214] jmpifz [222] ............................ if pt2.locH < pt1.locH then
+  [217] pushint8 1 .............................. <1>
+  [219] inv ..................................... <-1>
+  [220] setlocal 1 .............................. iDir = -1
+  [222] getparam 1 .............................. <pt1>
+  [224] getobjprop 299 .......................... <pt1.locH>
+  [227] getparam 2 .............................. <pt2>
+  [229] getobjprop 299 .......................... <pt2.locH>
+  [232] sub ..................................... <pt1.locH - pt2.locH>
+  [233] pusharglist 1 ........................... <pt1.locH - pt2.locH>
+  [235] extcall 467 ............................. <abs(pt1.locH - pt2.locH)>
+  [238] setlocal 2 .............................. iDif = abs(pt1.locH - pt2.locH)
+  [240] pushint8 1 .............................. <1>
+  [242] setlocal 3
+  [244] getlocal 3
+  [246] getlocal 2 .............................. <iDif>
+  [248] lteq
+  [249] jmpifz [348] ............................ repeat with i = 1 to iDif
+  [252] getparam 1 .............................. <pt1>
+  [254] getobjprop 299 .......................... <pt1.locH>
+  [257] getlocal 1 .............................. <iDir>
+  [259] getlocal 3 .............................. <i>
+  [261] mul ..................................... <iDir * i>
+  [262] add ..................................... <pt1.locH + (iDir * i)>
+  [263] setlocal 8 .............................. iNextH = pt1.locH + (iDir * i)
+  [265] getparam 0 .............................. <me>
+  [267] getchainedprop 115 ...................... <me.oMap>
+  [269] getparam 1 .............................. <pt1>
+  [271] getobjprop 300 .......................... <pt1.locV>
+  [274] getlocal 8 .............................. <iNextH>
+  [276] pusharglist 3 ........................... <me.oMap, pt1.locV, iNextH>
+  [278] objcall 156 ............................. <me.oMap.getNode(pt1.locV, iNextH)>
+  [280] setlocal 5 .............................. oMapNode = me.oMap.getNode(pt1.locV, iNextH)
+  [282] getlocal 5 .............................. <oMapNode>
+  [284] pusharglist 1 ........................... <oMapNode>
+  [286] extcall 105 ............................. <voidp(oMapNode)>
+  [288] jmpifz [299] ............................ if voidp(oMapNode) then
+  [291] pusharglist 0 ........................... <>
+  [293] extcall 130 ............................. <VOID>
+  [295] pusharglistnoret 1 ...................... <VOID>
+  [297] extcall 92 .............................. return VOID
+  [299] getparam 0 .............................. <me>
+  [301] getlocal 5 .............................. <oMapNode>
+  [303] pushzero ................................ <0>
+  [304] pusharglist 3 ........................... <me, oMapNode, 0>
+  [306] objcall 846 ............................. <me.getPassable(oMapNode, 0)>
+  [309] not ..................................... <not me.getPassable(oMapNode, 0)>
+  [310] jmpifz [321] ............................ if not me.getPassable(oMapNode, 0) then
+  [313] pusharglist 0 ........................... <>
+  [315] extcall 130 ............................. <VOID>
+  [317] pusharglistnoret 1 ...................... <VOID>
+  [319] extcall 92 .............................. return VOID
+  [321] getlocal 0 .............................. <aDirectPath>
+  [323] getlocal 8 .............................. <iNextH>
+  [325] getparam 1 .............................. <pt1>
+  [327] getobjprop 300 .......................... <pt1.locV>
+  [330] pusharglist 2 ........................... <iNextH, pt1.locV>
+  [332] extcall 295 ............................. <point(iNextH, pt1.locV)>
+  [335] pusharglistnoret 2 ...................... <aDirectPath, point(iNextH, pt1.locV)>
+  [337] objcall 133 ............................. aDirectPath.add(point(iNextH, pt1.locV))
+  [339] pushint8 1
+  [341] getlocal 3
+  [343] add
+  [344] setlocal 3
+  [346] endrepeat [244]
+  [348] getlocal 0 .............................. <aDirectPath>
+  [350] pusharglistnoret 1 ...................... <aDirectPath>
+  [352] extcall 92 .............................. return aDirectPath
+  [354] pusharglist 0 ........................... <>
+  [356] extcall 130 ............................. <VOID>
+  [358] pusharglistnoret 1 ...................... <VOID>
+  [360] extcall 92 .............................. return VOID
+  [362] ret
+end
+
+on getCost me, n, nn
+  [  0] pushint8 1 .............................. <1>
+  [  2] pusharglistnoret 1 ...................... <1>
+  [  4] extcall 92 .............................. return 1
+  [  6] ret
+end
+
+on getSuccessors me, n, pt2
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 12 ............................. <"getSuccessors() ">
+  [  4] getparam 1 .............................. <n>
+  [  6] joinstr ................................. <"getSuccessors() " & n>
+  [  7] pusharglistnoret 2 ...................... <me, "getSuccessors() " & n>
+  [  9] objcall 50 .............................. me.debug("getSuccessors() " & n)
+  [ 11] pusharglist 0 ........................... <[]>
+  [ 13] pushlist ................................ <[]>
+  [ 14] setlocal 0 .............................. aSuccessors = []
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setlocal 1
+  [ 20] getlocal 1
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 849 .......................... <me.iDirLength>
+  [ 27] lteq
+  [ 28] jmpifz [207] ............................ repeat with i = 1 to me.iDirLength
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pushsymb 671 ............................ <#aDirections>
+  [ 36] getlocal 1 .............................. <i>
+  [ 38] pusharglist 3 ........................... <me, #aDirections, i>
+  [ 40] objcall 577 ............................. <me.aDirections[i]>
+  [ 43] setlocal 2 .............................. dirPt = me.aDirections[i]
+  [ 45] getparam 1 .............................. <n>
+  [ 47] getobjprop 831 .......................... <n.pt>
+  [ 50] setlocal 3 .............................. nPt = n.pt
+  [ 52] getlocal 3 .............................. <nPt>
+  [ 54] getlocal 2 .............................. <dirPt>
+  [ 56] add ..................................... <nPt + dirPt>
+  [ 57] setlocal 4 .............................. nextPt = nPt + dirPt
+  [ 59] getlocal 4 .............................. <nextPt>
+  [ 61] getlocal 3 .............................. <nPt>
+  [ 63] eq ...................................... <nextPt = nPt>
+  [ 64] jmpifz [ 70] ............................ if nextPt = nPt then
+  [ 67] jmp [198] ............................... next repeat
+  [ 70] getparam 0 .............................. <me>
+  [ 72] getchainedprop 115 ...................... <me.oMap>
+  [ 74] getlocal 4 .............................. <nextPt>
+  [ 76] getobjprop 299 .......................... <nextPt.locH>
+  [ 79] getlocal 4 .............................. <nextPt>
+  [ 81] getobjprop 300 .......................... <nextPt.locV>
+  [ 84] pusharglist 3 ........................... <me.oMap, nextPt.locH, nextPt.locV>
+  [ 86] objcall 156 ............................. <me.oMap.getNode(nextPt.locH, nextPt.locV)>
+  [ 88] setlocal 5 .............................. oMapNode = me.oMap.getNode(nextPt.locH, nextPt.locV)
+  [ 90] getlocal 5 .............................. <oMapNode>
+  [ 92] pusharglist 0 ........................... <>
+  [ 94] extcall 130 ............................. <VOID>
+  [ 96] eq ...................................... <oMapNode = VOID>
+  [ 97] jmpifz [103] ............................ if oMapNode = VOID then
+  [100] jmp [198] ............................... next repeat
+  [103] getlocal 5 .............................. <oMapNode>
+  [105] getparam 0 .............................. <me>
+  [107] getobjprop 860 .......................... <me.oEndNode>
+  [110] pusharglist 2 ........................... <oMapNode, me.oEndNode>
+  [112] objcall 221 ............................. <oMapNode.equals(me.oEndNode)>
+  [114] setlocal 6 .............................. bEndNode = oMapNode.equals(me.oEndNode)
+  [116] getparam 0 .............................. <me>
+  [118] getlocal 5 .............................. <oMapNode>
+  [120] getlocal 6 .............................. <bEndNode>
+  [122] pusharglist 3 ........................... <me, oMapNode, bEndNode>
+  [124] objcall 846 ............................. <me.getPassable(oMapNode, bEndNode)>
+  [127] not ..................................... <not me.getPassable(oMapNode, bEndNode)>
+  [128] jmpifz [134] ............................ if not me.getPassable(oMapNode, bEndNode) then
+  [131] jmp [198] ............................... next repeat
+  [134] getparam 0 .............................. <me>
+  [136] pushsymb 847 ............................ <#aAStarMap>
+  [139] getlocal 4 .............................. <nextPt>
+  [141] getobjprop 299 .......................... <nextPt.locH>
+  [144] pusharglist 3 ........................... <me, #aAStarMap, nextPt.locH>
+  [146] objcall 440 ............................. <me.aAStarMap[nextPt.locH]>
+  [149] getlocal 4 .............................. <nextPt>
+  [151] getobjprop 300 .......................... <nextPt.locV>
+  [154] pusharglist 2 ........................... <me.aAStarMap[nextPt.locH], nextPt.locV>
+  [156] objcall 196 ............................. <me.aAStarMap[nextPt.locH][nextPt.locV]>
+  [158] setlocal 7 .............................. nn = me.aAStarMap[nextPt.locH][nextPt.locV]
+  [160] getlocal 7 .............................. <nn>
+  [162] pusharglist 0 ........................... <>
+  [164] extcall 130 ............................. <VOID>
+  [166] eq ...................................... <nn = VOID>
+  [167] jmpifz [189] ............................ if nn = VOID then
+  [170] pushcons 4 .............................. <"AStarNode">
+  [172] pusharglist 1 ........................... <"AStarNode">
+  [174] extcall 57 .............................. <script("AStarNode")>
+  [176] pusharglist 1 ........................... <script("AStarNode")>
+  [178] extcall 0 ............................... <new(script("AStarNode"))>
+  [180] setlocal 7 .............................. nn = new(script("AStarNode"))
+  [182] getlocal 7 .............................. <nn>
+  [184] getlocal 4 .............................. <nextPt>
+  [186] setobjprop 831 .......................... nn.pt = nextPt
+  [189] getlocal 0 .............................. <aSuccessors>
+  [191] getlocal 7 .............................. <nn>
+  [193] pusharglistnoret 2 ...................... <aSuccessors, nn>
+  [195] objcall 387 ............................. aSuccessors.append(nn)
+  [198] pushint8 1
+  [200] getlocal 1
+  [202] add
+  [203] setlocal 1
+  [205] endrepeat [ 20]
+  [207] getparam 0 .............................. <me>
+  [209] getchainedprop 115 ...................... <me.oMap>
+  [211] getparam 1 .............................. <n>
+  [213] getchainedprop 831 ...................... <n.pt>
+  [216] getobjprop 300 .......................... <n.pt.locV>
+  [219] getparam 1 .............................. <n>
+  [221] getchainedprop 831 ...................... <n.pt>
+  [224] getobjprop 299 .......................... <n.pt.locH>
+  [227] pusharglist 3 ........................... <me.oMap, n.pt.locV, n.pt.locH>
+  [229] objcall 156 ............................. <me.oMap.getNode(n.pt.locV, n.pt.locH)>
+  [231] setlocal 5 .............................. oMapNode = me.oMap.getNode(n.pt.locV, n.pt.locH)
+  [233] getlocal 5 .............................. <oMapNode>
+  [235] pusharglist 1 ........................... <oMapNode>
+  [237] extcall 105 ............................. <voidp(oMapNode)>
+  [239] not ..................................... <not voidp(oMapNode)>
+  [240] jmpifz [429] ............................ if not voidp(oMapNode) then
+  [243] getlocal 5 .............................. <oMapNode>
+  [245] getobjprop 810 .......................... <oMapNode.p>
+  [248] setlocal 8 .............................. aP = oMapNode.p
+  [250] getlocal 8 .............................. <aP>
+  [252] getobjprop 169 .......................... <aP.count>
+  [254] setlocal 9 .............................. iNumPointers = aP.count
+  [256] getlocal 9 .............................. <iNumPointers>
+  [258] pushzero ................................ <0>
+  [259] gt ...................................... <iNumPointers > 0>
+  [260] jmpifz [429] ............................ if iNumPointers > 0 then
+  [263] pushint8 1 .............................. <1>
+  [265] setlocal 1
+  [267] getlocal 1
+  [269] getlocal 9 .............................. <iNumPointers>
+  [271] lteq
+  [272] jmpifz [429] ............................ repeat with i = 1 to iNumPointers
+  [275] getlocal 8 .............................. <aP>
+  [277] getlocal 1 .............................. <i>
+  [279] pusharglist 2 ........................... <aP, i>
+  [281] objcall 196 ............................. <aP[i]>
+  [283] setlocal 10 ............................. oPNode = aP[i]
+  [285] getparam 1 .............................. <n>
+  [287] getobjprop 831 .......................... <n.pt>
+  [290] setlocal 3 .............................. nPt = n.pt
+  [292] getlocal 10 ............................. <oPNode>
+  [294] getobjprop 613 .......................... <oPNode.col>
+  [297] getlocal 10 ............................. <oPNode>
+  [299] getobjprop 612 .......................... <oPNode.row>
+  [302] pusharglist 2 ........................... <oPNode.col, oPNode.row>
+  [304] extcall 295 ............................. <point(oPNode.col, oPNode.row)>
+  [307] setlocal 4 .............................. nextPt = point(oPNode.col, oPNode.row)
+  [309] getlocal 4 .............................. <nextPt>
+  [311] getlocal 3 .............................. <nPt>
+  [313] eq ...................................... <nextPt = nPt>
+  [314] jmpifz [320] ............................ if nextPt = nPt then
+  [317] jmp [420] ............................... next repeat
+  [320] getparam 0 .............................. <me>
+  [322] getchainedprop 115 ...................... <me.oMap>
+  [324] getlocal 10 ............................. <oPNode>
+  [326] getobjprop 612 .......................... <oPNode.row>
+  [329] getlocal 10 ............................. <oPNode>
+  [331] getobjprop 613 .......................... <oPNode.col>
+  [334] pusharglist 3 ........................... <me.oMap, oPNode.row, oPNode.col>
+  [336] objcall 156 ............................. <me.oMap.getNode(oPNode.row, oPNode.col)>
+  [338] setlocal 11 ............................. oPointerMapNode = me.oMap.getNode(oPNode.row, oPNode.col)
+  [340] getparam 0 .............................. <me>
+  [342] getlocal 11 ............................. <oPointerMapNode>
+  [344] getlocal 6 .............................. <bEndNode>
+  [346] pusharglist 3 ........................... <me, oPointerMapNode, bEndNode>
+  [348] objcall 846 ............................. <me.getPassable(oPointerMapNode, bEndNode)>
+  [351] not ..................................... <not me.getPassable(oPointerMapNode, bEndNode)>
+  [352] jmpifz [358] ............................ if not me.getPassable(oPointerMapNode, bEndNode) then
+  [355] jmp [420] ............................... next repeat
+  [358] getparam 0 .............................. <me>
+  [360] pushsymb 847 ............................ <#aAStarMap>
+  [363] getlocal 4 .............................. <nextPt>
+  [365] getobjprop 299 .......................... <nextPt.locH>
+  [368] pusharglist 3 ........................... <me, #aAStarMap, nextPt.locH>
+  [370] objcall 440 ............................. <me.aAStarMap[nextPt.locH]>
+  [373] getlocal 4 .............................. <nextPt>
+  [375] getobjprop 300 .......................... <nextPt.locV>
+  [378] pusharglist 2 ........................... <me.aAStarMap[nextPt.locH], nextPt.locV>
+  [380] objcall 196 ............................. <me.aAStarMap[nextPt.locH][nextPt.locV]>
+  [382] setlocal 7 .............................. nn = me.aAStarMap[nextPt.locH][nextPt.locV]
+  [384] getlocal 7 .............................. <nn>
+  [386] pusharglist 1 ........................... <nn>
+  [388] extcall 105 ............................. <voidp(nn)>
+  [390] jmpifz [412] ............................ if voidp(nn) then
+  [393] pushcons 4 .............................. <"AStarNode">
+  [395] pusharglist 1 ........................... <"AStarNode">
+  [397] extcall 57 .............................. <script("AStarNode")>
+  [399] pusharglist 1 ........................... <script("AStarNode")>
+  [401] extcall 0 ............................... <new(script("AStarNode"))>
+  [403] setlocal 7 .............................. nn = new(script("AStarNode"))
+  [405] getlocal 7 .............................. <nn>
+  [407] getlocal 4 .............................. <nextPt>
+  [409] setobjprop 831 .......................... nn.pt = nextPt
+  [412] getlocal 0 .............................. <aSuccessors>
+  [414] getlocal 7 .............................. <nn>
+  [416] pusharglistnoret 2 ...................... <aSuccessors, nn>
+  [418] objcall 133 ............................. aSuccessors.add(nn)
+  [420] pushint8 1
+  [422] getlocal 1
+  [424] add
+  [425] setlocal 1
+  [427] endrepeat [267]
+  [429] getlocal 0 .............................. <aSuccessors>
+  [431] pusharglistnoret 1 ...................... <aSuccessors>
+  [433] extcall 92 .............................. return aSuccessors
+  [435] ret
+end
+
+on getHeuristic me, pt1, pt2
+  [  0] getparam 1 .............................. <pt1>
+  [  2] getobjprop 299 .......................... <pt1.locH>
+  [  5] getparam 2 .............................. <pt2>
+  [  7] getobjprop 299 .......................... <pt2.locH>
+  [ 10] sub ..................................... <pt1.locH - pt2.locH>
+  [ 11] setlocal 0 .............................. dx = pt1.locH - pt2.locH
+  [ 13] getparam 1 .............................. <pt1>
+  [ 15] getobjprop 300 .......................... <pt1.locV>
+  [ 18] getparam 2 .............................. <pt2>
+  [ 20] getobjprop 300 .......................... <pt2.locV>
+  [ 23] sub ..................................... <pt1.locV - pt2.locV>
+  [ 24] setlocal 1 .............................. dy = pt1.locV - pt2.locV
+  [ 26] getlocal 0 .............................. <dx>
+  [ 28] getlocal 0 .............................. <dx>
+  [ 30] mul ..................................... <dx * dx>
+  [ 31] getlocal 1 .............................. <dy>
+  [ 33] getlocal 1 .............................. <dy>
+  [ 35] mul ..................................... <dy * dy>
+  [ 36] add ..................................... <(dx * dx) + (dy * dy)>
+  [ 37] pusharglist 1 ........................... <(dx * dx) + (dy * dy)>
+  [ 39] extcall 378 ............................. <sqrt((dx * dx) + (dy * dy))>
+  [ 42] pusharglistnoret 1 ...................... <sqrt((dx * dx) + (dy * dy))>
+  [ 44] extcall 92 .............................. return sqrt((dx * dx) + (dy * dy))
+  [ 46] ret
+end
+
+on createDirections me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setprop 671 ............................. aDirections = []
+  [  6] getprop 671 ............................. <aDirections>
+  [  9] pushzero ................................ <0>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] inv ..................................... <-1>
+  [ 13] pusharglist 2 ........................... <0, -1>
+  [ 15] extcall 295 ............................. <point(0, -1)>
+  [ 18] pusharglistnoret 2 ...................... <aDirections, point(0, -1)>
+  [ 20] objcall 387 ............................. aDirections.append(point(0, -1))
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 848 .......................... <me.bUseDiagonals>
+  [ 28] jmpifz [ 49] ............................ if me.bUseDiagonals then
+  [ 31] getprop 671 ............................. <aDirections>
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] inv ..................................... <-1>
+  [ 39] pusharglist 2 ........................... <1, -1>
+  [ 41] extcall 295 ............................. <point(1, -1)>
+  [ 44] pusharglistnoret 2 ...................... <aDirections, point(1, -1)>
+  [ 46] objcall 387 ............................. aDirections.append(point(1, -1))
+  [ 49] getprop 671 ............................. <aDirections>
+  [ 52] pushint8 1 .............................. <1>
+  [ 54] pushzero ................................ <0>
+  [ 55] pusharglist 2 ........................... <1, 0>
+  [ 57] extcall 295 ............................. <point(1, 0)>
+  [ 60] pusharglistnoret 2 ...................... <aDirections, point(1, 0)>
+  [ 62] objcall 387 ............................. aDirections.append(point(1, 0))
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getobjprop 848 .......................... <me.bUseDiagonals>
+  [ 70] jmpifz [ 90] ............................ if me.bUseDiagonals then
+  [ 73] getprop 671 ............................. <aDirections>
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] pusharglist 2 ........................... <1, 1>
+  [ 82] extcall 295 ............................. <point(1, 1)>
+  [ 85] pusharglistnoret 2 ...................... <aDirections, point(1, 1)>
+  [ 87] objcall 387 ............................. aDirections.append(point(1, 1))
+  [ 90] getprop 671 ............................. <aDirections>
+  [ 93] pushzero ................................ <0>
+  [ 94] pushint8 1 .............................. <1>
+  [ 96] pusharglist 2 ........................... <0, 1>
+  [ 98] extcall 295 ............................. <point(0, 1)>
+  [101] pusharglistnoret 2 ...................... <aDirections, point(0, 1)>
+  [103] objcall 387 ............................. aDirections.append(point(0, 1))
+  [106] getparam 0 .............................. <me>
+  [108] getobjprop 848 .......................... <me.bUseDiagonals>
+  [111] jmpifz [132] ............................ if me.bUseDiagonals then
+  [114] getprop 671 ............................. <aDirections>
+  [117] pushint8 1 .............................. <1>
+  [119] inv ..................................... <-1>
+  [120] pushint8 1 .............................. <1>
+  [122] pusharglist 2 ........................... <-1, 1>
+  [124] extcall 295 ............................. <point(-1, 1)>
+  [127] pusharglistnoret 2 ...................... <aDirections, point(-1, 1)>
+  [129] objcall 387 ............................. aDirections.append(point(-1, 1))
+  [132] getprop 671 ............................. <aDirections>
+  [135] pushint8 1 .............................. <1>
+  [137] inv ..................................... <-1>
+  [138] pushzero ................................ <0>
+  [139] pusharglist 2 ........................... <-1, 0>
+  [141] extcall 295 ............................. <point(-1, 0)>
+  [144] pusharglistnoret 2 ...................... <aDirections, point(-1, 0)>
+  [146] objcall 387 ............................. aDirections.append(point(-1, 0))
+  [149] getparam 0 .............................. <me>
+  [151] getobjprop 848 .......................... <me.bUseDiagonals>
+  [154] jmpifz [176] ............................ if me.bUseDiagonals then
+  [157] getprop 671 ............................. <aDirections>
+  [160] pushint8 1 .............................. <1>
+  [162] inv ..................................... <-1>
+  [163] pushint8 1 .............................. <1>
+  [165] inv ..................................... <-1>
+  [166] pusharglist 2 ........................... <-1, -1>
+  [168] extcall 295 ............................. <point(-1, -1)>
+  [171] pusharglistnoret 2 ...................... <aDirections, point(-1, -1)>
+  [173] objcall 387 ............................. aDirections.append(point(-1, -1))
+  [176] getprop 671 ............................. <aDirections>
+  [179] pusharglistnoret 1 ...................... <aDirections>
+  [181] extcall 92 .............................. return aDirections
+  [183] ret
+end
+
+on createAStarMap me, iRows, iCols
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNodes = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getparam 1 .............................. <iRows>
+  [ 13] lteq
+  [ 14] jmpifz [ 72] ............................ repeat with iRow = 1 to iRows
+  [ 17] pusharglist 0 ........................... <[]>
+  [ 19] pushlist ................................ <[]>
+  [ 20] setlocal 2 .............................. aRow = []
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] setlocal 3
+  [ 26] getlocal 3
+  [ 28] getparam 2 .............................. <iCols>
+  [ 30] lteq
+  [ 31] jmpifz [ 54] ............................ repeat with iCol = 1 to iCols
+  [ 34] getlocal 2 .............................. <aRow>
+  [ 36] pusharglist 0 ........................... <>
+  [ 38] extcall 130 ............................. <VOID>
+  [ 40] pusharglistnoret 2 ...................... <aRow, VOID>
+  [ 42] objcall 387 ............................. aRow.append(VOID)
+  [ 45] pushint8 1
+  [ 47] getlocal 3
+  [ 49] add
+  [ 50] setlocal 3
+  [ 52] endrepeat [ 26]
+  [ 54] getlocal 0 .............................. <aNodes>
+  [ 56] getlocal 2 .............................. <aRow>
+  [ 58] pusharglistnoret 2 ...................... <aNodes, aRow>
+  [ 60] objcall 387 ............................. aNodes.append(aRow)
+  [ 63] pushint8 1
+  [ 65] getlocal 1
+  [ 67] add
+  [ 68] setlocal 1
+  [ 70] endrepeat [  9]
+  [ 72] getlocal 0 .............................. <aNodes>
+  [ 74] pusharglistnoret 1 ...................... <aNodes>
+  [ 76] extcall 92 .............................. return aNodes
+  [ 78] ret
+end
+
+on constructPath me, nnn
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 13 ............................. <"constructPath()">
+  [  4] pusharglistnoret 2 ...................... <me, "constructPath()">
+  [  6] objcall 50 .............................. me.debug("constructPath()")
+  [  8] pusharglist 0 ........................... <[]>
+  [ 10] pushlist ................................ <[]>
+  [ 11] setlocal 0 .............................. aPath = []
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] jmpifz [ 52] ............................ repeat while 1
+  [ 18] getlocal 0 .............................. <aPath>
+  [ 20] getparam 1 .............................. <nnn>
+  [ 22] getobjprop 831 .......................... <nnn.pt>
+  [ 25] pusharglistnoret 2 ...................... <aPath, nnn.pt>
+  [ 27] objcall 387 ............................. aPath.append(nnn.pt)
+  [ 30] getparam 1 .............................. <nnn>
+  [ 32] getobjprop 836 .......................... <nnn.parent>
+  [ 35] setparam 1 .............................. nnn = nnn.parent
+  [ 37] getparam 1 .............................. <nnn>
+  [ 39] pusharglist 0 ........................... <>
+  [ 41] extcall 130 ............................. <VOID>
+  [ 43] eq ...................................... <nnn = VOID>
+  [ 44] jmpifz [ 50] ............................ if nnn = VOID then
+  [ 47] jmp [ 52] ............................... exit repeat
+  [ 50] endrepeat [ 13]
+  [ 52] getparam 0 .............................. <me>
+  [ 54] getlocal 0 .............................. <aPath>
+  [ 56] pusharglist 2 ........................... <me, aPath>
+  [ 58] objcall 631 ............................. <me.reverseList(aPath)>
+  [ 61] setlocal 0 .............................. aPath = me.reverseList(aPath)
+  [ 63] getparam 0 .............................. <me>
+  [ 65] getlocal 0 .............................. <aPath>
+  [ 67] pusharglist 2 ........................... <me, aPath>
+  [ 69] objcall 837 ............................. <me.smoothPath(aPath)>
+  [ 72] setlocal 1 .............................. aNewPath = me.smoothPath(aPath)
+  [ 74] getparam 0 .............................. <me>
+  [ 76] getobjprop 857 .......................... <me.bSmoothPath>
+  [ 79] jmpifz [ 88] ............................ if me.bSmoothPath then
+  [ 82] getlocal 1 .............................. <aNewPath>
+  [ 84] pusharglistnoret 1 ...................... <aNewPath>
+  [ 86] extcall 92 .............................. return aNewPath
+  [ 88] getlocal 0 .............................. <aPath>
+  [ 90] pusharglistnoret 1 ...................... <aPath>
+  [ 92] extcall 92 .............................. return aPath
+  [ 94] ret
+end
+
+on getNodeByPoint me, nn, aList
+  [  0] getparam 2 .............................. <aList>
+  [  2] getobjprop 169 .......................... <aList.count>
+  [  4] setlocal 0 .............................. iLength = aList.count
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 1
+  [ 10] getlocal 1
+  [ 12] getparam 2 .............................. <aList>
+  [ 14] getobjprop 169 .......................... <aList.count>
+  [ 16] lteq
+  [ 17] jmpifz [ 56] ............................ repeat with i = 1 to aList.count
+  [ 20] getparam 2 .............................. <aList>
+  [ 22] getlocal 1 .............................. <i>
+  [ 24] pusharglist 2 ........................... <aList, i>
+  [ 26] objcall 196 ............................. <aList[i]>
+  [ 28] setlocal 2 .............................. n = aList[i]
+  [ 30] getlocal 2 .............................. <n>
+  [ 32] getparam 1 .............................. <nn>
+  [ 34] pusharglist 2 ........................... <n, nn>
+  [ 36] objcall 221 ............................. <n.equals(nn)>
+  [ 38] jmpifz [ 47] ............................ if n.equals(nn) then
+  [ 41] getlocal 2 .............................. <n>
+  [ 43] pusharglistnoret 1 ...................... <n>
+  [ 45] extcall 92 .............................. return n
+  [ 47] pushint8 1
+  [ 49] getlocal 1
+  [ 51] add
+  [ 52] setlocal 1
+  [ 54] endrepeat [ 10]
+  [ 56] ret
+end
+
+on reverseList me, _aPath
+  [  0] getparam 1 .............................. <_aPath>
+  [  2] getobjprop 169 .......................... <_aPath.count>
+  [  4] setlocal 0 .............................. iLength = _aPath.count
+  [  6] pusharglist 0 ........................... <[]>
+  [  8] pushlist ................................ <[]>
+  [  9] setlocal 1 .............................. aR = []
+  [ 11] getlocal 0 .............................. <iLength>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] gteq
+  [ 20] jmpifz [ 47] ............................ repeat with i = iLength down to 1
+  [ 23] getlocal 1 .............................. <aR>
+  [ 25] getparam 1 .............................. <_aPath>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <_aPath, i>
+  [ 31] objcall 196 ............................. <_aPath[i]>
+  [ 33] pusharglistnoret 2 ...................... <aR, _aPath[i]>
+  [ 35] objcall 387 ............................. aR.append(_aPath[i])
+  [ 38] pushint8 -1
+  [ 40] getlocal 2
+  [ 42] add
+  [ 43] setlocal 2
+  [ 45] endrepeat [ 15]
+  [ 47] getlocal 1 .............................. <aR>
+  [ 49] pusharglistnoret 1 ...................... <aR>
+  [ 51] extcall 92 .............................. return aR
+  [ 53] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 56 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 20] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 14 ............................. <"AStar:">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"AStar:" & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"AStar:" & sMessage>
+  [ 17] extcall 332 ............................. put "AStar:" & sMessage
+  [ 20] ret
+end
+
+on getPassable me, oMapNode, bEndNode
+  [  0] getparam 1 .............................. <oMapNode>
+  [  2] getobjprop 157 .......................... <oMapNode.w>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 159 .......................... <me.W_BLOCKED>
+  [  8] eq ...................................... <oMapNode.w = me.W_BLOCKED>
+  [  9] jmpifz [ 17] ............................ if oMapNode.w = me.W_BLOCKED then
+  [ 12] pushzero ................................ <0>
+  [ 13] pusharglistnoret 1 ...................... <0>
+  [ 15] extcall 92 .............................. return 0
+  [ 17] getglobal 88 ............................ <oIsoScene>
+  [ 19] getchainedprop 114 ...................... <oIsoScene.oGrid>
+  [ 21] getparam 1 .............................. <oMapNode>
+  [ 23] getobjprop 154 .......................... <oMapNode.iRow>
+  [ 25] getparam 1 .............................. <oMapNode>
+  [ 27] getobjprop 155 .......................... <oMapNode.iCol>
+  [ 29] pusharglist 3 ........................... <oIsoScene.oGrid, oMapNode.iRow, oMapNode.iCol>
+  [ 31] objcall 283 ............................. <oIsoScene.oGrid.getSquareByRowCol(oMapNode.iRow, oMapNode.iCol)>
+  [ 34] setlocal 0 .............................. oSquare = oIsoScene.oGrid.getSquareByRowCol(oMapNode.iRow, oMapNode.iCol)
+  [ 36] getglobal 88 ............................ <oIsoScene>
+  [ 38] getchainedprop 126 ...................... <oIsoScene.oAvatars>
+  [ 40] getlocal 0 .............................. <oSquare>
+  [ 42] pusharglist 2 ........................... <oIsoScene.oAvatars, oSquare>
+  [ 44] objcall 168 ............................. <oIsoScene.oAvatars.getItemsAtSquare(oSquare)>
+  [ 46] setlocal 1 .............................. aAvatars = oIsoScene.oAvatars.getItemsAtSquare(oSquare)
+  [ 48] getlocal 1 .............................. <aAvatars>
+  [ 50] getobjprop 169 .......................... <aAvatars.count>
+  [ 52] pushzero ................................ <0>
+  [ 53] gt ...................................... <aAvatars.count > 0>
+  [ 54] jmpifz [ 62] ............................ if aAvatars.count > 0 then
+  [ 57] pushzero ................................ <0>
+  [ 58] pusharglistnoret 1 ...................... <0>
+  [ 60] extcall 92 .............................. return 0
+  [ 62] getglobal 88 ............................ <oIsoScene>
+  [ 64] getchainedprop 124 ...................... <oIsoScene.oFurniture>
+  [ 66] getlocal 0 .............................. <oSquare>
+  [ 68] pusharglist 2 ........................... <oIsoScene.oFurniture, oSquare>
+  [ 70] objcall 168 ............................. <oIsoScene.oFurniture.getItemsAtSquare(oSquare)>
+  [ 72] setlocal 2 .............................. aFurnitureItems = oIsoScene.oFurniture.getItemsAtSquare(oSquare)
+  [ 74] getglobal 88 ............................ <oIsoScene>
+  [ 76] getchainedprop 124 ...................... <oIsoScene.oFurniture>
+  [ 78] getlocal 2 .............................. <aFurnitureItems>
+  [ 80] pusharglist 2 ........................... <oIsoScene.oFurniture, aFurnitureItems>
+  [ 82] objcall 889 ............................. <oIsoScene.oFurniture.seatableItemInList(aFurnitureItems)>
+  [ 85] setlocal 3 .............................. bSeatableItem = oIsoScene.oFurniture.seatableItemInList(aFurnitureItems)
+  [ 87] getlocal 3 .............................. <bSeatableItem>
+  [ 89] getparam 2 .............................. <bEndNode>
+  [ 91] not ..................................... <not bEndNode>
+  [ 92] and ..................................... <bSeatableItem and not bEndNode>
+  [ 93] jmpifz [101] ............................ if bSeatableItem and not bEndNode then
+  [ 96] pushzero ................................ <0>
+  [ 97] pusharglistnoret 1 ...................... <0>
+  [ 99] extcall 92 .............................. return 0
+  [101] getlocal 2 .............................. <aFurnitureItems>
+  [103] getobjprop 169 .......................... <aFurnitureItems.count>
+  [105] pushzero ................................ <0>
+  [106] gt ...................................... <aFurnitureItems.count > 0>
+  [107] jmpifz [115] ............................ if aFurnitureItems.count > 0 then
+  [110] pushzero ................................ <0>
+  [111] pusharglistnoret 1 ...................... <0>
+  [113] extcall 92 .............................. return 0
+  [115] pushint8 1 .............................. <1>
+  [117] pusharglistnoret 1 ...................... <1>
+  [119] extcall 92 .............................. return 1
+  [121] ret
+end

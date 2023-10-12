@@ -1,0 +1,128 @@
+on outputSpriteList
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] pushint16 1000 .......................... <1000>
+  [  9] lteq
+  [ 10] jmpifz [ 75] ............................ repeat with i = 1 to 1000
+  [ 13] getlocal 0 .............................. <i>
+  [ 15] pusharglist 1 ........................... <i>
+  [ 17] extcall 177 ............................. <sprite(i)>
+  [ 19] getobjprop 101 .......................... <sprite(i).member>
+  [ 21] pushzero ................................ <0>
+  [ 22] pushzero ................................ <0>
+  [ 23] pusharglist 2 ........................... <0, 0>
+  [ 25] extcall 101 ............................. <member(0, 0)>
+  [ 27] nteq .................................... <sprite(i).member <> member(0, 0)>
+  [ 28] jmpifz [ 66] ............................ if sprite(i).member <> member(0, 0) then
+  [ 31] pushcons 0 .............................. <"sprite:">
+  [ 33] getlocal 0 .............................. <i>
+  [ 35] joinpadstr .............................. <"sprite:" && i>
+  [ 36] pushcons 1 .............................. <"member:">
+  [ 38] joinpadstr .............................. <"sprite:" && i && "member:">
+  [ 39] getlocal 0 .............................. <i>
+  [ 41] pusharglist 1 ........................... <i>
+  [ 43] extcall 177 ............................. <sprite(i)>
+  [ 45] getchainedprop 101 ...................... <sprite(i).member>
+  [ 47] getobjprop 90 ........................... <sprite(i).member.name>
+  [ 49] joinpadstr .............................. <"sprite:" && i && "member:" && sprite(i).member.name>
+  [ 50] pushcons 2 .............................. <"scripts:">
+  [ 52] joinpadstr .............................. <"sprite:" && i && "member:" && sprite(i).member.name && "scripts:">
+  [ 53] getlocal 0 .............................. <i>
+  [ 55] pusharglist 1 ........................... <i>
+  [ 57] extcall 177 ............................. <sprite(i)>
+  [ 59] getobjprop 191 .......................... <sprite(i).scriptInstanceList>
+  [ 61] joinpadstr .............................. <"sprite:" && i && "member:" && sprite(i).member.name && "scripts:" && sprite(i).scriptInstanceList>
+  [ 62] pusharglistnoret 1 ...................... <"sprite:" && i && "member:" && sprite(i).member.name && "scripts:" && sprite(i).scriptInstanceList>
+  [ 64] extcall 80 .............................. put "sprite:" && i && "member:" && sprite(i).member.name && "scripts:" && sprite(i).scriptInstanceList
+  [ 66] pushint8 1
+  [ 68] getlocal 0
+  [ 70] add
+  [ 71] setlocal 0
+  [ 73] endrepeat [  4]
+  [ 75] ret
+end
+
+on clearOldAvatarCastMembers
+  [  0] pushcons 3 .............................. <"*** CLEARING OLD AVATAR CAST MEMBERS ***">
+  [  2] pusharglistnoret 1 ...................... <"*** CLEARING OLD AVATAR CAST MEMBERS ***">
+  [  4] extcall 80 .............................. put "*** CLEARING OLD AVATAR CAST MEMBERS ***"
+  [  6] pushzero ................................ <0>
+  [  7] setlocal 0 .............................. bShouldClear = 0
+  [  9] pushint8 1 .............................. <1>
+  [ 11] setlocal 1
+  [ 13] getlocal 1
+  [ 15] pushcons 4 .............................. <"AvatarEngine">
+  [ 17] pusharglist 1 ........................... <"AvatarEngine">
+  [ 19] extcall 411 ............................. <castLib("AvatarEngine")>
+  [ 22] pushsymb 101 ............................ <#member>
+  [ 24] pusharglist 2 ........................... <castLib("AvatarEngine"), #member>
+  [ 26] objcall 104 ............................. <castLib("AvatarEngine").member.count>
+  [ 28] lteq
+  [ 29] jmpifz [158] ............................ repeat with i = 1 to castLib("AvatarEngine").member.count
+  [ 32] getlocal 0 .............................. <bShouldClear>
+  [ 34] jmpifz [120] ............................ if bShouldClear then
+  [ 37] pushcons 4 .............................. <"AvatarEngine">
+  [ 39] pusharglist 1 ........................... <"AvatarEngine">
+  [ 41] extcall 411 ............................. <castLib("AvatarEngine")>
+  [ 44] pushsymb 101 ............................ <#member>
+  [ 46] getlocal 1 .............................. <i>
+  [ 48] pusharglist 3 ........................... <castLib("AvatarEngine"), #member, i>
+  [ 50] objcall 265 ............................. <castLib("AvatarEngine").member[i]>
+  [ 53] getobjprop 90 ........................... <castLib("AvatarEngine").member[i].name>
+  [ 55] setlocal 2 .............................. testname = castLib("AvatarEngine").member[i].name
+  [ 57] pushcons 4 .............................. <"AvatarEngine">
+  [ 59] pusharglist 1 ........................... <"AvatarEngine">
+  [ 61] extcall 411 ............................. <castLib("AvatarEngine")>
+  [ 64] pushsymb 101 ............................ <#member>
+  [ 66] getlocal 1 .............................. <i>
+  [ 68] pusharglist 3 ........................... <castLib("AvatarEngine"), #member, i>
+  [ 70] objcall 265 ............................. <castLib("AvatarEngine").member[i]>
+  [ 73] getobjprop 412 .......................... <castLib("AvatarEngine").member[i].type>
+  [ 76] setlocal 3 .............................. testtype = castLib("AvatarEngine").member[i].type
+  [ 78] pushcons 5 .............................. <"Number=">
+  [ 80] getlocal 1 .............................. <i>
+  [ 82] joinstr ................................. <"Number=" & i>
+  [ 83] pushcons 6 .............................. <"Membername=">
+  [ 85] joinpadstr .............................. <"Number=" & i && "Membername=">
+  [ 86] getlocal 2 .............................. <testname>
+  [ 88] joinstr ................................. <"Number=" & i && "Membername=" & testname>
+  [ 89] pushcons 7 .............................. <"Type=">
+  [ 91] joinpadstr .............................. <"Number=" & i && "Membername=" & testname && "Type=">
+  [ 92] getlocal 3 .............................. <testtype>
+  [ 94] joinstr ................................. <"Number=" & i && "Membername=" & testname && "Type=" & testtype>
+  [ 95] pusharglistnoret 1 ...................... <"Number=" & i && "Membername=" & testname && "Type=" & testtype>
+  [ 97] extcall 80 .............................. put "Number=" & i && "Membername=" & testname && "Type=" & testtype
+  [ 99] pushcons 4 .............................. <"AvatarEngine">
+  [101] pusharglist 1 ........................... <"AvatarEngine">
+  [103] extcall 411 ............................. <castLib("AvatarEngine")>
+  [106] pushsymb 101 ............................ <#member>
+  [108] getlocal 1 .............................. <i>
+  [110] pusharglist 3 ........................... <castLib("AvatarEngine"), #member, i>
+  [112] objcall 265 ............................. <castLib("AvatarEngine").member[i]>
+  [115] pusharglistnoret 1 ...................... <castLib("AvatarEngine").member[i]>
+  [117] objcall 413 ............................. castLib("AvatarEngine").member[i].erase()
+  [120] getlocal 0 .............................. <bShouldClear>
+  [122] not ..................................... <not bShouldClear>
+  [123] jmpifz [149] ............................ if not bShouldClear then
+  [126] pushcons 4 .............................. <"AvatarEngine">
+  [128] pusharglist 1 ........................... <"AvatarEngine">
+  [130] extcall 411 ............................. <castLib("AvatarEngine")>
+  [133] pushsymb 101 ............................ <#member>
+  [135] getlocal 1 .............................. <i>
+  [137] pusharglist 3 ........................... <castLib("AvatarEngine"), #member, i>
+  [139] objcall 265 ............................. <castLib("AvatarEngine").member[i]>
+  [142] getobjprop 90 ........................... <castLib("AvatarEngine").member[i].name>
+  [144] pushcons 8 .............................. <"_PREVIEW_">
+  [146] eq ...................................... <castLib("AvatarEngine").member[i].name = "_PREVIEW_">
+  [147] setlocal 0 .............................. bShouldClear = castLib("AvatarEngine").member[i].name = "_PREVIEW_"
+  [149] pushint8 1
+  [151] getlocal 1
+  [153] add
+  [154] setlocal 1
+  [156] endrepeat [ 13]
+  [158] pushcons 9 .............................. <"***  ***">
+  [160] pusharglistnoret 1 ...................... <"***  ***">
+  [162] extcall 80 .............................. put "***  ***"
+  [164] ret
+end

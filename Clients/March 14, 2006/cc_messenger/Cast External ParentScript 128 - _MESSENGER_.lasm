@@ -1,0 +1,2118 @@
+property iFriendCount, iEnemyCount, iInviteCount, iTotalMessageCount, aFriends, aEnemies, aInvites, aMessages, bDebug, iUpdateTime, iTimerID, sTimerID, iUpdateFriendsStatusTime, sUpdateFriendsTimerID, iUpdateFriendsTimerID, aMyInvites
+global ElementMgr, TextMgr, oDenizenManager
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 47 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushint16 30000 ......................... <30000>
+  [ 10] setobjprop 48 ........................... me.iUpdateFriendsStatusTime = 30000
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushcons 0 .............................. <"FriendsStatusTimer">
+  [ 16] setobjprop 49 ........................... me.sUpdateFriendsTimerID = "FriendsStatusTimer"
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] extcall 50 .............................. <VOID>
+  [ 24] setobjprop 51 ........................... me.iUpdateFriendsTimerID = VOID
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pushint16 2500 .......................... <2500>
+  [ 31] setobjprop 52 ........................... me.iUpdateTime = 2500
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pushcons 1 .............................. <"MessengerTimer">
+  [ 37] setobjprop 53 ........................... me.sTimerID = "MessengerTimer"
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglist 0 ........................... <>
+  [ 43] extcall 50 .............................. <VOID>
+  [ 45] setobjprop 54 ........................... me.iTimerID = VOID
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pusharglist 0 ........................... <[]>
+  [ 51] pushlist ................................ <[]>
+  [ 52] setobjprop 55 ........................... me.aMyInvites = []
+  [ 54] getparam 0 .............................. <me>
+  [ 56] pushzero ................................ <0>
+  [ 57] setobjprop 56 ........................... me.iFriendCount = 0
+  [ 59] getparam 0 .............................. <me>
+  [ 61] pushzero ................................ <0>
+  [ 62] setobjprop 57 ........................... me.iEnemyCount = 0
+  [ 64] getparam 0 .............................. <me>
+  [ 66] pushzero ................................ <0>
+  [ 67] setobjprop 58 ........................... me.iInviteCount = 0
+  [ 69] getparam 0 .............................. <me>
+  [ 71] pushzero ................................ <0>
+  [ 72] setobjprop 59 ........................... me.iTotalMessageCount = 0
+  [ 74] getparam 0 .............................. <me>
+  [ 76] pusharglist 0 ........................... <[]>
+  [ 78] pushlist ................................ <[]>
+  [ 79] setobjprop 60 ........................... me.aFriends = []
+  [ 81] getparam 0 .............................. <me>
+  [ 83] pusharglist 0 ........................... <[]>
+  [ 85] pushlist ................................ <[]>
+  [ 86] setobjprop 61 ........................... me.aEnemies = []
+  [ 88] getparam 0 .............................. <me>
+  [ 90] pusharglist 0 ........................... <[]>
+  [ 92] pushlist ................................ <[]>
+  [ 93] setobjprop 62 ........................... me.aInvites = []
+  [ 95] getparam 0 .............................. <me>
+  [ 97] pusharglist 0 ........................... <[]>
+  [ 99] pushlist ................................ <[]>
+  [100] setobjprop 63 ........................... me.aMessages = []
+  [102] pushcons 2 .............................. <"_TIMER_">
+  [104] pusharglist 1 ........................... <"_TIMER_">
+  [106] extcall 64 .............................. <script("_TIMER_")>
+  [108] pushint16 2000 .......................... <2000>
+  [111] pushsymb 5 .............................. <#getNewData>
+  [113] getparam 0 .............................. <me>
+  [115] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #getNewData, me>
+  [117] objcall 0 ............................... script("_TIMER_").new(2000, #getNewData, me)
+  [119] getparam 0 .............................. <me>
+  [121] pusharglistnoret 1 ...................... <me>
+  [123] objcall 3 ............................... me.startTimer()
+  [125] getparam 0 .............................. <me>
+  [127] pusharglistnoret 1 ...................... <me>
+  [129] extcall 65 .............................. return me
+  [131] ret
+end
+
+on startFriendsUpdateTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 49 ........................... <me.sUpdateFriendsTimerID>
+  [  6] pusharglist 1 ........................... <me.sUpdateFriendsTimerID>
+  [  8] extcall 67 .............................. <timeout(me.sUpdateFriendsTimerID)>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 48 ........................... <me.iUpdateFriendsStatusTime>
+  [ 14] pushsymb 27 ............................. <#getFriendsStatusUpdate>
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglist 4 ........................... <timeout(me.sUpdateFriendsTimerID), me.iUpdateFriendsStatusTime, #getFriendsStatusUpdate, me>
+  [ 20] objcall 0 ............................... <timeout(me.sUpdateFriendsTimerID).new(me.iUpdateFriendsStatusTime, #getFriendsStatusUpdate, me)>
+  [ 22] setobjprop 51 ........................... me.iUpdateFriendsTimerID = timeout(me.sUpdateFriendsTimerID).new(me.iUpdateFriendsStatusTime, #getFriendsStatusUpdate, me)
+  [ 24] ret
+end
+
+on stopFriendsUpdateTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 49 ........................... <me.sUpdateFriendsTimerID>
+  [  4] pusharglist 1 ........................... <me.sUpdateFriendsTimerID>
+  [  6] extcall 67 .............................. <timeout(me.sUpdateFriendsTimerID)>
+  [  8] pusharglistnoret 1 ...................... <timeout(me.sUpdateFriendsTimerID)>
+  [ 10] objcall 68 .............................. timeout(me.sUpdateFriendsTimerID).forget()
+  [ 12] ret
+end
+
+on startTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 53 ........................... <me.sTimerID>
+  [  6] pusharglist 1 ........................... <me.sTimerID>
+  [  8] extcall 67 .............................. <timeout(me.sTimerID)>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 52 ........................... <me.iUpdateTime>
+  [ 14] pushsymb 7 .............................. <#updateStatus>
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglist 4 ........................... <timeout(me.sTimerID), me.iUpdateTime, #updateStatus, me>
+  [ 20] objcall 0 ............................... <timeout(me.sTimerID).new(me.iUpdateTime, #updateStatus, me)>
+  [ 22] setobjprop 54 ........................... me.iTimerID = timeout(me.sTimerID).new(me.iUpdateTime, #updateStatus, me)
+  [ 24] ret
+end
+
+on stopTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 53 ........................... <me.sTimerID>
+  [  4] pusharglist 1 ........................... <me.sTimerID>
+  [  6] extcall 67 .............................. <timeout(me.sTimerID)>
+  [  8] pusharglistnoret 1 ...................... <timeout(me.sTimerID)>
+  [ 10] objcall 68 .............................. timeout(me.sTimerID).forget()
+  [ 12] ret
+end
+
+on getNewData me
+  [  0] getglobal 69 ............................ <oDenizenManager>
+  [  2] pusharglistnoret 1 ...................... <oDenizenManager>
+  [  4] objcall 70 .............................. oDenizenManager.getMessenger()
+  [  6] ret
+end
+
+on updateData me, _iFriendCount, _iEnemyCount, _iInviteCount, _iTotalMessageCount, _aFriends, _aEnemies, _aInvites, _aMessages
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 47 ........................... <me.bDebug>
+  [  4] jmpifz [ 85] ............................ if me.bDebug then
+  [  7] pushcons 3 .............................. <"Messenger.updateData()">
+  [  9] pusharglistnoret 1 ...................... <"Messenger.updateData()">
+  [ 11] extcall 71 .............................. put "Messenger.updateData()"
+  [ 13] pushcons 4 .............................. <"_iFriendCount: ">
+  [ 15] getparam 1 .............................. <_iFriendCount>
+  [ 17] joinstr ................................. <"_iFriendCount: " & _iFriendCount>
+  [ 18] pusharglistnoret 1 ...................... <"_iFriendCount: " & _iFriendCount>
+  [ 20] extcall 71 .............................. put "_iFriendCount: " & _iFriendCount
+  [ 22] pushcons 5 .............................. <"_iEnemyCount: ">
+  [ 24] getparam 2 .............................. <_iEnemyCount>
+  [ 26] joinstr ................................. <"_iEnemyCount: " & _iEnemyCount>
+  [ 27] pusharglistnoret 1 ...................... <"_iEnemyCount: " & _iEnemyCount>
+  [ 29] extcall 71 .............................. put "_iEnemyCount: " & _iEnemyCount
+  [ 31] pushcons 6 .............................. <"_iInviteCount: ">
+  [ 33] getparam 3 .............................. <_iInviteCount>
+  [ 35] joinstr ................................. <"_iInviteCount: " & _iInviteCount>
+  [ 36] pusharglistnoret 1 ...................... <"_iInviteCount: " & _iInviteCount>
+  [ 38] extcall 71 .............................. put "_iInviteCount: " & _iInviteCount
+  [ 40] pushcons 7 .............................. <"_iTotalMessageCount: ">
+  [ 42] getparam 4 .............................. <_iTotalMessageCount>
+  [ 44] joinstr ................................. <"_iTotalMessageCount: " & _iTotalMessageCount>
+  [ 45] pusharglistnoret 1 ...................... <"_iTotalMessageCount: " & _iTotalMessageCount>
+  [ 47] extcall 71 .............................. put "_iTotalMessageCount: " & _iTotalMessageCount
+  [ 49] pushcons 8 .............................. <"_aFriends: ">
+  [ 51] getparam 5 .............................. <_aFriends>
+  [ 53] joinstr ................................. <"_aFriends: " & _aFriends>
+  [ 54] pusharglistnoret 1 ...................... <"_aFriends: " & _aFriends>
+  [ 56] extcall 71 .............................. put "_aFriends: " & _aFriends
+  [ 58] pushcons 9 .............................. <"_aEnemies: ">
+  [ 60] getparam 6 .............................. <_aEnemies>
+  [ 62] joinstr ................................. <"_aEnemies: " & _aEnemies>
+  [ 63] pusharglistnoret 1 ...................... <"_aEnemies: " & _aEnemies>
+  [ 65] extcall 71 .............................. put "_aEnemies: " & _aEnemies
+  [ 67] pushcons 10 ............................. <"_aInvites: ">
+  [ 69] getparam 7 .............................. <_aInvites>
+  [ 71] joinstr ................................. <"_aInvites: " & _aInvites>
+  [ 72] pusharglistnoret 1 ...................... <"_aInvites: " & _aInvites>
+  [ 74] extcall 71 .............................. put "_aInvites: " & _aInvites
+  [ 76] pushcons 11 ............................. <"_aMessages: ">
+  [ 78] getparam 8 .............................. <_aMessages>
+  [ 80] joinstr ................................. <"_aMessages: " & _aMessages>
+  [ 81] pusharglistnoret 1 ...................... <"_aMessages: " & _aMessages>
+  [ 83] extcall 71 .............................. put "_aMessages: " & _aMessages
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getparam 1 .............................. <_iFriendCount>
+  [ 89] setobjprop 56 ........................... me.iFriendCount = _iFriendCount
+  [ 91] getparam 0 .............................. <me>
+  [ 93] getparam 2 .............................. <_iEnemyCount>
+  [ 95] setobjprop 57 ........................... me.iEnemyCount = _iEnemyCount
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getparam 3 .............................. <_iInviteCount>
+  [101] setobjprop 58 ........................... me.iInviteCount = _iInviteCount
+  [103] getparam 0 .............................. <me>
+  [105] getparam 4 .............................. <_iTotalMessageCount>
+  [107] setobjprop 59 ........................... me.iTotalMessageCount = _iTotalMessageCount
+  [109] getparam 0 .............................. <me>
+  [111] getparam 5 .............................. <_aFriends>
+  [113] setobjprop 60 ........................... me.aFriends = _aFriends
+  [115] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [117] jmpifz [141] ............................ if the debugPlaybackEnabled then
+  [120] pushcons 12 ............................. <"_MESSENGER_::updateData():">
+  [122] getparam 1 .............................. <_iFriendCount>
+  [124] joinpadstr .............................. <"_MESSENGER_::updateData():" && _iFriendCount>
+  [125] pushcons 13 ............................. <"friends">
+  [127] joinpadstr .............................. <"_MESSENGER_::updateData():" && _iFriendCount && "friends">
+  [128] pushcons 14 ............................. <RETURN>
+  [130] joinstr ................................. <"_MESSENGER_::updateData():" && _iFriendCount && "friends" & RETURN>
+  [131] pushcons 14 ............................. <RETURN>
+  [133] joinstr ................................. <"_MESSENGER_::updateData():" && _iFriendCount && "friends" & RETURN & RETURN>
+  [134] getparam 5 .............................. <_aFriends>
+  [136] joinstr ................................. <"_MESSENGER_::updateData():" && _iFriendCount && "friends" & RETURN & RETURN & _aFriends>
+  [137] pusharglistnoret 1 ...................... <"_MESSENGER_::updateData():" && _iFriendCount && "friends" & RETURN & RETURN & _aFriends>
+  [139] extcall 71 .............................. put "_MESSENGER_::updateData():" && _iFriendCount && "friends" & RETURN & RETURN & _aFriends
+  [141] getparam 0 .............................. <me>
+  [143] getparam 6 .............................. <_aEnemies>
+  [145] setobjprop 61 ........................... me.aEnemies = _aEnemies
+  [147] getparam 0 .............................. <me>
+  [149] getparam 7 .............................. <_aInvites>
+  [151] setobjprop 62 ........................... me.aInvites = _aInvites
+  [153] getparam 0 .............................. <me>
+  [155] getparam 8 .............................. <_aMessages>
+  [157] setobjprop 63 ........................... me.aMessages = _aMessages
+  [159] getparam 0 .............................. <me>
+  [161] pusharglistnoret 1 ...................... <me>
+  [163] objcall 7 ............................... me.updateStatus()
+  [165] getparam 0 .............................. <me>
+  [167] pusharglist 1 ........................... <me>
+  [169] objcall 10 .............................. <me.getOpenWindow()>
+  [171] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [173] getlocal 0 .............................. <mywindow>
+  [175] pusharglist 1 ........................... <mywindow>
+  [177] extcall 73 .............................. <voidp(mywindow)>
+  [179] not ..................................... <not voidp(mywindow)>
+  [180] jmpifz [199] ............................ if not voidp(mywindow) then
+  [183] getlocal 0 .............................. <mywindow>
+  [185] getobjprop 74 ........................... <mywindow.pname>
+  [187] pushcons 15 ............................. <"console_myinfo">
+  [189] eq ...................................... <mywindow.pname = "console_myinfo">
+  [190] jmpifz [199] ............................ if mywindow.pname = "console_myinfo" then
+  [193] getparam 0 .............................. <me>
+  [195] pusharglistnoret 1 ...................... <me>
+  [197] objcall 12 .............................. me.displayCurrentWindow()
+  [199] getparam 0 .............................. <me>
+  [201] pusharglistnoret 1 ...................... <me>
+  [203] objcall 1 ............................... me.startFriendsUpdateTimer()
+  [205] ret
+end
+
+on updateStatus me
+  [  0] pushzero ................................ <0>
+  [  1] setlocal 0 .............................. bState = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] getobjprop 62 ........................... <me.aInvites>
+  [  7] getobjprop 84 ........................... <me.aInvites.count>
+  [  9] pushzero ................................ <0>
+  [ 10] gt ...................................... <me.aInvites.count > 0>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 63 ........................... <me.aMessages>
+  [ 15] getobjprop 84 ........................... <me.aMessages.count>
+  [ 17] pushzero ................................ <0>
+  [ 18] gt ...................................... <me.aMessages.count > 0>
+  [ 19] or ...................................... <(me.aInvites.count > 0) or (me.aMessages.count > 0)>
+  [ 20] jmpifz [ 27] ............................ if (me.aInvites.count > 0) or (me.aMessages.count > 0) then
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setlocal 0 .............................. bState = 1
+  [ 27] pushsymb 86 ............................. <#setMessengerBlink>
+  [ 29] getlocal 0 .............................. <bState>
+  [ 31] pusharglistnoret 2 ...................... <#setMessengerBlink, bState>
+  [ 33] extcall 85 .............................. sendAllSprites(#setMessengerBlink, bState)
+  [ 35] ret
+end
+
+on openWindow me, sID, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 9 ............................... <me.closeWindow()>
+  [  6] setlocal 0 .............................. myRect = me.closeWindow()
+  [  8] getglobal 88 ............................ <ElementMgr>
+  [ 10] getparam 1 .............................. <sID>
+  [ 12] getlocal 0 .............................. <myRect>
+  [ 14] pusharglist 3 ........................... <ElementMgr, sID, myRect>
+  [ 16] objcall 89 .............................. <ElementMgr.newwindow(sID, myRect)>
+  [ 18] setlocal 1 .............................. mywindow = ElementMgr.newwindow(sID, myRect)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getlocal 1 .............................. <mywindow>
+  [ 24] getparam 2 .............................. <oArg>
+  [ 26] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [ 28] objcall 11 .............................. me.displayWindow(mywindow, oArg)
+  [ 30] ret
+end
+
+on closeWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 88 ............................ <ElementMgr>
+  [  8] getobjprop 93 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 84 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 58] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 88 ............................ <ElementMgr>
+  [ 20] getobjprop 93 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 94 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 16 ............................. <"console">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "console">
+  [ 31] jmpifz [ 49] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "console" then
+  [ 34] getglobal 88 ............................ <ElementMgr>
+  [ 36] pushsymb 93 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 95 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. mywindow = ElementMgr.pOpenWindows[n]
+  [ 46] jmp [ 58] ............................... exit repeat
+  [ 49] pushint8 1
+  [ 51] getlocal 0
+  [ 53] add
+  [ 54] setlocal 0
+  [ 56] endrepeat [  4]
+  [ 58] getlocal 1 .............................. <mywindow>
+  [ 60] pusharglist 1 ........................... <mywindow>
+  [ 62] extcall 73 .............................. <voidp(mywindow)>
+  [ 64] jmpifz [ 71] ............................ if voidp(mywindow) then
+  [ 67] pusharglistnoret 0 ...................... <>
+  [ 69] extcall 65 .............................. return 
+  [ 71] getlocal 1 .............................. <mywindow>
+  [ 73] pusharglist 1 ........................... <mywindow>
+  [ 75] objcall 9 ............................... <mywindow.closeWindow()>
+  [ 77] setlocal 2 .............................. iLastRect = mywindow.closeWindow()
+  [ 79] getlocal 2 .............................. <iLastRect>
+  [ 81] pusharglistnoret 1 ...................... <iLastRect>
+  [ 83] extcall 65 .............................. return iLastRect
+  [ 85] ret
+end
+
+on getOpenWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 88 ............................ <ElementMgr>
+  [  8] getobjprop 93 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 84 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 64] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 88 ............................ <ElementMgr>
+  [ 20] getobjprop 93 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 94 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 16 ............................. <"console">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "console">
+  [ 31] jmpifz [ 55] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "console" then
+  [ 34] getglobal 88 ............................ <ElementMgr>
+  [ 36] pushsymb 93 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 95 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. mywindow = ElementMgr.pOpenWindows[n]
+  [ 46] getlocal 1 .............................. <mywindow>
+  [ 48] pusharglistnoret 1 ...................... <mywindow>
+  [ 50] extcall 65 .............................. return mywindow
+  [ 52] jmp [ 64] ............................... exit repeat
+  [ 55] pushint8 1
+  [ 57] getlocal 0
+  [ 59] add
+  [ 60] setlocal 0
+  [ 62] endrepeat [  4]
+  [ 64] ret
+end
+
+on displayWindow me, mywindow, oArg
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 21] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 17 ............................. <"_MESSENGER_::displayWindow():">
+  [  7] getparam 2 .............................. <oArg>
+  [  9] pusharglist 1 ........................... <oArg>
+  [ 11] extcall 98 .............................. <ilk(oArg)>
+  [ 13] joinpadstr .............................. <"_MESSENGER_::displayWindow():" && ilk(oArg)>
+  [ 14] getparam 2 .............................. <oArg>
+  [ 16] joinpadstr .............................. <"_MESSENGER_::displayWindow():" && ilk(oArg) && oArg>
+  [ 17] pusharglistnoret 1 ...................... <"_MESSENGER_::displayWindow():" && ilk(oArg) && oArg>
+  [ 19] extcall 71 .............................. put "_MESSENGER_::displayWindow():" && ilk(oArg) && oArg
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] objcall 7 ............................... me.updateStatus()
+  [ 27] getparam 1 .............................. <mywindow>
+  [ 29] pusharglist 1 ........................... <mywindow>
+  [ 31] extcall 73 .............................. <voidp(mywindow)>
+  [ 33] jmpifz [ 40] ............................ if voidp(mywindow) then
+  [ 36] pusharglistnoret 0 ...................... <>
+  [ 38] extcall 65 .............................. return 
+  [ 40] getparam 1 .............................. <mywindow>
+  [ 42] getobjprop 74 ........................... <mywindow.pname>
+  [ 44] setlocal 0 .............................. sWindowName = mywindow.pname
+  [ 46] getlocal 0 .............................. <sWindowName>
+  [ 48] peek 0 .................................. case sWindowName of
+  [ 50] pushcons 15 ............................. <"console_myinfo">
+  [ 52] eq
+  [ 53] jmpifz [ 69] ............................ (case) "console_myinfo":
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getparam 1 .............................. <mywindow>
+  [ 60] getparam 2 .............................. <oArg>
+  [ 62] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [ 64] objcall 14 .............................. me.displayMyInfo(mywindow, oArg)
+  [ 66] jmp [171]
+  [ 69] peek 0
+  [ 71] pushcons 18 ............................. <"console_friends">
+  [ 73] eq
+  [ 74] jmpifz [ 90] ............................ (case) "console_friends":
+  [ 77] getparam 0 .............................. <me>
+  [ 79] getparam 1 .............................. <mywindow>
+  [ 81] getparam 2 .............................. <oArg>
+  [ 83] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [ 85] objcall 16 .............................. me.displayFriends(mywindow, oArg)
+  [ 87] jmp [171]
+  [ 90] peek 0
+  [ 92] pushcons 19 ............................. <"console_getrequest">
+  [ 94] eq
+  [ 95] jmpifz [111] ............................ (case) "console_getrequest":
+  [ 98] getparam 0 .............................. <me>
+  [100] getparam 1 .............................. <mywindow>
+  [102] getparam 2 .............................. <oArg>
+  [104] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [106] objcall 40 .............................. me.displayInvites(mywindow, oArg)
+  [108] jmp [171]
+  [111] peek 0
+  [113] pushcons 20 ............................. <"console_getmessage">
+  [115] eq
+  [116] jmpifz [132] ............................ (case) "console_getmessage":
+  [119] getparam 0 .............................. <me>
+  [121] getparam 1 .............................. <mywindow>
+  [123] getparam 2 .............................. <oArg>
+  [125] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [127] objcall 29 .............................. me.displayMessages(mywindow, oArg)
+  [129] jmp [171]
+  [132] peek 0
+  [134] pushcons 21 ............................. <"console_removefriend">
+  [136] eq
+  [137] jmpifz [153] ............................ (case) "console_removefriend":
+  [140] getparam 0 .............................. <me>
+  [142] getparam 1 .............................. <mywindow>
+  [144] getparam 2 .............................. <oArg>
+  [146] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [148] objcall 18 .............................. me.displayRemoveFriend(mywindow, oArg)
+  [150] jmp [171]
+  [153] peek 0
+  [155] pushcons 22 ............................. <"console_compose">
+  [157] eq
+  [158] jmpifz [171] ............................ (case) "console_compose":
+  [161] getparam 0 .............................. <me>
+  [163] getparam 1 .............................. <mywindow>
+  [165] getparam 2 .............................. <oArg>
+  [167] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [169] objcall 33 .............................. me.displayCompose(mywindow, oArg)
+  [171] pop 1 ................................... end case
+  [173] ret
+end
+
+on displayCurrentWindow me, oArg
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 11] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 23 ............................. <"_MESSENGER_::displayCurrentWindow">
+  [  7] pusharglistnoret 1 ...................... <"_MESSENGER_::displayCurrentWindow">
+  [  9] extcall 71 .............................. put "_MESSENGER_::displayCurrentWindow"
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglist 1 ........................... <me>
+  [ 15] objcall 10 .............................. <me.getOpenWindow()>
+  [ 17] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [ 19] getlocal 0 .............................. <mywindow>
+  [ 21] getobjprop 74 ........................... <mywindow.pname>
+  [ 23] setlocal 1 .............................. sWindowName = mywindow.pname
+  [ 25] getlocal 1 .............................. <sWindowName>
+  [ 27] peek 0 .................................. case sWindowName of
+  [ 29] pushcons 22 ............................. <"console_compose">
+  [ 31] eq
+  [ 32] jmpifz [ 48] ............................ (case) "console_compose":
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getlocal 0 .............................. <mywindow>
+  [ 39] getparam 1 .............................. <oArg>
+  [ 41] pusharglistnoret 3 ...................... <me, mywindow, oArg>
+  [ 43] objcall 33 .............................. me.displayCompose(mywindow, oArg)
+  [ 45] jmp [ 56] ............................... (case) otherwise:
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getlocal 0 .............................. <mywindow>
+  [ 52] pusharglistnoret 2 ...................... <me, mywindow>
+  [ 54] objcall 11 .............................. me.displayWindow(mywindow)
+  [ 56] pop 1 ................................... end case
+  [ 58] ret
+end
+
+on openMyInfo me, bGetNewData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 24 ............................. <"console_myinfo.window">
+  [  4] pusharglistnoret 2 ...................... <me, "console_myinfo.window">
+  [  6] objcall 8 ............................... me.openWindow("console_myinfo.window")
+  [  8] ret
+end
+
+on displayMyInfo me, mywindow
+  [  0] getglobal 69 ............................ <oDenizenManager>
+  [  2] pusharglist 1 ........................... <oDenizenManager>
+  [  4] objcall 101 ............................. <oDenizenManager.getScreenName()>
+  [  6] setlocal 0 .............................. sScreenName = oDenizenManager.getScreenName()
+  [  8] pushcons 25 ............................. <"mmc_myname">
+  [ 10] pusharglist 1 ........................... <"mmc_myname">
+  [ 12] extcall 102 ............................. <member("mmc_myname")>
+  [ 14] getlocal 0 .............................. <sScreenName>
+  [ 16] setobjprop 103 .......................... member("mmc_myname").text = sScreenName
+  [ 18] pushcons 26 ............................. <"missionfield">
+  [ 20] pusharglist 1 ........................... <"missionfield">
+  [ 22] extcall 102 ............................. <member("missionfield")>
+  [ 24] getglobal 69 ............................ <oDenizenManager>
+  [ 26] pusharglist 1 ........................... <oDenizenManager>
+  [ 28] objcall 104 ............................. <oDenizenManager.getMissionStatement()>
+  [ 30] setobjprop 103 .......................... member("missionfield").text = oDenizenManager.getMissionStatement()
+  [ 32] getglobal 105 ........................... <TextMgr>
+  [ 34] pushcons 27 ............................. <"MESSENGER_NEW_MESSAGES">
+  [ 36] pusharglist 2 ........................... <TextMgr, "MESSENGER_NEW_MESSAGES">
+  [ 38] objcall 106 ............................. <TextMgr.GetRefText("MESSENGER_NEW_MESSAGES")>
+  [ 40] setlocal 1 .............................. mytemplate = TextMgr.GetRefText("MESSENGER_NEW_MESSAGES")
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pushsymb 63 ............................. <#aMessages>
+  [ 46] pusharglist 2 ........................... <me, #aMessages>
+  [ 48] objcall 84 .............................. <me.aMessages.count>
+  [ 50] getlocal 1 .............................. <mytemplate>
+  [ 52] joinpadstr .............................. <me.aMessages.count && mytemplate>
+  [ 53] setlocal 2 .............................. sMessagesText = me.aMessages.count && mytemplate
+  [ 55] pushcons 28 ............................. <"messages">
+  [ 57] pusharglist 1 ........................... <"messages">
+  [ 59] extcall 102 ............................. <member("messages")>
+  [ 61] getlocal 2 .............................. <sMessagesText>
+  [ 63] setobjprop 103 .......................... member("messages").text = sMessagesText
+  [ 65] getglobal 105 ........................... <TextMgr>
+  [ 67] pushcons 29 ............................. <"MESSENGER_FRIEND_REQUESTS">
+  [ 69] pusharglist 2 ........................... <TextMgr, "MESSENGER_FRIEND_REQUESTS">
+  [ 71] objcall 106 ............................. <TextMgr.GetRefText("MESSENGER_FRIEND_REQUESTS")>
+  [ 73] setlocal 1 .............................. mytemplate = TextMgr.GetRefText("MESSENGER_FRIEND_REQUESTS")
+  [ 75] getparam 0 .............................. <me>
+  [ 77] pushsymb 62 ............................. <#aInvites>
+  [ 79] pusharglist 2 ........................... <me, #aInvites>
+  [ 81] objcall 84 .............................. <me.aInvites.count>
+  [ 83] getlocal 1 .............................. <mytemplate>
+  [ 85] joinpadstr .............................. <me.aInvites.count && mytemplate>
+  [ 86] setlocal 3 .............................. sFriendRequestsText = me.aInvites.count && mytemplate
+  [ 88] pushcons 30 ............................. <"requests">
+  [ 90] pusharglist 1 ........................... <"requests">
+  [ 92] extcall 102 ............................. <member("requests")>
+  [ 94] getlocal 3 .............................. <sFriendRequestsText>
+  [ 96] setobjprop 103 .......................... member("requests").text = sFriendRequestsText
+  [ 98] ret
+end
+
+on openFriends me
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 11] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 31 ............................. <"_MESSENGER_::openFriends()">
+  [  7] pusharglistnoret 1 ...................... <"_MESSENGER_::openFriends()">
+  [  9] extcall 71 .............................. put "_MESSENGER_::openFriends()"
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushcons 32 ............................. <"console_friends.window">
+  [ 15] pusharglistnoret 2 ...................... <me, "console_friends.window">
+  [ 17] objcall 8 ............................... me.openWindow("console_friends.window")
+  [ 19] ret
+end
+
+on displayFriends me, mywindow
+  [  0] getparam 1 .............................. <mywindow>
+  [  2] pusharglist 1 ........................... <mywindow>
+  [  4] extcall 73 .............................. <voidp(mywindow)>
+  [  6] jmpifz [ 13] ............................ if voidp(mywindow) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 65 .............................. return 
+  [ 13] getparam 1 .............................. <mywindow>
+  [ 15] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [ 17] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 60 ........................... <me.aFriends>
+  [ 23] setobjprop 113 .......................... mywindow.pScrollingLists.friendslist.pFriendsData = me.aFriends
+  [ 25] getparam 1 .............................. <mywindow>
+  [ 27] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [ 29] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [ 31] pusharglistnoret 1 ...................... <mywindow.pScrollingLists.friendslist>
+  [ 33] objcall 114 ............................. mywindow.pScrollingLists.friendslist.updatecontent()
+  [ 35] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 37] jmpifz [ 57] ............................ if the debugPlaybackEnabled then
+  [ 40] pushcons 33 ............................. <"_MESSENGER_::displayFriends():">
+  [ 42] pushcons 14 ............................. <RETURN>
+  [ 44] joinstr ................................. <"_MESSENGER_::displayFriends():" & RETURN>
+  [ 45] pushcons 14 ............................. <RETURN>
+  [ 47] joinstr ................................. <"_MESSENGER_::displayFriends():" & RETURN & RETURN>
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 60 ........................... <me.aFriends>
+  [ 52] joinstr ................................. <"_MESSENGER_::displayFriends():" & RETURN & RETURN & me.aFriends>
+  [ 53] pusharglistnoret 1 ...................... <"_MESSENGER_::displayFriends():" & RETURN & RETURN & me.aFriends>
+  [ 55] extcall 71 .............................. put "_MESSENGER_::displayFriends():" & RETURN & RETURN & me.aFriends
+  [ 57] ret
+end
+
+on openRemoveFriend me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [ 12] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [ 14] getobjprop 115 .......................... <mywindow.pScrollingLists.friendslist.pSelectedFriends>
+  [ 16] setlocal 1 .............................. removelist = mywindow.pScrollingLists.friendslist.pSelectedFriends
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushcons 34 ............................. <"console_removefriend.window">
+  [ 22] getlocal 1 .............................. <removelist>
+  [ 24] pusharglistnoret 3 ...................... <me, "console_removefriend.window", removelist>
+  [ 26] objcall 8 ............................... me.openWindow("console_removefriend.window", removelist)
+  [ 28] ret
+end
+
+on displayRemoveFriend me, mywindow, removelist
+  [  0] getparam 1 .............................. <mywindow>
+  [  2] pushsymb 118 ............................ <#pSpritelist>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [  8] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 10] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 12] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 14] pushsymb 116 ............................ <#removelist>
+  [ 16] getparam 2 .............................. <removelist>
+  [ 18] pusharglist 2 ........................... <[#removelist: removelist]>
+  [ 20] pushproplist ............................ <[#removelist: removelist]>
+  [ 21] setobjprop 119 .......................... sprite(mywindow.pSpritelist[1]).pCustomData = [#removelist: removelist]
+  [ 23] pushcons 35 ............................. <"deletiasanfoname">
+  [ 25] pusharglist 1 ........................... <"deletiasanfoname">
+  [ 27] extcall 102 ............................. <member("deletiasanfoname")>
+  [ 29] getparam 2 .............................. <removelist>
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] pusharglist 2 ........................... <removelist, 1>
+  [ 35] objcall 120 ............................. <removelist[1]>
+  [ 37] setobjprop 103 .......................... member("deletiasanfoname").text = removelist[1]
+  [ 39] ret
+end
+
+on cancelRemoveFriend me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pusharglist 1 ........................... <mywindow>
+  [ 12] extcall 73 .............................. <voidp(mywindow)>
+  [ 14] getlocal 0 .............................. <mywindow>
+  [ 16] getobjprop 74 ........................... <mywindow.pname>
+  [ 18] pushcons 21 ............................. <"console_removefriend">
+  [ 20] nteq .................................... <mywindow.pname <> "console_removefriend">
+  [ 21] or ...................................... <voidp(mywindow) or (mywindow.pname <> "console_removefriend")>
+  [ 22] jmpifz [ 29] ............................ if voidp(mywindow) or (mywindow.pname <> "console_removefriend") then
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 65 .............................. return 
+  [ 29] getlocal 0 .............................. <mywindow>
+  [ 31] pushsymb 118 ............................ <#pSpritelist>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 37] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 39] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 41] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 43] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 45] getobjprop 116 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.removelist>
+  [ 47] setlocal 1 .............................. removelist = sprite(mywindow.pSpritelist[1]).pCustomData.removelist
+  [ 49] getlocal 1 .............................. <removelist>
+  [ 51] pusharglist 1 ........................... <removelist>
+  [ 53] extcall 84 .............................. <count(removelist)>
+  [ 55] jmpifz [ 86] ............................ if count(removelist) then
+  [ 58] getlocal 1 .............................. <removelist>
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] pusharglistnoret 2 ...................... <removelist, 1>
+  [ 64] extcall 121 ............................. deleteAt(removelist, 1)
+  [ 66] getlocal 0 .............................. <mywindow>
+  [ 68] pushsymb 118 ............................ <#pSpritelist>
+  [ 70] pushint8 1 .............................. <1>
+  [ 72] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 74] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 76] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 78] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 80] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 82] getlocal 1 .............................. <removelist>
+  [ 84] setobjprop 116 .......................... sprite(mywindow.pSpritelist[1]).pCustomData.removelist = removelist
+  [ 86] getlocal 1 .............................. <removelist>
+  [ 88] pusharglist 1 ........................... <removelist>
+  [ 90] extcall 84 .............................. <count(removelist)>
+  [ 92] jmpifz [108] ............................ if count(removelist) then / else
+  [ 95] getparam 0 .............................. <me>
+  [ 97] getlocal 0 .............................. <mywindow>
+  [ 99] getlocal 1 .............................. <removelist>
+  [101] pusharglistnoret 3 ...................... <me, mywindow, removelist>
+  [103] objcall 18 .............................. me.displayRemoveFriend(mywindow, removelist)
+  [105] jmp [114]
+  [108] getparam 0 .............................. <me>
+  [110] pusharglistnoret 1 ...................... <me>
+  [112] objcall 15 .............................. me.openFriends()
+  [114] ret
+end
+
+on deleteFriend me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pusharglist 1 ........................... <mywindow>
+  [ 12] extcall 73 .............................. <voidp(mywindow)>
+  [ 14] getlocal 0 .............................. <mywindow>
+  [ 16] getobjprop 74 ........................... <mywindow.pname>
+  [ 18] pushcons 21 ............................. <"console_removefriend">
+  [ 20] nteq .................................... <mywindow.pname <> "console_removefriend">
+  [ 21] or ...................................... <voidp(mywindow) or (mywindow.pname <> "console_removefriend")>
+  [ 22] jmpifz [ 29] ............................ if voidp(mywindow) or (mywindow.pname <> "console_removefriend") then
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 65 .............................. return 
+  [ 29] getlocal 0 .............................. <mywindow>
+  [ 31] pushsymb 118 ............................ <#pSpritelist>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 37] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 39] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 41] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 43] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 45] getobjprop 116 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.removelist>
+  [ 47] setlocal 1 .............................. removelist = sprite(mywindow.pSpritelist[1]).pCustomData.removelist
+  [ 49] getlocal 1 .............................. <removelist>
+  [ 51] pusharglist 1 ........................... <removelist>
+  [ 53] extcall 84 .............................. <count(removelist)>
+  [ 55] jmpifz [ 95] ............................ if count(removelist) then
+  [ 58] getlocal 1 .............................. <removelist>
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] pusharglist 2 ........................... <removelist, 1>
+  [ 64] objcall 120 ............................. <removelist[1]>
+  [ 66] setlocal 2 .............................. sFriendScreenName = removelist[1]
+  [ 68] getglobal 69 ............................ <oDenizenManager>
+  [ 70] pusharglist 1 ........................... <oDenizenManager>
+  [ 72] objcall 101 ............................. <oDenizenManager.getScreenName()>
+  [ 74] setlocal 3 .............................. sMyScreenName = oDenizenManager.getScreenName()
+  [ 76] getglobal 69 ............................ <oDenizenManager>
+  [ 78] getlocal 3 .............................. <sMyScreenName>
+  [ 80] getlocal 2 .............................. <sFriendScreenName>
+  [ 82] pusharglist 1 ........................... <[sFriendScreenName]>
+  [ 84] pushlist ................................ <[sFriendScreenName]>
+  [ 85] pusharglistnoret 3 ...................... <oDenizenManager, sMyScreenName, [sFriendScreenName]>
+  [ 87] objcall 122 ............................. oDenizenManager.removeFriends(sMyScreenName, [sFriendScreenName])
+  [ 89] getparam 0 .............................. <me>
+  [ 91] pusharglistnoret 1 ...................... <me>
+  [ 93] objcall 21 .............................. me.removeFriend()
+  [ 95] ret
+end
+
+on removeFriend me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pusharglist 1 ........................... <mywindow>
+  [ 12] extcall 73 .............................. <voidp(mywindow)>
+  [ 14] getlocal 0 .............................. <mywindow>
+  [ 16] getobjprop 74 ........................... <mywindow.pname>
+  [ 18] pushcons 21 ............................. <"console_removefriend">
+  [ 20] nteq .................................... <mywindow.pname <> "console_removefriend">
+  [ 21] or ...................................... <voidp(mywindow) or (mywindow.pname <> "console_removefriend")>
+  [ 22] jmpifz [ 29] ............................ if voidp(mywindow) or (mywindow.pname <> "console_removefriend") then
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 65 .............................. return 
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getobjprop 60 ........................... <me.aFriends>
+  [ 33] getobjprop 84 ........................... <me.aFriends.count>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] lt ...................................... <me.aFriends.count < 1>
+  [ 38] jmpifz [ 45] ............................ if me.aFriends.count < 1 then
+  [ 41] pusharglistnoret 0 ...................... <>
+  [ 43] extcall 65 .............................. return 
+  [ 45] getlocal 0 .............................. <mywindow>
+  [ 47] pushsymb 118 ............................ <#pSpritelist>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 53] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 55] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 57] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 59] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 61] getobjprop 116 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.removelist>
+  [ 63] setlocal 1 .............................. removelist = sprite(mywindow.pSpritelist[1]).pCustomData.removelist
+  [ 65] getlocal 1 .............................. <removelist>
+  [ 67] pusharglist 1 ........................... <removelist>
+  [ 69] extcall 84 .............................. <count(removelist)>
+  [ 71] jmpifz [172] ............................ if count(removelist) then
+  [ 74] getlocal 1 .............................. <removelist>
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] pusharglist 2 ........................... <removelist, 1>
+  [ 80] objcall 120 ............................. <removelist[1]>
+  [ 82] setlocal 2 .............................. sFriendScreenName = removelist[1]
+  [ 84] getlocal 1 .............................. <removelist>
+  [ 86] pushint8 1 .............................. <1>
+  [ 88] pusharglistnoret 2 ...................... <removelist, 1>
+  [ 90] extcall 121 ............................. deleteAt(removelist, 1)
+  [ 92] getlocal 0 .............................. <mywindow>
+  [ 94] pushsymb 118 ............................ <#pSpritelist>
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [100] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [102] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [104] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [106] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [108] getlocal 1 .............................. <removelist>
+  [110] setobjprop 116 .......................... sprite(mywindow.pSpritelist[1]).pCustomData.removelist = removelist
+  [112] pushint8 1 .............................. <1>
+  [114] setlocal 3
+  [116] getlocal 3
+  [118] getparam 0 .............................. <me>
+  [120] getobjprop 60 ........................... <me.aFriends>
+  [122] getobjprop 84 ........................... <me.aFriends.count>
+  [124] lteq
+  [125] jmpifz [172] ............................ repeat with i = 1 to me.aFriends.count
+  [128] getparam 0 .............................. <me>
+  [130] pushsymb 60 ............................. <#aFriends>
+  [132] getlocal 3 .............................. <i>
+  [134] pusharglist 3 ........................... <me, #aFriends, i>
+  [136] objcall 95 .............................. <me.aFriends[i]>
+  [138] setlocal 4 .............................. aFriend = me.aFriends[i]
+  [140] getlocal 4 .............................. <aFriend>
+  [142] getobjprop 125 .......................... <aFriend.screenName>
+  [144] getlocal 2 .............................. <sFriendScreenName>
+  [146] eq ...................................... <aFriend.screenName = sFriendScreenName>
+  [147] jmpifz [163] ............................ if aFriend.screenName = sFriendScreenName then
+  [150] getparam 0 .............................. <me>
+  [152] getchainedprop 60 ....................... <me.aFriends>
+  [154] getlocal 3 .............................. <i>
+  [156] pusharglistnoret 2 ...................... <me.aFriends, i>
+  [158] objcall 121 ............................. me.aFriends.deleteAt(i)
+  [160] jmp [172] ............................... exit repeat
+  [163] pushint8 1
+  [165] getlocal 3
+  [167] add
+  [168] setlocal 3
+  [170] endrepeat [116]
+  [172] getlocal 1 .............................. <removelist>
+  [174] getobjprop 84 ........................... <removelist.count>
+  [176] pushzero ................................ <0>
+  [177] gt ...................................... <removelist.count > 0>
+  [178] jmpifz [200] ............................ if removelist.count > 0 then / else
+  [181] pushcons 35 ............................. <"deletiasanfoname">
+  [183] pusharglist 1 ........................... <"deletiasanfoname">
+  [185] extcall 102 ............................. <member("deletiasanfoname")>
+  [187] getlocal 1 .............................. <removelist>
+  [189] pushint8 1 .............................. <1>
+  [191] pusharglist 2 ........................... <removelist, 1>
+  [193] objcall 120 ............................. <removelist[1]>
+  [195] setobjprop 103 .......................... member("deletiasanfoname").text = removelist[1]
+  [197] jmp [206]
+  [200] getparam 0 .............................. <me>
+  [202] pusharglistnoret 1 ...................... <me>
+  [204] objcall 15 .............................. me.openFriends()
+  [206] ret
+end
+
+on removeFriendByName me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 60 ........................... <me.aFriends>
+  [  4] pusharglist 1 ........................... <me.aFriends>
+  [  6] objcall 84 .............................. <me.aFriends.count()>
+  [  8] setlocal 0 .............................. iLength = me.aFriends.count()
+  [ 10] getlocal 0 .............................. <iLength>
+  [ 12] pushzero ................................ <0>
+  [ 13] eq ...................................... <iLength = 0>
+  [ 14] jmpifz [ 21] ............................ if iLength = 0 then
+  [ 17] pusharglistnoret 0 ...................... <>
+  [ 19] extcall 65 .............................. return 
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] setlocal 1
+  [ 25] getlocal 1
+  [ 27] getlocal 0 .............................. <iLength>
+  [ 29] lteq
+  [ 30] jmpifz [101] ............................ repeat with i = 1 to iLength
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pushsymb 60 ............................. <#aFriends>
+  [ 37] getlocal 1 .............................. <i>
+  [ 39] pusharglist 3 ........................... <me, #aFriends, i>
+  [ 41] objcall 95 .............................. <me.aFriends[i]>
+  [ 43] setlocal 2 .............................. aFriend = me.aFriends[i]
+  [ 45] getlocal 2 .............................. <aFriend>
+  [ 47] pushsymb 125 ............................ <#screenName>
+  [ 49] pusharglist 2 ........................... <aFriend, #screenName>
+  [ 51] objcall 120 ............................. <aFriend[#screenName]>
+  [ 53] getparam 1 .............................. <sScreenName>
+  [ 55] eq ...................................... <aFriend[#screenName] = sScreenName>
+  [ 56] jmpifz [ 92] ............................ if aFriend[#screenName] = sScreenName then
+  [ 59] getparam 0 .............................. <me>
+  [ 61] getchainedprop 60 ....................... <me.aFriends>
+  [ 63] getlocal 1 .............................. <i>
+  [ 65] pusharglistnoret 2 ...................... <me.aFriends, i>
+  [ 67] objcall 121 ............................. me.aFriends.deleteAt(i)
+  [ 69] getparam 0 .............................. <me>
+  [ 71] getobjprop 56 ........................... <me.iFriendCount>
+  [ 73] pushzero ................................ <0>
+  [ 74] gt ...................................... <me.iFriendCount > 0>
+  [ 75] jmpifz [ 89] ............................ if me.iFriendCount > 0 then
+  [ 78] getparam 0 .............................. <me>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 56 ........................... <me.iFriendCount>
+  [ 84] pushint8 1 .............................. <1>
+  [ 86] sub ..................................... <me.iFriendCount - 1>
+  [ 87] setobjprop 56 ........................... me.iFriendCount = me.iFriendCount - 1
+  [ 89] jmp [101] ............................... exit repeat
+  [ 92] pushint8 1
+  [ 94] getlocal 1
+  [ 96] add
+  [ 97] setlocal 1
+  [ 99] endrepeat [ 25]
+  [101] getparam 0 .............................. <me>
+  [103] pusharglistnoret 1 ...................... <me>
+  [105] objcall 7 ............................... me.updateStatus()
+  [107] getparam 0 .............................. <me>
+  [109] pusharglist 1 ........................... <me>
+  [111] objcall 10 .............................. <me.getOpenWindow()>
+  [113] setlocal 3 .............................. mywindow = me.getOpenWindow()
+  [115] getlocal 3 .............................. <mywindow>
+  [117] pusharglist 1 ........................... <mywindow>
+  [119] extcall 73 .............................. <voidp(mywindow)>
+  [121] not ..................................... <not voidp(mywindow)>
+  [122] jmpifz [131] ............................ if not voidp(mywindow) then
+  [125] getparam 0 .............................. <me>
+  [127] pusharglistnoret 1 ...................... <me>
+  [129] objcall 12 .............................. me.displayCurrentWindow()
+  [131] ret
+end
+
+on addFriend me, aFriend
+  [  0] getparam 1 .............................. <aFriend>
+  [  2] pushsymb 125 ............................ <#screenName>
+  [  4] pusharglist 2 ........................... <aFriend, #screenName>
+  [  6] objcall 120 ............................. <aFriend[#screenName]>
+  [  8] setlocal 0 .............................. sFriendName = aFriend[#screenName]
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getlocal 0 .............................. <sFriendName>
+  [ 14] pusharglist 2 ........................... <me, sFriendName>
+  [ 16] objcall 24 .............................. <me.isFriend(sFriendName)>
+  [ 18] jmpifz [ 25] ............................ if me.isFriend(sFriendName) then
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 65 .............................. return 
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getchainedprop 60 ....................... <me.aFriends>
+  [ 29] getparam 1 .............................. <aFriend>
+  [ 31] pusharglistnoret 2 ...................... <me.aFriends, aFriend>
+  [ 33] objcall 129 ............................. me.aFriends.add(aFriend)
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getobjprop 56 ........................... <me.iFriendCount>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] add ..................................... <me.iFriendCount + 1>
+  [ 44] setobjprop 56 ........................... me.iFriendCount = me.iFriendCount + 1
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglistnoret 1 ...................... <me>
+  [ 50] objcall 7 ............................... me.updateStatus()
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglist 1 ........................... <me>
+  [ 56] objcall 10 .............................. <me.getOpenWindow()>
+  [ 58] setlocal 1 .............................. mywindow = me.getOpenWindow()
+  [ 60] getlocal 1 .............................. <mywindow>
+  [ 62] pusharglist 1 ........................... <mywindow>
+  [ 64] extcall 73 .............................. <voidp(mywindow)>
+  [ 66] not ..................................... <not voidp(mywindow)>
+  [ 67] jmpifz [ 76] ............................ if not voidp(mywindow) then
+  [ 70] getparam 0 .............................. <me>
+  [ 72] pusharglistnoret 1 ...................... <me>
+  [ 74] objcall 12 .............................. me.displayCurrentWindow()
+  [ 76] ret
+end
+
+on isFriend me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 60 ........................... <me.aFriends>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 84
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 59] ............................ repeat with aFriend in me.aFriends
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 120
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <aFriend>
+  [ 32] pushsymb 125 ............................ <#screenName>
+  [ 34] pusharglist 2 ........................... <aFriend, #screenName>
+  [ 36] objcall 120 ............................. <aFriend[#screenName]>
+  [ 38] setlocal 1 .............................. sFriendName = aFriend[#screenName]
+  [ 40] getlocal 1 .............................. <sFriendName>
+  [ 42] getparam 1 .............................. <sScreenName>
+  [ 44] eq ...................................... <sFriendName = sScreenName>
+  [ 45] jmpifz [ 54] ............................ if sFriendName = sScreenName then
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] pusharglistnoret 1 ...................... <1>
+  [ 52] extcall 65 .............................. return 1
+  [ 54] pushint8 1
+  [ 56] add
+  [ 57] endrepeat [ 12]
+  [ 59] pop 3
+  [ 61] pushzero ................................ <0>
+  [ 62] pusharglistnoret 1 ...................... <0>
+  [ 64] extcall 65 .............................. return 0
+  [ 66] ret
+end
+
+on updateFriendsStatus me, aOnlineFriends
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 60 ........................... <me.aFriends>
+  [ 10] pusharglist 1 ........................... <me.aFriends>
+  [ 12] objcall 84 .............................. <me.aFriends.count()>
+  [ 14] lteq
+  [ 15] jmpifz [105] ............................ repeat with i = 1 to me.aFriends.count()
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 60 ............................. <#aFriends>
+  [ 22] getlocal 0 .............................. <i>
+  [ 24] pusharglist 3 ........................... <me, #aFriends, i>
+  [ 26] objcall 95 .............................. <me.aFriends[i]>
+  [ 28] setlocal 1 .............................. aFriend = me.aFriends[i]
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getlocal 1 .............................. <aFriend>
+  [ 34] pushsymb 125 ............................ <#screenName>
+  [ 36] pusharglist 2 ........................... <aFriend, #screenName>
+  [ 38] objcall 120 ............................. <aFriend[#screenName]>
+  [ 40] getparam 1 .............................. <aOnlineFriends>
+  [ 42] pusharglist 3 ........................... <me, aFriend[#screenName], aOnlineFriends>
+  [ 44] objcall 26 .............................. <me.getFriendByScreenName(aFriend[#screenName], aOnlineFriends)>
+  [ 46] setlocal 2 .............................. aOnlineFriend = me.getFriendByScreenName(aFriend[#screenName], aOnlineFriends)
+  [ 48] getlocal 2 .............................. <aOnlineFriend>
+  [ 50] pusharglist 1 ........................... <aOnlineFriend>
+  [ 52] extcall 73 .............................. <voidp(aOnlineFriend)>
+  [ 54] jmpifz [ 84] ............................ if voidp(aOnlineFriend) then
+  [ 57] getlocal 1 .............................. <aFriend>
+  [ 59] pushsymb 131 ............................ <#online>
+  [ 61] pushzero ................................ <0>
+  [ 62] pusharglistnoret 3 ...................... <aFriend, #online, 0>
+  [ 64] objcall 132 ............................. aFriend[#online] = 0
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pushsymb 60 ............................. <#aFriends>
+  [ 70] getlocal 0 .............................. <i>
+  [ 72] getlocal 1 .............................. <aFriend>
+  [ 74] pusharglistnoret 4 ...................... <me, #aFriends, i, aFriend>
+  [ 76] objcall 133 ............................. me.aFriends[i] = aFriend
+  [ 78] jmp [ 96] ............................... next repeat
+  [ 81] jmp [ 96] ............................... next repeat
+  [ 84] getparam 0 .............................. <me>
+  [ 86] pushsymb 60 ............................. <#aFriends>
+  [ 88] getlocal 0 .............................. <i>
+  [ 90] getlocal 2 .............................. <aOnlineFriend>
+  [ 92] pusharglistnoret 4 ...................... <me, #aFriends, i, aOnlineFriend>
+  [ 94] objcall 133 ............................. me.aFriends[i] = aOnlineFriend
+  [ 96] pushint8 1
+  [ 98] getlocal 0
+  [100] add
+  [101] setlocal 0
+  [103] endrepeat [  4]
+  [105] getparam 0 .............................. <me>
+  [107] pusharglist 1 ........................... <me>
+  [109] objcall 10 .............................. <me.getOpenWindow()>
+  [111] setlocal 3 .............................. mywindow = me.getOpenWindow()
+  [113] getlocal 3 .............................. <mywindow>
+  [115] pusharglist 1 ........................... <mywindow>
+  [117] extcall 73 .............................. <voidp(mywindow)>
+  [119] not ..................................... <not voidp(mywindow)>
+  [120] jmpifz [207] ............................ if not voidp(mywindow) then
+  [123] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [125] jmpifz [134] ............................ if the debugPlaybackEnabled then
+  [128] pushcons 36 ............................. <"_MESSENGER_::updateFriendsStatus()::displayCurrentWindow">
+  [130] pusharglistnoret 1 ...................... <"_MESSENGER_::updateFriendsStatus()::displayCurrentWindow">
+  [132] extcall 71 .............................. put "_MESSENGER_::updateFriendsStatus()::displayCurrentWindow"
+  [134] getlocal 3 .............................. <mywindow>
+  [136] getobjprop 111 .......................... <mywindow.pScrollingLists>
+  [138] pusharglist 1 ........................... <mywindow.pScrollingLists>
+  [140] extcall 73 .............................. <voidp(mywindow.pScrollingLists)>
+  [142] not ..................................... <not voidp(mywindow.pScrollingLists)>
+  [143] jmpifz [186] ............................ if not voidp(mywindow.pScrollingLists) then
+  [146] getlocal 3 .............................. <mywindow>
+  [148] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [150] getobjprop 112 .......................... <mywindow.pScrollingLists.friendslist>
+  [152] pusharglist 1 ........................... <mywindow.pScrollingLists.friendslist>
+  [154] extcall 73 .............................. <voidp(mywindow.pScrollingLists.friendslist)>
+  [156] not ..................................... <not voidp(mywindow.pScrollingLists.friendslist)>
+  [157] jmpifz [186] ............................ if not voidp(mywindow.pScrollingLists.friendslist) then
+  [160] getlocal 3 .............................. <mywindow>
+  [162] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [164] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [166] getobjprop 115 .......................... <mywindow.pScrollingLists.friendslist.pSelectedFriends>
+  [168] pusharglist 1 ........................... <mywindow.pScrollingLists.friendslist.pSelectedFriends>
+  [170] extcall 73 .............................. <voidp(mywindow.pScrollingLists.friendslist.pSelectedFriends)>
+  [172] not ..................................... <not voidp(mywindow.pScrollingLists.friendslist.pSelectedFriends)>
+  [173] jmpifz [186] ............................ if not voidp(mywindow.pScrollingLists.friendslist.pSelectedFriends) then
+  [176] getlocal 3 .............................. <mywindow>
+  [178] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [180] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [182] getobjprop 115 .......................... <mywindow.pScrollingLists.friendslist.pSelectedFriends>
+  [184] setlocal 4 .............................. recipients = mywindow.pScrollingLists.friendslist.pSelectedFriends
+  [186] pushsymb 134 ............................ <#mailto>
+  [188] getlocal 4 .............................. <recipients>
+  [190] pushsymb 135 ............................ <#camefrom>
+  [192] pushcons 13 ............................. <"friends">
+  [194] pusharglist 4 ........................... <[#mailto: recipients, #camefrom: "friends"]>
+  [196] pushproplist ............................ <[#mailto: recipients, #camefrom: "friends"]>
+  [197] setlocal 5 .............................. pCustomData = [#mailto: recipients, #camefrom: "friends"]
+  [199] getparam 0 .............................. <me>
+  [201] getlocal 5 .............................. <pCustomData>
+  [203] pusharglistnoret 2 ...................... <me, pCustomData>
+  [205] objcall 12 .............................. me.displayCurrentWindow(pCustomData)
+  [207] ret
+end
+
+on getFriendByScreenName me, sFriendName, aFriendsList
+  [  0] getparam 2 .............................. <aFriendsList>
+  [  2] peek 0
+  [  4] pusharglist 1
+  [  6] extcall 84
+  [  8] pushint8 1
+  [ 10] peek 0
+  [ 12] peek 2
+  [ 14] lteq
+  [ 15] jmpifz [ 53] ............................ repeat with aFriend in aFriendsList
+  [ 18] peek 2
+  [ 20] peek 1
+  [ 22] pusharglist 2
+  [ 24] extcall 120
+  [ 26] setlocal 0
+  [ 28] getlocal 0 .............................. <aFriend>
+  [ 30] pushsymb 125 ............................ <#screenName>
+  [ 32] pusharglist 2 ........................... <aFriend, #screenName>
+  [ 34] objcall 120 ............................. <aFriend[#screenName]>
+  [ 36] getparam 1 .............................. <sFriendName>
+  [ 38] eq ...................................... <aFriend[#screenName] = sFriendName>
+  [ 39] jmpifz [ 48] ............................ if aFriend[#screenName] = sFriendName then
+  [ 42] getlocal 0 .............................. <aFriend>
+  [ 44] pusharglistnoret 1 ...................... <aFriend>
+  [ 46] extcall 65 .............................. return aFriend
+  [ 48] pushint8 1
+  [ 50] add
+  [ 51] endrepeat [ 10]
+  [ 53] pop 3
+  [ 55] ret
+end
+
+on getFriendsStatusUpdate me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aFriendNames = []
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 60 ........................... <me.aFriends>
+  [  9] peek 0
+  [ 11] pusharglist 1
+  [ 13] extcall 84
+  [ 15] pushint8 1
+  [ 17] peek 0
+  [ 19] peek 2
+  [ 21] lteq
+  [ 22] jmpifz [ 54] ............................ repeat with aFriend in me.aFriends
+  [ 25] peek 2
+  [ 27] peek 1
+  [ 29] pusharglist 2
+  [ 31] extcall 120
+  [ 33] setlocal 1
+  [ 35] getlocal 0 .............................. <aFriendNames>
+  [ 37] getlocal 1 .............................. <aFriend>
+  [ 39] pushsymb 125 ............................ <#screenName>
+  [ 41] pusharglist 2 ........................... <aFriend, #screenName>
+  [ 43] objcall 120 ............................. <aFriend[#screenName]>
+  [ 45] pusharglistnoret 2 ...................... <aFriendNames, aFriend[#screenName]>
+  [ 47] objcall 129 ............................. aFriendNames.add(aFriend[#screenName])
+  [ 49] pushint8 1
+  [ 51] add
+  [ 52] endrepeat [ 17]
+  [ 54] pop 3
+  [ 56] getglobal 69 ............................ <oDenizenManager>
+  [ 58] getlocal 0 .............................. <aFriendNames>
+  [ 60] pusharglistnoret 2 ...................... <oDenizenManager, aFriendNames>
+  [ 62] objcall 140 ............................. oDenizenManager.getOnlineFriends(aFriendNames)
+  [ 64] ret
+end
+
+on openMessages me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 63 ........................... <me.aMessages>
+  [  4] getobjprop 84 ........................... <me.aMessages.count>
+  [  6] pushzero ................................ <0>
+  [  7] eq ...................................... <me.aMessages.count = 0>
+  [  8] jmpifz [ 15] ............................ if me.aMessages.count = 0 then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 65 .............................. return 
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushcons 37 ............................. <"console_getmessage.window">
+  [ 19] pusharglistnoret 2 ...................... <me, "console_getmessage.window">
+  [ 21] objcall 8 ............................... me.openWindow("console_getmessage.window")
+  [ 23] ret
+end
+
+on displayMessages me, mywindow
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 63 ............................. <#aMessages>
+  [  4] pusharglist 2 ........................... <me, #aMessages>
+  [  6] objcall 84 .............................. <me.aMessages.count>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] lt ...................................... <me.aMessages.count < 1>
+  [ 11] jmpifz [ 18] ............................ if me.aMessages.count < 1 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 65 .............................. return 
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 63 ............................. <#aMessages>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] pusharglist 3 ........................... <me, #aMessages, 1>
+  [ 26] objcall 95 .............................. <me.aMessages[1]>
+  [ 28] setlocal 0 .............................. mymessage = me.aMessages[1]
+  [ 30] getparam 1 .............................. <mywindow>
+  [ 32] pushsymb 118 ............................ <#pSpritelist>
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 38] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 40] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 42] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 44] getobjprop 119 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 46] pushsymb 143 ............................ <#currentmsg>
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 63 ........................... <me.aMessages>
+  [ 52] pusharglistnoret 3 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData, #currentmsg, me.aMessages>
+  [ 54] extcall 142 ............................. setaProp(sprite(mywindow.pSpritelist[1]).pCustomData, #currentmsg, me.aMessages)
+  [ 56] getlocal 0 .............................. <mymessage>
+  [ 58] getobjprop 144 .......................... <mymessage.sender>
+  [ 60] setlocal 1 .............................. sender = mymessage.sender
+  [ 62] getlocal 1 .............................. <sender>
+  [ 64] pushcons 38 ............................. <"$SYSTEM$">
+  [ 66] eq ...................................... <sender = "$SYSTEM$">
+  [ 67] jmpifz [ 74] ............................ if sender = "$SYSTEM$" then
+  [ 70] pushcons 39 ............................. <"Coke Studios">
+  [ 72] setlocal 1 .............................. sender = "Coke Studios"
+  [ 74] pushcons 40 ............................. <"mes_fromto">
+  [ 76] pusharglist 1 ........................... <"mes_fromto">
+  [ 78] extcall 102 ............................. <member("mes_fromto")>
+  [ 80] getglobal 105 ........................... <TextMgr>
+  [ 82] pushcons 41 ............................. <"MESSENGER_READ_FROM">
+  [ 84] pusharglist 2 ........................... <TextMgr, "MESSENGER_READ_FROM">
+  [ 86] objcall 106 ............................. <TextMgr.GetRefText("MESSENGER_READ_FROM")>
+  [ 88] getlocal 1 .............................. <sender>
+  [ 90] joinpadstr .............................. <TextMgr.GetRefText("MESSENGER_READ_FROM") && sender>
+  [ 91] setobjprop 103 .......................... member("mes_fromto").text = TextMgr.GetRefText("MESSENGER_READ_FROM") && sender
+  [ 93] pushcons 42 ............................. <"receivedmessage">
+  [ 95] pusharglist 1 ........................... <"receivedmessage">
+  [ 97] extcall 102 ............................. <member("receivedmessage")>
+  [ 99] getlocal 0 .............................. <mymessage>
+  [101] getobjprop 145 .......................... <mymessage.message>
+  [103] setobjprop 103 .......................... member("receivedmessage").text = mymessage.message
+  [105] pushcons 43 ............................. <"messagedate">
+  [107] pusharglist 1 ........................... <"messagedate">
+  [109] extcall 102 ............................. <member("messagedate")>
+  [111] getglobal 105 ........................... <TextMgr>
+  [113] getlocal 0 .............................. <mymessage>
+  [115] getobjprop 146 .......................... <mymessage.sentOn>
+  [117] pusharglist 2 ........................... <TextMgr, mymessage.sentOn>
+  [119] objcall 147 ............................. <TextMgr.getDate(mymessage.sentOn)>
+  [121] getglobal 105 ........................... <TextMgr>
+  [123] getlocal 0 .............................. <mymessage>
+  [125] getobjprop 146 .......................... <mymessage.sentOn>
+  [127] pusharglist 2 ........................... <TextMgr, mymessage.sentOn>
+  [129] objcall 148 ............................. <TextMgr.getTime(mymessage.sentOn)>
+  [131] joinpadstr .............................. <TextMgr.getDate(mymessage.sentOn) && TextMgr.getTime(mymessage.sentOn)>
+  [132] setobjprop 103 .......................... member("messagedate").text = TextMgr.getDate(mymessage.sentOn) && TextMgr.getTime(mymessage.sentOn)
+  [134] ret
+end
+
+on deleteMessage me, camefrom
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 63 ............................. <#aMessages>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglist 3 ........................... <me, #aMessages, 1>
+  [  8] objcall 95 .............................. <me.aMessages[1]>
+  [ 10] setlocal 0 .............................. mymessage = me.aMessages[1]
+  [ 12] getlocal 0 .............................. <mymessage>
+  [ 14] getobjprop 144 .......................... <mymessage.sender>
+  [ 16] setlocal 1 .............................. sSender = mymessage.sender
+  [ 18] getlocal 0 .............................. <mymessage>
+  [ 20] getobjprop 150 .......................... <mymessage.recipient>
+  [ 22] setlocal 2 .............................. sRecipient = mymessage.recipient
+  [ 24] getlocal 0 .............................. <mymessage>
+  [ 26] getobjprop 151 .......................... <mymessage.messageHash>
+  [ 28] setlocal 3 .............................. sMessageHash = mymessage.messageHash
+  [ 30] getglobal 69 ............................ <oDenizenManager>
+  [ 32] getlocal 1 .............................. <sSender>
+  [ 34] getlocal 2 .............................. <sRecipient>
+  [ 36] getlocal 3 .............................. <sMessageHash>
+  [ 38] pusharglistnoret 4 ...................... <oDenizenManager, sSender, sRecipient, sMessageHash>
+  [ 40] objcall 31 .............................. oDenizenManager.removeMessage(sSender, sRecipient, sMessageHash)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 1 ...................... <me>
+  [ 46] objcall 31 .............................. me.removeMessage()
+  [ 48] getparam 1 .............................. <camefrom>
+  [ 50] pusharglist 1 ........................... <camefrom>
+  [ 52] extcall 73 .............................. <voidp(camefrom)>
+  [ 54] getparam 1 .............................. <camefrom>
+  [ 56] pushcons 44 ............................. <"read">
+  [ 58] eq ...................................... <camefrom = "read">
+  [ 59] or ...................................... <voidp(camefrom) or (camefrom = "read")>
+  [ 60] jmpifz [ 91] ............................ if voidp(camefrom) or (camefrom = "read") then
+  [ 63] getparam 0 .............................. <me>
+  [ 65] pushsymb 63 ............................. <#aMessages>
+  [ 67] pusharglist 2 ........................... <me, #aMessages>
+  [ 69] objcall 84 .............................. <me.aMessages.count>
+  [ 71] pushzero ................................ <0>
+  [ 72] eq ...................................... <me.aMessages.count = 0>
+  [ 73] jmpifz [ 85] ............................ if me.aMessages.count = 0 then / else
+  [ 76] getparam 0 .............................. <me>
+  [ 78] pusharglistnoret 1 ...................... <me>
+  [ 80] objcall 13 .............................. me.openMyInfo()
+  [ 82] jmp [ 91]
+  [ 85] getparam 0 .............................. <me>
+  [ 87] pusharglistnoret 1 ...................... <me>
+  [ 89] objcall 28 .............................. me.openMessages()
+  [ 91] ret
+end
+
+on removeMessage me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 63 ............................. <#aMessages>
+  [  4] pusharglist 2 ........................... <me, #aMessages>
+  [  6] objcall 84 .............................. <me.aMessages.count>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] lt ...................................... <me.aMessages.count < 1>
+  [ 11] jmpifz [ 18] ............................ if me.aMessages.count < 1 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 65 .............................. return 
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 63 ............................. <#aMessages>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] pusharglist 3 ........................... <me, #aMessages, 1>
+  [ 26] objcall 95 .............................. <me.aMessages[1]>
+  [ 28] setlocal 0 .............................. aMessage = me.aMessages[1]
+  [ 30] getlocal 0 .............................. <aMessage>
+  [ 32] getobjprop 144 .......................... <aMessage.sender>
+  [ 34] setlocal 1 .............................. sSender = aMessage.sender
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getchainedprop 63 ....................... <me.aMessages>
+  [ 40] pushint8 1 .............................. <1>
+  [ 42] pusharglistnoret 2 ...................... <me.aMessages, 1>
+  [ 44] objcall 121 ............................. me.aMessages.deleteAt(1)
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] setlocal 2
+  [ 50] getlocal 2
+  [ 52] getparam 0 .............................. <me>
+  [ 54] getobjprop 60 ........................... <me.aFriends>
+  [ 56] getobjprop 84 ........................... <me.aFriends.count>
+  [ 58] lteq
+  [ 59] jmpifz [149] ............................ repeat with i = 1 to me.aFriends.count
+  [ 62] getparam 0 .............................. <me>
+  [ 64] pushsymb 60 ............................. <#aFriends>
+  [ 66] getlocal 2 .............................. <i>
+  [ 68] pusharglist 3 ........................... <me, #aFriends, i>
+  [ 70] objcall 95 .............................. <me.aFriends[i]>
+  [ 72] setlocal 3 .............................. aFriend = me.aFriends[i]
+  [ 74] getlocal 3 .............................. <aFriend>
+  [ 76] getobjprop 125 .......................... <aFriend.screenName>
+  [ 78] getlocal 1 .............................. <sSender>
+  [ 80] eq ...................................... <aFriend.screenName = sSender>
+  [ 81] jmpifz [140] ............................ if aFriend.screenName = sSender then
+  [ 84] getlocal 3 .............................. <aFriend>
+  [ 86] getobjprop 155 .......................... <aFriend.messagesFrom>
+  [ 88] setlocal 4 .............................. iMessagesFrom = aFriend.messagesFrom
+  [ 90] getlocal 4 .............................. <iMessagesFrom>
+  [ 92] pushzero ................................ <0>
+  [ 93] gt ...................................... <iMessagesFrom > 0>
+  [ 94] jmpifz [140] ............................ if iMessagesFrom > 0 then
+  [ 97] getlocal 3 .............................. <aFriend>
+  [ 99] getlocal 3 .............................. <aFriend>
+  [101] getobjprop 155 .......................... <aFriend.messagesFrom>
+  [103] pushint8 1 .............................. <1>
+  [105] sub ..................................... <aFriend.messagesFrom - 1>
+  [106] setobjprop 155 .......................... aFriend.messagesFrom = aFriend.messagesFrom - 1
+  [108] getparam 0 .............................. <me>
+  [110] pushsymb 60 ............................. <#aFriends>
+  [112] getlocal 2 .............................. <i>
+  [114] getlocal 3 .............................. <aFriend>
+  [116] pusharglistnoret 4 ...................... <me, #aFriends, i, aFriend>
+  [118] objcall 133 ............................. me.aFriends[i] = aFriend
+  [120] getparam 0 .............................. <me>
+  [122] getobjprop 59 ........................... <me.iTotalMessageCount>
+  [124] pushzero ................................ <0>
+  [125] gt ...................................... <me.iTotalMessageCount > 0>
+  [126] jmpifz [140] ............................ if me.iTotalMessageCount > 0 then
+  [129] getparam 0 .............................. <me>
+  [131] getparam 0 .............................. <me>
+  [133] getobjprop 59 ........................... <me.iTotalMessageCount>
+  [135] pushint8 1 .............................. <1>
+  [137] sub ..................................... <me.iTotalMessageCount - 1>
+  [138] setobjprop 59 ........................... me.iTotalMessageCount = me.iTotalMessageCount - 1
+  [140] pushint8 1
+  [142] getlocal 2
+  [144] add
+  [145] setlocal 2
+  [147] endrepeat [ 50]
+  [149] ret
+end
+
+on openCompose me, pCustomData
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 21] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 45 ............................. <"_MESSENGER_::openCompose:">
+  [  7] getparam 1 .............................. <pCustomData>
+  [  9] pusharglist 1 ........................... <pCustomData>
+  [ 11] extcall 98 .............................. <ilk(pCustomData)>
+  [ 13] joinpadstr .............................. <"_MESSENGER_::openCompose:" && ilk(pCustomData)>
+  [ 14] getparam 1 .............................. <pCustomData>
+  [ 16] joinpadstr .............................. <"_MESSENGER_::openCompose:" && ilk(pCustomData) && pCustomData>
+  [ 17] pusharglistnoret 1 ...................... <"_MESSENGER_::openCompose:" && ilk(pCustomData) && pCustomData>
+  [ 19] extcall 71 .............................. put "_MESSENGER_::openCompose:" && ilk(pCustomData) && pCustomData
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglist 1 ........................... <me>
+  [ 25] objcall 10 .............................. <me.getOpenWindow()>
+  [ 27] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushcons 46 ............................. <"console_compose.window">
+  [ 33] getparam 1 .............................. <pCustomData>
+  [ 35] pusharglistnoret 3 ...................... <me, "console_compose.window", pCustomData>
+  [ 37] objcall 8 ............................... me.openWindow("console_compose.window", pCustomData)
+  [ 39] ret
+end
+
+on displayCompose me, mywindow, pCustomData
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 21] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 47 ............................. <"_MESSENGER_::displayCompose:">
+  [  7] getparam 2 .............................. <pCustomData>
+  [  9] pusharglist 1 ........................... <pCustomData>
+  [ 11] extcall 98 .............................. <ilk(pCustomData)>
+  [ 13] joinpadstr .............................. <"_MESSENGER_::displayCompose:" && ilk(pCustomData)>
+  [ 14] getparam 2 .............................. <pCustomData>
+  [ 16] joinpadstr .............................. <"_MESSENGER_::displayCompose:" && ilk(pCustomData) && pCustomData>
+  [ 17] pusharglistnoret 1 ...................... <"_MESSENGER_::displayCompose:" && ilk(pCustomData) && pCustomData>
+  [ 19] extcall 71 .............................. put "_MESSENGER_::displayCompose:" && ilk(pCustomData) && pCustomData
+  [ 21] getparam 1 .............................. <mywindow>
+  [ 23] pushsymb 118 ............................ <#pSpritelist>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 29] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 31] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 33] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 35] getparam 2 .............................. <pCustomData>
+  [ 37] setobjprop 119 .......................... sprite(mywindow.pSpritelist[1]).pCustomData = pCustomData
+  [ 39] getparam 2 .............................. <pCustomData>
+  [ 41] getobjprop 134 .......................... <pCustomData.mailto>
+  [ 43] setlocal 0 .............................. recipients = pCustomData.mailto
+  [ 45] pushcons 48 ............................. <"recipients">
+  [ 47] pusharglist 1 ........................... <"recipients">
+  [ 49] extcall 102 ............................. <member("recipients")>
+  [ 51] getglobal 105 ........................... <TextMgr>
+  [ 53] pushcons 49 ............................. <"MESSENGER_RECIPIENT">
+  [ 55] pusharglist 2 ........................... <TextMgr, "MESSENGER_RECIPIENT">
+  [ 57] objcall 106 ............................. <TextMgr.GetRefText("MESSENGER_RECIPIENT")>
+  [ 59] setobjprop 103 .......................... member("recipients").text = TextMgr.GetRefText("MESSENGER_RECIPIENT")
+  [ 61] getlocal 0 .............................. <recipients>
+  [ 63] pusharglist 1 ........................... <recipients>
+  [ 65] extcall 84 .............................. <count(recipients)>
+  [ 67] pushint8 1 .............................. <1>
+  [ 69] gt ...................................... <count(recipients) > 1>
+  [ 70] jmpifz [ 92] ............................ if count(recipients) > 1 then / else
+  [ 73] pushcons 50 ............................. <"names">
+  [ 75] pusharglist 1 ........................... <"names">
+  [ 77] extcall 102 ............................. <member("names")>
+  [ 79] getglobal 105 ........................... <TextMgr>
+  [ 81] pushcons 51 ............................. <"MESSENGER_RECIPIENTS">
+  [ 83] pusharglist 2 ........................... <TextMgr, "MESSENGER_RECIPIENTS">
+  [ 85] objcall 106 ............................. <TextMgr.GetRefText("MESSENGER_RECIPIENTS")>
+  [ 87] setobjprop 103 .......................... member("names").text = TextMgr.GetRefText("MESSENGER_RECIPIENTS")
+  [ 89] jmp [108]
+  [ 92] pushcons 50 ............................. <"names">
+  [ 94] pusharglist 1 ........................... <"names">
+  [ 96] extcall 102 ............................. <member("names")>
+  [ 98] getlocal 0 .............................. <recipients>
+  [100] pushint8 1 .............................. <1>
+  [102] pusharglist 2 ........................... <recipients, 1>
+  [104] objcall 120 ............................. <recipients[1]>
+  [106] setobjprop 103 .......................... member("names").text = recipients[1]
+  [108] ret
+end
+
+on cancelCompose me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pushsymb 118 ............................ <#pSpritelist>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 16] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 18] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 20] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 22] pushsymb 119 ............................ <#pCustomData>
+  [ 24] pushsymb 135 ............................ <#camefrom>
+  [ 26] pusharglist 3 ........................... <sprite(mywindow.pSpritelist[1]), #pCustomData, #camefrom>
+  [ 28] objcall 95 .............................. <sprite(mywindow.pSpritelist[1]).pCustomData[#camefrom]>
+  [ 30] setlocal 1 .............................. camefrom = sprite(mywindow.pSpritelist[1]).pCustomData[#camefrom]
+  [ 32] getlocal 1 .............................. <camefrom>
+  [ 34] pushcons 44 ............................. <"read">
+  [ 36] eq ...................................... <camefrom = "read">
+  [ 37] jmpifz [ 49] ............................ if camefrom = "read" then / else
+  [ 40] getparam 0 .............................. <me>
+  [ 42] pusharglistnoret 1 ...................... <me>
+  [ 44] objcall 28 .............................. me.openMessages()
+  [ 46] jmp [ 55]
+  [ 49] getparam 0 .............................. <me>
+  [ 51] pusharglistnoret 1 ...................... <me>
+  [ 53] objcall 15 .............................. me.openFriends()
+  [ 55] ret
+end
+
+on sendMessage me
+  [  0] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [  2] jmpifz [ 11] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 52 ............................. <"_MESSENGER_::sendMessage">
+  [  7] pusharglistnoret 1 ...................... <"_MESSENGER_::sendMessage">
+  [  9] extcall 71 .............................. put "_MESSENGER_::sendMessage"
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglist 1 ........................... <me>
+  [ 15] objcall 10 .............................. <me.getOpenWindow()>
+  [ 17] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [ 19] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 21] jmpifz [ 40] ............................ if the debugPlaybackEnabled then
+  [ 24] pushcons 53 ............................. <"_MESSENGER_::mywindow:">
+  [ 26] getlocal 0 .............................. <mywindow>
+  [ 28] pusharglist 1 ........................... <mywindow>
+  [ 30] extcall 98 .............................. <ilk(mywindow)>
+  [ 32] joinpadstr .............................. <"_MESSENGER_::mywindow:" && ilk(mywindow)>
+  [ 33] getlocal 0 .............................. <mywindow>
+  [ 35] joinpadstr .............................. <"_MESSENGER_::mywindow:" && ilk(mywindow) && mywindow>
+  [ 36] pusharglistnoret 1 ...................... <"_MESSENGER_::mywindow:" && ilk(mywindow) && mywindow>
+  [ 38] extcall 71 .............................. put "_MESSENGER_::mywindow:" && ilk(mywindow) && mywindow
+  [ 40] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 42] jmpifz [ 61] ............................ if the debugPlaybackEnabled then
+  [ 45] pushcons 54 ............................. <"_MESSENGER_::oDenizenManager:">
+  [ 47] getglobal 69 ............................ <oDenizenManager>
+  [ 49] pusharglist 1 ........................... <oDenizenManager>
+  [ 51] extcall 98 .............................. <ilk(oDenizenManager)>
+  [ 53] joinpadstr .............................. <"_MESSENGER_::oDenizenManager:" && ilk(oDenizenManager)>
+  [ 54] getglobal 69 ............................ <oDenizenManager>
+  [ 56] joinpadstr .............................. <"_MESSENGER_::oDenizenManager:" && ilk(oDenizenManager) && oDenizenManager>
+  [ 57] pusharglistnoret 1 ...................... <"_MESSENGER_::oDenizenManager:" && ilk(oDenizenManager) && oDenizenManager>
+  [ 59] extcall 71 .............................. put "_MESSENGER_::oDenizenManager:" && ilk(oDenizenManager) && oDenizenManager
+  [ 61] getglobal 69 ............................ <oDenizenManager>
+  [ 63] pusharglist 1 ........................... <oDenizenManager>
+  [ 65] objcall 101 ............................. <oDenizenManager.getScreenName()>
+  [ 67] setlocal 1 .............................. sFromScreenName = oDenizenManager.getScreenName()
+  [ 69] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 71] jmpifz [ 90] ............................ if the debugPlaybackEnabled then
+  [ 74] pushcons 55 ............................. <"_MESSENGER_::sFromScreenName:">
+  [ 76] getlocal 1 .............................. <sFromScreenName>
+  [ 78] pusharglist 1 ........................... <sFromScreenName>
+  [ 80] extcall 98 .............................. <ilk(sFromScreenName)>
+  [ 82] joinpadstr .............................. <"_MESSENGER_::sFromScreenName:" && ilk(sFromScreenName)>
+  [ 83] getlocal 1 .............................. <sFromScreenName>
+  [ 85] joinpadstr .............................. <"_MESSENGER_::sFromScreenName:" && ilk(sFromScreenName) && sFromScreenName>
+  [ 86] pusharglistnoret 1 ...................... <"_MESSENGER_::sFromScreenName:" && ilk(sFromScreenName) && sFromScreenName>
+  [ 88] extcall 71 .............................. put "_MESSENGER_::sFromScreenName:" && ilk(sFromScreenName) && sFromScreenName
+  [ 90] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 92] jmpifz [135] ............................ if the debugPlaybackEnabled then
+  [ 95] pushcons 56 ............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]):">
+  [ 97] getlocal 0 .............................. <mywindow>
+  [ 99] pushsymb 118 ............................ <#pSpritelist>
+  [101] pushint8 1 .............................. <1>
+  [103] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [105] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [107] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [109] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [111] pusharglist 1 ........................... <sprite(mywindow.pSpritelist[1])>
+  [113] extcall 98 .............................. <ilk(sprite(mywindow.pSpritelist[1]))>
+  [115] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]):" && ilk(sprite(mywindow.pSpritelist[1]))>
+  [116] getlocal 0 .............................. <mywindow>
+  [118] pushsymb 118 ............................ <#pSpritelist>
+  [120] pushint8 1 .............................. <1>
+  [122] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [124] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [126] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [128] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [130] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]):" && ilk(sprite(mywindow.pSpritelist[1])) && sprite(mywindow.pSpritelist[1])>
+  [131] pusharglistnoret 1 ...................... <"_MESSENGER_::sprite(mywindow.pSpriteList[1]):" && ilk(sprite(mywindow.pSpritelist[1])) && sprite(mywindow.pSpritelist[1])>
+  [133] extcall 71 .............................. put "_MESSENGER_::sprite(mywindow.pSpriteList[1]):" && ilk(sprite(mywindow.pSpritelist[1])) && sprite(mywindow.pSpritelist[1])
+  [135] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [137] jmpifz [184] ............................ if the debugPlaybackEnabled then
+  [140] pushcons 57 ............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData:">
+  [142] getlocal 0 .............................. <mywindow>
+  [144] pushsymb 118 ............................ <#pSpritelist>
+  [146] pushint8 1 .............................. <1>
+  [148] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [150] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [152] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [154] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [156] getobjprop 119 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [158] pusharglist 1 ........................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [160] extcall 98 .............................. <ilk(sprite(mywindow.pSpritelist[1]).pCustomData)>
+  [162] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData)>
+  [163] getlocal 0 .............................. <mywindow>
+  [165] pushsymb 118 ............................ <#pSpritelist>
+  [167] pushint8 1 .............................. <1>
+  [169] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [171] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [173] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [175] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [177] getobjprop 119 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [179] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData) && sprite(mywindow.pSpritelist[1]).pCustomData>
+  [180] pusharglistnoret 1 ...................... <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData) && sprite(mywindow.pSpritelist[1]).pCustomData>
+  [182] extcall 71 .............................. put "_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData) && sprite(mywindow.pSpritelist[1]).pCustomData
+  [184] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [186] jmpifz [237] ............................ if the debugPlaybackEnabled then
+  [189] pushcons 58 ............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData.mailto:">
+  [191] getlocal 0 .............................. <mywindow>
+  [193] pushsymb 118 ............................ <#pSpritelist>
+  [195] pushint8 1 .............................. <1>
+  [197] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [199] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [201] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [203] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [205] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [207] getobjprop 134 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [209] pusharglist 1 ........................... <sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [211] extcall 98 .............................. <ilk(sprite(mywindow.pSpritelist[1]).pCustomData.mailto)>
+  [213] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData.mailto:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData.mailto)>
+  [214] getlocal 0 .............................. <mywindow>
+  [216] pushsymb 118 ............................ <#pSpritelist>
+  [218] pushint8 1 .............................. <1>
+  [220] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [222] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [224] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [226] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [228] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [230] getobjprop 134 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [232] joinpadstr .............................. <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData.mailto:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData.mailto) && sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [233] pusharglistnoret 1 ...................... <"_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData.mailto:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData.mailto) && sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [235] extcall 71 .............................. put "_MESSENGER_::sprite(mywindow.pSpriteList[1]).pCustomData.mailto:" && ilk(sprite(mywindow.pSpritelist[1]).pCustomData.mailto) && sprite(mywindow.pSpritelist[1]).pCustomData.mailto
+  [237] getlocal 0 .............................. <mywindow>
+  [239] pushsymb 118 ............................ <#pSpritelist>
+  [241] pushint8 1 .............................. <1>
+  [243] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [245] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [247] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [249] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [251] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [253] getobjprop 134 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.mailto>
+  [255] setlocal 2 .............................. aToScreenNameList = sprite(mywindow.pSpritelist[1]).pCustomData.mailto
+  [257] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [259] jmpifz [278] ............................ if the debugPlaybackEnabled then
+  [262] pushcons 59 ............................. <"_MESSENGER_::aToScreenNameList:">
+  [264] getlocal 2 .............................. <aToScreenNameList>
+  [266] pusharglist 1 ........................... <aToScreenNameList>
+  [268] extcall 98 .............................. <ilk(aToScreenNameList)>
+  [270] joinpadstr .............................. <"_MESSENGER_::aToScreenNameList:" && ilk(aToScreenNameList)>
+  [271] getlocal 2 .............................. <aToScreenNameList>
+  [273] joinpadstr .............................. <"_MESSENGER_::aToScreenNameList:" && ilk(aToScreenNameList) && aToScreenNameList>
+  [274] pusharglistnoret 1 ...................... <"_MESSENGER_::aToScreenNameList:" && ilk(aToScreenNameList) && aToScreenNameList>
+  [276] extcall 71 .............................. put "_MESSENGER_::aToScreenNameList:" && ilk(aToScreenNameList) && aToScreenNameList
+  [278] pushcons 60 ............................. <"message">
+  [280] pusharglist 1 ........................... <"message">
+  [282] extcall 102 ............................. <member("message")>
+  [284] getobjprop 103 .......................... <member("message").text>
+  [286] setlocal 3 .............................. sMessage = member("message").text
+  [288] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [290] jmpifz [309] ............................ if the debugPlaybackEnabled then
+  [293] pushcons 61 ............................. <"_MESSENGER_::sMessage:">
+  [295] getlocal 3 .............................. <sMessage>
+  [297] pusharglist 1 ........................... <sMessage>
+  [299] extcall 98 .............................. <ilk(sMessage)>
+  [301] joinpadstr .............................. <"_MESSENGER_::sMessage:" && ilk(sMessage)>
+  [302] getlocal 3 .............................. <sMessage>
+  [304] joinpadstr .............................. <"_MESSENGER_::sMessage:" && ilk(sMessage) && sMessage>
+  [305] pusharglistnoret 1 ...................... <"_MESSENGER_::sMessage:" && ilk(sMessage) && sMessage>
+  [307] extcall 71 .............................. put "_MESSENGER_::sMessage:" && ilk(sMessage) && sMessage
+  [309] getglobal 69 ............................ <oDenizenManager>
+  [311] getlocal 1 .............................. <sFromScreenName>
+  [313] getlocal 2 .............................. <aToScreenNameList>
+  [315] getlocal 3 .............................. <sMessage>
+  [317] pusharglistnoret 4 ...................... <oDenizenManager, sFromScreenName, aToScreenNameList, sMessage>
+  [319] objcall 35 .............................. oDenizenManager.sendMessage(sFromScreenName, aToScreenNameList, sMessage)
+  [321] getlocal 0 .............................. <mywindow>
+  [323] pushsymb 118 ............................ <#pSpritelist>
+  [325] pushint8 1 .............................. <1>
+  [327] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [329] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [331] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [333] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [335] pushsymb 119 ............................ <#pCustomData>
+  [337] pushsymb 135 ............................ <#camefrom>
+  [339] pusharglist 3 ........................... <sprite(mywindow.pSpritelist[1]), #pCustomData, #camefrom>
+  [341] objcall 95 .............................. <sprite(mywindow.pSpritelist[1]).pCustomData[#camefrom]>
+  [343] setlocal 4 .............................. camefrom = sprite(mywindow.pSpritelist[1]).pCustomData[#camefrom]
+  [345] getlocal 4 .............................. <camefrom>
+  [347] pushcons 44 ............................. <"read">
+  [349] eq ...................................... <camefrom = "read">
+  [350] jmpifz [364] ............................ if camefrom = "read" then / else
+  [353] getparam 0 .............................. <me>
+  [355] getlocal 4 .............................. <camefrom>
+  [357] pusharglistnoret 2 ...................... <me, camefrom>
+  [359] objcall 30 .............................. me.deleteMessage(camefrom)
+  [361] jmp [370]
+  [364] getparam 0 .............................. <me>
+  [366] pusharglistnoret 1 ...................... <me>
+  [368] objcall 34 .............................. me.cancelCompose()
+  [370] ret
+end
+
+on composeMessage me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] getchainedprop 111 ...................... <mywindow.pScrollingLists>
+  [ 12] getchainedprop 112 ...................... <mywindow.pScrollingLists.friendslist>
+  [ 14] getobjprop 115 .......................... <mywindow.pScrollingLists.friendslist.pSelectedFriends>
+  [ 16] setlocal 1 .............................. recipients = mywindow.pScrollingLists.friendslist.pSelectedFriends
+  [ 18] pushsymb 134 ............................ <#mailto>
+  [ 20] getlocal 1 .............................. <recipients>
+  [ 22] pushsymb 135 ............................ <#camefrom>
+  [ 24] pushcons 13 ............................. <"friends">
+  [ 26] pusharglist 4 ........................... <[#mailto: recipients, #camefrom: "friends"]>
+  [ 28] pushproplist ............................ <[#mailto: recipients, #camefrom: "friends"]>
+  [ 29] setlocal 2 .............................. pCustomData = [#mailto: recipients, #camefrom: "friends"]
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getlocal 2 .............................. <pCustomData>
+  [ 35] pusharglistnoret 2 ...................... <me, pCustomData>
+  [ 37] objcall 32 .............................. me.openCompose(pCustomData)
+  [ 39] ret
+end
+
+on replyToMessage me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pushsymb 118 ............................ <#pSpritelist>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 16] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 18] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 20] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 22] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 24] pushsymb 143 ............................ <#currentmsg>
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] pusharglist 3 ........................... <sprite(mywindow.pSpritelist[1]).pCustomData, #currentmsg, 1>
+  [ 30] objcall 95 .............................. <sprite(mywindow.pSpritelist[1]).pCustomData.currentmsg[1]>
+  [ 32] setlocal 1 .............................. mymsg = sprite(mywindow.pSpritelist[1]).pCustomData.currentmsg[1]
+  [ 34] getlocal 1 .............................. <mymsg>
+  [ 36] getobjprop 144 .......................... <mymsg.sender>
+  [ 38] setlocal 2 .............................. mysender = mymsg.sender
+  [ 40] pushsymb 134 ............................ <#mailto>
+  [ 42] getlocal 2 .............................. <mysender>
+  [ 44] pusharglist 1 ........................... <[mysender]>
+  [ 46] pushlist ................................ <[mysender]>
+  [ 47] pushsymb 135 ............................ <#camefrom>
+  [ 49] pushcons 44 ............................. <"read">
+  [ 51] pusharglist 4 ........................... <[#mailto: [mysender], #camefrom: "read"]>
+  [ 53] pushproplist ............................ <[#mailto: [mysender], #camefrom: "read"]>
+  [ 54] setlocal 3 .............................. pCustomData = [#mailto: [mysender], #camefrom: "read"]
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getlocal 3 .............................. <pCustomData>
+  [ 60] pusharglistnoret 2 ...................... <me, pCustomData>
+  [ 62] objcall 32 .............................. me.openCompose(pCustomData)
+  [ 64] ret
+end
+
+on addMessage me, aMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 63 ....................... <me.aMessages>
+  [  4] getparam 1 .............................. <aMessage>
+  [  6] pusharglistnoret 2 ...................... <me.aMessages, aMessage>
+  [  8] objcall 129 ............................. me.aMessages.add(aMessage)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 59 ........................... <me.iTotalMessageCount>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] add ..................................... <me.iTotalMessageCount + 1>
+  [ 19] setobjprop 59 ........................... me.iTotalMessageCount = me.iTotalMessageCount + 1
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] objcall 7 ............................... me.updateStatus()
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pusharglist 1 ........................... <me>
+  [ 31] objcall 10 .............................. <me.getOpenWindow()>
+  [ 33] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [ 35] getlocal 0 .............................. <mywindow>
+  [ 37] pusharglist 1 ........................... <mywindow>
+  [ 39] extcall 73 .............................. <voidp(mywindow)>
+  [ 41] not ..................................... <not voidp(mywindow)>
+  [ 42] jmpifz [ 62] ............................ if not voidp(mywindow) then
+  [ 45] getmovieprop 72 ......................... <the debugPlaybackEnabled>
+  [ 47] jmpifz [ 56] ............................ if the debugPlaybackEnabled then
+  [ 50] pushcons 62 ............................. <"_MESSENGER_::addMessage():displayCurrentWindow">
+  [ 52] pusharglistnoret 1 ...................... <"_MESSENGER_::addMessage():displayCurrentWindow">
+  [ 54] extcall 71 .............................. put "_MESSENGER_::addMessage():displayCurrentWindow"
+  [ 56] getparam 0 .............................. <me>
+  [ 58] pusharglistnoret 1 ...................... <me>
+  [ 60] objcall 12 .............................. me.displayCurrentWindow()
+  [ 62] ret
+end
+
+on openInvites me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 62 ........................... <me.aInvites>
+  [  4] getobjprop 84 ........................... <me.aInvites.count>
+  [  6] pushzero ................................ <0>
+  [  7] eq ...................................... <me.aInvites.count = 0>
+  [  8] jmpifz [ 20] ............................ if me.aInvites.count = 0 then / else
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] objcall 13 .............................. me.openMyInfo()
+  [ 17] jmp [ 28]
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushcons 63 ............................. <"console_getrequest.window">
+  [ 24] pusharglistnoret 2 ...................... <me, "console_getrequest.window">
+  [ 26] objcall 8 ............................... me.openWindow("console_getrequest.window")
+  [ 28] ret
+end
+
+on displayInvites me, mywindow
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 62 ............................. <#aInvites>
+  [  4] pusharglist 2 ........................... <me, #aInvites>
+  [  6] objcall 84 .............................. <me.aInvites.count>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] lt ...................................... <me.aInvites.count < 1>
+  [ 11] jmpifz [ 18] ............................ if me.aInvites.count < 1 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 65 .............................. return 
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 62 ............................. <#aInvites>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] pusharglist 3 ........................... <me, #aInvites, 1>
+  [ 26] objcall 95 .............................. <me.aInvites[1]>
+  [ 28] setlocal 0 .............................. myInvite = me.aInvites[1]
+  [ 30] getparam 1 .............................. <mywindow>
+  [ 32] pushsymb 118 ............................ <#pSpritelist>
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 38] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 40] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 42] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 44] getobjprop 119 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 46] pushsymb 163 ............................ <#currentinvite>
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 62 ........................... <me.aInvites>
+  [ 52] pusharglistnoret 3 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData, #currentinvite, me.aInvites>
+  [ 54] extcall 142 ............................. setaProp(sprite(mywindow.pSpritelist[1]).pCustomData, #currentinvite, me.aInvites)
+  [ 56] pushcons 64 ............................. <"requestsanfoname">
+  [ 58] pusharglist 1 ........................... <"requestsanfoname">
+  [ 60] extcall 102 ............................. <member("requestsanfoname")>
+  [ 62] getlocal 0 .............................. <myInvite>
+  [ 64] getobjprop 125 .......................... <myInvite.screenName>
+  [ 66] setobjprop 103 .......................... member("requestsanfoname").text = myInvite.screenName
+  [ 68] ret
+end
+
+on removeInvite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 10 .............................. <me.getOpenWindow()>
+  [  6] setlocal 0 .............................. mywindow = me.getOpenWindow()
+  [  8] getlocal 0 .............................. <mywindow>
+  [ 10] pusharglist 1 ........................... <mywindow>
+  [ 12] extcall 73 .............................. <voidp(mywindow)>
+  [ 14] getlocal 0 .............................. <mywindow>
+  [ 16] getobjprop 74 ........................... <mywindow.pname>
+  [ 18] pushcons 19 ............................. <"console_getrequest">
+  [ 20] nteq .................................... <mywindow.pname <> "console_getrequest">
+  [ 21] or ...................................... <voidp(mywindow) or (mywindow.pname <> "console_getrequest")>
+  [ 22] jmpifz [ 29] ............................ if voidp(mywindow) or (mywindow.pname <> "console_getrequest") then
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 65 .............................. return 
+  [ 29] getlocal 0 .............................. <mywindow>
+  [ 31] pushsymb 118 ............................ <#pSpritelist>
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 37] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 39] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 41] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [ 43] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [ 45] getobjprop 163 .......................... <sprite(mywindow.pSpritelist[1]).pCustomData.currentinvite>
+  [ 47] setlocal 1 .............................. currentinvite = sprite(mywindow.pSpritelist[1]).pCustomData.currentinvite
+  [ 49] getlocal 1 .............................. <currentinvite>
+  [ 51] getobjprop 84 ........................... <currentinvite.count>
+  [ 53] pushzero ................................ <0>
+  [ 54] eq ...................................... <currentinvite.count = 0>
+  [ 55] jmpifz [ 62] ............................ if currentinvite.count = 0 then
+  [ 58] pusharglistnoret 0 ...................... <>
+  [ 60] extcall 65 .............................. return 
+  [ 62] getlocal 1 .............................. <currentinvite>
+  [ 64] pushint8 1 .............................. <1>
+  [ 66] pusharglist 2 ........................... <currentinvite, 1>
+  [ 68] objcall 120 ............................. <currentinvite[1]>
+  [ 70] setlocal 2 .............................. aInvite = currentinvite[1]
+  [ 72] getlocal 2 .............................. <aInvite>
+  [ 74] getobjprop 125 .......................... <aInvite.screenName>
+  [ 76] setlocal 3 .............................. sInviter = aInvite.screenName
+  [ 78] getlocal 1 .............................. <currentinvite>
+  [ 80] pushint8 1 .............................. <1>
+  [ 82] pusharglistnoret 2 ...................... <currentinvite, 1>
+  [ 84] objcall 121 ............................. currentinvite.deleteAt(1)
+  [ 86] getlocal 0 .............................. <mywindow>
+  [ 88] pushsymb 118 ............................ <#pSpritelist>
+  [ 90] pushint8 1 .............................. <1>
+  [ 92] pusharglist 3 ........................... <mywindow, #pSpritelist, 1>
+  [ 94] objcall 95 .............................. <mywindow.pSpritelist[1]>
+  [ 96] pusharglist 1 ........................... <mywindow.pSpritelist[1]>
+  [ 98] extcall 117 ............................. <sprite(mywindow.pSpritelist[1])>
+  [100] getchainedprop 119 ...................... <sprite(mywindow.pSpritelist[1]).pCustomData>
+  [102] getlocal 1 .............................. <currentinvite>
+  [104] setobjprop 163 .......................... sprite(mywindow.pSpritelist[1]).pCustomData.currentinvite = currentinvite
+  [106] pushint8 1 .............................. <1>
+  [108] setlocal 4
+  [110] getlocal 4
+  [112] getparam 0 .............................. <me>
+  [114] getobjprop 62 ........................... <me.aInvites>
+  [116] getobjprop 84 ........................... <me.aInvites.count>
+  [118] lteq
+  [119] jmpifz [186] ............................ repeat with i = 1 to me.aInvites.count
+  [122] getparam 0 .............................. <me>
+  [124] pushsymb 62 ............................. <#aInvites>
+  [126] getlocal 4 .............................. <i>
+  [128] pusharglist 3 ........................... <me, #aInvites, i>
+  [130] objcall 95 .............................. <me.aInvites[i]>
+  [132] setlocal 2 .............................. aInvite = me.aInvites[i]
+  [134] getlocal 2 .............................. <aInvite>
+  [136] getobjprop 125 .......................... <aInvite.screenName>
+  [138] getlocal 3 .............................. <sInviter>
+  [140] eq ...................................... <aInvite.screenName = sInviter>
+  [141] jmpifz [177] ............................ if aInvite.screenName = sInviter then
+  [144] getparam 0 .............................. <me>
+  [146] getchainedprop 62 ....................... <me.aInvites>
+  [148] getlocal 4 .............................. <i>
+  [150] pusharglistnoret 2 ...................... <me.aInvites, i>
+  [152] objcall 121 ............................. me.aInvites.deleteAt(i)
+  [154] getparam 0 .............................. <me>
+  [156] getobjprop 58 ........................... <me.iInviteCount>
+  [158] pushzero ................................ <0>
+  [159] gt ...................................... <me.iInviteCount > 0>
+  [160] jmpifz [174] ............................ if me.iInviteCount > 0 then
+  [163] getparam 0 .............................. <me>
+  [165] getparam 0 .............................. <me>
+  [167] getobjprop 58 ........................... <me.iInviteCount>
+  [169] pushint8 1 .............................. <1>
+  [171] sub ..................................... <me.iInviteCount - 1>
+  [172] setobjprop 58 ........................... me.iInviteCount = me.iInviteCount - 1
+  [174] jmp [186] ............................... exit repeat
+  [177] pushint8 1
+  [179] getlocal 4
+  [181] add
+  [182] setlocal 4
+  [184] endrepeat [110]
+  [186] getparam 0 .............................. <me>
+  [188] pusharglistnoret 1 ...................... <me>
+  [190] objcall 39 .............................. me.openInvites()
+  [192] ret
+end
+
+on rejectInvite me
+  [  0] pushcons 64 ............................. <"requestsanfoname">
+  [  2] pusharglist 1 ........................... <"requestsanfoname">
+  [  4] extcall 102 ............................. <member("requestsanfoname")>
+  [  6] getobjprop 103 .......................... <member("requestsanfoname").text>
+  [  8] setlocal 0 .............................. sInviter = member("requestsanfoname").text
+  [ 10] getglobal 69 ............................ <oDenizenManager>
+  [ 12] pusharglist 1 ........................... <oDenizenManager>
+  [ 14] objcall 101 ............................. <oDenizenManager.getScreenName()>
+  [ 16] setlocal 1 .............................. sInvitee = oDenizenManager.getScreenName()
+  [ 18] getglobal 69 ............................ <oDenizenManager>
+  [ 20] getlocal 1 .............................. <sInvitee>
+  [ 22] getlocal 0 .............................. <sInviter>
+  [ 24] pusharglistnoret 3 ...................... <oDenizenManager, sInvitee, sInviter>
+  [ 26] objcall 167 ............................. oDenizenManager.rejectInvitation(sInvitee, sInviter)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pusharglistnoret 2 ...................... <me, me>
+  [ 34] objcall 41 .............................. me.removeInvite(me)
+  [ 36] ret
+end
+
+on acceptInvite me
+  [  0] pushcons 64 ............................. <"requestsanfoname">
+  [  2] pusharglist 1 ........................... <"requestsanfoname">
+  [  4] extcall 102 ............................. <member("requestsanfoname")>
+  [  6] getobjprop 103 .......................... <member("requestsanfoname").text>
+  [  8] setlocal 0 .............................. sInviter = member("requestsanfoname").text
+  [ 10] getglobal 69 ............................ <oDenizenManager>
+  [ 12] pusharglist 1 ........................... <oDenizenManager>
+  [ 14] objcall 101 ............................. <oDenizenManager.getScreenName()>
+  [ 16] setlocal 1 .............................. sInvitee = oDenizenManager.getScreenName()
+  [ 18] getglobal 69 ............................ <oDenizenManager>
+  [ 20] getlocal 1 .............................. <sInvitee>
+  [ 22] getlocal 0 .............................. <sInviter>
+  [ 24] pusharglistnoret 3 ...................... <oDenizenManager, sInvitee, sInviter>
+  [ 26] objcall 169 ............................. oDenizenManager.acceptInvitation(sInvitee, sInviter)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pusharglistnoret 2 ...................... <me, me>
+  [ 34] objcall 41 .............................. me.removeInvite(me)
+  [ 36] ret
+end
+
+on addInvite me, aFriend
+  [  0] getparam 1 .............................. <aFriend>
+  [  2] pushsymb 125 ............................ <#screenName>
+  [  4] pusharglist 2 ........................... <aFriend, #screenName>
+  [  6] objcall 120 ............................. <aFriend[#screenName]>
+  [  8] setlocal 0 .............................. sFriendName = aFriend[#screenName]
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getlocal 0 .............................. <sFriendName>
+  [ 14] pusharglist 2 ........................... <me, sFriendName>
+  [ 16] objcall 24 .............................. <me.isFriend(sFriendName)>
+  [ 18] jmpifz [ 25] ............................ if me.isFriend(sFriendName) then
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 65 .............................. return 
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getchainedprop 62 ....................... <me.aInvites>
+  [ 29] getparam 1 .............................. <aFriend>
+  [ 31] pusharglistnoret 2 ...................... <me.aInvites, aFriend>
+  [ 33] objcall 129 ............................. me.aInvites.add(aFriend)
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getobjprop 58 ........................... <me.iInviteCount>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] add ..................................... <me.iInviteCount + 1>
+  [ 44] setobjprop 58 ........................... me.iInviteCount = me.iInviteCount + 1
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglistnoret 1 ...................... <me>
+  [ 50] objcall 7 ............................... me.updateStatus()
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglist 1 ........................... <me>
+  [ 56] objcall 10 .............................. <me.getOpenWindow()>
+  [ 58] setlocal 1 .............................. mywindow = me.getOpenWindow()
+  [ 60] getlocal 1 .............................. <mywindow>
+  [ 62] pusharglist 1 ........................... <mywindow>
+  [ 64] extcall 73 .............................. <voidp(mywindow)>
+  [ 66] not ..................................... <not voidp(mywindow)>
+  [ 67] jmpifz [ 76] ............................ if not voidp(mywindow) then
+  [ 70] getparam 0 .............................. <me>
+  [ 72] pusharglistnoret 1 ...................... <me>
+  [ 74] objcall 12 .............................. me.displayCurrentWindow()
+  [ 76] ret
+end
+
+on addMyInvite me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 55 ........................... <me.aMyInvites>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 84
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 47] ............................ repeat with sMyInvite in me.aMyInvites
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 120
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <sMyInvite>
+  [ 32] getparam 1 .............................. <sScreenName>
+  [ 34] eq ...................................... <sMyInvite = sScreenName>
+  [ 35] jmpifz [ 42] ............................ if sMyInvite = sScreenName then
+  [ 38] pusharglistnoret 0 ...................... <>
+  [ 40] extcall 65 .............................. return 
+  [ 42] pushint8 1
+  [ 44] add
+  [ 45] endrepeat [ 12]
+  [ 47] pop 3
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getchainedprop 55 ....................... <me.aMyInvites>
+  [ 53] getparam 1 .............................. <sScreenName>
+  [ 55] pusharglistnoret 2 ...................... <me.aMyInvites, sScreenName>
+  [ 57] objcall 129 ............................. me.aMyInvites.add(sScreenName)
+  [ 59] ret
+end
+
+on haveInvited me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 55 ........................... <me.aMyInvites>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 84
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 49] ............................ repeat with sMyInvite in me.aMyInvites
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 120
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <sMyInvite>
+  [ 32] getparam 1 .............................. <sScreenName>
+  [ 34] eq ...................................... <sMyInvite = sScreenName>
+  [ 35] jmpifz [ 44] ............................ if sMyInvite = sScreenName then
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] pusharglistnoret 1 ...................... <1>
+  [ 42] extcall 65 .............................. return 1
+  [ 44] pushint8 1
+  [ 46] add
+  [ 47] endrepeat [ 12]
+  [ 49] pop 3
+  [ 51] pushzero ................................ <0>
+  [ 52] pusharglistnoret 1 ...................... <0>
+  [ 54] extcall 65 .............................. return 0
+  [ 56] ret
+end

@@ -1,0 +1,106 @@
+property pID, pParentWindow, pGroupID
+
+on new me, id, myparent
+  [  0] getparam 1 .............................. <id>
+  [  2] setprop 439 ............................. pID = id
+  [  5] getparam 2 .............................. <myparent>
+  [  7] setprop 467 ............................. pParentWindow = myparent
+  [ 10] pushcons 0 .............................. <"_">
+  [ 12] setmovieprop 135 ........................ the itemDelimiter = "_"
+  [ 14] getprop 439 ............................. <pID>
+  [ 17] pushsymb 137 ............................ <#item>
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] getprop 439 ............................. <pID>
+  [ 24] pushsymb 136 ............................ <#items>
+  [ 26] pusharglist 2 ........................... <pID, #items>
+  [ 28] objcall 104 ............................. <pID.items.count>
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] sub ..................................... <pID.items.count - 1>
+  [ 33] pusharglist 4 ........................... <pID, #item, 1, pID.items.count - 1>
+  [ 35] objcall 108 ............................. <pID.item[1..pID.items.count - 1]>
+  [ 37] setprop 625 ............................. pGroupID = pID.item[1..pID.items.count - 1]
+  [ 40] pushcons 1 .............................. <",">
+  [ 42] setmovieprop 135 ........................ the itemDelimiter = ","
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pusharglistnoret 1 ...................... <me>
+  [ 48] extcall 78 .............................. return me
+  [ 50] ret
+end
+
+on mouseUp me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. groupBtn = []
+  [  5] getprop 467 ............................. <pParentWindow>
+  [  8] getobjprop 250 .......................... <pParentWindow.pSpritelist>
+  [ 10] peek 0
+  [ 12] pusharglist 1
+  [ 14] extcall 104
+  [ 16] pushint8 1
+  [ 18] peek 0
+  [ 20] peek 2
+  [ 22] lteq
+  [ 23] jmpifz [ 81] ............................ repeat with n in pParentWindow.pSpritelist
+  [ 26] peek 2
+  [ 28] peek 1
+  [ 30] pusharglist 2
+  [ 32] extcall 95
+  [ 34] setlocal 1
+  [ 36] getlocal 1 .............................. <n>
+  [ 38] pusharglist 1 ........................... <n>
+  [ 40] extcall 177 ............................. <sprite(n)>
+  [ 42] getchainedprop 101 ...................... <sprite(n).member>
+  [ 44] getobjprop 90 ........................... <sprite(n).member.name>
+  [ 46] pushcons 2 .............................. <"cc.radiobutton.">
+  [ 48] containsstr ............................. <sprite(n).member.name contains "cc.radiobutton.">
+  [ 49] jmpifz [ 76] ............................ if sprite(n).member.name contains "cc.radiobutton." then
+  [ 52] getlocal 1 .............................. <n>
+  [ 54] pusharglist 1 ........................... <n>
+  [ 56] extcall 177 ............................. <sprite(n)>
+  [ 58] getobjprop 439 .......................... <sprite(n).pID>
+  [ 61] getprop 625 ............................. <pGroupID>
+  [ 64] containsstr ............................. <sprite(n).pID contains pGroupID>
+  [ 65] jmpifz [ 76] ............................ if sprite(n).pID contains pGroupID then
+  [ 68] getlocal 0 .............................. <groupBtn>
+  [ 70] getlocal 1 .............................. <n>
+  [ 72] pusharglistnoret 2 ...................... <groupBtn, n>
+  [ 74] extcall 190 ............................. append(groupBtn, n)
+  [ 76] pushint8 1
+  [ 78] add
+  [ 79] endrepeat [ 18]
+  [ 81] pop 3
+  [ 83] getlocal 0 .............................. <groupBtn>
+  [ 85] peek 0
+  [ 87] pusharglist 1
+  [ 89] extcall 104
+  [ 91] pushint8 1
+  [ 93] peek 0
+  [ 95] peek 2
+  [ 97] lteq
+  [ 98] jmpifz [130] ............................ repeat with n in groupBtn
+  [101] peek 2
+  [103] peek 1
+  [105] pusharglist 2
+  [107] extcall 95
+  [109] setlocal 1
+  [111] getlocal 1 .............................. <n>
+  [113] pusharglist 1 ........................... <n>
+  [115] extcall 177 ............................. <sprite(n)>
+  [117] pushcons 3 .............................. <"cc.radiobutton.active.off">
+  [119] pusharglist 1 ........................... <"cc.radiobutton.active.off">
+  [121] extcall 101 ............................. <member("cc.radiobutton.active.off")>
+  [123] setobjprop 101 .......................... sprite(n).member = member("cc.radiobutton.active.off")
+  [125] pushint8 1
+  [127] add
+  [128] endrepeat [ 93]
+  [130] pop 3
+  [132] getparam 0 .............................. <me>
+  [134] getobjprop 429 .......................... <me.spriteNum>
+  [137] pusharglist 1 ........................... <me.spriteNum>
+  [139] extcall 177 ............................. <sprite(me.spriteNum)>
+  [141] pushcons 4 .............................. <"cc.radiobutton.active.on">
+  [143] pusharglist 1 ........................... <"cc.radiobutton.active.on">
+  [145] extcall 101 ............................. <member("cc.radiobutton.active.on")>
+  [147] setobjprop 101 .......................... sprite(me.spriteNum).member = member("cc.radiobutton.active.on")
+  [149] ret
+end

@@ -1,0 +1,85 @@
+property ancestor
+global oPossessionStudio
+
+on new me, _oItem, aAttributes
+  [  0] pushcons 0 .............................. <"toggle_state aAttributes:">
+  [  2] getparam 2 .............................. <aAttributes>
+  [  4] joinpadstr .............................. <"toggle_state aAttributes:" && aAttributes>
+  [  5] pusharglistnoret 1 ...................... <"toggle_state aAttributes:" && aAttributes>
+  [  7] extcall 274 ............................. put "toggle_state aAttributes:" && aAttributes
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pushcons 1 .............................. <"ACTION_DEFAULT">
+  [ 14] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [ 16] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [ 18] getparam 1 .............................. <_oItem>
+  [ 20] getparam 2 .............................. <aAttributes>
+  [ 22] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 24] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 26] setobjprop 779 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglistnoret 1 ...................... <me>
+  [ 33] objcall 1281 ............................ me.displayState()
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pusharglistnoret 1 ...................... <me>
+  [ 40] extcall 93 .............................. return me
+  [ 42] ret
+end
+
+on mouseDownEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 779 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 10 .............................. me.ancestor.mouseDownEvent()
+  [  9] pusharglist 0 ........................... <>
+  [ 11] thebuiltin 977 .......................... <the doubleClick>
+  [ 14] jmpifz [ 24] ............................ if the doubleClick then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 1 ...................... <me>
+  [ 21] objcall 1441 ............................ me.toggleState()
+  [ 24] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 225 ...................... <me.oItem>
+  [  4] getparam 0 .............................. <me>
+  [  6] getchainedprop 225 ...................... <me.oItem>
+  [  8] pusharglist 1 ........................... <me.oItem>
+  [ 10] objcall 1180 ............................ <me.oItem.getState()>
+  [ 13] pusharglistnoret 2 ...................... <me.oItem, me.oItem.getState()>
+  [ 15] objcall 1246 ............................ me.oItem.setFrame(me.oItem.getState())
+  [ 18] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 225 ...................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1180 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 28] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getchainedprop 225 ...................... <me.oItem>
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 22] objcall 1179 ............................ me.oItem.setState(1)
+  [ 25] jmp [ 38]
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getchainedprop 225 ...................... <me.oItem>
+  [ 32] pushzero ................................ <0>
+  [ 33] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 35] objcall 1179 ............................ me.oItem.setState(0)
+  [ 38] getglobal 296 ........................... <oPossessionStudio>
+  [ 41] pusharglist 1 ........................... <oPossessionStudio>
+  [ 43] extcall 106 ............................. <voidp(oPossessionStudio)>
+  [ 45] not ..................................... <not voidp(oPossessionStudio)>
+  [ 46] jmpifz [ 64] ............................ if not voidp(oPossessionStudio) then
+  [ 49] getglobal 296 ........................... <oPossessionStudio>
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglist 1 ........................... <me>
+  [ 56] objcall 1442 ............................ <me.getItem()>
+  [ 59] pusharglistnoret 2 ...................... <oPossessionStudio, me.getItem()>
+  [ 61] objcall 297 ............................. oPossessionStudio.sendUpdatePossession(me.getItem())
+  [ 64] ret
+end

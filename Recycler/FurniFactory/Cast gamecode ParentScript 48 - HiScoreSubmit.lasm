@@ -1,0 +1,123 @@
+property netID
+global oServerHelper, sInputString, sAvatarString, sScreenName, sTimeString, iLatestScore, sHiScoreURL
+
+on new me
+  [  0] pushcons 0 .............................. <"theGameID=2&">
+  [  2] getglobal 784 ........................... <oServerHelper>
+  [  5] pusharglist 1 ........................... <oServerHelper>
+  [  7] objcall 753 ............................. <oServerHelper.getScreenNameStringForServerCall()>
+  [ 10] joinstr ................................. <"theGameID=2&" & oServerHelper.getScreenNameStringForServerCall()>
+  [ 11] pushcons 1 .............................. <"&">
+  [ 13] joinstr ................................. <"theGameID=2&" & oServerHelper.getScreenNameStringForServerCall() & "&">
+  [ 14] getglobal 784 ........................... <oServerHelper>
+  [ 17] pusharglist 1 ........................... <oServerHelper>
+  [ 19] objcall 754 ............................. <oServerHelper.getScoreStringForServerCall()>
+  [ 22] joinstr ................................. <"theGameID=2&" & oServerHelper.getScreenNameStringForServerCall() & "&" & oServerHelper.getScoreStringForServerCall()>
+  [ 23] pushcons 1 .............................. <"&">
+  [ 25] joinstr ................................. <"theGameID=2&" & oServerHelper.getScreenNameStringForServerCall() & "&" & oServerHelper.getScoreStringForServerCall() & "&">
+  [ 26] getglobal 784 ........................... <oServerHelper>
+  [ 29] pusharglist 1 ........................... <oServerHelper>
+  [ 31] objcall 752 ............................. <oServerHelper.getDateStringForServerCall()>
+  [ 34] joinstr ................................. <"theGameID=2&" & oServerHelper.getScreenNameStringForServerCall() & "&" & oServerHelper.getScoreStringForServerCall() & "&" & oServerHelper.getDateStringForServerCall()>
+  [ 35] setlocal 0 .............................. sRawSubmission = "theGameID=2&" & oServerHelper.getScreenNameStringForServerCall() & "&" & oServerHelper.getScoreStringForServerCall() & "&" & oServerHelper.getDateStringForServerCall()
+  [ 37] pushcons 2 .............................. <"hotdog">
+  [ 39] pusharglist 1 ........................... <"hotdog">
+  [ 41] extcall 64 .............................. <script("hotdog")>
+  [ 43] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 46] getlocal 0 .............................. <sRawSubmission>
+  [ 48] pusharglist 2 ........................... <script("hotdog").pickle, sRawSubmission>
+  [ 50] objcall 66 .............................. <script("hotdog").pickle.Encrypt(sRawSubmission)>
+  [ 52] setlocal 1 .............................. sEncryptedSubmission = script("hotdog").pickle.Encrypt(sRawSubmission)
+  [ 54] getlocal 1 .............................. <sEncryptedSubmission>
+  [ 56] pusharglist 1 ........................... <sEncryptedSubmission>
+  [ 58] extcall 785 ............................. <base64Encode(sEncryptedSubmission)>
+  [ 61] setlocal 2 .............................. sB64edSubmission = base64Encode(sEncryptedSubmission)
+  [ 63] pushsymb 786 ............................ <#var>
+  [ 66] getlocal 2 .............................. <sB64edSubmission>
+  [ 68] pusharglist 2 ........................... <[#var: sB64edSubmission]>
+  [ 70] pushproplist ............................ <[#var: sB64edSubmission]>
+  [ 71] setlocal 3 .............................. pList = [#var: sB64edSubmission]
+  [ 73] getparam 0 .............................. <me>
+  [ 75] getglobal 788 ........................... <sHiScoreURL>
+  [ 78] getlocal 3 .............................. <pList>
+  [ 80] pusharglist 2 ........................... <sHiScoreURL, pList>
+  [ 82] extcall 787 ............................. <postNetText(sHiScoreURL, pList)>
+  [ 85] setobjprop 789 .......................... me.netID = postNetText(sHiScoreURL, pList)
+  [ 88] pushsymb 95 ............................. <#showAlert>
+  [ 90] pushcons 3 .............................. <"Checking your score against the high score list...">
+  [ 92] pusharglistnoret 2 ...................... <#showAlert, "Checking your score against the high score list...">
+  [ 94] extcall 94 .............................. sendAllSprites(#showAlert, "Checking your score against the high score list...")
+  [ 96] getmovieprop 60 ......................... <the actorList>
+  [ 98] getparam 0 .............................. <me>
+  [100] pusharglistnoret 2 ...................... <the actorList, me>
+  [102] objcall 81 .............................. (the actorList).add(me)
+  [104] getparam 0 .............................. <me>
+  [106] pusharglistnoret 1 ...................... <me>
+  [108] extcall 63 .............................. return me
+  [110] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 789 .......................... <me.netID>
+  [  5] pusharglist 1 ........................... <me.netID>
+  [  7] extcall 744 ............................. <netDone(me.netID)>
+  [ 10] jmpifz [129] ............................ if netDone(me.netID) then
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 789 .......................... <me.netID>
+  [ 18] pusharglist 1 ........................... <me.netID>
+  [ 20] extcall 794 ............................. <netTextresult(me.netID)>
+  [ 23] setlocal 0 .............................. sTemp = netTextresult(me.netID)
+  [ 25] getlocal 0 .............................. <sTemp>
+  [ 27] pushsymb 774 ............................ <#chars>
+  [ 30] pusharglist 2 ........................... <sTemp, #chars>
+  [ 32] objcall 88 .............................. <sTemp.chars.count>
+  [ 34] pushint8 45 ............................. <45>
+  [ 36] lt ...................................... <sTemp.chars.count < 45>
+  [ 37] jmpifz [ 99] ............................ if sTemp.chars.count < 45 then / else
+  [ 40] getlocal 0 .............................. <sTemp>
+  [ 42] peek 0 .................................. case sTemp of
+  [ 44] pushcons 4 .............................. <"-1">
+  [ 46] eq
+  [ 47] jmpifz [ 61] ............................ (case) "-1":
+  [ 50] pushsymb 95 ............................. <#showAlert>
+  [ 52] pushcons 5 .............................. <"Sorry, there has been an error. Please try again later.">
+  [ 54] pusharglistnoret 2 ...................... <#showAlert, "Sorry, there has been an error. Please try again later.">
+  [ 56] extcall 94 .............................. sendAllSprites(#showAlert, "Sorry, there has been an error. Please try again later.")
+  [ 58] jmp [ 94]
+  [ 61] peek 0
+  [ 63] pushcons 6 .............................. <"0">
+  [ 65] eq
+  [ 66] jmpifz [ 80] ............................ (case) "0":
+  [ 69] pushsymb 95 ............................. <#showAlert>
+  [ 71] pushcons 7 .............................. <"Sorry, you didn't make the high score list. Please try again.">
+  [ 73] pusharglistnoret 2 ...................... <#showAlert, "Sorry, you didn't make the high score list. Please try again.">
+  [ 75] extcall 94 .............................. sendAllSprites(#showAlert, "Sorry, you didn't make the high score list. Please try again.")
+  [ 77] jmp [ 94] ............................... (case) otherwise:
+  [ 80] pushsymb 95 ............................. <#showAlert>
+  [ 82] pushcons 8 .............................. <"Congratulations, your score is currently ranked at #">
+  [ 84] getlocal 0 .............................. <sTemp>
+  [ 86] joinstr ................................. <"Congratulations, your score is currently ranked at #" & sTemp>
+  [ 87] pushcons 9 .............................. <"for the day.">
+  [ 89] joinpadstr .............................. <"Congratulations, your score is currently ranked at #" & sTemp && "for the day.">
+  [ 90] pusharglistnoret 2 ...................... <#showAlert, "Congratulations, your score is currently ranked at #" & sTemp && "for the day.">
+  [ 92] extcall 94 .............................. sendAllSprites(#showAlert, "Congratulations, your score is currently ranked at #" & sTemp && "for the day.")
+  [ 94] pop 1 ................................... end case
+  [ 96] jmp [121]
+  [ 99] pushsymb 95 ............................. <#showAlert>
+  [101] pushcons 10 ............................. <"Result:">
+  [103] getlocal 0 .............................. <sTemp>
+  [105] pushsymb 394 ............................ <#char>
+  [108] pushint8 1 .............................. <1>
+  [110] pushint8 45 ............................. <45>
+  [112] pusharglist 4 ........................... <sTemp, #char, 1, 45>
+  [114] objcall 54 .............................. <sTemp.char[1..45]>
+  [116] joinpadstr .............................. <"Result:" && sTemp.char[1..45]>
+  [117] pusharglistnoret 2 ...................... <#showAlert, "Result:" && sTemp.char[1..45]>
+  [119] extcall 94 .............................. sendAllSprites(#showAlert, "Result:" && sTemp.char[1..45])
+  [121] getmovieprop 60 ......................... <the actorList>
+  [123] getparam 0 .............................. <me>
+  [125] pusharglistnoret 2 ...................... <the actorList, me>
+  [127] objcall 62 .............................. (the actorList).deleteOne(me)
+  [129] ret
+end

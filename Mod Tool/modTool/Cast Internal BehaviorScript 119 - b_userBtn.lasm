@@ -1,0 +1,660 @@
+property pAction, pTargetMarker, pSprite, pAdminMod, bDebug
+global oUserDisplayManager, oCallAlertDisplayManager, sModScreenName, oMessageManager, oDenizenManager, oEditAvatarManager, oModControllerManager
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. mylist = [:]
+  [  5] getlocal 0 .............................. <mylist>
+  [  7] pushsymb 492 ............................ <#pAdminMod>
+  [ 10] pushsymb 88 ............................. <#comment>
+  [ 12] pushcons 0 .............................. <"Display for AdminMod only?:">
+  [ 14] pushsymb 89 ............................. <#format>
+  [ 16] pushsymb 90 ............................. <#boolean>
+  [ 18] pushsymb 91 ............................. <#default>
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglist 6 ........................... <[#comment: "Display for AdminMod only?:", #format: #boolean, #default: 0]>
+  [ 23] pushproplist ............................ <[#comment: "Display for AdminMod only?:", #format: #boolean, #default: 0]>
+  [ 24] pusharglistnoret 3 ...................... <mylist, #pAdminMod, [#comment: "Display for AdminMod only?:", #format: #boolean, #default: 0]>
+  [ 26] objcall 68 .............................. mylist[#pAdminMod] = [#comment: "Display for AdminMod only?:", #format: #boolean, #default: 0]
+  [ 28] getlocal 0 .............................. <mylist>
+  [ 30] pushsymb 466 ............................ <#pTargetMarker>
+  [ 33] pushsymb 88 ............................. <#comment>
+  [ 35] pushcons 1 .............................. <"Go Target Marker:">
+  [ 37] pushsymb 89 ............................. <#format>
+  [ 39] pushsymb 467 ............................ <#marker>
+  [ 42] pushsymb 91 ............................. <#default>
+  [ 44] pushcons 2 .............................. <EMPTY>
+  [ 46] pusharglist 6 ........................... <[#comment: "Go Target Marker:", #format: #marker, #default: EMPTY]>
+  [ 48] pushproplist ............................ <[#comment: "Go Target Marker:", #format: #marker, #default: EMPTY]>
+  [ 49] pusharglistnoret 3 ...................... <mylist, #pTargetMarker, [#comment: "Go Target Marker:", #format: #marker, #default: EMPTY]>
+  [ 51] objcall 68 .............................. mylist[#pTargetMarker] = [#comment: "Go Target Marker:", #format: #marker, #default: EMPTY]
+  [ 53] getlocal 0 .............................. <mylist>
+  [ 55] pushsymb 96 ............................. <#pAction>
+  [ 57] pushsymb 88 ............................. <#comment>
+  [ 59] pushcons 3 .............................. <"Action:">
+  [ 61] pushsymb 89 ............................. <#format>
+  [ 63] pushsymb 94 ............................. <#string>
+  [ 65] pushsymb 91 ............................. <#default>
+  [ 67] pushcons 4 .............................. <"BEEP">
+  [ 69] pushsymb 97 ............................. <#range>
+  [ 71] pushcons 4 .............................. <"BEEP">
+  [ 73] pushcons 5 .............................. <"nothing">
+  [ 75] pushcons 6 .............................. <"go pTargetMarker">
+  [ 77] pushcons 7 .............................. <"displayUser(me)">
+  [ 79] pushcons 8 .............................. <"pickUp(me)">
+  [ 81] pushcons 9 .............................. <"deleteCallAlert(me)">
+  [ 83] pushcons 10 ............................. <"answer(me)">
+  [ 85] pushcons 11 ............................. <"changeUserMission(me)">
+  [ 87] pushcons 12 ............................. <"message(me)">
+  [ 89] pushcons 13 ............................. <"warn(me)">
+  [ 91] pushcons 14 ............................. <"ban(me)">
+  [ 93] pusharglist 11 .......................... <["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]>
+  [ 95] pushlist ................................ <["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]>
+  [ 96] pusharglist 8 ........................... <[#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]]>
+  [ 98] pushproplist ............................ <[#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]]>
+  [ 99] pusharglistnoret 3 ...................... <mylist, #pAction, [#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]]>
+  [101] objcall 68 .............................. mylist[#pAction] = [#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "go pTargetMarker", "displayUser(me)", "pickUp(me)", "deleteCallAlert(me)", "answer(me)", "changeUserMission(me)", "message(me)", "warn(me)", "ban(me)"]]
+  [103] getlocal 0 .............................. <mylist>
+  [105] pusharglistnoret 1 ...................... <mylist>
+  [107] extcall 31 .............................. return mylist
+  [109] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getprop 492 ............................. <pAdminMod>
+  [ 13] jmpifz [ 22] ............................ if pAdminMod then
+  [ 16] getprop 11 .............................. <pSprite>
+  [ 18] pushzero ................................ <0>
+  [ 19] setobjprop 493 .......................... pSprite.visible = 0
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] setobjprop 10 ........................... me.bDebug = 1
+  [ 28] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 25] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 15 ............................. <"b_userBtn:">
+  [ 12] getprop 96 .............................. <pAction>
+  [ 14] joinpadstr .............................. <"b_userBtn:" && pAction>
+  [ 15] pushcons 16 ............................. <":">
+  [ 17] joinpadstr .............................. <"b_userBtn:" && pAction && ":">
+  [ 18] getparam 1 .............................. <sMessage>
+  [ 20] joinpadstr .............................. <"b_userBtn:" && pAction && ":" && sMessage>
+  [ 21] pusharglistnoret 1 ...................... <"b_userBtn:" && pAction && ":" && sMessage>
+  [ 23] extcall 38 .............................. put "b_userBtn:" && pAction && ":" && sMessage
+  [ 25] ret
+end
+
+on mouseUp me
+  [  0] getprop 96 .............................. <pAction>
+  [  2] pusharglistnoret 1 ...................... <pAction>
+  [  4] extcall 185 ............................. do(pAction)
+  [  6] ret
+end
+
+on displayUser me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] pushsymb 20 ............................. <#pCallAlertList>
+  [  4] pusharglist 2 ........................... <oCallAlertDisplayManager, #pCallAlertList>
+  [  6] objcall 32 .............................. <oCallAlertDisplayManager.pCallAlertList.count>
+  [  8] pushzero ................................ <0>
+  [  9] eq ...................................... <oCallAlertDisplayManager.pCallAlertList.count = 0>
+  [ 10] jmpifz [ 14] ............................ if oCallAlertDisplayManager.pCallAlertList.count = 0 then
+  [ 13] ret ..................................... exit
+  [ 14] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 16] pushsymb 20 ............................. <#pCallAlertList>
+  [ 18] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 20] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 22] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 24] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 26] getobjprop 46 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].screenName>
+  [ 28] setlocal 0 .............................. sScreenName = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].screenName
+  [ 30] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 32] pushsymb 20 ............................. <#pCallAlertList>
+  [ 34] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 36] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 38] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 40] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 42] getobjprop 47 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName>
+  [ 44] setlocal 1 .............................. sStudioName = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName
+  [ 46] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 48] pushsymb 20 ............................. <#pCallAlertList>
+  [ 50] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 52] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 54] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 56] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 58] getobjprop 48 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioOwner>
+  [ 60] setlocal 2 .............................. sStudioOwner = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioOwner
+  [ 62] getglobal 52 ............................ <oUserDisplayManager>
+  [ 64] getlocal 0 .............................. <sScreenName>
+  [ 66] getlocal 1 .............................. <sStudioName>
+  [ 68] getlocal 2 .............................. <sStudioOwner>
+  [ 70] pushint8 1 .............................. <1>
+  [ 72] pusharglistnoret 5 ...................... <oUserDisplayManager, sScreenName, sStudioName, sStudioOwner, 1>
+  [ 74] objcall 53 .............................. oUserDisplayManager.displayExtendedUserInfo(sScreenName, sStudioName, sStudioOwner, 1)
+  [ 76] ret
+end
+
+on pickUp me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] pushsymb 20 ............................. <#pCallAlertList>
+  [  4] pusharglist 2 ........................... <oCallAlertDisplayManager, #pCallAlertList>
+  [  6] objcall 32 .............................. <oCallAlertDisplayManager.pCallAlertList.count>
+  [  8] pushzero ................................ <0>
+  [  9] eq ...................................... <oCallAlertDisplayManager.pCallAlertList.count = 0>
+  [ 10] jmpifz [ 23] ............................ if oCallAlertDisplayManager.pCallAlertList.count = 0 then / else
+  [ 13] pushcons 17 ............................. <"exit 1">
+  [ 15] pusharglistnoret 1 ...................... <"exit 1">
+  [ 17] extcall 38 .............................. put "exit 1"
+  [ 19] ret ..................................... exit
+  [ 20] jmp [ 47]
+  [ 23] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 25] pushsymb 20 ............................. <#pCallAlertList>
+  [ 27] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 29] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 31] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 33] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 35] getobjprop 42 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert>
+  [ 37] jmpifz [ 47] ............................ if oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert then
+  [ 40] pushcons 18 ............................. <"exit 2">
+  [ 42] pusharglistnoret 1 ...................... <"exit 2">
+  [ 44] extcall 38 .............................. put "exit 2"
+  [ 46] ret ..................................... exit
+  [ 47] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 49] pushsymb 20 ............................. <#pCallAlertList>
+  [ 51] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 53] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 55] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 57] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 59] getobjprop 43 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isPickedUp>
+  [ 61] not ..................................... <not oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isPickedUp>
+  [ 62] jmpifz [268] ............................ if not oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isPickedUp then
+  [ 65] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 67] pushsymb 20 ............................. <#pCallAlertList>
+  [ 69] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 71] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 73] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 75] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 77] getobjprop 34 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID>
+  [ 79] setlocal 0 .............................. iCallID = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID
+  [ 81] pushint8 1 .............................. <1>
+  [ 83] setlocal 1
+  [ 85] getlocal 1
+  [ 87] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 89] pushsymb 18 ............................. <#aCallList>
+  [ 91] pusharglist 2 ........................... <oCallAlertDisplayManager, #aCallList>
+  [ 93] objcall 32 .............................. <oCallAlertDisplayManager.aCallList.count>
+  [ 95] lteq
+  [ 96] jmpifz [157] ............................ repeat with i = 1 to oCallAlertDisplayManager.aCallList.count
+  [ 99] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [101] pushsymb 18 ............................. <#aCallList>
+  [103] getlocal 1 .............................. <i>
+  [105] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallList, i>
+  [107] objcall 61 .............................. <oCallAlertDisplayManager.aCallList[i]>
+  [109] getobjprop 34 ........................... <oCallAlertDisplayManager.aCallList[i].callID>
+  [111] getlocal 0 .............................. <iCallID>
+  [113] eq ...................................... <oCallAlertDisplayManager.aCallList[i].callID = iCallID>
+  [114] jmpifz [148] ............................ if oCallAlertDisplayManager.aCallList[i].callID = iCallID then
+  [117] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [119] pushsymb 18 ............................. <#aCallList>
+  [121] getlocal 1 .............................. <i>
+  [123] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallList, i>
+  [125] objcall 61 .............................. <oCallAlertDisplayManager.aCallList[i]>
+  [127] pushint8 1 .............................. <1>
+  [129] setobjprop 43 ........................... oCallAlertDisplayManager.aCallList[i].isPickedUp = 1
+  [131] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [133] pushsymb 18 ............................. <#aCallList>
+  [135] getlocal 1 .............................. <i>
+  [137] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallList, i>
+  [139] objcall 61 .............................. <oCallAlertDisplayManager.aCallList[i]>
+  [141] getglobal 235 ........................... <sModScreenName>
+  [143] setobjprop 45 ........................... oCallAlertDisplayManager.aCallList[i].pickedUpBy = sModScreenName
+  [145] jmp [157] ............................... exit repeat
+  [148] pushint8 1
+  [150] getlocal 1
+  [152] add
+  [153] setlocal 1
+  [155] endrepeat [ 85]
+  [157] pushint8 1 .............................. <1>
+  [159] setlocal 1
+  [161] getlocal 1
+  [163] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [165] pushsymb 17 ............................. <#aCallAlertList>
+  [167] pusharglist 2 ........................... <oCallAlertDisplayManager, #aCallAlertList>
+  [169] objcall 32 .............................. <oCallAlertDisplayManager.aCallAlertList.count>
+  [171] lteq
+  [172] jmpifz [243] ............................ repeat with i = 1 to oCallAlertDisplayManager.aCallAlertList.count
+  [175] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [177] pushsymb 17 ............................. <#aCallAlertList>
+  [179] getlocal 1 .............................. <i>
+  [181] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallAlertList, i>
+  [183] objcall 61 .............................. <oCallAlertDisplayManager.aCallAlertList[i]>
+  [185] getobjprop 34 ........................... <oCallAlertDisplayManager.aCallAlertList[i].callID>
+  [187] getlocal 0 .............................. <iCallID>
+  [189] eq ...................................... <oCallAlertDisplayManager.aCallAlertList[i].callID = iCallID>
+  [190] jmpifz [234] ............................ if oCallAlertDisplayManager.aCallAlertList[i].callID = iCallID then
+  [193] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [195] pushsymb 17 ............................. <#aCallAlertList>
+  [197] getlocal 1 .............................. <i>
+  [199] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallAlertList, i>
+  [201] objcall 61 .............................. <oCallAlertDisplayManager.aCallAlertList[i]>
+  [203] pushint8 1 .............................. <1>
+  [205] setobjprop 43 ........................... oCallAlertDisplayManager.aCallAlertList[i].isPickedUp = 1
+  [207] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [209] pushsymb 17 ............................. <#aCallAlertList>
+  [211] getlocal 1 .............................. <i>
+  [213] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallAlertList, i>
+  [215] objcall 61 .............................. <oCallAlertDisplayManager.aCallAlertList[i]>
+  [217] getglobal 235 ........................... <sModScreenName>
+  [219] setobjprop 45 ........................... oCallAlertDisplayManager.aCallAlertList[i].pickedUpBy = sModScreenName
+  [221] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [223] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [225] getobjprop 20 ........................... <oCallAlertDisplayManager.pCallAlertList>
+  [227] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, oCallAlertDisplayManager.pCallAlertList>
+  [229] objcall 5 ............................... oCallAlertDisplayManager.displayCallAlert(oCallAlertDisplayManager.pCallAlertList)
+  [231] jmp [243] ............................... exit repeat
+  [234] pushint8 1
+  [236] getlocal 1
+  [238] add
+  [239] setlocal 1
+  [241] endrepeat [161]
+  [243] getparam 0 .............................. <me>
+  [245] pushcons 19 ............................. <"pickUp:iCallID:">
+  [247] getlocal 0 .............................. <iCallID>
+  [249] joinpadstr .............................. <"pickUp:iCallID:" && iCallID>
+  [250] pusharglistnoret 2 ...................... <me, "pickUp:iCallID:" && iCallID>
+  [252] objcall 4 ............................... me.debug("pickUp:iCallID:" && iCallID)
+  [254] getglobal 199 ........................... <oModControllerManager>
+  [256] pusharglist 1 ........................... <oModControllerManager>
+  [258] objcall 200 ............................. <oModControllerManager.getCFHController()>
+  [260] getlocal 0 .............................. <iCallID>
+  [262] pushzero ................................ <0>
+  [263] pusharglistnoret 3 ...................... <oModControllerManager.getCFHController(), iCallID, 0>
+  [265] objcall 494 ............................. oModControllerManager.getCFHController().sendPickUpCallForHelp(iCallID, 0)
+  [268] ret
+end
+
+on answer me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] pushsymb 20 ............................. <#pCallAlertList>
+  [  4] pusharglist 2 ........................... <oCallAlertDisplayManager, #pCallAlertList>
+  [  6] objcall 32 .............................. <oCallAlertDisplayManager.pCallAlertList.count>
+  [  8] pushzero ................................ <0>
+  [  9] eq ...................................... <oCallAlertDisplayManager.pCallAlertList.count = 0>
+  [ 10] jmpifz [ 23] ............................ if oCallAlertDisplayManager.pCallAlertList.count = 0 then / else
+  [ 13] pushcons 17 ............................. <"exit 1">
+  [ 15] pusharglistnoret 1 ...................... <"exit 1">
+  [ 17] extcall 38 .............................. put "exit 1"
+  [ 19] ret ..................................... exit
+  [ 20] jmp [ 47]
+  [ 23] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 25] pushsymb 20 ............................. <#pCallAlertList>
+  [ 27] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 29] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 31] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 33] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 35] getobjprop 42 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert>
+  [ 37] jmpifz [ 47] ............................ if oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert then
+  [ 40] pushcons 18 ............................. <"exit 2">
+  [ 42] pusharglistnoret 1 ...................... <"exit 2">
+  [ 44] extcall 38 .............................. put "exit 2"
+  [ 46] ret ..................................... exit
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pusharglistnoret 1 ...................... <me>
+  [ 51] localcall 5 ............................. pickUp(me)
+  [ 53] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 55] pushsymb 20 ............................. <#pCallAlertList>
+  [ 57] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 59] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 61] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 63] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 65] getobjprop 34 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID>
+  [ 67] setlocal 0 .............................. iCallID = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID
+  [ 69] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 71] pushsymb 20 ............................. <#pCallAlertList>
+  [ 73] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 75] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 77] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 79] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 81] getobjprop 46 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].screenName>
+  [ 83] setlocal 1 .............................. sScreenName = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].screenName
+  [ 85] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 87] pushsymb 20 ............................. <#pCallAlertList>
+  [ 89] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 91] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 93] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 95] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 97] getobjprop 47 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName>
+  [ 99] setlocal 2 .............................. sStudioName = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName
+  [101] pushcons 20 ............................. <"MessageManager">
+  [103] pusharglist 1 ........................... <"MessageManager">
+  [105] extcall 315 ............................. <script("MessageManager")>
+  [108] getlocal 1 .............................. <sScreenName>
+  [110] getlocal 2 .............................. <sStudioName>
+  [112] getlocal 0 .............................. <iCallID>
+  [114] pusharglist 4 ........................... <script("MessageManager"), sScreenName, sStudioName, iCallID>
+  [116] extcall 236 ............................. <new(script("MessageManager"), sScreenName, sStudioName, iCallID)>
+  [118] setglobal 472 ........................... oMessageManager = new(script("MessageManager"), sScreenName, sStudioName, iCallID)
+  [121] getprop 466 ............................. <pTargetMarker>
+  [124] pusharglistnoret 1 ...................... <pTargetMarker>
+  [126] extcall 83 .............................. go(pTargetMarker)
+  [128] ret
+end
+
+on deleteCallAlert me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] pushsymb 20 ............................. <#pCallAlertList>
+  [  4] pusharglist 2 ........................... <oCallAlertDisplayManager, #pCallAlertList>
+  [  6] objcall 32 .............................. <oCallAlertDisplayManager.pCallAlertList.count>
+  [  8] pushzero ................................ <0>
+  [  9] eq ...................................... <oCallAlertDisplayManager.pCallAlertList.count = 0>
+  [ 10] jmpifz [ 14] ............................ if oCallAlertDisplayManager.pCallAlertList.count = 0 then
+  [ 13] ret ..................................... exit
+  [ 14] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 16] pushsymb 20 ............................. <#pCallAlertList>
+  [ 18] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 20] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 22] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 24] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 26] getobjprop 34 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID>
+  [ 28] setlocal 0 .............................. iCallID = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].callID
+  [ 30] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 32] pushsymb 20 ............................. <#pCallAlertList>
+  [ 34] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 36] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 38] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 40] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 42] getobjprop 42 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert>
+  [ 44] setlocal 1 .............................. bIsAlert = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].isAlert
+  [ 46] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 48] getlocal 0 .............................. <iCallID>
+  [ 50] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, iCallID>
+  [ 52] objcall 1 ............................... oCallAlertDisplayManager.addDeletedID(iCallID)
+  [ 54] getlocal 1 .............................. <bIsAlert>
+  [ 56] jmpifz [121] ............................ if bIsAlert then / else
+  [ 59] pushint8 1 .............................. <1>
+  [ 61] setlocal 2
+  [ 63] getlocal 2
+  [ 65] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 67] pushsymb 19 ............................. <#aAlertList>
+  [ 69] pusharglist 2 ........................... <oCallAlertDisplayManager, #aAlertList>
+  [ 71] objcall 32 .............................. <oCallAlertDisplayManager.aAlertList.count>
+  [ 73] lteq
+  [ 74] jmpifz [118] ............................ repeat with i = 1 to oCallAlertDisplayManager.aAlertList.count
+  [ 77] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 79] pushsymb 19 ............................. <#aAlertList>
+  [ 81] getlocal 2 .............................. <i>
+  [ 83] pusharglist 3 ........................... <oCallAlertDisplayManager, #aAlertList, i>
+  [ 85] objcall 61 .............................. <oCallAlertDisplayManager.aAlertList[i]>
+  [ 87] getobjprop 34 ........................... <oCallAlertDisplayManager.aAlertList[i].callID>
+  [ 89] getlocal 0 .............................. <iCallID>
+  [ 91] eq ...................................... <oCallAlertDisplayManager.aAlertList[i].callID = iCallID>
+  [ 92] jmpifz [109] ............................ if oCallAlertDisplayManager.aAlertList[i].callID = iCallID then
+  [ 95] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 97] getchainedprop 19 ....................... <oCallAlertDisplayManager.aAlertList>
+  [ 99] getlocal 2 .............................. <i>
+  [101] pusharglistnoret 2 ...................... <oCallAlertDisplayManager.aAlertList, i>
+  [103] objcall 495 ............................. oCallAlertDisplayManager.aAlertList.deleteAt(i)
+  [106] jmp [118] ............................... exit repeat
+  [109] pushint8 1
+  [111] getlocal 2
+  [113] add
+  [114] setlocal 2
+  [116] endrepeat [ 63]
+  [118] jmp [180]
+  [121] pushint8 1 .............................. <1>
+  [123] setlocal 2
+  [125] getlocal 2
+  [127] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [129] pushsymb 18 ............................. <#aCallList>
+  [131] pusharglist 2 ........................... <oCallAlertDisplayManager, #aCallList>
+  [133] objcall 32 .............................. <oCallAlertDisplayManager.aCallList.count>
+  [135] lteq
+  [136] jmpifz [180] ............................ repeat with i = 1 to oCallAlertDisplayManager.aCallList.count
+  [139] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [141] pushsymb 18 ............................. <#aCallList>
+  [143] getlocal 2 .............................. <i>
+  [145] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallList, i>
+  [147] objcall 61 .............................. <oCallAlertDisplayManager.aCallList[i]>
+  [149] getobjprop 34 ........................... <oCallAlertDisplayManager.aCallList[i].callID>
+  [151] getlocal 0 .............................. <iCallID>
+  [153] eq ...................................... <oCallAlertDisplayManager.aCallList[i].callID = iCallID>
+  [154] jmpifz [171] ............................ if oCallAlertDisplayManager.aCallList[i].callID = iCallID then
+  [157] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [159] getchainedprop 18 ....................... <oCallAlertDisplayManager.aCallList>
+  [161] getlocal 2 .............................. <i>
+  [163] pusharglistnoret 2 ...................... <oCallAlertDisplayManager.aCallList, i>
+  [165] objcall 495 ............................. oCallAlertDisplayManager.aCallList.deleteAt(i)
+  [168] jmp [180] ............................... exit repeat
+  [171] pushint8 1
+  [173] getlocal 2
+  [175] add
+  [176] setlocal 2
+  [178] endrepeat [125]
+  [180] pushint8 1 .............................. <1>
+  [182] setlocal 2
+  [184] getlocal 2
+  [186] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [188] pushsymb 17 ............................. <#aCallAlertList>
+  [190] pusharglist 2 ........................... <oCallAlertDisplayManager, #aCallAlertList>
+  [192] objcall 32 .............................. <oCallAlertDisplayManager.aCallAlertList.count>
+  [194] lteq
+  [195] jmpifz [247] ............................ repeat with i = 1 to oCallAlertDisplayManager.aCallAlertList.count
+  [198] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [200] pushsymb 17 ............................. <#aCallAlertList>
+  [202] getlocal 2 .............................. <i>
+  [204] pusharglist 3 ........................... <oCallAlertDisplayManager, #aCallAlertList, i>
+  [206] objcall 61 .............................. <oCallAlertDisplayManager.aCallAlertList[i]>
+  [208] getobjprop 34 ........................... <oCallAlertDisplayManager.aCallAlertList[i].callID>
+  [210] getlocal 0 .............................. <iCallID>
+  [212] eq ...................................... <oCallAlertDisplayManager.aCallAlertList[i].callID = iCallID>
+  [213] jmpifz [238] ............................ if oCallAlertDisplayManager.aCallAlertList[i].callID = iCallID then
+  [216] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [218] getchainedprop 17 ....................... <oCallAlertDisplayManager.aCallAlertList>
+  [220] getlocal 2 .............................. <i>
+  [222] pusharglistnoret 2 ...................... <oCallAlertDisplayManager.aCallAlertList, i>
+  [224] objcall 495 ............................. oCallAlertDisplayManager.aCallAlertList.deleteAt(i)
+  [227] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [229] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [231] getobjprop 20 ........................... <oCallAlertDisplayManager.pCallAlertList>
+  [233] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, oCallAlertDisplayManager.pCallAlertList>
+  [235] objcall 5 ............................... oCallAlertDisplayManager.displayCallAlert(oCallAlertDisplayManager.pCallAlertList)
+  [237] ret ..................................... exit
+  [238] pushint8 1
+  [240] getlocal 2
+  [242] add
+  [243] setlocal 2
+  [245] endrepeat [184]
+  [247] ret
+end
+
+on changeUserMission me
+  [  0] getglobal 52 ............................ <oUserDisplayManager>
+  [  2] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [  5] pusharglist 0 ........................... <[]>
+  [  7] pushlist ................................ <[]>
+  [  8] eq ...................................... <oUserDisplayManager.pUserData = []>
+  [  9] jmpifz [ 16] ............................ if oUserDisplayManager.pUserData = [] then / else
+  [ 12] ret ..................................... exit
+  [ 13] jmp [ 31]
+  [ 16] getglobal 52 ............................ <oUserDisplayManager>
+  [ 18] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 21] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 24] pushcons 2 .............................. <EMPTY>
+  [ 26] eq ...................................... <oUserDisplayManager.pUserData.denizenName = EMPTY>
+  [ 27] jmpifz [ 31] ............................ if oUserDisplayManager.pUserData.denizenName = EMPTY then
+  [ 30] ret ..................................... exit
+  [ 31] getglobal 52 ............................ <oUserDisplayManager>
+  [ 33] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 36] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 39] setlocal 0 .............................. sScreenName = oUserDisplayManager.pUserData.denizenName
+  [ 41] getglobal 52 ............................ <oUserDisplayManager>
+  [ 43] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 46] getobjprop 269 .......................... <oUserDisplayManager.pUserData.gender>
+  [ 49] setlocal 1 .............................. iGender = oUserDisplayManager.pUserData.gender
+  [ 51] getglobal 52 ............................ <oUserDisplayManager>
+  [ 53] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 56] getobjprop 265 .......................... <oUserDisplayManager.pUserData.mission>
+  [ 59] setlocal 2 .............................. sMission = oUserDisplayManager.pUserData.mission
+  [ 61] getglobal 52 ............................ <oUserDisplayManager>
+  [ 63] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 66] getobjprop 266 .......................... <oUserDisplayManager.pUserData.avatarString>
+  [ 69] setlocal 3 .............................. sAvatarString = oUserDisplayManager.pUserData.avatarString
+  [ 71] getparam 0 .............................. <me>
+  [ 73] pushcons 21 ............................. <"sScreenName:">
+  [ 75] getlocal 0 .............................. <sScreenName>
+  [ 77] joinpadstr .............................. <"sScreenName:" && sScreenName>
+  [ 78] pushcons 22 ............................. <"iGender:">
+  [ 80] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:">
+  [ 81] getlocal 1 .............................. <iGender>
+  [ 83] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:" && iGender>
+  [ 84] pushcons 23 ............................. <"sMission:">
+  [ 86] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:">
+  [ 87] getlocal 2 .............................. <sMission>
+  [ 89] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:" && sMission>
+  [ 90] pushcons 24 ............................. <"sAvatarString:">
+  [ 92] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:" && sMission && "sAvatarString:">
+  [ 93] getlocal 3 .............................. <sAvatarString>
+  [ 95] joinpadstr .............................. <"sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:" && sMission && "sAvatarString:" && sAvatarString>
+  [ 96] pusharglistnoret 2 ...................... <me, "sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:" && sMission && "sAvatarString:" && sAvatarString>
+  [ 98] objcall 4 ............................... me.debug("sScreenName:" && sScreenName && "iGender:" && iGender && "sMission:" && sMission && "sAvatarString:" && sAvatarString)
+  [100] pushcons 25 ............................. <"EditAvatarManager">
+  [102] pusharglist 1 ........................... <"EditAvatarManager">
+  [104] extcall 315 ............................. <script("EditAvatarManager")>
+  [107] getlocal 0 .............................. <sScreenName>
+  [109] getlocal 1 .............................. <iGender>
+  [111] getlocal 2 .............................. <sMission>
+  [113] getlocal 3 .............................. <sAvatarString>
+  [115] pusharglist 5 ........................... <script("EditAvatarManager"), sScreenName, iGender, sMission, sAvatarString>
+  [117] extcall 236 ............................. <new(script("EditAvatarManager"), sScreenName, iGender, sMission, sAvatarString)>
+  [119] setglobal 470 ........................... oEditAvatarManager = new(script("EditAvatarManager"), sScreenName, iGender, sMission, sAvatarString)
+  [122] getprop 466 ............................. <pTargetMarker>
+  [125] pusharglistnoret 1 ...................... <pTargetMarker>
+  [127] extcall 83 .............................. go(pTargetMarker)
+  [129] ret
+end
+
+on message me
+  [  0] getglobal 52 ............................ <oUserDisplayManager>
+  [  2] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [  5] pusharglist 0 ........................... <[]>
+  [  7] pushlist ................................ <[]>
+  [  8] eq ...................................... <oUserDisplayManager.pUserData = []>
+  [  9] jmpifz [ 16] ............................ if oUserDisplayManager.pUserData = [] then / else
+  [ 12] ret ..................................... exit
+  [ 13] jmp [ 31]
+  [ 16] getglobal 52 ............................ <oUserDisplayManager>
+  [ 18] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 21] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 24] pushcons 2 .............................. <EMPTY>
+  [ 26] eq ...................................... <oUserDisplayManager.pUserData.denizenName = EMPTY>
+  [ 27] jmpifz [ 31] ............................ if oUserDisplayManager.pUserData.denizenName = EMPTY then
+  [ 30] ret ..................................... exit
+  [ 31] getglobal 52 ............................ <oUserDisplayManager>
+  [ 33] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 36] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 39] setlocal 0 .............................. sScreenName = oUserDisplayManager.pUserData.denizenName
+  [ 41] getglobal 52 ............................ <oUserDisplayManager>
+  [ 43] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 46] getobjprop 47 ........................... <oUserDisplayManager.pUserData.studioName>
+  [ 48] setlocal 1 .............................. sStudioName = oUserDisplayManager.pUserData.studioName
+  [ 50] pushcons 20 ............................. <"MessageManager">
+  [ 52] pusharglist 1 ........................... <"MessageManager">
+  [ 54] extcall 315 ............................. <script("MessageManager")>
+  [ 57] getlocal 0 .............................. <sScreenName>
+  [ 59] getlocal 1 .............................. <sStudioName>
+  [ 61] pusharglist 3 ........................... <script("MessageManager"), sScreenName, sStudioName>
+  [ 63] extcall 236 ............................. <new(script("MessageManager"), sScreenName, sStudioName)>
+  [ 65] setglobal 472 ........................... oMessageManager = new(script("MessageManager"), sScreenName, sStudioName)
+  [ 68] getprop 466 ............................. <pTargetMarker>
+  [ 71] pusharglistnoret 1 ...................... <pTargetMarker>
+  [ 73] extcall 83 .............................. go(pTargetMarker)
+  [ 75] ret
+end
+
+on warn me
+  [  0] getglobal 52 ............................ <oUserDisplayManager>
+  [  2] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [  5] pusharglist 0 ........................... <[]>
+  [  7] pushlist ................................ <[]>
+  [  8] eq ...................................... <oUserDisplayManager.pUserData = []>
+  [  9] jmpifz [ 16] ............................ if oUserDisplayManager.pUserData = [] then / else
+  [ 12] ret ..................................... exit
+  [ 13] jmp [ 31]
+  [ 16] getglobal 52 ............................ <oUserDisplayManager>
+  [ 18] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 21] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 24] pushcons 2 .............................. <EMPTY>
+  [ 26] eq ...................................... <oUserDisplayManager.pUserData.denizenName = EMPTY>
+  [ 27] jmpifz [ 31] ............................ if oUserDisplayManager.pUserData.denizenName = EMPTY then
+  [ 30] ret ..................................... exit
+  [ 31] getglobal 52 ............................ <oUserDisplayManager>
+  [ 33] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 36] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 39] setlocal 0 .............................. sScreenName = oUserDisplayManager.pUserData.denizenName
+  [ 41] getglobal 52 ............................ <oUserDisplayManager>
+  [ 43] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 46] getobjprop 47 ........................... <oUserDisplayManager.pUserData.studioName>
+  [ 48] setlocal 1 .............................. sStudioName = oUserDisplayManager.pUserData.studioName
+  [ 50] pushcons 20 ............................. <"MessageManager">
+  [ 52] pusharglist 1 ........................... <"MessageManager">
+  [ 54] extcall 315 ............................. <script("MessageManager")>
+  [ 57] getlocal 0 .............................. <sScreenName>
+  [ 59] getlocal 1 .............................. <sStudioName>
+  [ 61] pusharglist 3 ........................... <script("MessageManager"), sScreenName, sStudioName>
+  [ 63] extcall 236 ............................. <new(script("MessageManager"), sScreenName, sStudioName)>
+  [ 65] setglobal 472 ........................... oMessageManager = new(script("MessageManager"), sScreenName, sStudioName)
+  [ 68] getprop 466 ............................. <pTargetMarker>
+  [ 71] pusharglistnoret 1 ...................... <pTargetMarker>
+  [ 73] extcall 83 .............................. go(pTargetMarker)
+  [ 75] ret
+end
+
+on ban me
+  [  0] getglobal 52 ............................ <oUserDisplayManager>
+  [  2] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [  5] pusharglist 0 ........................... <[]>
+  [  7] pushlist ................................ <[]>
+  [  8] eq ...................................... <oUserDisplayManager.pUserData = []>
+  [  9] jmpifz [ 16] ............................ if oUserDisplayManager.pUserData = [] then / else
+  [ 12] ret ..................................... exit
+  [ 13] jmp [ 31]
+  [ 16] getglobal 52 ............................ <oUserDisplayManager>
+  [ 18] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 21] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 24] pushcons 2 .............................. <EMPTY>
+  [ 26] eq ...................................... <oUserDisplayManager.pUserData.denizenName = EMPTY>
+  [ 27] jmpifz [ 31] ............................ if oUserDisplayManager.pUserData.denizenName = EMPTY then
+  [ 30] ret ..................................... exit
+  [ 31] getglobal 52 ............................ <oUserDisplayManager>
+  [ 33] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 36] getobjprop 262 .......................... <oUserDisplayManager.pUserData.denizenName>
+  [ 39] setlocal 0 .............................. sScreenName = oUserDisplayManager.pUserData.denizenName
+  [ 41] getglobal 52 ............................ <oUserDisplayManager>
+  [ 43] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [ 46] getobjprop 47 ........................... <oUserDisplayManager.pUserData.studioName>
+  [ 48] setlocal 1 .............................. sStudioName = oUserDisplayManager.pUserData.studioName
+  [ 50] pushcons 20 ............................. <"MessageManager">
+  [ 52] pusharglist 1 ........................... <"MessageManager">
+  [ 54] extcall 315 ............................. <script("MessageManager")>
+  [ 57] getlocal 0 .............................. <sScreenName>
+  [ 59] getlocal 1 .............................. <sStudioName>
+  [ 61] pusharglist 3 ........................... <script("MessageManager"), sScreenName, sStudioName>
+  [ 63] extcall 236 ............................. <new(script("MessageManager"), sScreenName, sStudioName)>
+  [ 65] setglobal 472 ........................... oMessageManager = new(script("MessageManager"), sScreenName, sStudioName)
+  [ 68] getprop 466 ............................. <pTargetMarker>
+  [ 71] pusharglistnoret 1 ...................... <pTargetMarker>
+  [ 73] extcall 83 .............................. go(pTargetMarker)
+  [ 75] ret
+end

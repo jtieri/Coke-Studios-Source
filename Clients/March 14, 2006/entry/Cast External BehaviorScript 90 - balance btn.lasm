@@ -1,0 +1,75 @@
+global ElementMgr, oDenizenManager, gFeatureSet
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 23 .............................. return me
+  [  6] ret
+end
+
+on mouseUp me
+  [  0] getglobal 309 ........................... <gFeatureSet>
+  [  3] pushsymb 872 ............................ <#CHECK_DECIBELS>
+  [  6] pusharglist 2 ........................... <gFeatureSet, #CHECK_DECIBELS>
+  [  8] objcall 311 ............................. <gFeatureSet.isEnabled(#CHECK_DECIBELS)>
+  [ 11] not ..................................... <not gFeatureSet.isEnabled(#CHECK_DECIBELS)>
+  [ 12] jmpifz [ 27] ............................ if not gFeatureSet.isEnabled(#CHECK_DECIBELS) then
+  [ 15] getglobal 30 ............................ <ElementMgr>
+  [ 17] pushcons 0 .............................. <"FEATURE_DISABLED">
+  [ 19] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 21] objcall 245 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 23] pusharglistnoret 0 ...................... <>
+  [ 25] extcall 23 .............................. return 
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setlocal 0
+  [ 31] getlocal 0
+  [ 33] getglobal 30 ............................ <ElementMgr>
+  [ 35] getobjprop 31 ........................... <ElementMgr.pOpenWindows>
+  [ 37] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 39] extcall 29 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 41] lteq
+  [ 42] jmpifz [132] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 45] getglobal 30 ............................ <ElementMgr>
+  [ 47] getobjprop 31 ........................... <ElementMgr.pOpenWindows>
+  [ 49] getlocal 0 .............................. <n>
+  [ 51] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 53] extcall 32 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 55] pushcons 1 .............................. <"cc_balance">
+  [ 57] eq ...................................... <getPropAt(ElementMgr.pOpenWindows, n) = "cc_balance">
+  [ 58] jmpifz [ 81] ............................ if getPropAt(ElementMgr.pOpenWindows, n) = "cc_balance" then
+  [ 61] getglobal 30 ............................ <ElementMgr>
+  [ 63] pushsymb 31 ............................. <#pOpenWindows>
+  [ 65] getlocal 0 .............................. <n>
+  [ 67] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 69] objcall 98 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 71] pusharglistnoret 1 ...................... <ElementMgr.pOpenWindows[n]>
+  [ 73] objcall 5 ............................... ElementMgr.pOpenWindows[n].closeWindow()
+  [ 75] jmp [132] ............................... exit repeat
+  [ 78] jmp [123] ............................... next repeat
+  [ 81] getlocal 0 .............................. <n>
+  [ 83] getglobal 30 ............................ <ElementMgr>
+  [ 85] getobjprop 31 ........................... <ElementMgr.pOpenWindows>
+  [ 87] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 89] extcall 29 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 91] eq ...................................... <n = count(ElementMgr.pOpenWindows)>
+  [ 92] jmpifz [123] ............................ if n = count(ElementMgr.pOpenWindows) then
+  [ 95] getglobal 30 ............................ <ElementMgr>
+  [ 97] pushcons 2 .............................. <"cc.balance.window">
+  [ 99] pusharglistnoret 2 ...................... <ElementMgr, "cc.balance.window">
+  [101] objcall 239 ............................. ElementMgr.newwindow("cc.balance.window")
+  [103] getglobal 79 ............................ <oDenizenManager>
+  [105] pusharglist 1 ........................... <oDenizenManager>
+  [107] objcall 80 .............................. <oDenizenManager.getScreenName()>
+  [109] setlocal 1 .............................. myscreenname = oDenizenManager.getScreenName()
+  [111] getglobal 79 ............................ <oDenizenManager>
+  [113] getlocal 1 .............................. <myscreenname>
+  [115] pusharglistnoret 2 ...................... <oDenizenManager, myscreenname>
+  [117] objcall 873 ............................. oDenizenManager.getDenizenBalance(myscreenname)
+  [120] jmp [132] ............................... exit repeat
+  [123] pushint8 1
+  [125] getlocal 0
+  [127] add
+  [128] setlocal 0
+  [130] endrepeat [ 31]
+  [132] ret
+end

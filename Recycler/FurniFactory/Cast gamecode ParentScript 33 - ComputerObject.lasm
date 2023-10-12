@@ -1,0 +1,1771 @@
+property bDebug, iTimeDefaultDuration, iTime, bCountdown, iMilliseconds, oTimer, iScore, iToolScore, iFinishScoreBonus, iLifeScoreBonus, iLives, aToolList_Default, aToolList_Random, aToolList_User, sTool_Target, iToolHilite, iToolChannelOffset, aToolLocs, bInteractingWithUser, aToolList_Names, bICheated, iBgSoundChannel, bToolSubmissable
+global oComputer, oDisplay, oAvatar, oTextConstants, sInputString, sAvatarString, sScreenName, sTimeString, iLatestScore, oSpriteManager
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 48 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oComputer:">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinpadstr .............................. <"oComputer:" && sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oComputer:" && sMessage>
+  [ 17] extcall 49 .............................. put "oComputer:" && sMessage
+  [ 19] ret
+end
+
+on cheatToolList me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 7 ............................... <me.getCountOfToolsLeft()>
+  [  6] setlocal 0
+  [  8] getlocal 0
+  [ 10] pushint8 2 .............................. <2>
+  [ 12] gteq
+  [ 13] jmpifz [ 66] ............................ repeat with i = me.getCountOfToolsLeft() down to 2
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 53 ............................. <#aToolList_Random>
+  [ 22] getlocal 0 .............................. <i>
+  [ 24] pusharglist 3 ........................... <me, #aToolList_Random, i>
+  [ 26] objcall 54 .............................. <me.aToolList_Random[i]>
+  [ 28] pusharglistnoret 2 ...................... <me, me.aToolList_Random[i]>
+  [ 30] objcall 36 .............................. me.pickUpTool(me.aToolList_Random[i])
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushint8 10 ............................. <10>
+  [ 36] pushint8 10 ............................. <10>
+  [ 38] pusharglist 1 ........................... <10>
+  [ 40] extcall 55 .............................. <random(10)>
+  [ 42] add ..................................... <10 + random(10)>
+  [ 43] pusharglistnoret 2 ...................... <me, 10 + random(10)>
+  [ 45] objcall 25 .............................. me.incrementScore(10 + random(10))
+  [ 47] getparam 0 .............................. <me>
+  [ 49] getchainedprop 53 ....................... <me.aToolList_Random>
+  [ 51] getlocal 0 .............................. <i>
+  [ 53] pusharglistnoret 2 ...................... <me.aToolList_Random, i>
+  [ 55] objcall 56 .............................. me.aToolList_Random.deleteAt(i)
+  [ 57] pushint8 -1
+  [ 59] getlocal 0
+  [ 61] add
+  [ 62] setlocal 0
+  [ 64] endrepeat [  8]
+  [ 66] ret
+end
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 3 ............................. init(me)
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 1 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 0 ............................... me.debug("new()")
+  [ 14] getglobal 58 ............................ <oComputer>
+  [ 16] pusharglist 0 ........................... <>
+  [ 18] extcall 59 .............................. <VOID>
+  [ 20] nteq .................................... <oComputer <> VOID>
+  [ 21] jmpifz [ 56] ............................ if oComputer <> VOID then
+  [ 24] getmovieprop 60 ......................... <the actorList>
+  [ 26] getglobal 58 ............................ <oComputer>
+  [ 28] getobjprop 61 ........................... <oComputer.oTimer>
+  [ 30] pusharglistnoret 2 ...................... <the actorList, oComputer.oTimer>
+  [ 32] objcall 62 .............................. (the actorList).deleteOne(oComputer.oTimer)
+  [ 34] getglobal 58 ............................ <oComputer>
+  [ 36] pusharglist 0 ........................... <>
+  [ 38] extcall 59 .............................. <VOID>
+  [ 40] setobjprop 61 ........................... oComputer.oTimer = VOID
+  [ 42] getmovieprop 60 ......................... <the actorList>
+  [ 44] getglobal 58 ............................ <oComputer>
+  [ 46] pusharglistnoret 2 ...................... <the actorList, oComputer>
+  [ 48] objcall 62 .............................. (the actorList).deleteOne(oComputer)
+  [ 50] pusharglist 0 ........................... <>
+  [ 52] extcall 59 .............................. <VOID>
+  [ 54] setglobal 58 ............................ oComputer = VOID
+  [ 56] getparam 0 .............................. <me>
+  [ 58] setglobal 58 ............................ oComputer = me
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pusharglistnoret 1 ...................... <me>
+  [ 64] extcall 63 .............................. return me
+  [ 66] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 48 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 2 .............................. <"ComputerTimer">
+  [  9] pusharglist 1 ........................... <"ComputerTimer">
+  [ 11] extcall 64 .............................. <script("ComputerTimer")>
+  [ 13] pusharglist 1 ........................... <script("ComputerTimer")>
+  [ 15] objcall 2 ............................... <script("ComputerTimer").new()>
+  [ 17] setobjprop 61 ........................... me.oTimer = script("ComputerTimer").new()
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushcons 3 .............................. <"hotdog">
+  [ 23] pusharglist 1 ........................... <"hotdog">
+  [ 25] extcall 64 .............................. <script("hotdog")>
+  [ 27] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 30] pushcons 4 .............................. <"0">
+  [ 32] pusharglist 2 ........................... <script("hotdog").pickle, "0">
+  [ 34] objcall 66 .............................. <script("hotdog").pickle.Encrypt("0")>
+  [ 36] setobjprop 67 ........................... me.iScore = script("hotdog").pickle.Encrypt("0")
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushcons 3 .............................. <"hotdog">
+  [ 42] pusharglist 1 ........................... <"hotdog">
+  [ 44] extcall 64 .............................. <script("hotdog")>
+  [ 46] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 49] pushcons 5 .............................. <"1000">
+  [ 51] pusharglist 2 ........................... <script("hotdog").pickle, "1000">
+  [ 53] objcall 66 .............................. <script("hotdog").pickle.Encrypt("1000")>
+  [ 55] setobjprop 68 ........................... me.iToolScore = script("hotdog").pickle.Encrypt("1000")
+  [ 57] getparam 0 .............................. <me>
+  [ 59] pushcons 3 .............................. <"hotdog">
+  [ 61] pusharglist 1 ........................... <"hotdog">
+  [ 63] extcall 64 .............................. <script("hotdog")>
+  [ 65] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 68] pushcons 6 .............................. <"5000">
+  [ 70] pusharglist 2 ........................... <script("hotdog").pickle, "5000">
+  [ 72] objcall 66 .............................. <script("hotdog").pickle.Encrypt("5000")>
+  [ 74] setobjprop 69 ........................... me.iFinishScoreBonus = script("hotdog").pickle.Encrypt("5000")
+  [ 76] getparam 0 .............................. <me>
+  [ 78] pushcons 3 .............................. <"hotdog">
+  [ 80] pusharglist 1 ........................... <"hotdog">
+  [ 82] extcall 64 .............................. <script("hotdog")>
+  [ 84] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 87] pushcons 5 .............................. <"1000">
+  [ 89] pusharglist 2 ........................... <script("hotdog").pickle, "1000">
+  [ 91] objcall 66 .............................. <script("hotdog").pickle.Encrypt("1000")>
+  [ 93] setobjprop 70 ........................... me.iLifeScoreBonus = script("hotdog").pickle.Encrypt("1000")
+  [ 95] getparam 0 .............................. <me>
+  [ 97] pushcons 3 .............................. <"hotdog">
+  [ 99] pusharglist 1 ........................... <"hotdog">
+  [101] extcall 64 .............................. <script("hotdog")>
+  [103] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [106] pushcons 7 .............................. <"5">
+  [108] pusharglist 2 ........................... <script("hotdog").pickle, "5">
+  [110] objcall 66 .............................. <script("hotdog").pickle.Encrypt("5")>
+  [112] setobjprop 71 ........................... me.iLives = script("hotdog").pickle.Encrypt("5")
+  [114] getparam 0 .............................. <me>
+  [116] getglobal 72 ............................ <oTextConstants>
+  [118] getobjprop 73 ........................... <oTextConstants.aToolList>
+  [120] setobjprop 74 ........................... me.aToolList_Names = oTextConstants.aToolList
+  [122] getparam 0 .............................. <me>
+  [124] pushint8 1 .............................. <1>
+  [126] pushint8 2 .............................. <2>
+  [128] pushint8 3 .............................. <3>
+  [130] pushint8 4 .............................. <4>
+  [132] pushint8 5 .............................. <5>
+  [134] pushint8 6 .............................. <6>
+  [136] pushint8 7 .............................. <7>
+  [138] pushint8 8 .............................. <8>
+  [140] pushint8 9 .............................. <9>
+  [142] pushint8 10 ............................. <10>
+  [144] pusharglist 10 .......................... <[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>
+  [146] pushlist ................................ <[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>
+  [147] setobjprop 75 ........................... me.aToolList_Default = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  [149] getparam 0 .............................. <me>
+  [151] getparam 0 .............................. <me>
+  [153] pusharglist 1 ........................... <me>
+  [155] localcall 29 ............................ <randomizeToolList(me)>
+  [157] setobjprop 53 ........................... me.aToolList_Random = randomizeToolList(me)
+  [159] getparam 0 .............................. <me>
+  [161] pusharglistnoret 1 ...................... <me>
+  [163] localcall 31 ............................ getComputerTool(me)
+  [165] getparam 0 .............................. <me>
+  [167] pushint8 61 ............................. <61>
+  [169] setobjprop 76 ........................... me.iToolHilite = 61
+  [171] getparam 0 .............................. <me>
+  [173] pushint8 50 ............................. <50>
+  [175] setobjprop 77 ........................... me.iToolChannelOffset = 50
+  [177] getparam 0 .............................. <me>
+  [179] pusharglist 0 ........................... <[]>
+  [181] pushlist ................................ <[]>
+  [182] setobjprop 78 ........................... me.aToolLocs = []
+  [184] pushint8 1 .............................. <1>
+  [186] setlocal 0
+  [188] getlocal 0
+  [190] pushint8 10 ............................. <10>
+  [192] lteq
+  [193] jmpifz [226] ............................ repeat with i = 1 to 10
+  [196] getparam 0 .............................. <me>
+  [198] getchainedprop 78 ....................... <me.aToolLocs>
+  [200] getparam 0 .............................. <me>
+  [202] getobjprop 77 ........................... <me.iToolChannelOffset>
+  [204] getlocal 0 .............................. <i>
+  [206] add ..................................... <me.iToolChannelOffset + i>
+  [207] pusharglist 1 ........................... <me.iToolChannelOffset + i>
+  [209] extcall 79 .............................. <sprite(me.iToolChannelOffset + i)>
+  [211] getobjprop 80 ........................... <sprite(me.iToolChannelOffset + i).loc>
+  [213] pusharglistnoret 2 ...................... <me.aToolLocs, sprite(me.iToolChannelOffset + i).loc>
+  [215] objcall 81 .............................. me.aToolLocs.add(sprite(me.iToolChannelOffset + i).loc)
+  [217] pushint8 1
+  [219] getlocal 0
+  [221] add
+  [222] setlocal 0
+  [224] endrepeat [188]
+  [226] getparam 0 .............................. <me>
+  [228] pushzero ................................ <0>
+  [229] setobjprop 82 ........................... me.bInteractingWithUser = 0
+  [231] getglobal 83 ............................ <oDisplay>
+  [233] pushcons 8 .............................. <"Tool_Target">
+  [235] pushcons 9 .............................. <EMPTY>
+  [237] pusharglistnoret 3 ...................... <oDisplay, "Tool_Target", EMPTY>
+  [239] objcall 84 .............................. oDisplay.sendDisplay("Tool_Target", EMPTY)
+  [241] getparam 0 .............................. <me>
+  [243] pushint8 1 .............................. <1>
+  [245] setobjprop 85 ........................... me.bToolSubmissable = 1
+  [247] ret
+end
+
+on getToolSubmissable me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 85 ........................... <me.bToolSubmissable>
+  [  4] pusharglistnoret 1 ...................... <me.bToolSubmissable>
+  [  6] extcall 63 .............................. return me.bToolSubmissable
+  [  8] ret
+end
+
+on setToolSubmissable me, bVal
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"setting bToolSubmissable:">
+  [  4] pushcons 11 ............................. <"false">
+  [  6] pushcons 12 ............................. <"true">
+  [  8] pusharglist 2 ........................... <["false", "true"]>
+  [ 10] pushlist ................................ <["false", "true"]>
+  [ 11] getparam 1 .............................. <bVal>
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] add ..................................... <bVal + 1>
+  [ 16] pusharglist 2 ........................... <["false", "true"], bVal + 1>
+  [ 18] objcall 86 .............................. <["false", "true"][bVal + 1]>
+  [ 20] joinpadstr .............................. <"setting bToolSubmissable:" && ["false", "true"][bVal + 1]>
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] pusharglistnoret 3 ...................... <me, "setting bToolSubmissable:" && ["false", "true"][bVal + 1], 1>
+  [ 25] objcall 0 ............................... me.debug("setting bToolSubmissable:" && ["false", "true"][bVal + 1], 1)
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getparam 1 .............................. <bVal>
+  [ 31] setobjprop 85 ........................... me.bToolSubmissable = bVal
+  [ 33] ret
+end
+
+on disableToolSubmission me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 85 ........................... <me.bToolSubmissable>
+  [  4] jmpifz [ 33] ............................ if me.bToolSubmissable then
+  [  7] getparam 0 .............................. <me>
+  [  9] pushzero ................................ <0>
+  [ 10] pusharglistnoret 2 ...................... <me, 0>
+  [ 12] objcall 5 ............................... me.setToolSubmissable(0)
+  [ 14] pushcons 13 ............................. <"_TIMER_">
+  [ 16] pusharglist 1 ........................... <"_TIMER_">
+  [ 18] extcall 64 .............................. <script("_TIMER_")>
+  [ 20] pushint16 15000 ......................... <15000>
+  [ 23] pushsymb 5 .............................. <#setToolSubmissable>
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] pusharglistnoret 5 ...................... <script("_TIMER_"), 15000, #setToolSubmissable, me, 1>
+  [ 31] objcall 2 ............................... script("_TIMER_").new(15000, #setToolSubmissable, me, 1)
+  [ 33] ret
+end
+
+on getCountOfToolsLeft me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 53 ............................. <#aToolList_Random>
+  [  4] pusharglist 2 ........................... <me, #aToolList_Random>
+  [  6] objcall 88 .............................. <me.aToolList_Random.count>
+  [  8] pusharglistnoret 1 ...................... <me.aToolList_Random.count>
+  [ 10] extcall 63 .............................. return me.aToolList_Random.count
+  [ 12] ret
+end
+
+on getCountOfTools me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 75 ............................. <#aToolList_Default>
+  [  4] pusharglist 2 ........................... <me, #aToolList_Default>
+  [  6] objcall 88 .............................. <me.aToolList_Default.count>
+  [  8] pusharglistnoret 1 ...................... <me.aToolList_Default.count>
+  [ 10] extcall 63 .............................. return me.aToolList_Default.count
+  [ 12] ret
+end
+
+on getInteractingWithUser me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 82 ........................... <me.bInteractingWithUser>
+  [  4] pusharglistnoret 1 ...................... <me.bInteractingWithUser>
+  [  6] extcall 63 .............................. return me.bInteractingWithUser
+  [  8] ret
+end
+
+on setInteractingWithUser me, bValue
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <bValue>
+  [  4] setobjprop 82 ........................... me.bInteractingWithUser = bValue
+  [  6] ret
+end
+
+on gameReset me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"gameReset():iTime:">
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 90 ........................... <me.iTimeDefaultDuration>
+  [  8] joinpadstr .............................. <"gameReset():iTime:" && me.iTimeDefaultDuration>
+  [  9] pushcons 15 ............................. <"iScore:">
+  [ 11] joinpadstr .............................. <"gameReset():iTime:" && me.iTimeDefaultDuration && "iScore:">
+  [ 12] pushcons 4 .............................. <"0">
+  [ 14] joinpadstr .............................. <"gameReset():iTime:" && me.iTimeDefaultDuration && "iScore:" && "0">
+  [ 15] pusharglistnoret 2 ...................... <me, "gameReset():iTime:" && me.iTimeDefaultDuration && "iScore:" && "0">
+  [ 17] objcall 0 ............................... me.debug("gameReset():iTime:" && me.iTimeDefaultDuration && "iScore:" && "0")
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] objcall 3 ............................... me.init()
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pushzero ................................ <0>
+  [ 28] setobjprop 91 ........................... me.bICheated = 0
+  [ 30] pushcons 16 ............................. <"begin">
+  [ 32] pusharglistnoret 1 ...................... <"begin">
+  [ 34] extcall 92 .............................. go("begin")
+  [ 36] ret
+end
+
+on gameBegin me
+  [  0] getglobal 72 ............................ <oTextConstants>
+  [  2] getparam 0 .............................. <me>
+  [  4] pusharglist 1 ........................... <me>
+  [  6] objcall 32 .............................. <me.getComputerToolName()>
+  [  8] pusharglist 2 ........................... <oTextConstants, me.getComputerToolName()>
+  [ 10] objcall 93 .............................. <oTextConstants.getGameBeginMessage(me.getComputerToolName())>
+  [ 12] setlocal 0 .............................. alertString = oTextConstants.getGameBeginMessage(me.getComputerToolName())
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 39 .............................. me.playBeepSound()
+  [ 20] pushsymb 95 ............................. <#showAlert>
+  [ 22] getlocal 0 .............................. <alertString>
+  [ 24] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [ 26] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [ 28] pushcons 13 ............................. <"_TIMER_">
+  [ 30] pusharglist 1 ........................... <"_TIMER_">
+  [ 32] extcall 64 .............................. <script("_TIMER_")>
+  [ 34] pushint16 2000 .......................... <2000>
+  [ 37] pushsymb 96 ............................. <#resetPositionToStart>
+  [ 39] getglobal 97 ............................ <oAvatar>
+  [ 41] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #resetPositionToStart, oAvatar>
+  [ 43] objcall 2 ............................... script("_TIMER_").new(2000, #resetPositionToStart, oAvatar)
+  [ 45] pushcons 13 ............................. <"_TIMER_">
+  [ 47] pusharglist 1 ........................... <"_TIMER_">
+  [ 49] extcall 64 .............................. <script("_TIMER_")>
+  [ 51] pushint16 2000 .......................... <2000>
+  [ 54] pushsymb 22 ............................. <#startToolCarry>
+  [ 56] getparam 0 .............................. <me>
+  [ 58] pushint8 1 .............................. <1>
+  [ 60] pusharglistnoret 5 ...................... <script("_TIMER_"), 2000, #startToolCarry, me, 1>
+  [ 62] objcall 2 ............................... script("_TIMER_").new(2000, #startToolCarry, me, 1)
+  [ 64] getparam 0 .............................. <me>
+  [ 66] pushzero ................................ <0>
+  [ 67] setobjprop 91 ........................... me.bICheated = 0
+  [ 69] ret
+end
+
+on gameWon me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 61 ....................... <me.oTimer>
+  [  4] pusharglistnoret 1 ...................... <me.oTimer>
+  [  6] objcall 99 .............................. me.oTimer.stopTiming()
+  [  8] getglobal 97 ............................ <oAvatar>
+  [ 10] pusharglistnoret 1 ...................... <oAvatar>
+  [ 12] objcall 100 ............................. oAvatar.destroy()
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 46 .............................. me.deleteFromActorList()
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] pusharglistnoret 2 ...................... <me, 1>
+  [ 26] objcall 10 .............................. me.setInteractingWithUser(1)
+  [ 28] pushcons 17 ............................. <"end">
+  [ 30] pusharglistnoret 1 ...................... <"end">
+  [ 32] extcall 92 .............................. go("end")
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglist 1 ........................... <me>
+  [ 38] objcall 27 .............................. <me.getLives()>
+  [ 40] pushcons 3 .............................. <"hotdog">
+  [ 42] pusharglist 1 ........................... <"hotdog">
+  [ 44] extcall 64 .............................. <script("hotdog")>
+  [ 46] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getobjprop 70 ........................... <me.iLifeScoreBonus>
+  [ 53] pusharglist 2 ........................... <script("hotdog").pickle, me.iLifeScoreBonus>
+  [ 55] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iLifeScoreBonus)>
+  [ 57] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iLifeScoreBonus)>
+  [ 59] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iLifeScoreBonus))>
+  [ 61] mul ..................................... <me.getLives() * integer(script("hotdog").pickle.Decrypt(me.iLifeScoreBonus))>
+  [ 62] setlocal 0 .............................. iAddLifeScoreBonus = me.getLives() * integer(script("hotdog").pickle.Decrypt(me.iLifeScoreBonus))
+  [ 64] pushcons 3 .............................. <"hotdog">
+  [ 66] pusharglist 1 ........................... <"hotdog">
+  [ 68] extcall 64 .............................. <script("hotdog")>
+  [ 70] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 73] getparam 0 .............................. <me>
+  [ 75] getobjprop 69 ........................... <me.iFinishScoreBonus>
+  [ 77] pusharglist 2 ........................... <script("hotdog").pickle, me.iFinishScoreBonus>
+  [ 79] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iFinishScoreBonus)>
+  [ 81] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iFinishScoreBonus)>
+  [ 83] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iFinishScoreBonus))>
+  [ 85] setlocal 1 .............................. iAddFinishScoreBonus = integer(script("hotdog").pickle.Decrypt(me.iFinishScoreBonus))
+  [ 87] getlocal 0 .............................. <iAddLifeScoreBonus>
+  [ 89] getlocal 1 .............................. <iAddFinishScoreBonus>
+  [ 91] add ..................................... <iAddLifeScoreBonus + iAddFinishScoreBonus>
+  [ 92] setlocal 2 .............................. iTotalBonus = iAddLifeScoreBonus + iAddFinishScoreBonus
+  [ 94] getparam 0 .............................. <me>
+  [ 96] getlocal 2 .............................. <iTotalBonus>
+  [ 98] pusharglistnoret 2 ...................... <me, iTotalBonus>
+  [100] objcall 25 .............................. me.incrementScore(iTotalBonus)
+  [102] getglobal 72 ............................ <oTextConstants>
+  [104] getparam 0 .............................. <me>
+  [106] pusharglist 1 ........................... <me>
+  [108] objcall 27 .............................. <me.getLives()>
+  [110] getlocal 0 .............................. <iAddLifeScoreBonus>
+  [112] getlocal 1 .............................. <iAddFinishScoreBonus>
+  [114] getparam 0 .............................. <me>
+  [116] pusharglist 1 ........................... <me>
+  [118] objcall 24 .............................. <me.getScore()>
+  [120] pusharglist 5 ........................... <oTextConstants, me.getLives(), iAddLifeScoreBonus, iAddFinishScoreBonus, me.getScore()>
+  [122] objcall 101 ............................. <oTextConstants.getGameWonMessage(me.getLives(), iAddLifeScoreBonus, iAddFinishScoreBonus, me.getScore())>
+  [124] setlocal 3 .............................. alertString = oTextConstants.getGameWonMessage(me.getLives(), iAddLifeScoreBonus, iAddFinishScoreBonus, me.getScore())
+  [126] getparam 0 .............................. <me>
+  [128] pusharglistnoret 1 ...................... <me>
+  [130] objcall 40 .............................. me.playWonSound()
+  [132] pushsymb 95 ............................. <#showAlert>
+  [134] getlocal 3 .............................. <alertString>
+  [136] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [138] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [140] getglobal 83 ............................ <oDisplay>
+  [142] pushcons 18 ............................. <"Score">
+  [144] pushcons 3 .............................. <"hotdog">
+  [146] pusharglist 1 ........................... <"hotdog">
+  [148] extcall 64 .............................. <script("hotdog")>
+  [150] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [153] getparam 0 .............................. <me>
+  [155] getobjprop 67 ........................... <me.iScore>
+  [157] pusharglist 2 ........................... <script("hotdog").pickle, me.iScore>
+  [159] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iScore)>
+  [161] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iScore)>
+  [163] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iScore))>
+  [165] pusharglistnoret 3 ...................... <oDisplay, "Score", integer(script("hotdog").pickle.Decrypt(me.iScore))>
+  [167] objcall 84 .............................. oDisplay.sendDisplay("Score", integer(script("hotdog").pickle.Decrypt(me.iScore)))
+  [169] getparam 0 .............................. <me>
+  [171] getchainedprop 61 ....................... <me.oTimer>
+  [173] pusharglistnoret 1 ...................... <me.oTimer>
+  [175] objcall 100 ............................. me.oTimer.destroy()
+  [177] getparam 0 .............................. <me>
+  [179] pusharglist 0 ........................... <>
+  [181] extcall 59 .............................. <VOID>
+  [183] setobjprop 61 ........................... me.oTimer = VOID
+  [185] pushsymb 103 ............................ <#pauseMachine>
+  [187] pushint8 1 .............................. <1>
+  [189] pusharglistnoret 2 ...................... <#pauseMachine, 1>
+  [191] extcall 94 .............................. sendAllSprites(#pauseMachine, 1)
+  [193] pushcons 19 ............................. <"ToolReplacer">
+  [195] pusharglist 1 ........................... <"ToolReplacer">
+  [197] extcall 64 .............................. <script("ToolReplacer")>
+  [199] pusharglistnoret 1 ...................... <script("ToolReplacer")>
+  [201] objcall 2 ............................... script("ToolReplacer").new()
+  [203] pushcons 3 .............................. <"hotdog">
+  [205] pusharglist 1 ........................... <"hotdog">
+  [207] extcall 64 .............................. <script("hotdog")>
+  [209] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [212] getparam 0 .............................. <me>
+  [214] pusharglist 1 ........................... <me>
+  [216] objcall 24 .............................. <me.getScore()>
+  [218] pusharglist 1 ........................... <me.getScore()>
+  [220] extcall 121 ............................. <string(me.getScore())>
+  [222] pusharglist 2 ........................... <script("hotdog").pickle, string(me.getScore())>
+  [224] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(me.getScore()))>
+  [226] setglobal 104 ........................... iLatestScore = script("hotdog").pickle.Encrypt(string(me.getScore()))
+  [228] getglobal 83 ............................ <oDisplay>
+  [230] pushcons 18 ............................. <"Score">
+  [232] pushcons 3 .............................. <"hotdog">
+  [234] pusharglist 1 ........................... <"hotdog">
+  [236] extcall 64 .............................. <script("hotdog")>
+  [238] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [241] getglobal 104 ........................... <iLatestScore>
+  [243] pusharglist 2 ........................... <script("hotdog").pickle, iLatestScore>
+  [245] objcall 102 ............................. <script("hotdog").pickle.Decrypt(iLatestScore)>
+  [247] pusharglistnoret 3 ...................... <oDisplay, "Score", script("hotdog").pickle.Decrypt(iLatestScore)>
+  [249] objcall 84 .............................. oDisplay.sendDisplay("Score", script("hotdog").pickle.Decrypt(iLatestScore))
+  [251] pushcons 13 ............................. <"_TIMER_">
+  [253] pusharglist 1 ........................... <"_TIMER_">
+  [255] extcall 64 .............................. <script("_TIMER_")>
+  [257] pushint16 7000 .......................... <7000>
+  [260] pushsymb 15 ............................. <#sendScore>
+  [262] getparam 0 .............................. <me>
+  [264] pusharglistnoret 4 ...................... <script("_TIMER_"), 7000, #sendScore, me>
+  [266] objcall 2 ............................... script("_TIMER_").new(7000, #sendScore, me)
+  [268] ret
+end
+
+on gameOver me
+  [  0] getglobal 97 ............................ <oAvatar>
+  [  2] pusharglist 1 ........................... <oAvatar>
+  [  4] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [  6] pushzero ................................ <0>
+  [  7] gt ...................................... <oAvatar.getToolCarried() > 0>
+  [  8] jmpifz [ 23] ............................ if oAvatar.getToolCarried() > 0 then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getglobal 97 ............................ <oAvatar>
+  [ 15] pusharglist 1 ........................... <oAvatar>
+  [ 17] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 19] pusharglistnoret 2 ...................... <me, oAvatar.getToolCarried()>
+  [ 21] objcall 37 .............................. me.dropOffTool(oAvatar.getToolCarried())
+  [ 23] getglobal 97 ............................ <oAvatar>
+  [ 25] pusharglistnoret 1 ...................... <oAvatar>
+  [ 27] objcall 109 ............................. oAvatar.dropTool()
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] pusharglistnoret 2 ...................... <me, 1>
+  [ 35] objcall 28 .............................. me.decrementLives(1)
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 61 ....................... <me.oTimer>
+  [ 41] pusharglistnoret 1 ...................... <me.oTimer>
+  [ 43] objcall 99 .............................. me.oTimer.stopTiming()
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getchainedprop 61 ....................... <me.oTimer>
+  [ 49] pusharglistnoret 1 ...................... <me.oTimer>
+  [ 51] objcall 100 ............................. me.oTimer.destroy()
+  [ 53] getparam 0 .............................. <me>
+  [ 55] pusharglist 0 ........................... <>
+  [ 57] extcall 59 .............................. <VOID>
+  [ 59] setobjprop 61 ........................... me.oTimer = VOID
+  [ 61] getglobal 97 ............................ <oAvatar>
+  [ 63] pusharglistnoret 1 ...................... <oAvatar>
+  [ 65] objcall 100 ............................. oAvatar.destroy()
+  [ 67] getparam 0 .............................. <me>
+  [ 69] pusharglistnoret 1 ...................... <me>
+  [ 71] objcall 46 .............................. me.deleteFromActorList()
+  [ 73] getparam 0 .............................. <me>
+  [ 75] pushint8 1 .............................. <1>
+  [ 77] pusharglistnoret 2 ...................... <me, 1>
+  [ 79] objcall 10 .............................. me.setInteractingWithUser(1)
+  [ 81] pushcons 17 ............................. <"end">
+  [ 83] pusharglistnoret 1 ...................... <"end">
+  [ 85] extcall 92 .............................. go("end")
+  [ 87] getglobal 72 ............................ <oTextConstants>
+  [ 89] getparam 0 .............................. <me>
+  [ 91] pusharglist 1 ........................... <me>
+  [ 93] objcall 24 .............................. <me.getScore()>
+  [ 95] pusharglist 2 ........................... <oTextConstants, me.getScore()>
+  [ 97] objcall 110 ............................. <oTextConstants.getGameOverMessage(me.getScore())>
+  [ 99] setlocal 0 .............................. alertString = oTextConstants.getGameOverMessage(me.getScore())
+  [101] getparam 0 .............................. <me>
+  [103] pusharglistnoret 1 ...................... <me>
+  [105] objcall 41 .............................. me.playLoseSound()
+  [107] pushsymb 95 ............................. <#showAlert>
+  [109] getlocal 0 .............................. <alertString>
+  [111] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [113] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [115] pushcons 19 ............................. <"ToolReplacer">
+  [117] pusharglist 1 ........................... <"ToolReplacer">
+  [119] extcall 64 .............................. <script("ToolReplacer")>
+  [121] pusharglistnoret 1 ...................... <script("ToolReplacer")>
+  [123] objcall 2 ............................... script("ToolReplacer").new()
+  [125] pushcons 3 .............................. <"hotdog">
+  [127] pusharglist 1 ........................... <"hotdog">
+  [129] extcall 64 .............................. <script("hotdog")>
+  [131] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [134] getparam 0 .............................. <me>
+  [136] pusharglist 1 ........................... <me>
+  [138] objcall 24 .............................. <me.getScore()>
+  [140] pusharglist 1 ........................... <me.getScore()>
+  [142] extcall 121 ............................. <string(me.getScore())>
+  [144] pusharglist 2 ........................... <script("hotdog").pickle, string(me.getScore())>
+  [146] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(me.getScore()))>
+  [148] setglobal 104 ........................... iLatestScore = script("hotdog").pickle.Encrypt(string(me.getScore()))
+  [150] getglobal 83 ............................ <oDisplay>
+  [152] pushcons 18 ............................. <"Score">
+  [154] pushcons 3 .............................. <"hotdog">
+  [156] pusharglist 1 ........................... <"hotdog">
+  [158] extcall 64 .............................. <script("hotdog")>
+  [160] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [163] getglobal 104 ........................... <iLatestScore>
+  [165] pusharglist 2 ........................... <script("hotdog").pickle, iLatestScore>
+  [167] objcall 102 ............................. <script("hotdog").pickle.Decrypt(iLatestScore)>
+  [169] pusharglistnoret 3 ...................... <oDisplay, "Score", script("hotdog").pickle.Decrypt(iLatestScore)>
+  [171] objcall 84 .............................. oDisplay.sendDisplay("Score", script("hotdog").pickle.Decrypt(iLatestScore))
+  [173] pushcons 13 ............................. <"_TIMER_">
+  [175] pusharglist 1 ........................... <"_TIMER_">
+  [177] extcall 64 .............................. <script("_TIMER_")>
+  [179] pushint16 4000 .......................... <4000>
+  [182] pushsymb 15 ............................. <#sendScore>
+  [184] getparam 0 .............................. <me>
+  [186] pusharglistnoret 4 ...................... <script("_TIMER_"), 4000, #sendScore, me>
+  [188] objcall 2 ............................... script("_TIMER_").new(4000, #sendScore, me)
+  [190] ret
+end
+
+on sendScore me
+  [  0] pushsymb 111 ............................ <#show>
+  [  2] pusharglistnoret 1 ...................... <#show>
+  [  4] extcall 94 .............................. sendAllSprites(#show)
+  [  6] pushcons 20 ............................. <"HiScoreSubmit">
+  [  8] pusharglist 1 ........................... <"HiScoreSubmit">
+  [ 10] extcall 64 .............................. <script("HiScoreSubmit")>
+  [ 12] pusharglistnoret 1 ...................... <script("HiScoreSubmit")>
+  [ 14] objcall 2 ............................... script("HiScoreSubmit").new()
+  [ 16] ret
+end
+
+on gameTimerZeroed me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 9 ............................... <me.getInteractingWithUser()>
+  [  6] not ..................................... <not me.getInteractingWithUser()>
+  [  7] jmpifz [125] ............................ if not me.getInteractingWithUser() then
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] pusharglistnoret 2 ...................... <me, 1>
+  [ 16] objcall 10 .............................. me.setInteractingWithUser(1)
+  [ 18] pushcons 13 ............................. <"_TIMER_">
+  [ 20] pusharglist 1 ........................... <"_TIMER_">
+  [ 22] extcall 64 .............................. <script("_TIMER_")>
+  [ 24] pushint16 2000 .......................... <2000>
+  [ 27] pushsymb 17 ............................. <#gameHideMessage>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #gameHideMessage, me>
+  [ 33] objcall 2 ............................... script("_TIMER_").new(2000, #gameHideMessage, me)
+  [ 35] getparam 0 .............................. <me>
+  [ 37] pusharglist 1 ........................... <me>
+  [ 39] objcall 27 .............................. <me.getLives()>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] gt ...................................... <me.getLives() > 1>
+  [ 44] jmpifz [119] ............................ if me.getLives() > 1 then / else
+  [ 47] getglobal 97 ............................ <oAvatar>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] pusharglistnoret 2 ...................... <oAvatar, 1>
+  [ 53] objcall 103 ............................. oAvatar.pauseMachine(1)
+  [ 55] pushsymb 103 ............................ <#pauseMachine>
+  [ 57] pushint8 1 .............................. <1>
+  [ 59] pusharglistnoret 2 ...................... <#pauseMachine, 1>
+  [ 61] extcall 94 .............................. sendAllSprites(#pauseMachine, 1)
+  [ 63] getparam 0 .............................. <me>
+  [ 65] pushint8 1 .............................. <1>
+  [ 67] pusharglistnoret 2 ...................... <me, 1>
+  [ 69] objcall 28 .............................. me.decrementLives(1)
+  [ 71] getglobal 72 ............................ <oTextConstants>
+  [ 73] getglobal 58 ............................ <oComputer>
+  [ 75] pusharglist 1 ........................... <oComputer>
+  [ 77] objcall 27 .............................. <oComputer.getLives()>
+  [ 79] pusharglist 2 ........................... <oTextConstants, oComputer.getLives()>
+  [ 81] objcall 112 ............................. <oTextConstants.getGameTimerZeroedMessage(oComputer.getLives())>
+  [ 83] setlocal 0 .............................. sMessage = oTextConstants.getGameTimerZeroedMessage(oComputer.getLives())
+  [ 85] getparam 0 .............................. <me>
+  [ 87] pusharglistnoret 1 ...................... <me>
+  [ 89] objcall 42 .............................. me.playTimeOutSound()
+  [ 91] pushsymb 95 ............................. <#showAlert>
+  [ 93] getlocal 0 .............................. <sMessage>
+  [ 95] pusharglistnoret 2 ...................... <#showAlert, sMessage>
+  [ 97] extcall 94 .............................. sendAllSprites(#showAlert, sMessage)
+  [ 99] pushcons 13 ............................. <"_TIMER_">
+  [101] pusharglist 1 ........................... <"_TIMER_">
+  [103] extcall 64 .............................. <script("_TIMER_")>
+  [105] pushint16 3000 .......................... <3000>
+  [108] pushsymb 20 ............................. <#callForToolAfterCollision>
+  [110] getparam 0 .............................. <me>
+  [112] pusharglistnoret 4 ...................... <script("_TIMER_"), 3000, #callForToolAfterCollision, me>
+  [114] objcall 2 ............................... script("_TIMER_").new(3000, #callForToolAfterCollision, me)
+  [116] jmp [125]
+  [119] getparam 0 .............................. <me>
+  [121] pusharglistnoret 1 ...................... <me>
+  [123] objcall 14 .............................. me.gameOver()
+  [125] ret
+end
+
+on gameHideMessage me
+  [  0] pushsymb 113 ............................ <#hideAlert>
+  [  2] pusharglistnoret 1 ...................... <#hideAlert>
+  [  4] extcall 94 .............................. sendAllSprites(#hideAlert)
+  [  6] ret
+end
+
+on callForTool me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] pusharglistnoret 2 ...................... <me, 1>
+  [  6] objcall 10 .............................. me.setInteractingWithUser(1)
+  [  8] getglobal 72 ............................ <oTextConstants>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pusharglist 1 ........................... <me>
+  [ 14] objcall 32 .............................. <me.getComputerToolName()>
+  [ 16] pusharglist 2 ........................... <oTextConstants, me.getComputerToolName()>
+  [ 18] objcall 114 ............................. <oTextConstants.getCallForToolMessage(me.getComputerToolName())>
+  [ 20] setlocal 0 .............................. alertString = oTextConstants.getCallForToolMessage(me.getComputerToolName())
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pusharglistnoret 1 ...................... <me>
+  [ 26] objcall 39 .............................. me.playBeepSound()
+  [ 28] pushsymb 95 ............................. <#showAlert>
+  [ 30] getlocal 0 .............................. <alertString>
+  [ 32] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [ 34] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [ 36] pushcons 13 ............................. <"_TIMER_">
+  [ 38] pusharglist 1 ........................... <"_TIMER_">
+  [ 40] extcall 64 .............................. <script("_TIMER_")>
+  [ 42] pushint16 2000 .......................... <2000>
+  [ 45] pushsymb 22 ............................. <#startToolCarry>
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] pusharglistnoret 5 ...................... <script("_TIMER_"), 2000, #startToolCarry, me, 1>
+  [ 53] objcall 2 ............................... script("_TIMER_").new(2000, #startToolCarry, me, 1)
+  [ 55] ret
+end
+
+on callForToolAgain me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] pusharglistnoret 2 ...................... <me, 1>
+  [  6] objcall 10 .............................. me.setInteractingWithUser(1)
+  [  8] getglobal 72 ............................ <oTextConstants>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pusharglist 1 ........................... <me>
+  [ 14] objcall 32 .............................. <me.getComputerToolName()>
+  [ 16] pusharglist 2 ........................... <oTextConstants, me.getComputerToolName()>
+  [ 18] objcall 115 ............................. <oTextConstants.getCallForToolAgainMessage(me.getComputerToolName())>
+  [ 20] setlocal 0 .............................. alertString = oTextConstants.getCallForToolAgainMessage(me.getComputerToolName())
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pusharglistnoret 1 ...................... <me>
+  [ 26] objcall 39 .............................. me.playBeepSound()
+  [ 28] pushsymb 95 ............................. <#showAlert>
+  [ 30] getlocal 0 .............................. <alertString>
+  [ 32] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [ 34] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [ 36] pushcons 13 ............................. <"_TIMER_">
+  [ 38] pusharglist 1 ........................... <"_TIMER_">
+  [ 40] extcall 64 .............................. <script("_TIMER_")>
+  [ 42] pushint16 2000 .......................... <2000>
+  [ 45] pushsymb 22 ............................. <#startToolCarry>
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pushzero ................................ <0>
+  [ 50] pusharglistnoret 5 ...................... <script("_TIMER_"), 2000, #startToolCarry, me, 0>
+  [ 52] objcall 2 ............................... script("_TIMER_").new(2000, #startToolCarry, me, 0)
+  [ 54] ret
+end
+
+on callForToolAfterCollision me
+  [  0] getglobal 97 ............................ <oAvatar>
+  [  2] pusharglist 1 ........................... <oAvatar>
+  [  4] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [  6] pushzero ................................ <0>
+  [  7] gt ...................................... <oAvatar.getToolCarried() > 0>
+  [  8] jmpifz [ 23] ............................ if oAvatar.getToolCarried() > 0 then
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getglobal 97 ............................ <oAvatar>
+  [ 15] pusharglist 1 ........................... <oAvatar>
+  [ 17] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 19] pusharglistnoret 2 ...................... <me, oAvatar.getToolCarried()>
+  [ 21] objcall 37 .............................. me.dropOffTool(oAvatar.getToolCarried())
+  [ 23] getglobal 97 ............................ <oAvatar>
+  [ 25] pusharglistnoret 1 ...................... <oAvatar>
+  [ 27] objcall 109 ............................. oAvatar.dropTool()
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] pusharglistnoret 2 ...................... <me, 1>
+  [ 35] objcall 10 .............................. me.setInteractingWithUser(1)
+  [ 37] getglobal 72 ............................ <oTextConstants>
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglist 1 ........................... <me>
+  [ 43] objcall 32 .............................. <me.getComputerToolName()>
+  [ 45] pusharglist 2 ........................... <oTextConstants, me.getComputerToolName()>
+  [ 47] objcall 116 ............................. <oTextConstants.getCallForToolAfterCollisionMessage(me.getComputerToolName())>
+  [ 49] setlocal 0 .............................. alertString = oTextConstants.getCallForToolAfterCollisionMessage(me.getComputerToolName())
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pusharglistnoret 1 ...................... <me>
+  [ 55] objcall 39 .............................. me.playBeepSound()
+  [ 57] pushsymb 95 ............................. <#showAlert>
+  [ 59] getlocal 0 .............................. <alertString>
+  [ 61] pusharglistnoret 2 ...................... <#showAlert, alertString>
+  [ 63] extcall 94 .............................. sendAllSprites(#showAlert, alertString)
+  [ 65] pushcons 13 ............................. <"_TIMER_">
+  [ 67] pusharglist 1 ........................... <"_TIMER_">
+  [ 69] extcall 64 .............................. <script("_TIMER_")>
+  [ 71] pushint16 2000 .......................... <2000>
+  [ 74] pushsymb 96 ............................. <#resetPositionToStart>
+  [ 76] getglobal 97 ............................ <oAvatar>
+  [ 78] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #resetPositionToStart, oAvatar>
+  [ 80] objcall 2 ............................... script("_TIMER_").new(2000, #resetPositionToStart, oAvatar)
+  [ 82] pushcons 13 ............................. <"_TIMER_">
+  [ 84] pusharglist 1 ........................... <"_TIMER_">
+  [ 86] extcall 64 .............................. <script("_TIMER_")>
+  [ 88] pushint16 2000 .......................... <2000>
+  [ 91] pushsymb 22 ............................. <#startToolCarry>
+  [ 93] getparam 0 .............................. <me>
+  [ 95] pushzero ................................ <0>
+  [ 96] pusharglistnoret 5 ...................... <script("_TIMER_"), 2000, #startToolCarry, me, 0>
+  [ 98] objcall 2 ............................... script("_TIMER_").new(2000, #startToolCarry, me, 0)
+  [100] getparam 0 .............................. <me>
+  [102] getchainedprop 61 ....................... <me.oTimer>
+  [104] pusharglistnoret 1 ...................... <me.oTimer>
+  [106] objcall 117 ............................. me.oTimer.reset()
+  [108] ret
+end
+
+on callForNewTool me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] pusharglistnoret 2 ...................... <me, 1>
+  [  6] objcall 10 .............................. me.setInteractingWithUser(1)
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 61 ....................... <me.oTimer>
+  [ 12] pusharglistnoret 1 ...................... <me.oTimer>
+  [ 14] objcall 117 ............................. me.oTimer.reset()
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 1 ...................... <me>
+  [ 20] objcall 30 .............................. me.getNextTool()
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pusharglist 1 ........................... <me>
+  [ 26] objcall 31 .............................. <me.getComputerTool()>
+  [ 28] pushzero ................................ <0>
+  [ 29] gt ...................................... <me.getComputerTool() > 0>
+  [ 30] jmpifz [ 42] ............................ if me.getComputerTool() > 0 then / else
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 18 .............................. me.callForTool()
+  [ 39] jmp [ 48]
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 1 ...................... <me>
+  [ 46] objcall 13 .............................. me.gameWon()
+  [ 48] ret
+end
+
+on startToolCarry me, bSuccess
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 61 ....................... <me.oTimer>
+  [  4] pusharglistnoret 1 ...................... <me.oTimer>
+  [  6] objcall 118 ............................. me.oTimer.startTiming()
+  [  8] pushsymb 103 ............................ <#pauseMachine>
+  [ 10] pushzero ................................ <0>
+  [ 11] pusharglistnoret 2 ...................... <#pauseMachine, 0>
+  [ 13] extcall 94 .............................. sendAllSprites(#pauseMachine, 0)
+  [ 15] getglobal 97 ............................ <oAvatar>
+  [ 17] pushzero ................................ <0>
+  [ 18] pusharglistnoret 2 ...................... <oAvatar, 0>
+  [ 20] objcall 103 ............................. oAvatar.pauseMachine(0)
+  [ 22] pushsymb 113 ............................ <#hideAlert>
+  [ 24] pusharglistnoret 1 ...................... <#hideAlert>
+  [ 26] extcall 94 .............................. sendAllSprites(#hideAlert)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushzero ................................ <0>
+  [ 31] pusharglistnoret 2 ...................... <me, 0>
+  [ 33] objcall 10 .............................. me.setInteractingWithUser(0)
+  [ 35] getglobal 97 ............................ <oAvatar>
+  [ 37] pushint16 2000 .......................... <2000>
+  [ 40] getparam 1 .............................. <bSuccess>
+  [ 42] pusharglistnoret 3 ...................... <oAvatar, 2000, bSuccess>
+  [ 44] objcall 119 ............................. oAvatar.startFlash(2000, bSuccess)
+  [ 46] ret
+end
+
+on setScore me, _iScore
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 21 ............................. <"setScore():">
+  [  4] getparam 1 .............................. <_iScore>
+  [  6] joinpadstr .............................. <"setScore():" && _iScore>
+  [  7] pusharglistnoret 2 ...................... <me, "setScore():" && _iScore>
+  [  9] objcall 0 ............................... me.debug("setScore():" && _iScore)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushcons 3 .............................. <"hotdog">
+  [ 15] pusharglist 1 ........................... <"hotdog">
+  [ 17] extcall 64 .............................. <script("hotdog")>
+  [ 19] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 22] getparam 1 .............................. <_iScore>
+  [ 24] pusharglist 1 ........................... <_iScore>
+  [ 26] extcall 121 ............................. <string(_iScore)>
+  [ 28] pusharglist 2 ........................... <script("hotdog").pickle, string(_iScore)>
+  [ 30] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(_iScore))>
+  [ 32] setobjprop 67 ........................... me.iScore = script("hotdog").pickle.Encrypt(string(_iScore))
+  [ 34] ret
+end
+
+on getScore me
+  [  0] pushcons 3 .............................. <"hotdog">
+  [  2] pusharglist 1 ........................... <"hotdog">
+  [  4] extcall 64 .............................. <script("hotdog")>
+  [  6] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 67 ........................... <me.iScore>
+  [ 13] pusharglist 2 ........................... <script("hotdog").pickle, me.iScore>
+  [ 15] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 17] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 19] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iScore))>
+  [ 21] pusharglistnoret 1 ...................... <integer(script("hotdog").pickle.Decrypt(me.iScore))>
+  [ 23] extcall 63 .............................. return integer(script("hotdog").pickle.Decrypt(me.iScore))
+  [ 25] ret
+end
+
+on incrementScore me, iValue
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 22 ............................. <"incrementScore():">
+  [  4] getparam 1 .............................. <iValue>
+  [  6] joinpadstr .............................. <"incrementScore():" && iValue>
+  [  7] pusharglistnoret 2 ...................... <me, "incrementScore():" && iValue>
+  [  9] objcall 0 ............................... me.debug("incrementScore():" && iValue)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushcons 3 .............................. <"hotdog">
+  [ 15] pusharglist 1 ........................... <"hotdog">
+  [ 17] extcall 64 .............................. <script("hotdog")>
+  [ 19] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 22] pushcons 3 .............................. <"hotdog">
+  [ 24] pusharglist 1 ........................... <"hotdog">
+  [ 26] extcall 64 .............................. <script("hotdog")>
+  [ 28] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 67 ........................... <me.iScore>
+  [ 35] pusharglist 2 ........................... <script("hotdog").pickle, me.iScore>
+  [ 37] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 39] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 41] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iScore))>
+  [ 43] getparam 1 .............................. <iValue>
+  [ 45] add ..................................... <integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue>
+  [ 46] pusharglist 1 ........................... <integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue>
+  [ 48] extcall 121 ............................. <string(integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue)>
+  [ 50] pusharglist 2 ........................... <script("hotdog").pickle, string(integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue)>
+  [ 52] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue))>
+  [ 54] setobjprop 67 ........................... me.iScore = script("hotdog").pickle.Encrypt(string(integer(script("hotdog").pickle.Decrypt(me.iScore)) + iValue))
+  [ 56] ret
+end
+
+on setLives me, _iLives
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 23 ............................. <"setLives():">
+  [  4] getparam 1 .............................. <_iLives>
+  [  6] joinpadstr .............................. <"setLives():" && _iLives>
+  [  7] pusharglistnoret 2 ...................... <me, "setLives():" && _iLives>
+  [  9] objcall 0 ............................... me.debug("setLives():" && _iLives)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushcons 3 .............................. <"hotdog">
+  [ 15] pusharglist 1 ........................... <"hotdog">
+  [ 17] extcall 64 .............................. <script("hotdog")>
+  [ 19] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 22] getparam 1 .............................. <_iLives>
+  [ 24] pusharglist 1 ........................... <_iLives>
+  [ 26] extcall 121 ............................. <string(_iLives)>
+  [ 28] pusharglist 2 ........................... <script("hotdog").pickle, string(_iLives)>
+  [ 30] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(_iLives))>
+  [ 32] setobjprop 71 ........................... me.iLives = script("hotdog").pickle.Encrypt(string(_iLives))
+  [ 34] ret
+end
+
+on getLives me
+  [  0] pushcons 3 .............................. <"hotdog">
+  [  2] pusharglist 1 ........................... <"hotdog">
+  [  4] extcall 64 .............................. <script("hotdog")>
+  [  6] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 71 ........................... <me.iLives>
+  [ 13] pusharglist 2 ........................... <script("hotdog").pickle, me.iLives>
+  [ 15] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iLives)>
+  [ 17] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iLives)>
+  [ 19] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iLives))>
+  [ 21] pusharglistnoret 1 ...................... <integer(script("hotdog").pickle.Decrypt(me.iLives))>
+  [ 23] extcall 63 .............................. return integer(script("hotdog").pickle.Decrypt(me.iLives))
+  [ 25] ret
+end
+
+on decrementLives me, iValue
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 24 ............................. <"decrementLives():">
+  [  4] getparam 1 .............................. <iValue>
+  [  6] joinpadstr .............................. <"decrementLives():" && iValue>
+  [  7] pusharglistnoret 2 ...................... <me, "decrementLives():" && iValue>
+  [  9] objcall 0 ............................... me.debug("decrementLives():" && iValue)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushcons 3 .............................. <"hotdog">
+  [ 15] pusharglist 1 ........................... <"hotdog">
+  [ 17] extcall 64 .............................. <script("hotdog")>
+  [ 19] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 22] pushcons 3 .............................. <"hotdog">
+  [ 24] pusharglist 1 ........................... <"hotdog">
+  [ 26] extcall 64 .............................. <script("hotdog")>
+  [ 28] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 71 ........................... <me.iLives>
+  [ 35] pusharglist 2 ........................... <script("hotdog").pickle, me.iLives>
+  [ 37] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iLives)>
+  [ 39] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iLives)>
+  [ 41] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iLives))>
+  [ 43] getparam 1 .............................. <iValue>
+  [ 45] sub ..................................... <integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue>
+  [ 46] pusharglist 1 ........................... <integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue>
+  [ 48] extcall 121 ............................. <string(integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue)>
+  [ 50] pusharglist 2 ........................... <script("hotdog").pickle, string(integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue)>
+  [ 52] objcall 66 .............................. <script("hotdog").pickle.Encrypt(string(integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue))>
+  [ 54] setobjprop 71 ........................... me.iLives = script("hotdog").pickle.Encrypt(string(integer(script("hotdog").pickle.Decrypt(me.iLives)) - iValue))
+  [ 56] ret
+end
+
+on randomizeToolList me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 75 ....................... <me.aToolList_Default>
+  [  4] pusharglist 1 ........................... <me.aToolList_Default>
+  [  6] objcall 126 ............................. <me.aToolList_Default.duplicate()>
+  [  8] setlocal 0 .............................. aToolList = me.aToolList_Default.duplicate()
+  [ 10] pusharglist 0 ........................... <[]>
+  [ 12] pushlist ................................ <[]>
+  [ 13] setlocal 1 .............................. aRandomToolList = []
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 2
+  [ 19] getlocal 2
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushsymb 75 ............................. <#aToolList_Default>
+  [ 25] pusharglist 2 ........................... <me, #aToolList_Default>
+  [ 27] objcall 88 .............................. <me.aToolList_Default.count>
+  [ 29] lteq
+  [ 30] jmpifz [ 74] ............................ repeat with i = 1 to me.aToolList_Default.count
+  [ 33] getlocal 0 .............................. <aToolList>
+  [ 35] getlocal 0 .............................. <aToolList>
+  [ 37] getobjprop 88 ........................... <aToolList.count>
+  [ 39] pusharglist 1 ........................... <aToolList.count>
+  [ 41] extcall 55 .............................. <random(aToolList.count)>
+  [ 43] pusharglist 2 ........................... <aToolList, random(aToolList.count)>
+  [ 45] objcall 86 .............................. <aToolList[random(aToolList.count)]>
+  [ 47] setlocal 3 .............................. sRandomTool = aToolList[random(aToolList.count)]
+  [ 49] getlocal 1 .............................. <aRandomToolList>
+  [ 51] getlocal 3 .............................. <sRandomTool>
+  [ 53] pusharglistnoret 2 ...................... <aRandomToolList, sRandomTool>
+  [ 55] objcall 81 .............................. aRandomToolList.add(sRandomTool)
+  [ 57] getlocal 0 .............................. <aToolList>
+  [ 59] getlocal 3 .............................. <sRandomTool>
+  [ 61] pusharglistnoret 2 ...................... <aToolList, sRandomTool>
+  [ 63] objcall 62 .............................. aToolList.deleteOne(sRandomTool)
+  [ 65] pushint8 1
+  [ 67] getlocal 2
+  [ 69] add
+  [ 70] setlocal 2
+  [ 72] endrepeat [ 19]
+  [ 74] getlocal 1 .............................. <aRandomToolList>
+  [ 76] pusharglistnoret 1 ...................... <aRandomToolList>
+  [ 78] extcall 63 .............................. return aRandomToolList
+  [ 80] ret
+end
+
+on getNextTool me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 7 ............................... <me.getCountOfToolsLeft()>
+  [  6] pushint8 1 .............................. <1>
+  [  8] gt ...................................... <me.getCountOfToolsLeft() > 1>
+  [  9] jmpifz [ 39] ............................ if me.getCountOfToolsLeft() > 1 then / else
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getchainedprop 53 ....................... <me.aToolList_Random>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] pusharglistnoret 2 ...................... <me.aToolList_Random, 1>
+  [ 20] objcall 56 .............................. me.aToolList_Random.deleteAt(1)
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pushsymb 53 ............................. <#aToolList_Random>
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] pusharglist 3 ........................... <me, #aToolList_Random, 1>
+  [ 30] objcall 54 .............................. <me.aToolList_Random[1]>
+  [ 32] pusharglistnoret 1 ...................... <me.aToolList_Random[1]>
+  [ 34] extcall 63 .............................. return me.aToolList_Random[1]
+  [ 36] jmp [ 51]
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglist 0 ........................... <[]>
+  [ 43] pushlist ................................ <[]>
+  [ 44] setobjprop 53 ........................... me.aToolList_Random = []
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglistnoret 1 ...................... <0>
+  [ 49] extcall 63 .............................. return 0
+  [ 51] ret
+end
+
+on getComputerTool me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 7 ............................... <me.getCountOfToolsLeft()>
+  [  6] pushzero ................................ <0>
+  [  7] gt ...................................... <me.getCountOfToolsLeft() > 0>
+  [  8] jmpifz [ 28] ............................ if me.getCountOfToolsLeft() > 0 then / else
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushsymb 53 ............................. <#aToolList_Random>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] pusharglist 3 ........................... <me, #aToolList_Random, 1>
+  [ 19] objcall 54 .............................. <me.aToolList_Random[1]>
+  [ 21] pusharglistnoret 1 ...................... <me.aToolList_Random[1]>
+  [ 23] extcall 63 .............................. return me.aToolList_Random[1]
+  [ 25] jmp [ 35]
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] inv ..................................... <-1>
+  [ 31] pusharglistnoret 1 ...................... <-1>
+  [ 33] extcall 63 .............................. return -1
+  [ 35] ret
+end
+
+on getComputerToolName me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 31 .............................. <me.getComputerTool()>
+  [  6] pushzero ................................ <0>
+  [  7] gt ...................................... <me.getComputerTool() > 0>
+  [  8] jmpifz [ 32] ............................ if me.getComputerTool() > 0 then / else
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushsymb 74 ............................. <#aToolList_Names>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglist 1 ........................... <me>
+  [ 19] objcall 31 .............................. <me.getComputerTool()>
+  [ 21] pusharglist 3 ........................... <me, #aToolList_Names, me.getComputerTool()>
+  [ 23] objcall 54 .............................. <me.aToolList_Names[me.getComputerTool()]>
+  [ 25] pusharglistnoret 1 ...................... <me.aToolList_Names[me.getComputerTool()]>
+  [ 27] extcall 63 .............................. return me.aToolList_Names[me.getComputerTool()]
+  [ 29] jmp [ 38]
+  [ 32] pushcons 9 .............................. <EMPTY>
+  [ 34] pusharglistnoret 1 ...................... <EMPTY>
+  [ 36] extcall 63 .............................. return EMPTY
+  [ 38] ret
+end
+
+on getToolNameByIndex me, iIndex
+  [  0] getparam 1 .............................. <iIndex>
+  [  2] pushzero ................................ <0>
+  [  3] gt ...................................... <iIndex > 0>
+  [  4] jmpifz [ 24] ............................ if iIndex > 0 then / else
+  [  7] getparam 0 .............................. <me>
+  [  9] pushsymb 74 ............................. <#aToolList_Names>
+  [ 11] getparam 1 .............................. <iIndex>
+  [ 13] pusharglist 3 ........................... <me, #aToolList_Names, iIndex>
+  [ 15] objcall 54 .............................. <me.aToolList_Names[iIndex]>
+  [ 17] pusharglistnoret 1 ...................... <me.aToolList_Names[iIndex]>
+  [ 19] extcall 63 .............................. return me.aToolList_Names[iIndex]
+  [ 21] jmp [ 30]
+  [ 24] pushcons 25 ............................. <"No Tool">
+  [ 26] pusharglistnoret 1 ...................... <"No Tool">
+  [ 28] extcall 63 .............................. return "No Tool"
+  [ 30] ret
+end
+
+on getToolOnTable me, iToolNum
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 53 ....................... <me.aToolList_Random>
+  [  4] getparam 1 .............................. <iToolNum>
+  [  6] pusharglist 2 ........................... <me.aToolList_Random, iToolNum>
+  [  8] objcall 130 ............................. <me.aToolList_Random.getPos(iToolNum)>
+  [ 10] pushzero ................................ <0>
+  [ 11] gt ...................................... <me.aToolList_Random.getPos(iToolNum) > 0>
+  [ 12] getparam 1 .............................. <iToolNum>
+  [ 14] getglobal 97 ............................ <oAvatar>
+  [ 16] pusharglist 1 ........................... <oAvatar>
+  [ 18] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 20] nteq .................................... <iToolNum <> oAvatar.getToolCarried()>
+  [ 21] and ..................................... <(me.aToolList_Random.getPos(iToolNum) > 0) and (iToolNum <> oAvatar.getToolCarried())>
+  [ 22] pusharglistnoret 1 ...................... <(me.aToolList_Random.getPos(iToolNum) > 0) and (iToolNum <> oAvatar.getToolCarried())>
+  [ 24] extcall 63 .............................. return (me.aToolList_Random.getPos(iToolNum) > 0) and (iToolNum <> oAvatar.getToolCarried())
+  [ 26] ret
+end
+
+on hiliteTool me, iToolNum
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 76 ........................... <me.iToolHilite>
+  [  4] pusharglist 1 ........................... <me.iToolHilite>
+  [  6] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [  8] getobjprop 80 ........................... <sprite(me.iToolHilite).loc>
+  [ 10] setlocal 0 .............................. prevLoc = sprite(me.iToolHilite).loc
+  [ 12] getparam 1 .............................. <iToolNum>
+  [ 14] pushzero ................................ <0>
+  [ 15] nteq .................................... <iToolNum <> 0>
+  [ 16] jmpifz [109] ............................ if iToolNum <> 0 then / else
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 76 ........................... <me.iToolHilite>
+  [ 23] pusharglist 1 ........................... <me.iToolHilite>
+  [ 25] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 77 ........................... <me.iToolChannelOffset>
+  [ 31] getparam 1 .............................. <iToolNum>
+  [ 33] add ..................................... <me.iToolChannelOffset + iToolNum>
+  [ 34] pusharglist 1 ........................... <me.iToolChannelOffset + iToolNum>
+  [ 36] extcall 79 .............................. <sprite(me.iToolChannelOffset + iToolNum)>
+  [ 38] pushsymb 133 ............................ <#rect>
+  [ 40] pushint8 1 .............................. <1>
+  [ 42] pusharglist 3 ........................... <sprite(me.iToolChannelOffset + iToolNum), #rect, 1>
+  [ 44] objcall 54 .............................. <sprite(me.iToolChannelOffset + iToolNum).rect[1]>
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getobjprop 77 ........................... <me.iToolChannelOffset>
+  [ 50] getparam 1 .............................. <iToolNum>
+  [ 52] add ..................................... <me.iToolChannelOffset + iToolNum>
+  [ 53] pusharglist 1 ........................... <me.iToolChannelOffset + iToolNum>
+  [ 55] extcall 79 .............................. <sprite(me.iToolChannelOffset + iToolNum)>
+  [ 57] pushsymb 133 ............................ <#rect>
+  [ 59] pushint8 2 .............................. <2>
+  [ 61] pusharglist 3 ........................... <sprite(me.iToolChannelOffset + iToolNum), #rect, 2>
+  [ 63] objcall 54 .............................. <sprite(me.iToolChannelOffset + iToolNum).rect[2]>
+  [ 65] pusharglist 2 ........................... <sprite(me.iToolChannelOffset + iToolNum).rect[1], sprite(me.iToolChannelOffset + iToolNum).rect[2]>
+  [ 67] extcall 132 ............................. <point(sprite(me.iToolChannelOffset + iToolNum).rect[1], sprite(me.iToolChannelOffset + iToolNum).rect[2])>
+  [ 69] setobjprop 80 ........................... sprite(me.iToolHilite).loc = point(sprite(me.iToolChannelOffset + iToolNum).rect[1], sprite(me.iToolChannelOffset + iToolNum).rect[2])
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getobjprop 76 ........................... <me.iToolHilite>
+  [ 75] pusharglist 1 ........................... <me.iToolHilite>
+  [ 77] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [ 79] pushint16 10000 ......................... <10000>
+  [ 82] setobjprop 134 .......................... sprite(me.iToolHilite).locZ = 10000
+  [ 84] getlocal 0 .............................. <prevLoc>
+  [ 86] getparam 0 .............................. <me>
+  [ 88] getobjprop 76 ........................... <me.iToolHilite>
+  [ 90] pusharglist 1 ........................... <me.iToolHilite>
+  [ 92] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [ 94] getobjprop 80 ........................... <sprite(me.iToolHilite).loc>
+  [ 96] nteq .................................... <prevLoc <> sprite(me.iToolHilite).loc>
+  [ 97] jmpifz [106] ............................ if prevLoc <> sprite(me.iToolHilite).loc then
+  [100] getparam 0 .............................. <me>
+  [102] pusharglistnoret 1 ...................... <me>
+  [104] objcall 44 .............................. me.playHiliteSound()
+  [106] jmp [131]
+  [109] getparam 0 .............................. <me>
+  [111] getobjprop 76 ........................... <me.iToolHilite>
+  [113] pusharglist 1 ........................... <me.iToolHilite>
+  [115] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [117] pushint16 500 ........................... <500>
+  [120] inv ..................................... <-500>
+  [121] pushint16 500 ........................... <500>
+  [124] inv ..................................... <-500>
+  [125] pusharglist 2 ........................... <-500, -500>
+  [127] extcall 132 ............................. <point(-500, -500)>
+  [129] setobjprop 80 ........................... sprite(me.iToolHilite).loc = point(-500, -500)
+  [131] ret
+end
+
+on pickUpTool me, iToolNum
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 76 ........................... <me.iToolHilite>
+  [  4] pusharglist 1 ........................... <me.iToolHilite>
+  [  6] extcall 79 .............................. <sprite(me.iToolHilite)>
+  [  8] pushint16 500 ........................... <500>
+  [ 11] inv ..................................... <-500>
+  [ 12] pushint16 500 ........................... <500>
+  [ 15] inv ..................................... <-500>
+  [ 16] pusharglist 2 ........................... <-500, -500>
+  [ 18] extcall 132 ............................. <point(-500, -500)>
+  [ 20] setobjprop 80 ........................... sprite(me.iToolHilite).loc = point(-500, -500)
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 77 ........................... <me.iToolChannelOffset>
+  [ 26] getparam 1 .............................. <iToolNum>
+  [ 28] add ..................................... <me.iToolChannelOffset + iToolNum>
+  [ 29] pusharglist 1 ........................... <me.iToolChannelOffset + iToolNum>
+  [ 31] extcall 79 .............................. <sprite(me.iToolChannelOffset + iToolNum)>
+  [ 33] pushint16 500 ........................... <500>
+  [ 36] inv ..................................... <-500>
+  [ 37] pushint16 500 ........................... <500>
+  [ 40] inv ..................................... <-500>
+  [ 41] pusharglist 2 ........................... <-500, -500>
+  [ 43] extcall 132 ............................. <point(-500, -500)>
+  [ 45] setobjprop 80 ........................... sprite(me.iToolChannelOffset + iToolNum).loc = point(-500, -500)
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pusharglistnoret 1 ...................... <me>
+  [ 51] objcall 43 .............................. me.playPickUpSound()
+  [ 53] ret
+end
+
+on dropOffTool me, iToolNum
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 77 ........................... <me.iToolChannelOffset>
+  [  4] getparam 1 .............................. <iToolNum>
+  [  6] add ..................................... <me.iToolChannelOffset + iToolNum>
+  [  7] pusharglist 1 ........................... <me.iToolChannelOffset + iToolNum>
+  [  9] extcall 79 .............................. <sprite(me.iToolChannelOffset + iToolNum)>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushsymb 78 ............................. <#aToolLocs>
+  [ 15] getparam 1 .............................. <iToolNum>
+  [ 17] pusharglist 3 ........................... <me, #aToolLocs, iToolNum>
+  [ 19] objcall 54 .............................. <me.aToolLocs[iToolNum]>
+  [ 21] setobjprop 80 ........................... sprite(me.iToolChannelOffset + iToolNum).loc = me.aToolLocs[iToolNum]
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pusharglistnoret 1 ...................... <me>
+  [ 27] objcall 43 .............................. me.playPickUpSound()
+  [ 29] ret
+end
+
+on matchTool me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 26 ............................. <"matchTool()">
+  [  4] pusharglistnoret 2 ...................... <me, "matchTool()">
+  [  6] objcall 0 ............................... me.debug("matchTool()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 85 ........................... <me.bToolSubmissable>
+  [ 12] jmpifz [430] ............................ if me.bToolSubmissable then / else
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglistnoret 1 ...................... <me>
+  [ 19] objcall 6 ............................... me.disableToolSubmission()
+  [ 21] getglobal 97 ............................ <oAvatar>
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] pusharglistnoret 2 ...................... <oAvatar, 1>
+  [ 27] objcall 103 ............................. oAvatar.pauseMachine(1)
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] pusharglistnoret 2 ...................... <me, 1>
+  [ 35] objcall 10 .............................. me.setInteractingWithUser(1)
+  [ 37] getparam 0 .............................. <me>
+  [ 39] pusharglist 1 ........................... <me>
+  [ 41] objcall 31 .............................. <me.getComputerTool()>
+  [ 43] getglobal 97 ............................ <oAvatar>
+  [ 45] pusharglist 1 ........................... <oAvatar>
+  [ 47] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 49] eq ...................................... <me.getComputerTool() = oAvatar.getToolCarried()>
+  [ 50] jmpifz [241] ............................ if me.getComputerTool() = oAvatar.getToolCarried() then / else
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getchainedprop 61 ....................... <me.oTimer>
+  [ 57] pusharglistnoret 1 ...................... <me.oTimer>
+  [ 59] objcall 99 .............................. me.oTimer.stopTiming()
+  [ 61] pushcons 3 .............................. <"hotdog">
+  [ 63] pusharglist 1 ........................... <"hotdog">
+  [ 65] extcall 64 .............................. <script("hotdog")>
+  [ 67] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 70] getparam 0 .............................. <me>
+  [ 72] getobjprop 68 ........................... <me.iToolScore>
+  [ 74] pusharglist 2 ........................... <script("hotdog").pickle, me.iToolScore>
+  [ 76] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iToolScore)>
+  [ 78] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(me.iToolScore)>
+  [ 80] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(me.iToolScore))>
+  [ 82] setlocal 0 .............................. iToolAddScore = integer(script("hotdog").pickle.Decrypt(me.iToolScore))
+  [ 84] getparam 0 .............................. <me>
+  [ 86] getchainedprop 61 ....................... <me.oTimer>
+  [ 88] pusharglist 1 ........................... <me.oTimer>
+  [ 90] objcall 136 ............................. <me.oTimer.getTime()>
+  [ 92] setlocal 1 .............................. iTimeLeft = me.oTimer.getTime()
+  [ 94] getparam 0 .............................. <me>
+  [ 96] getobjprop 91 ........................... <me.bICheated>
+  [ 98] not ..................................... <not me.bICheated>
+  [ 99] jmpifz [116] ............................ if not me.bICheated then / else
+  [102] getlocal 1 .............................. <iTimeLeft>
+  [104] pushint8 100 ............................ <100>
+  [106] mul ..................................... <iTimeLeft * 100>
+  [107] pusharglist 1 ........................... <iTimeLeft * 100>
+  [109] extcall 123 ............................. <integer(iTimeLeft * 100)>
+  [111] setlocal 2 .............................. iTimeBonus = integer(iTimeLeft * 100)
+  [113] jmp [124]
+  [116] getlocal 1 .............................. <iTimeLeft>
+  [118] pusharglist 1 ........................... <iTimeLeft>
+  [120] extcall 123 ............................. <integer(iTimeLeft)>
+  [122] setlocal 2 .............................. iTimeBonus = integer(iTimeLeft)
+  [124] getlocal 0 .............................. <iToolAddScore>
+  [126] getlocal 2 .............................. <iTimeBonus>
+  [128] add ..................................... <iToolAddScore + iTimeBonus>
+  [129] setlocal 3 .............................. iTotal = iToolAddScore + iTimeBonus
+  [131] getglobal 138 ........................... <oSpriteManager>
+  [133] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [135] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [137] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [139] pushint16 150 ........................... <150>
+  [142] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 150
+  [144] getglobal 138 ........................... <oSpriteManager>
+  [146] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [148] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [150] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [152] pushzero ................................ <0>
+  [153] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [155] getglobal 138 ........................... <oSpriteManager>
+  [157] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [159] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [161] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [163] pushcons 27 ............................. <"SONAR">
+  [165] pusharglist 1 ........................... <"SONAR">
+  [167] extcall 142 ............................. <member("SONAR")>
+  [169] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("SONAR")>
+  [171] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("SONAR"))
+  [173] getglobal 72 ............................ <oTextConstants>
+  [175] getparam 0 .............................. <me>
+  [177] pusharglist 1 ........................... <me>
+  [179] objcall 32 .............................. <me.getComputerToolName()>
+  [181] getlocal 0 .............................. <iToolAddScore>
+  [183] getlocal 2 .............................. <iTimeBonus>
+  [185] getlocal 3 .............................. <iTotal>
+  [187] pusharglist 5 ........................... <oTextConstants, me.getComputerToolName(), iToolAddScore, iTimeBonus, iTotal>
+  [189] objcall 144 ............................. <oTextConstants.getMatchToolMessageTrue(me.getComputerToolName(), iToolAddScore, iTimeBonus, iTotal)>
+  [191] setlocal 4 .............................. theMessage = oTextConstants.getMatchToolMessageTrue(me.getComputerToolName(), iToolAddScore, iTimeBonus, iTotal)
+  [193] getparam 0 .............................. <me>
+  [195] getlocal 3 .............................. <iTotal>
+  [197] pusharglistnoret 2 ...................... <me, iTotal>
+  [199] objcall 25 .............................. me.incrementScore(iTotal)
+  [201] getglobal 97 ............................ <oAvatar>
+  [203] pusharglistnoret 1 ...................... <oAvatar>
+  [205] objcall 109 ............................. oAvatar.dropTool()
+  [207] pushsymb 95 ............................. <#showAlert>
+  [209] getlocal 4 .............................. <theMessage>
+  [211] pusharglistnoret 2 ...................... <#showAlert, theMessage>
+  [213] extcall 94 .............................. sendAllSprites(#showAlert, theMessage)
+  [215] pushcons 13 ............................. <"_TIMER_">
+  [217] pusharglist 1 ........................... <"_TIMER_">
+  [219] extcall 64 .............................. <script("_TIMER_")>
+  [221] pushint16 5000 .......................... <5000>
+  [224] pushsymb 21 ............................. <#callForNewTool>
+  [226] getparam 0 .............................. <me>
+  [228] pusharglistnoret 4 ...................... <script("_TIMER_"), 5000, #callForNewTool, me>
+  [230] objcall 2 ............................... script("_TIMER_").new(5000, #callForNewTool, me)
+  [232] pushint8 1 .............................. <1>
+  [234] pusharglistnoret 1 ...................... <1>
+  [236] extcall 63 .............................. return 1
+  [238] jmp [427]
+  [241] getglobal 97 ............................ <oAvatar>
+  [243] pusharglist 1 ........................... <oAvatar>
+  [245] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [247] pushzero ................................ <0>
+  [248] gt ...................................... <oAvatar.getToolCarried() > 0>
+  [249] jmpifz [347] ............................ if oAvatar.getToolCarried() > 0 then / else
+  [252] getglobal 138 ........................... <oSpriteManager>
+  [254] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [256] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [258] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [260] pushint16 180 ........................... <180>
+  [263] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 180
+  [265] getglobal 138 ........................... <oSpriteManager>
+  [267] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [269] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [271] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [273] pushzero ................................ <0>
+  [274] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [276] getglobal 138 ........................... <oSpriteManager>
+  [278] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [280] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [282] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [284] pushcons 28 ............................. <"Alarm-08">
+  [286] pusharglist 1 ........................... <"Alarm-08">
+  [288] extcall 142 ............................. <member("Alarm-08")>
+  [290] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("Alarm-08")>
+  [292] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("Alarm-08"))
+  [294] getglobal 72 ............................ <oTextConstants>
+  [296] getparam 0 .............................. <me>
+  [298] getglobal 97 ............................ <oAvatar>
+  [300] pusharglist 1 ........................... <oAvatar>
+  [302] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [304] pusharglist 2 ........................... <me, oAvatar.getToolCarried()>
+  [306] objcall 33 .............................. <me.getToolNameByIndex(oAvatar.getToolCarried())>
+  [308] pusharglist 2 ........................... <oTextConstants, me.getToolNameByIndex(oAvatar.getToolCarried())>
+  [310] objcall 145 ............................. <oTextConstants.getMatchToolMessageFalse(me.getToolNameByIndex(oAvatar.getToolCarried()))>
+  [312] setlocal 4 .............................. theMessage = oTextConstants.getMatchToolMessageFalse(me.getToolNameByIndex(oAvatar.getToolCarried()))
+  [314] pushsymb 95 ............................. <#showAlert>
+  [316] getlocal 4 .............................. <theMessage>
+  [318] pusharglistnoret 2 ...................... <#showAlert, theMessage>
+  [320] extcall 94 .............................. sendAllSprites(#showAlert, theMessage)
+  [322] pushcons 13 ............................. <"_TIMER_">
+  [324] pusharglist 1 ........................... <"_TIMER_">
+  [326] extcall 64 .............................. <script("_TIMER_")>
+  [328] pushint16 2000 .......................... <2000>
+  [331] pushsymb 19 ............................. <#callForToolAgain>
+  [333] getparam 0 .............................. <me>
+  [335] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #callForToolAgain, me>
+  [337] objcall 2 ............................... script("_TIMER_").new(2000, #callForToolAgain, me)
+  [339] pushzero ................................ <0>
+  [340] pusharglistnoret 1 ...................... <0>
+  [342] extcall 63 .............................. return 0
+  [344] jmp [427]
+  [347] getglobal 138 ........................... <oSpriteManager>
+  [349] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [351] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [353] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [355] pushint16 180 ........................... <180>
+  [358] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 180
+  [360] getglobal 138 ........................... <oSpriteManager>
+  [362] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [364] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [366] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [368] pushzero ................................ <0>
+  [369] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [371] getglobal 138 ........................... <oSpriteManager>
+  [373] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [375] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [377] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [379] pushcons 28 ............................. <"Alarm-08">
+  [381] pusharglist 1 ........................... <"Alarm-08">
+  [383] extcall 142 ............................. <member("Alarm-08")>
+  [385] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("Alarm-08")>
+  [387] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("Alarm-08"))
+  [389] getglobal 72 ............................ <oTextConstants>
+  [391] pusharglist 1 ........................... <oTextConstants>
+  [393] objcall 146 ............................. <oTextConstants.getMatchToolMessageEmpty()>
+  [395] setlocal 4 .............................. theMessage = oTextConstants.getMatchToolMessageEmpty()
+  [397] pushsymb 95 ............................. <#showAlert>
+  [399] getlocal 4 .............................. <theMessage>
+  [401] pusharglistnoret 2 ...................... <#showAlert, theMessage>
+  [403] extcall 94 .............................. sendAllSprites(#showAlert, theMessage)
+  [405] pushcons 13 ............................. <"_TIMER_">
+  [407] pusharglist 1 ........................... <"_TIMER_">
+  [409] extcall 64 .............................. <script("_TIMER_")>
+  [411] pushint16 2000 .......................... <2000>
+  [414] pushsymb 19 ............................. <#callForToolAgain>
+  [416] getparam 0 .............................. <me>
+  [418] pusharglistnoret 4 ...................... <script("_TIMER_"), 2000, #callForToolAgain, me>
+  [420] objcall 2 ............................... script("_TIMER_").new(2000, #callForToolAgain, me)
+  [422] pushzero ................................ <0>
+  [423] pusharglistnoret 1 ...................... <0>
+  [425] extcall 63 .............................. return 0
+  [427] jmp [430]
+  [430] ret
+end
+
+on playBeepSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 32] pushcons 29 ............................. <"fx000">
+  [ 34] pusharglist 1 ........................... <"fx000">
+  [ 36] extcall 142 ............................. <member("fx000")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("fx000")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("fx000"))
+  [ 42] ret
+end
+
+on playWonSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 32] pushcons 30 ............................. <"fanfare_pitched">
+  [ 34] pusharglist 1 ........................... <"fanfare_pitched">
+  [ 36] extcall 142 ............................. <member("fanfare_pitched")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("fanfare_pitched")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("fanfare_pitched"))
+  [ 42] ret
+end
+
+on playLoseSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 32] pushcons 31 ............................. <"shipwhistle2">
+  [ 34] pusharglist 1 ........................... <"shipwhistle2">
+  [ 36] extcall 142 ............................. <member("shipwhistle2")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("shipwhistle2")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("shipwhistle2"))
+  [ 42] ret
+end
+
+on playTimeOutSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 32] pushcons 32 ............................. <"fx002">
+  [ 34] pusharglist 1 ........................... <"fx002">
+  [ 36] extcall 142 ............................. <member("fx002")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("fx002")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("fx002"))
+  [ 42] ret
+end
+
+on playPickUpSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iEffectSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iEffectSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 152 .......................... <oSpriteManager.iEffectSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iEffectSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iEffectSound)>
+  [ 32] pushcons 33 ............................. <"fx004">
+  [ 34] pusharglist 1 ........................... <"fx004">
+  [ 36] extcall 142 ............................. <member("fx004")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iEffectSound), member("fx004")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iEffectSound).play(member("fx004"))
+  [ 42] ret
+end
+
+on playHiliteSound me
+  [  0] getglobal 138 ........................... <oSpriteManager>
+  [  2] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [  4] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [  6] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [  8] pushint16 255 ........................... <255>
+  [ 11] setobjprop 140 .......................... sound(oSpriteManager.iComputerSound).volume = 255
+  [ 13] getglobal 138 ........................... <oSpriteManager>
+  [ 15] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 17] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 19] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 21] pushzero ................................ <0>
+  [ 22] setobjprop 141 .......................... sound(oSpriteManager.iComputerSound).pan = 0
+  [ 24] getglobal 138 ........................... <oSpriteManager>
+  [ 26] getobjprop 139 .......................... <oSpriteManager.iComputerSound>
+  [ 28] pusharglist 1 ........................... <oSpriteManager.iComputerSound>
+  [ 30] extcall 137 ............................. <sound(oSpriteManager.iComputerSound)>
+  [ 32] pushcons 34 ............................. <"Clicklibrary">
+  [ 34] pusharglist 1 ........................... <"Clicklibrary">
+  [ 36] extcall 142 ............................. <member("Clicklibrary")>
+  [ 38] pusharglistnoret 2 ...................... <sound(oSpriteManager.iComputerSound), member("Clicklibrary")>
+  [ 40] objcall 143 ............................. sound(oSpriteManager.iComputerSound).play(member("Clicklibrary"))
+  [ 42] ret
+end
+
+on addToActorList me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 35 ............................. <"addToActorList()">
+  [  4] pusharglistnoret 2 ...................... <me, "addToActorList()">
+  [  6] objcall 0 ............................... me.debug("addToActorList()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getglobal 138 ........................... <oSpriteManager>
+  [ 12] pusharglist 1 ........................... <oSpriteManager>
+  [ 14] objcall 153 ............................. <oSpriteManager.checkOutSound()>
+  [ 16] setobjprop 154 .......................... me.iBgSoundChannel = oSpriteManager.checkOutSound()
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 154 .......................... <me.iBgSoundChannel>
+  [ 22] pusharglist 1 ........................... <me.iBgSoundChannel>
+  [ 24] extcall 137 ............................. <sound(me.iBgSoundChannel)>
+  [ 26] pushint16 180 ........................... <180>
+  [ 29] setobjprop 140 .......................... sound(me.iBgSoundChannel).volume = 180
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 154 .......................... <me.iBgSoundChannel>
+  [ 35] pusharglist 1 ........................... <me.iBgSoundChannel>
+  [ 37] extcall 137 ............................. <sound(me.iBgSoundChannel)>
+  [ 39] pushzero ................................ <0>
+  [ 40] setobjprop 141 .......................... sound(me.iBgSoundChannel).pan = 0
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 154 .......................... <me.iBgSoundChannel>
+  [ 46] pusharglist 1 ........................... <me.iBgSoundChannel>
+  [ 48] extcall 137 ............................. <sound(me.iBgSoundChannel)>
+  [ 50] pushcons 36 ............................. <"TRFICJAM">
+  [ 52] pusharglist 1 ........................... <"TRFICJAM">
+  [ 54] extcall 142 ............................. <member("TRFICJAM")>
+  [ 56] pusharglistnoret 2 ...................... <sound(me.iBgSoundChannel), member("TRFICJAM")>
+  [ 58] objcall 143 ............................. sound(me.iBgSoundChannel).play(member("TRFICJAM"))
+  [ 60] getmovieprop 60 ......................... <the actorList>
+  [ 62] getparam 0 .............................. <me>
+  [ 64] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 66] objcall 81 .............................. (the actorList).add(me)
+  [ 68] ret
+end
+
+on deleteFromActorList me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 37 ............................. <"deleteFromActorList()">
+  [  4] pusharglistnoret 2 ...................... <me, "deleteFromActorList()">
+  [  6] objcall 0 ............................... me.debug("deleteFromActorList()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 154 .......................... <me.iBgSoundChannel>
+  [ 12] pusharglist 1 ........................... <me.iBgSoundChannel>
+  [ 14] extcall 137 ............................. <sound(me.iBgSoundChannel)>
+  [ 16] pusharglistnoret 1 ...................... <sound(me.iBgSoundChannel)>
+  [ 18] objcall 155 ............................. sound(me.iBgSoundChannel).stop()
+  [ 20] getglobal 138 ........................... <oSpriteManager>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 154 .......................... <me.iBgSoundChannel>
+  [ 26] pusharglistnoret 2 ...................... <oSpriteManager, me.iBgSoundChannel>
+  [ 28] objcall 156 ............................. oSpriteManager.checkInSound(me.iBgSoundChannel)
+  [ 30] getmovieprop 60 ......................... <the actorList>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 36] objcall 62 .............................. (the actorList).deleteOne(me)
+  [ 38] ret
+end
+
+on stepFrame me
+  [  0] getglobal 83 ............................ <oDisplay>
+  [  2] pushcons 18 ............................. <"Score">
+  [  4] pushcons 3 .............................. <"hotdog">
+  [  6] pusharglist 1 ........................... <"hotdog">
+  [  8] extcall 64 .............................. <script("hotdog")>
+  [ 10] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 67 ........................... <me.iScore>
+  [ 17] pusharglist 2 ........................... <script("hotdog").pickle, me.iScore>
+  [ 19] objcall 102 ............................. <script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 21] pusharglistnoret 3 ...................... <oDisplay, "Score", script("hotdog").pickle.Decrypt(me.iScore)>
+  [ 23] objcall 84 .............................. oDisplay.sendDisplay("Score", script("hotdog").pickle.Decrypt(me.iScore))
+  [ 25] getglobal 83 ............................ <oDisplay>
+  [ 27] pushcons 38 ............................. <"Lives">
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglist 1 ........................... <me>
+  [ 33] objcall 27 .............................. <me.getLives()>
+  [ 35] pusharglistnoret 3 ...................... <oDisplay, "Lives", me.getLives()>
+  [ 37] objcall 84 .............................. oDisplay.sendDisplay("Lives", me.getLives())
+  [ 39] getglobal 97 ............................ <oAvatar>
+  [ 41] pusharglist 1 ........................... <oAvatar>
+  [ 43] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 45] pushint8 1 .............................. <1>
+  [ 47] inv ..................................... <-1>
+  [ 48] gt ...................................... <oAvatar.getToolCarried() > -1>
+  [ 49] jmpifz [ 75] ............................ if oAvatar.getToolCarried() > -1 then / else
+  [ 52] getglobal 83 ............................ <oDisplay>
+  [ 54] pushcons 39 ............................. <"Tool">
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getglobal 97 ............................ <oAvatar>
+  [ 60] pusharglist 1 ........................... <oAvatar>
+  [ 62] objcall 108 ............................. <oAvatar.getToolCarried()>
+  [ 64] pusharglist 2 ........................... <me, oAvatar.getToolCarried()>
+  [ 66] objcall 33 .............................. <me.getToolNameByIndex(oAvatar.getToolCarried())>
+  [ 68] pusharglistnoret 3 ...................... <oDisplay, "Tool", me.getToolNameByIndex(oAvatar.getToolCarried())>
+  [ 70] objcall 84 .............................. oDisplay.sendDisplay("Tool", me.getToolNameByIndex(oAvatar.getToolCarried()))
+  [ 72] jmp [ 85]
+  [ 75] getglobal 83 ............................ <oDisplay>
+  [ 77] pushcons 39 ............................. <"Tool">
+  [ 79] pushcons 40 ............................. <"No tool carried">
+  [ 81] pusharglistnoret 3 ...................... <oDisplay, "Tool", "No tool carried">
+  [ 83] objcall 84 .............................. oDisplay.sendDisplay("Tool", "No tool carried")
+  [ 85] getglobal 83 ............................ <oDisplay>
+  [ 87] pushcons 8 .............................. <"Tool_Target">
+  [ 89] getparam 0 .............................. <me>
+  [ 91] pusharglist 1 ........................... <me>
+  [ 93] objcall 32 .............................. <me.getComputerToolName()>
+  [ 95] pusharglistnoret 3 ...................... <oDisplay, "Tool_Target", me.getComputerToolName()>
+  [ 97] objcall 84 .............................. oDisplay.sendDisplay("Tool_Target", me.getComputerToolName())
+  [ 99] getglobal 83 ............................ <oDisplay>
+  [101] pushcons 41 ............................. <"TotalTools">
+  [103] getparam 0 .............................. <me>
+  [105] pusharglist 1 ........................... <me>
+  [107] objcall 7 ............................... <me.getCountOfToolsLeft()>
+  [109] pushcons 42 ............................. <" of ">
+  [111] joinstr ................................. <me.getCountOfToolsLeft() & " of ">
+  [112] getparam 0 .............................. <me>
+  [114] pushsymb 75 ............................. <#aToolList_Default>
+  [116] pusharglist 2 ........................... <me, #aToolList_Default>
+  [118] objcall 88 .............................. <me.aToolList_Default.count>
+  [120] joinstr ................................. <me.getCountOfToolsLeft() & " of " & me.aToolList_Default.count>
+  [121] pusharglistnoret 3 ...................... <oDisplay, "TotalTools", me.getCountOfToolsLeft() & " of " & me.aToolList_Default.count>
+  [123] objcall 84 .............................. oDisplay.sendDisplay("TotalTools", me.getCountOfToolsLeft() & " of " & me.aToolList_Default.count)
+  [125] ret
+end

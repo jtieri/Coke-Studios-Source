@@ -1,0 +1,263 @@
+property pParentWindow, pClicked, previousmember, bVisible
+
+on new me, myMember, myparent, _bVisible
+  [  0] getparam 1 .............................. <myMember>
+  [  2] setprop 787 ............................. previousmember = myMember
+  [  5] getparam 2 .............................. <myparent>
+  [  7] setprop 590 ............................. pParentWindow = myparent
+  [ 10] pushzero ................................ <0>
+  [ 11] setprop 224 ............................. pClicked = 0
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 3 .............................. <_bVisible>
+  [ 17] setobjprop 114 .......................... me.bVisible = _bVisible
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 23 .............................. return me
+  [ 25] ret
+end
+
+on hidemodifybtn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 114 .......................... me.bVisible = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 228 .......................... <me.spriteNum>
+  [  9] pusharglist 1 ........................... <me.spriteNum>
+  [ 11] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 114 .......................... <me.bVisible>
+  [ 17] setobjprop 46 ........................... sprite(me.spriteNum).visible = me.bVisible
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 228 .......................... <me.spriteNum>
+  [ 23] pusharglist 1 ........................... <me.spriteNum>
+  [ 25] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 27] pushzero ................................ <0>
+  [ 28] setobjprop 41 ........................... sprite(me.spriteNum).blend = 0
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 228 .......................... <me.spriteNum>
+  [ 34] pusharglist 1 ........................... <me.spriteNum>
+  [ 36] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 38] pushcons 0 .............................. <"shadow.pixel">
+  [ 40] pusharglist 1 ........................... <"shadow.pixel">
+  [ 42] extcall 34 .............................. <member("shadow.pixel")>
+  [ 44] setobjprop 34 ........................... sprite(me.spriteNum).member = member("shadow.pixel")
+  [ 46] ret
+end
+
+on showmodifybtn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 114 .......................... me.bVisible = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 228 .......................... <me.spriteNum>
+  [ 10] pusharglist 1 ........................... <me.spriteNum>
+  [ 12] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 114 .......................... <me.bVisible>
+  [ 18] setobjprop 46 ........................... sprite(me.spriteNum).visible = me.bVisible
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 228 .......................... <me.spriteNum>
+  [ 24] pusharglist 1 ........................... <me.spriteNum>
+  [ 26] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 28] pushint8 100 ............................ <100>
+  [ 30] setobjprop 41 ........................... sprite(me.spriteNum).blend = 100
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 228 .......................... <me.spriteNum>
+  [ 36] pusharglist 1 ........................... <me.spriteNum>
+  [ 38] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 40] getprop 787 ............................. <previousmember>
+  [ 43] setobjprop 34 ........................... sprite(me.spriteNum).member = previousmember
+  [ 45] ret
+end
+
+on mouseDown me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 4 ............................. modifyDown(me)
+  [  6] pusharglistnoret 0 ...................... <>
+  [  8] extcall 229 ............................. stopEvent()
+  [ 10] ret
+end
+
+on modifyDown me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 224 ............................. pClicked = 1
+  [  4] ret
+end
+
+on mouseWithin me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 6 ............................. modifywithin(me)
+  [  6] ret
+end
+
+on modifywithin me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 228 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 36 .............................. <sprite(me.spriteNum)>
+  [  8] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 10] getobjprop 21 ........................... <sprite(me.spriteNum).member.name>
+  [ 12] setlocal 0 .............................. myName = sprite(me.spriteNum).member.name
+  [ 14] getlocal 0 .............................. <myName>
+  [ 16] pushcons 1 .............................. <"shadow">
+  [ 18] containsstr ............................. <myName contains "shadow">
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <(myName contains "shadow") = 0>
+  [ 21] jmpifz [147] ............................ if (myName contains "shadow") = 0 then
+  [ 24] pusharglist 0 ........................... <>
+  [ 26] thebuiltin 217 .......................... <the mouseDown>
+  [ 28] getprop 224 ............................. <pClicked>
+  [ 30] and ..................................... <the mouseDown and pClicked>
+  [ 31] jmpifz [ 92] ............................ if the mouseDown and pClicked then / else
+  [ 34] pushcons 2 .............................. <".">
+  [ 36] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 38] getlocal 0 .............................. <myName>
+  [ 40] pushsymb 158 ............................ <#item>
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] getlocal 0 .............................. <myName>
+  [ 46] pushsymb 223 ............................ <#items>
+  [ 48] pusharglist 2 ........................... <myName, #items>
+  [ 50] objcall 29 .............................. <myName.items.count>
+  [ 52] pushint8 1 .............................. <1>
+  [ 54] sub ..................................... <myName.items.count - 1>
+  [ 55] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [ 57] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [ 59] pushcons 3 .............................. <".pressed">
+  [ 61] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".pressed">
+  [ 62] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".pressed"
+  [ 64] pushcons 4 .............................. <",">
+  [ 66] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 68] getparam 0 .............................. <me>
+  [ 70] getobjprop 228 .......................... <me.spriteNum>
+  [ 72] pusharglist 1 ........................... <me.spriteNum>
+  [ 74] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 76] getlocal 0 .............................. <myName>
+  [ 78] pusharglist 1 ........................... <myName>
+  [ 80] extcall 34 .............................. <member(myName)>
+  [ 82] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [ 84] pusharglistnoret 0 ...................... <>
+  [ 86] extcall 374 ............................. updateStage()
+  [ 89] jmp [147]
+  [ 92] pushcons 2 .............................. <".">
+  [ 94] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 96] getlocal 0 .............................. <myName>
+  [ 98] pushsymb 158 ............................ <#item>
+  [100] pushint8 1 .............................. <1>
+  [102] getlocal 0 .............................. <myName>
+  [104] pushsymb 223 ............................ <#items>
+  [106] pusharglist 2 ........................... <myName, #items>
+  [108] objcall 29 .............................. <myName.items.count>
+  [110] pushint8 1 .............................. <1>
+  [112] sub ..................................... <myName.items.count - 1>
+  [113] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [115] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [117] pushcons 5 .............................. <".active">
+  [119] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".active">
+  [120] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".active"
+  [122] pushcons 4 .............................. <",">
+  [124] setmovieprop 157 ........................ the itemDelimiter = ","
+  [126] getparam 0 .............................. <me>
+  [128] getobjprop 228 .......................... <me.spriteNum>
+  [130] pusharglist 1 ........................... <me.spriteNum>
+  [132] extcall 36 .............................. <sprite(me.spriteNum)>
+  [134] getlocal 0 .............................. <myName>
+  [136] pusharglist 1 ........................... <myName>
+  [138] extcall 34 .............................. <member(myName)>
+  [140] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [142] pusharglistnoret 0 ...................... <>
+  [144] extcall 374 ............................. updateStage()
+  [147] ret
+end
+
+on mouseUp me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 10 ............................ modifyUp(me)
+  [  6] ret
+end
+
+on mouseUpOutSide me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 9 ............................. modifyupoutside(me)
+  [  6] ret
+end
+
+on modifyupoutside me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] ret
+end
+
+on modifyUp me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] pushcons 6 .............................. <"userroomID">
+  [  5] pusharglist 1 ........................... <"userroomID">
+  [  7] extcall 34 .............................. <member("userroomID")>
+  [  9] getobjprop 78 ........................... <member("userroomID").text>
+  [ 11] setlocal 0 .............................. sStudioID = member("userroomID").text
+  [ 13] getglobal 79 ............................ <oDenizenManager>
+  [ 15] pusharglist 1 ........................... <oDenizenManager>
+  [ 17] objcall 80 .............................. <oDenizenManager.getScreenName()>
+  [ 19] setlocal 1 .............................. sScreenName = oDenizenManager.getScreenName()
+  [ 21] getglobal 207 ........................... <oStudioManager>
+  [ 23] getlocal 1 .............................. <sScreenName>
+  [ 25] getlocal 0 .............................. <sStudioID>
+  [ 27] pusharglistnoret 3 ...................... <oStudioManager, sScreenName, sStudioID>
+  [ 29] objcall 794 ............................. oStudioManager.startModifyStudio(sScreenName, sStudioID)
+  [ 32] ret
+end
+
+on mouseLeave me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 12 ............................ modifyleave(me)
+  [  6] ret
+end
+
+on modifyleave me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 228 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 36 .............................. <sprite(me.spriteNum)>
+  [  8] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 10] getobjprop 21 ........................... <sprite(me.spriteNum).member.name>
+  [ 12] setlocal 0 .............................. myName = sprite(me.spriteNum).member.name
+  [ 14] pushcons 2 .............................. <".">
+  [ 16] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 18] getlocal 0 .............................. <myName>
+  [ 20] pushsymb 158 ............................ <#item>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] getlocal 0 .............................. <myName>
+  [ 26] pushsymb 223 ............................ <#items>
+  [ 28] pusharglist 2 ........................... <myName, #items>
+  [ 30] objcall 29 .............................. <myName.items.count>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] sub ..................................... <myName.items.count - 1>
+  [ 35] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [ 37] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [ 39] pushcons 5 .............................. <".active">
+  [ 41] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".active">
+  [ 42] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".active"
+  [ 44] pushcons 4 .............................. <",">
+  [ 46] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 48] getlocal 0 .............................. <myName>
+  [ 50] pusharglist 1 ........................... <myName>
+  [ 52] extcall 34 .............................. <member(myName)>
+  [ 54] getobjprop 61 ........................... <member(myName).memberNum>
+  [ 56] pushzero ................................ <0>
+  [ 57] gt ...................................... <member(myName).memberNum > 0>
+  [ 58] jmpifz [ 77] ............................ if member(myName).memberNum > 0 then
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getobjprop 228 .......................... <me.spriteNum>
+  [ 65] pusharglist 1 ........................... <me.spriteNum>
+  [ 67] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 69] getlocal 0 .............................. <myName>
+  [ 71] pusharglist 1 ........................... <myName>
+  [ 73] extcall 34 .............................. <member(myName)>
+  [ 75] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [ 77] ret
+end

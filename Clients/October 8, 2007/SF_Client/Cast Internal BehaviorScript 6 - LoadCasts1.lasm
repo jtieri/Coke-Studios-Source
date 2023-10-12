@@ -1,0 +1,80 @@
+property bInit
+global bPreloadCasts
+
+on beginSprite me
+  [  0] pushcons 0 .............................. <"** LOAD CASTS 1 **">
+  [  2] pusharglistnoret 1 ...................... <"** LOAD CASTS 1 **">
+  [  4] extcall 17 .............................. put "** LOAD CASTS 1 **"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushzero ................................ <0>
+  [  9] setobjprop 6 ............................ me.bInit = 0
+  [ 11] ret
+end
+
+on Init me
+  [  0] getglobal 10 ............................ <bPreloadCasts>
+  [  2] jmpifz [ 71] ............................ if bPreloadCasts then / else
+  [  5] pushcons 1 .............................. <"PreloadCasts">
+  [  7] pusharglist 1 ........................... <"PreloadCasts">
+  [  9] extcall 12 .............................. <script("PreloadCasts")>
+  [ 11] pushcons 2 .............................. <"Loading Coke Studios">
+  [ 13] pusharglist 2 ........................... <script("PreloadCasts"), "Loading Coke Studios">
+  [ 15] objcall 13 .............................. <script("PreloadCasts").new("Loading Coke Studios")>
+  [ 17] setlocal 0 .............................. p = script("PreloadCasts").new("Loading Coke Studios")
+  [ 19] getlocal 0 .............................. <p>
+  [ 21] pushcons 3 .............................. <"Gateway">
+  [ 23] getmovieprop 15 ......................... <the moviePath>
+  [ 25] pushcons 4 .............................. <"SF_Gateway">
+  [ 27] joinstr ................................. <the moviePath & "SF_Gateway">
+  [ 28] pusharglistnoret 3 ...................... <p, "Gateway", the moviePath & "SF_Gateway">
+  [ 30] objcall 14 .............................. p.addItem("Gateway", the moviePath & "SF_Gateway")
+  [ 32] getlocal 0 .............................. <p>
+  [ 34] pushcons 5 .............................. <"Entry">
+  [ 36] getmovieprop 15 ......................... <the moviePath>
+  [ 38] pushcons 6 .............................. <"entry">
+  [ 40] joinstr ................................. <the moviePath & "entry">
+  [ 41] pusharglistnoret 3 ...................... <p, "Entry", the moviePath & "entry">
+  [ 43] objcall 14 .............................. p.addItem("Entry", the moviePath & "entry")
+  [ 45] getlocal 0 .............................. <p>
+  [ 47] pushcons 7 .............................. <"Interface">
+  [ 49] getmovieprop 15 ......................... <the moviePath>
+  [ 51] pushcons 8 .............................. <"cc_interface[1]">
+  [ 53] joinstr ................................. <the moviePath & "cc_interface[1]">
+  [ 54] pusharglistnoret 3 ...................... <p, "Interface", the moviePath & "cc_interface[1]">
+  [ 56] objcall 14 .............................. p.addItem("Interface", the moviePath & "cc_interface[1]")
+  [ 58] getlocal 0 .............................. <p>
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pushsymb 3 .............................. <#finished>
+  [ 64] pusharglistnoret 3 ...................... <p, me, #finished>
+  [ 66] objcall 16 .............................. p.start(me, #finished)
+  [ 68] jmp [ 77]
+  [ 71] getparam 0 .............................. <me>
+  [ 73] pusharglistnoret 1 ...................... <me>
+  [ 75] objcall 3 ............................... me.finished()
+  [ 77] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 6 ............................ <me.bInit>
+  [  4] not ..................................... <not me.bInit>
+  [  5] jmpifz [ 20] ............................ if not me.bInit then
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 6 ............................ me.bInit = 1
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1 ............................... me.Init()
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] thebuiltin 20 ........................... <the frame>
+  [ 24] pusharglistnoret 1 ...................... <the frame>
+  [ 26] extcall 21 .............................. go(the frame)
+  [ 28] ret
+end
+
+on finished me
+  [  0] pushsymb 22 ............................. <#next>
+  [  2] pusharglistnoret 1 ...................... <#next>
+  [  4] extcall 21 .............................. go(#next)
+  [  6] ret
+end

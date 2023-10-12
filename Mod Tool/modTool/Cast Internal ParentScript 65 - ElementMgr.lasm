@@ -1,0 +1,805 @@
+property pPublicStudioData, pPrivateStudioData, pModList, aUserData, aStudioDetailData, bDebug
+global ElementMgr, oPublicDisplayManager, oPrivateDisplayManager, oStudioManager, oUserDisplayManager, oDenizenManager, oSession, oEditStudioManager, oLogInManager, sModScreenName
+
+on new me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setprop 252 ............................. pModList = []
+  [  5] getparam 0 .............................. <me>
+  [  7] setglobal 253 ........................... ElementMgr = me
+  [  9] getparam 0 .............................. <me>
+  [ 11] pushzero ................................ <0>
+  [ 12] setobjprop 10 ........................... me.bDebug = 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] extcall 31 .............................. return me
+  [ 20] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"ModTool: ElementMgr: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"ModTool: ElementMgr: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"ModTool: ElementMgr: " & sMessage>
+  [ 17] extcall 38 .............................. put "ModTool: ElementMgr: " & sMessage
+  [ 19] ret
+end
+
+on displayPublicStudios me, aPublicStudioData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"displayPublicStudios:aPublicStudioData:">
+  [  4] getparam 1 .............................. <aPublicStudioData>
+  [  6] joinpadstr .............................. <"displayPublicStudios:aPublicStudioData:" && aPublicStudioData>
+  [  7] pusharglistnoret 2 ...................... <me, "displayPublicStudios:aPublicStudioData:" && aPublicStudioData>
+  [  9] objcall 4 ............................... me.debug("displayPublicStudios:aPublicStudioData:" && aPublicStudioData)
+  [ 11] getparam 1 .............................. <aPublicStudioData>
+  [ 13] pusharglist 1 ........................... <aPublicStudioData>
+  [ 15] objcall 211 ............................. <aPublicStudioData.duplicate()>
+  [ 17] setprop 78 .............................. pPublicStudioData = aPublicStudioData.duplicate()
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 0
+  [ 23] getlocal 0
+  [ 25] getprop 78 .............................. <pPublicStudioData>
+  [ 27] getobjprop 32 ........................... <pPublicStudioData.count>
+  [ 29] lteq
+  [ 30] jmpifz [ 59] ............................ repeat with i = 1 to pPublicStudioData.count
+  [ 33] getprop 78 .............................. <pPublicStudioData>
+  [ 35] getlocal 0 .............................. <i>
+  [ 37] pusharglist 2 ........................... <pPublicStudioData, i>
+  [ 39] objcall 33 .............................. <pPublicStudioData[i]>
+  [ 41] pushsymb 213 ............................ <#mods>
+  [ 43] pusharglist 0 ........................... <[]>
+  [ 45] pushlist ................................ <[]>
+  [ 46] pusharglistnoret 3 ...................... <pPublicStudioData[i], #mods, []>
+  [ 48] objcall 68 .............................. pPublicStudioData[i][#mods] = []
+  [ 50] pushint8 1
+  [ 52] getlocal 0
+  [ 54] add
+  [ 55] setlocal 0
+  [ 57] endrepeat [ 23]
+  [ 59] pushint8 1 .............................. <1>
+  [ 61] setlocal 1
+  [ 63] getlocal 1
+  [ 65] getprop 252 ............................. <pModList>
+  [ 67] getobjprop 32 ........................... <pModList.count>
+  [ 69] lteq
+  [ 70] jmpifz [153] ............................ repeat with m = 1 to pModList.count
+  [ 73] pushint8 1 .............................. <1>
+  [ 75] setlocal 0
+  [ 77] getlocal 0
+  [ 79] getprop 78 .............................. <pPublicStudioData>
+  [ 81] getobjprop 32 ........................... <pPublicStudioData.count>
+  [ 83] lteq
+  [ 84] jmpifz [144] ............................ repeat with i = 1 to pPublicStudioData.count
+  [ 87] getprop 252 ............................. <pModList>
+  [ 89] getlocal 1 .............................. <m>
+  [ 91] pusharglist 2 ........................... <pModList, m>
+  [ 93] objcall 33 .............................. <pModList[m]>
+  [ 95] getobjprop 67 ........................... <pModList[m].studioId>
+  [ 97] getprop 78 .............................. <pPublicStudioData>
+  [ 99] getlocal 0 .............................. <i>
+  [101] pusharglist 2 ........................... <pPublicStudioData, i>
+  [103] objcall 33 .............................. <pPublicStudioData[i]>
+  [105] getobjprop 67 ........................... <pPublicStudioData[i].studioId>
+  [107] eq ...................................... <pModList[m].studioId = pPublicStudioData[i].studioId>
+  [108] jmpifz [135] ............................ if pModList[m].studioId = pPublicStudioData[i].studioId then
+  [111] getprop 78 .............................. <pPublicStudioData>
+  [113] getlocal 0 .............................. <i>
+  [115] pusharglist 2 ........................... <pPublicStudioData, i>
+  [117] objcall 33 .............................. <pPublicStudioData[i]>
+  [119] pushsymb 213 ............................ <#mods>
+  [121] getprop 252 ............................. <pModList>
+  [123] getlocal 1 .............................. <m>
+  [125] pusharglist 2 ........................... <pModList, m>
+  [127] objcall 33 .............................. <pModList[m]>
+  [129] getobjprop 213 .......................... <pModList[m].mods>
+  [131] pusharglistnoret 3 ...................... <pPublicStudioData[i], #mods, pModList[m].mods>
+  [133] objcall 68 .............................. pPublicStudioData[i][#mods] = pModList[m].mods
+  [135] pushint8 1
+  [137] getlocal 0
+  [139] add
+  [140] setlocal 0
+  [142] endrepeat [ 77]
+  [144] pushint8 1
+  [146] getlocal 1
+  [148] add
+  [149] setlocal 1
+  [151] endrepeat [ 63]
+  [153] getglobal 206 ........................... <oPublicDisplayManager>
+  [155] getprop 78 .............................. <pPublicStudioData>
+  [157] pusharglistnoret 2 ...................... <oPublicDisplayManager, pPublicStudioData>
+  [159] objcall 204 ............................. oPublicDisplayManager.displayPublic_Mod(pPublicStudioData)
+  [161] ret
+end
+
+on displayPrivateStudios me, aPrivateStudioData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"displayPrivateStudios:aPrivateStudioData:">
+  [  4] getparam 1 .............................. <aPrivateStudioData>
+  [  6] joinpadstr .............................. <"displayPrivateStudios:aPrivateStudioData:" && aPrivateStudioData>
+  [  7] pusharglistnoret 2 ...................... <me, "displayPrivateStudios:aPrivateStudioData:" && aPrivateStudioData>
+  [  9] objcall 4 ............................... me.debug("displayPrivateStudios:aPrivateStudioData:" && aPrivateStudioData)
+  [ 11] getparam 1 .............................. <aPrivateStudioData>
+  [ 13] pusharglist 1 ........................... <aPrivateStudioData>
+  [ 15] objcall 211 ............................. <aPrivateStudioData.duplicate()>
+  [ 17] setprop 255 ............................. pPrivateStudioData = aPrivateStudioData.duplicate()
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setlocal 0
+  [ 23] getlocal 0
+  [ 25] getprop 255 ............................. <pPrivateStudioData>
+  [ 27] getobjprop 32 ........................... <pPrivateStudioData.count>
+  [ 29] lteq
+  [ 30] jmpifz [ 59] ............................ repeat with i = 1 to pPrivateStudioData.count
+  [ 33] getprop 255 ............................. <pPrivateStudioData>
+  [ 35] getlocal 0 .............................. <i>
+  [ 37] pusharglist 2 ........................... <pPrivateStudioData, i>
+  [ 39] objcall 33 .............................. <pPrivateStudioData[i]>
+  [ 41] pushsymb 213 ............................ <#mods>
+  [ 43] pusharglist 0 ........................... <[]>
+  [ 45] pushlist ................................ <[]>
+  [ 46] pusharglistnoret 3 ...................... <pPrivateStudioData[i], #mods, []>
+  [ 48] objcall 68 .............................. pPrivateStudioData[i][#mods] = []
+  [ 50] pushint8 1
+  [ 52] getlocal 0
+  [ 54] add
+  [ 55] setlocal 0
+  [ 57] endrepeat [ 23]
+  [ 59] pushint8 1 .............................. <1>
+  [ 61] setlocal 1
+  [ 63] getlocal 1
+  [ 65] getprop 252 ............................. <pModList>
+  [ 67] getobjprop 32 ........................... <pModList.count>
+  [ 69] lteq
+  [ 70] jmpifz [153] ............................ repeat with m = 1 to pModList.count
+  [ 73] pushint8 1 .............................. <1>
+  [ 75] setlocal 0
+  [ 77] getlocal 0
+  [ 79] getprop 255 ............................. <pPrivateStudioData>
+  [ 81] getobjprop 32 ........................... <pPrivateStudioData.count>
+  [ 83] lteq
+  [ 84] jmpifz [144] ............................ repeat with i = 1 to pPrivateStudioData.count
+  [ 87] getprop 252 ............................. <pModList>
+  [ 89] getlocal 1 .............................. <m>
+  [ 91] pusharglist 2 ........................... <pModList, m>
+  [ 93] objcall 33 .............................. <pModList[m]>
+  [ 95] getobjprop 67 ........................... <pModList[m].studioId>
+  [ 97] getprop 255 ............................. <pPrivateStudioData>
+  [ 99] getlocal 0 .............................. <i>
+  [101] pusharglist 2 ........................... <pPrivateStudioData, i>
+  [103] objcall 33 .............................. <pPrivateStudioData[i]>
+  [105] getobjprop 67 ........................... <pPrivateStudioData[i].studioId>
+  [107] eq ...................................... <pModList[m].studioId = pPrivateStudioData[i].studioId>
+  [108] jmpifz [135] ............................ if pModList[m].studioId = pPrivateStudioData[i].studioId then
+  [111] getprop 255 ............................. <pPrivateStudioData>
+  [113] getlocal 0 .............................. <i>
+  [115] pusharglist 2 ........................... <pPrivateStudioData, i>
+  [117] objcall 33 .............................. <pPrivateStudioData[i]>
+  [119] pushsymb 213 ............................ <#mods>
+  [121] getprop 252 ............................. <pModList>
+  [123] getlocal 1 .............................. <m>
+  [125] pusharglist 2 ........................... <pModList, m>
+  [127] objcall 33 .............................. <pModList[m]>
+  [129] getobjprop 213 .......................... <pModList[m].mods>
+  [131] pusharglistnoret 3 ...................... <pPrivateStudioData[i], #mods, pModList[m].mods>
+  [133] objcall 68 .............................. pPrivateStudioData[i][#mods] = pModList[m].mods
+  [135] pushint8 1
+  [137] getlocal 0
+  [139] add
+  [140] setlocal 0
+  [142] endrepeat [ 77]
+  [144] pushint8 1
+  [146] getlocal 1
+  [148] add
+  [149] setlocal 1
+  [151] endrepeat [ 63]
+  [153] getglobal 194 ........................... <oPrivateDisplayManager>
+  [155] getprop 255 ............................. <pPrivateStudioData>
+  [157] pusharglistnoret 2 ...................... <oPrivateDisplayManager, pPrivateStudioData>
+  [159] objcall 256 ............................. oPrivateDisplayManager.displayPrivate_Mod(pPrivateStudioData)
+  [162] ret
+end
+
+on createModList me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 3 .............................. <"createModList:sModName:">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinpadstr .............................. <"createModList:sModName:" && sModName>
+  [  7] pushcons 4 .............................. <"sStudioID:">
+  [  9] joinpadstr .............................. <"createModList:sModName:" && sModName && "sStudioID:">
+  [ 10] getparam 2 .............................. <sStudioID>
+  [ 12] joinpadstr .............................. <"createModList:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 13] pusharglistnoret 2 ...................... <me, "createModList:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 15] objcall 4 ............................... me.debug("createModList:sModName:" && sModName && "sStudioID:" && sStudioID)
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setlocal 0
+  [ 21] getlocal 0
+  [ 23] getprop 252 ............................. <pModList>
+  [ 25] getobjprop 32 ........................... <pModList.count>
+  [ 27] lteq
+  [ 28] jmpifz [ 76] ............................ repeat with i = 1 to pModList.count
+  [ 31] getprop 252 ............................. <pModList>
+  [ 33] getlocal 0 .............................. <i>
+  [ 35] pusharglist 2 ........................... <pModList, i>
+  [ 37] objcall 33 .............................. <pModList[i]>
+  [ 39] getobjprop 67 ........................... <pModList[i].studioId>
+  [ 41] getparam 2 .............................. <sStudioID>
+  [ 43] eq ...................................... <pModList[i].studioId = sStudioID>
+  [ 44] jmpifz [ 67] ............................ if pModList[i].studioId = sStudioID then
+  [ 47] getprop 252 ............................. <pModList>
+  [ 49] getlocal 0 .............................. <i>
+  [ 51] pusharglist 2 ........................... <pModList, i>
+  [ 53] objcall 33 .............................. <pModList[i]>
+  [ 55] getchainedprop 213 ...................... <pModList[i].mods>
+  [ 57] getparam 1 .............................. <sModName>
+  [ 59] pusharglistnoret 2 ...................... <pModList[i].mods, sModName>
+  [ 61] objcall 30 .............................. pModList[i].mods.add(sModName)
+  [ 63] pusharglistnoret 0 ...................... <>
+  [ 65] extcall 31 .............................. return 
+  [ 67] pushint8 1
+  [ 69] getlocal 0
+  [ 71] add
+  [ 72] setlocal 0
+  [ 74] endrepeat [ 21]
+  [ 76] pusharglist 0 ........................... <[:]>
+  [ 78] pushproplist ............................ <[:]>
+  [ 79] setlocal 1 .............................. aNewStudioList = [:]
+  [ 81] getlocal 1 .............................. <aNewStudioList>
+  [ 83] pushsymb 67 ............................. <#studioId>
+  [ 85] getparam 2 .............................. <sStudioID>
+  [ 87] pusharglistnoret 3 ...................... <aNewStudioList, #studioId, sStudioID>
+  [ 89] objcall 68 .............................. aNewStudioList[#studioId] = sStudioID
+  [ 91] getlocal 1 .............................. <aNewStudioList>
+  [ 93] pushsymb 213 ............................ <#mods>
+  [ 95] pusharglist 0 ........................... <[]>
+  [ 97] pushlist ................................ <[]>
+  [ 98] pusharglistnoret 3 ...................... <aNewStudioList, #mods, []>
+  [100] objcall 68 .............................. aNewStudioList[#mods] = []
+  [102] getlocal 1 .............................. <aNewStudioList>
+  [104] getchainedprop 213 ...................... <aNewStudioList.mods>
+  [106] getparam 1 .............................. <sModName>
+  [108] pusharglistnoret 2 ...................... <aNewStudioList.mods, sModName>
+  [110] objcall 30 .............................. aNewStudioList.mods.add(sModName)
+  [112] getprop 252 ............................. <pModList>
+  [114] getlocal 1 .............................. <aNewStudioList>
+  [116] pusharglistnoret 2 ...................... <pModList, aNewStudioList>
+  [118] objcall 30 .............................. pModList.add(aNewStudioList)
+  [120] ret
+end
+
+on startModStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 5 .............................. <"startModStudio:sModName:">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinpadstr .............................. <"startModStudio:sModName:" && sModName>
+  [  7] pushcons 4 .............................. <"sStudioID:">
+  [  9] joinpadstr .............................. <"startModStudio:sModName:" && sModName && "sStudioID:">
+  [ 10] getparam 2 .............................. <sStudioID>
+  [ 12] joinpadstr .............................. <"startModStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 13] pusharglistnoret 2 ...................... <me, "startModStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 15] objcall 4 ............................... me.debug("startModStudio:sModName:" && sModName && "sStudioID:" && sStudioID)
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getparam 1 .............................. <sModName>
+  [ 21] getparam 2 .............................. <sStudioID>
+  [ 23] pusharglistnoret 3 ...................... <me, sModName, sStudioID>
+  [ 25] localcall 4 ............................. createModList(me, sModName, sStudioID)
+  [ 27] ret
+end
+
+on stopModStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"stopModStudio:sModName:">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinpadstr .............................. <"stopModStudio:sModName:" && sModName>
+  [  7] pushcons 4 .............................. <"sStudioID:">
+  [  9] joinpadstr .............................. <"stopModStudio:sModName:" && sModName && "sStudioID:">
+  [ 10] getparam 2 .............................. <sStudioID>
+  [ 12] joinpadstr .............................. <"stopModStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 13] pusharglistnoret 2 ...................... <me, "stopModStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 15] objcall 4 ............................... me.debug("stopModStudio:sModName:" && sModName && "sStudioID:" && sStudioID)
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setlocal 0
+  [ 21] getlocal 0
+  [ 23] getprop 252 ............................. <pModList>
+  [ 25] getobjprop 32 ........................... <pModList.count>
+  [ 27] lteq
+  [ 28] jmpifz [ 76] ............................ repeat with i = 1 to pModList.count
+  [ 31] getprop 252 ............................. <pModList>
+  [ 33] getlocal 0 .............................. <i>
+  [ 35] pusharglist 2 ........................... <pModList, i>
+  [ 37] objcall 33 .............................. <pModList[i]>
+  [ 39] getobjprop 67 ........................... <pModList[i].studioId>
+  [ 41] getparam 2 .............................. <sStudioID>
+  [ 43] eq ...................................... <pModList[i].studioId = sStudioID>
+  [ 44] jmpifz [ 67] ............................ if pModList[i].studioId = sStudioID then
+  [ 47] getprop 252 ............................. <pModList>
+  [ 49] getlocal 0 .............................. <i>
+  [ 51] pusharglist 2 ........................... <pModList, i>
+  [ 53] objcall 33 .............................. <pModList[i]>
+  [ 55] pushsymb 213 ............................ <#mods>
+  [ 57] pusharglist 2 ........................... <pModList[i], #mods>
+  [ 59] objcall 33 .............................. <pModList[i][#mods]>
+  [ 61] getparam 1 .............................. <sModName>
+  [ 63] pusharglistnoret 2 ...................... <pModList[i][#mods], sModName>
+  [ 65] objcall 129 ............................. pModList[i][#mods].deleteOne(sModName)
+  [ 67] pushint8 1
+  [ 69] getlocal 0
+  [ 71] add
+  [ 72] setlocal 0
+  [ 74] endrepeat [ 21]
+  [ 76] ret
+end
+
+on getDenizenByScreenName_Result me, iError, sScreenName, oLastAccess, sLastSeenIn, sAvatarMission, sAvatarString, bOnline, bExists, sLastSeenInName, iGender
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 7 .............................. <"getDenizenByScreenName_Result:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError>
+  [  7] pushcons 8 .............................. <"sScreenName:">
+  [  9] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:">
+  [ 10] getparam 2 .............................. <sScreenName>
+  [ 12] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName>
+  [ 13] pushcons 9 .............................. <"oLastAccess:">
+  [ 15] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:">
+  [ 16] getparam 3 .............................. <oLastAccess>
+  [ 18] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess>
+  [ 19] pushcons 10 ............................. <"sLastSeenIn:">
+  [ 21] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:">
+  [ 22] getparam 4 .............................. <sLastSeenIn>
+  [ 24] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn>
+  [ 25] pushcons 11 ............................. <"sAvatarMission:">
+  [ 27] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:">
+  [ 28] getparam 5 .............................. <sAvatarMission>
+  [ 30] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission>
+  [ 31] pushcons 12 ............................. <"sAvatarString:">
+  [ 33] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:">
+  [ 34] getparam 6 .............................. <sAvatarString>
+  [ 36] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString>
+  [ 37] pushcons 13 ............................. <"bOnline:">
+  [ 39] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:">
+  [ 40] getparam 7 .............................. <bOnline>
+  [ 42] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline>
+  [ 43] pushcons 14 ............................. <"bExists:">
+  [ 45] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:">
+  [ 46] getparam 8 .............................. <bExists>
+  [ 48] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists>
+  [ 49] pushcons 15 ............................. <"sLastSeenInName:">
+  [ 51] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:">
+  [ 52] getparam 9 .............................. <sLastSeenInName>
+  [ 54] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:" && sLastSeenInName>
+  [ 55] pushcons 16 ............................. <"iGender:">
+  [ 57] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:" && sLastSeenInName && "iGender:">
+  [ 58] getparam 10 ............................. <iGender>
+  [ 60] joinpadstr .............................. <"getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:" && sLastSeenInName && "iGender:" && iGender>
+  [ 61] pusharglistnoret 2 ...................... <me, "getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:" && sLastSeenInName && "iGender:" && iGender>
+  [ 63] objcall 4 ............................... me.debug("getDenizenByScreenName_Result:iError:" && iError && "sScreenName:" && sScreenName && "oLastAccess:" && oLastAccess && "sLastSeenIn:" && sLastSeenIn && "sAvatarMission:" && sAvatarMission && "sAvatarString:" && sAvatarString && "bOnline:" && bOnline && "bExists:" && bExists && "sLastSeenInName:" && sLastSeenInName && "iGender:" && iGender)
+  [ 65] pusharglist 0 ........................... <[:]>
+  [ 67] pushproplist ............................ <[:]>
+  [ 68] setprop 260 ............................. aUserData = [:]
+  [ 71] getprop 260 ............................. <aUserData>
+  [ 74] pushsymb 261 ............................ <#error>
+  [ 77] getparam 1 .............................. <iError>
+  [ 79] pusharglistnoret 3 ...................... <aUserData, #error, iError>
+  [ 81] objcall 68 .............................. aUserData[#error] = iError
+  [ 83] getprop 260 ............................. <aUserData>
+  [ 86] pushsymb 262 ............................ <#denizenName>
+  [ 89] getparam 2 .............................. <sScreenName>
+  [ 91] pusharglistnoret 3 ...................... <aUserData, #denizenName, sScreenName>
+  [ 93] objcall 68 .............................. aUserData[#denizenName] = sScreenName
+  [ 95] getparam 3 .............................. <oLastAccess>
+  [ 97] pusharglist 0 ........................... <>
+  [ 99] extcall 263 ............................. <VOID>
+  [102] eq ...................................... <oLastAccess = VOID>
+  [103] jmpifz [110] ............................ if oLastAccess = VOID then
+  [106] pushcons 17 ............................. <EMPTY>
+  [108] setparam 3 .............................. oLastAccess = EMPTY
+  [110] getprop 260 ............................. <aUserData>
+  [113] pushsymb 264 ............................ <#lastAccess>
+  [116] getparam 3 .............................. <oLastAccess>
+  [118] pusharglistnoret 3 ...................... <aUserData, #lastAccess, oLastAccess>
+  [120] objcall 68 .............................. aUserData[#lastAccess] = oLastAccess
+  [122] getprop 260 ............................. <aUserData>
+  [125] pushsymb 265 ............................ <#mission>
+  [128] getparam 5 .............................. <sAvatarMission>
+  [130] pusharglistnoret 3 ...................... <aUserData, #mission, sAvatarMission>
+  [132] objcall 68 .............................. aUserData[#mission] = sAvatarMission
+  [134] getprop 260 ............................. <aUserData>
+  [137] pushsymb 266 ............................ <#avatarString>
+  [140] getparam 6 .............................. <sAvatarString>
+  [142] pusharglistnoret 3 ...................... <aUserData, #avatarString, sAvatarString>
+  [144] objcall 68 .............................. aUserData[#avatarString] = sAvatarString
+  [146] getprop 260 ............................. <aUserData>
+  [149] pushsymb 267 ............................ <#online>
+  [152] getparam 7 .............................. <bOnline>
+  [154] pusharglistnoret 3 ...................... <aUserData, #online, bOnline>
+  [156] objcall 68 .............................. aUserData[#online] = bOnline
+  [158] getprop 260 ............................. <aUserData>
+  [161] pushsymb 268 ............................ <#exists>
+  [164] getparam 8 .............................. <bExists>
+  [166] pusharglistnoret 3 ...................... <aUserData, #exists, bExists>
+  [168] objcall 68 .............................. aUserData[#exists] = bExists
+  [170] getprop 260 ............................. <aUserData>
+  [173] pushsymb 269 ............................ <#gender>
+  [176] getparam 10 ............................. <iGender>
+  [178] pusharglistnoret 3 ...................... <aUserData, #gender, iGender>
+  [180] objcall 68 .............................. aUserData[#gender] = iGender
+  [182] getprop 260 ............................. <aUserData>
+  [185] pushsymb 67 ............................. <#studioId>
+  [187] getparam 4 .............................. <sLastSeenIn>
+  [189] pusharglistnoret 3 ...................... <aUserData, #studioId, sLastSeenIn>
+  [191] objcall 68 .............................. aUserData[#studioId] = sLastSeenIn
+  [193] getprop 260 ............................. <aUserData>
+  [196] pushsymb 47 ............................. <#studioName>
+  [198] getparam 9 .............................. <sLastSeenInName>
+  [200] pusharglistnoret 3 ...................... <aUserData, #studioName, sLastSeenInName>
+  [202] objcall 68 .............................. aUserData[#studioName] = sLastSeenInName
+  [204] getprop 260 ............................. <aUserData>
+  [207] pushsymb 230 ............................ <#owner>
+  [209] pushcons 18 ............................. <"studioOwner">
+  [211] pusharglistnoret 3 ...................... <aUserData, #owner, "studioOwner">
+  [213] objcall 68 .............................. aUserData[#owner] = "studioOwner"
+  [215] pushint8 1 .............................. <1>
+  [217] setlocal 0
+  [219] getlocal 0
+  [221] getprop 260 ............................. <aUserData>
+  [224] getobjprop 32 ........................... <aUserData.count>
+  [226] lteq
+  [227] jmpifz [266] ............................ repeat with i = 1 to aUserData.count
+  [230] getprop 260 ............................. <aUserData>
+  [233] getlocal 0 .............................. <i>
+  [235] pusharglist 2 ........................... <aUserData, i>
+  [237] objcall 33 .............................. <aUserData[i]>
+  [239] pusharglist 1 ........................... <aUserData[i]>
+  [241] extcall 26 .............................. <voidp(aUserData[i])>
+  [243] jmpifz [257] ............................ if voidp(aUserData[i]) then
+  [246] getprop 260 ............................. <aUserData>
+  [249] getlocal 0 .............................. <i>
+  [251] pushcons 17 ............................. <EMPTY>
+  [253] pusharglistnoret 3 ...................... <aUserData, i, EMPTY>
+  [255] objcall 68 .............................. aUserData[i] = EMPTY
+  [257] pushint8 1
+  [259] getlocal 0
+  [261] add
+  [262] setlocal 0
+  [264] endrepeat [219]
+  [266] getmovieprop 270 ........................ <the frameLabel>
+  [269] pushcons 19 ............................. <"logIn">
+  [271] eq ...................................... <the frameLabel = "logIn">
+  [272] jmpifz [283] ............................ if the frameLabel = "logIn" then / else
+  [275] pusharglistnoret 0 ...................... <>
+  [277] extcall 271 ............................. nothing()
+  [280] jmp [295]
+  [283] getglobal 52 ............................ <oUserDisplayManager>
+  [285] getprop 260 ............................. <aUserData>
+  [288] getparam 0 .............................. <me>
+  [290] pusharglistnoret 3 ...................... <oUserDisplayManager, aUserData, me>
+  [292] objcall 272 ............................. oUserDisplayManager.displayUser(aUserData, me)
+  [295] ret
+end
+
+on loginModerator_Result me, iError
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 20 ............................. <"loginModerator_Result:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"loginModerator_Result:iError:" && iError>
+  [  7] pusharglistnoret 2 ...................... <me, "loginModerator_Result:iError:" && iError>
+  [  9] objcall 4 ............................... me.debug("loginModerator_Result:iError:" && iError)
+  [ 11] pushcons 21 ............................. <"loginModerator_Result() ">
+  [ 13] getparam 1 .............................. <iError>
+  [ 15] joinstr ................................. <"loginModerator_Result() " & iError>
+  [ 16] pusharglistnoret 1 ...................... <"loginModerator_Result() " & iError>
+  [ 18] extcall 38 .............................. put "loginModerator_Result() " & iError
+  [ 20] getglobal 282 ........................... <oLogInManager>
+  [ 23] getparam 1 .............................. <iError>
+  [ 25] pushcons 22 ............................. <"userNameLogIn">
+  [ 27] pusharglist 1 ........................... <"userNameLogIn">
+  [ 29] extcall 14 .............................. <member("userNameLogIn")>
+  [ 31] getobjprop 15 ........................... <member("userNameLogIn").text>
+  [ 33] pusharglistnoret 3 ...................... <oLogInManager, iError, member("userNameLogIn").text>
+  [ 35] objcall 283 ............................. oLogInManager.confirmLogIn(iError, member("userNameLogIn").text)
+  [ 38] ret
+end
+
+on getExtendedDenizenInfo_Result me, iError, sScreenName, sAvatarMission, aLevelList, iPossessions_purchased, iPossessions_total, iPossessions_backpack, bInfluencer, iLogInTotal
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 23 ............................. <"getExtendedDenizenInfo_Result:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError>
+  [  7] pushcons 8 .............................. <"sScreenName:">
+  [  9] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:">
+  [ 10] getparam 2 .............................. <sScreenName>
+  [ 12] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName>
+  [ 13] pushcons 11 ............................. <"sAvatarMission:">
+  [ 15] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:">
+  [ 16] getparam 3 .............................. <sAvatarMission>
+  [ 18] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission>
+  [ 19] pushcons 24 ............................. <"aLevelList:">
+  [ 21] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:">
+  [ 22] getparam 4 .............................. <aLevelList>
+  [ 24] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList>
+  [ 25] pushcons 25 ............................. <"iPossessions_purchased:">
+  [ 27] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:">
+  [ 28] getparam 5 .............................. <iPossessions_purchased>
+  [ 30] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased>
+  [ 31] pushcons 26 ............................. <"iPossessions_total:">
+  [ 33] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:">
+  [ 34] getparam 6 .............................. <iPossessions_total>
+  [ 36] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total>
+  [ 37] pushcons 27 ............................. <"iPossessions_backpack:">
+  [ 39] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:">
+  [ 40] getparam 7 .............................. <iPossessions_backpack>
+  [ 42] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack>
+  [ 43] pushcons 28 ............................. <"bInfluencer:">
+  [ 45] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:">
+  [ 46] getparam 8 .............................. <bInfluencer>
+  [ 48] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:" && bInfluencer>
+  [ 49] pushcons 29 ............................. <"iLogInTotal:">
+  [ 51] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:" && bInfluencer && "iLogInTotal:">
+  [ 52] getparam 9 .............................. <iLogInTotal>
+  [ 54] joinpadstr .............................. <"getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:" && bInfluencer && "iLogInTotal:" && iLogInTotal>
+  [ 55] pusharglistnoret 2 ...................... <me, "getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:" && bInfluencer && "iLogInTotal:" && iLogInTotal>
+  [ 57] objcall 4 ............................... me.debug("getExtendedDenizenInfo_Result:iError:" && iError && "sScreenName:" && sScreenName && "sAvatarMission:" && sAvatarMission && "aLevelList:" && aLevelList && "iPossessions_purchased:" && iPossessions_purchased && "iPossessions_total:" && iPossessions_total && "iPossessions_backpack:" && iPossessions_backpack && "bInfluencer:" && bInfluencer && "iLogInTotal:" && iLogInTotal)
+  [ 59] pusharglist 0 ........................... <[:]>
+  [ 61] pushproplist ............................ <[:]>
+  [ 62] setprop 260 ............................. aUserData = [:]
+  [ 65] getprop 260 ............................. <aUserData>
+  [ 68] pushsymb 262 ............................ <#denizenName>
+  [ 71] getparam 2 .............................. <sScreenName>
+  [ 73] pusharglistnoret 3 ...................... <aUserData, #denizenName, sScreenName>
+  [ 75] objcall 68 .............................. aUserData[#denizenName] = sScreenName
+  [ 77] getprop 260 ............................. <aUserData>
+  [ 80] pushsymb 265 ............................ <#mission>
+  [ 83] getparam 3 .............................. <sAvatarMission>
+  [ 85] pusharglistnoret 3 ...................... <aUserData, #mission, sAvatarMission>
+  [ 87] objcall 68 .............................. aUserData[#mission] = sAvatarMission
+  [ 89] getprop 260 ............................. <aUserData>
+  [ 92] pushsymb 47 ............................. <#studioName>
+  [ 94] pushcons 30 ............................. <"studioName">
+  [ 96] pusharglistnoret 3 ...................... <aUserData, #studioName, "studioName">
+  [ 98] objcall 68 .............................. aUserData[#studioName] = "studioName"
+  [100] getprop 260 ............................. <aUserData>
+  [103] pushsymb 230 ............................ <#owner>
+  [105] pushcons 18 ............................. <"studioOwner">
+  [107] pusharglistnoret 3 ...................... <aUserData, #owner, "studioOwner">
+  [109] objcall 68 .............................. aUserData[#owner] = "studioOwner"
+  [111] getprop 260 ............................. <aUserData>
+  [114] pushsymb 284 ............................ <#denizenLevel>
+  [117] getparam 4 .............................. <aLevelList>
+  [119] pusharglistnoret 3 ...................... <aUserData, #denizenLevel, aLevelList>
+  [121] objcall 68 .............................. aUserData[#denizenLevel] = aLevelList
+  [123] getprop 260 ............................. <aUserData>
+  [126] pushsymb 285 ............................ <#bought>
+  [129] getparam 5 .............................. <iPossessions_purchased>
+  [131] pusharglistnoret 3 ...................... <aUserData, #bought, iPossessions_purchased>
+  [133] objcall 68 .............................. aUserData[#bought] = iPossessions_purchased
+  [135] getprop 260 ............................. <aUserData>
+  [138] pushsymb 286 ............................ <#owned>
+  [141] getparam 6 .............................. <iPossessions_total>
+  [143] pusharglistnoret 3 ...................... <aUserData, #owned, iPossessions_total>
+  [145] objcall 68 .............................. aUserData[#owned] = iPossessions_total
+  [147] getprop 260 ............................. <aUserData>
+  [150] pushsymb 287 ............................ <#onHand>
+  [153] getparam 7 .............................. <iPossessions_backpack>
+  [155] pusharglistnoret 3 ...................... <aUserData, #onHand, iPossessions_backpack>
+  [157] objcall 68 .............................. aUserData[#onHand] = iPossessions_backpack
+  [159] getprop 260 ............................. <aUserData>
+  [162] pushsymb 288 ............................ <#influencer>
+  [165] getparam 8 .............................. <bInfluencer>
+  [167] pusharglistnoret 3 ...................... <aUserData, #influencer, bInfluencer>
+  [169] objcall 68 .............................. aUserData[#influencer] = bInfluencer
+  [171] getprop 260 ............................. <aUserData>
+  [174] pushsymb 289 ............................ <#logInTotal>
+  [177] getparam 9 .............................. <iLogInTotal>
+  [179] pusharglistnoret 3 ...................... <aUserData, #logInTotal, iLogInTotal>
+  [181] objcall 68 .............................. aUserData[#logInTotal] = iLogInTotal
+  [183] getglobal 52 ............................ <oUserDisplayManager>
+  [185] getprop 260 ............................. <aUserData>
+  [188] pusharglistnoret 2 ...................... <oUserDisplayManager, aUserData>
+  [190] objcall 272 ............................. oUserDisplayManager.displayUser(aUserData)
+  [193] ret
+end
+
+on displayStudioDetail me, aStudio
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 31 ............................. <"displayStudioDetail:aStudio:">
+  [  4] getparam 1 .............................. <aStudio>
+  [  6] joinpadstr .............................. <"displayStudioDetail:aStudio:" && aStudio>
+  [  7] pusharglistnoret 2 ...................... <me, "displayStudioDetail:aStudio:" && aStudio>
+  [  9] objcall 4 ............................... me.debug("displayStudioDetail:aStudio:" && aStudio)
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 0
+  [ 15] getlocal 0
+  [ 17] getparam 1 .............................. <aStudio>
+  [ 19] getobjprop 32 ........................... <aStudio.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 59] ............................ repeat with i = 1 to aStudio.count
+  [ 25] getparam 1 .............................. <aStudio>
+  [ 27] getlocal 0 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aStudio, i>
+  [ 31] objcall 33 .............................. <aStudio[i]>
+  [ 33] pusharglist 1 ........................... <aStudio[i]>
+  [ 35] extcall 26 .............................. <voidp(aStudio[i])>
+  [ 37] jmpifz [ 50] ............................ if voidp(aStudio[i]) then
+  [ 40] getparam 1 .............................. <aStudio>
+  [ 42] getlocal 0 .............................. <i>
+  [ 44] pushcons 17 ............................. <EMPTY>
+  [ 46] pusharglistnoret 3 ...................... <aStudio, i, EMPTY>
+  [ 48] objcall 68 .............................. aStudio[i] = EMPTY
+  [ 50] pushint8 1
+  [ 52] getlocal 0
+  [ 54] add
+  [ 55] setlocal 0
+  [ 57] endrepeat [ 15]
+  [ 59] getparam 1 .............................. <aStudio>
+  [ 61] setprop 296 ............................. aStudioDetailData = aStudio
+  [ 64] ret
+end
+
+on modifyStudio_Result me, iError, sStudioName, sDescription
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 32 ............................. <"modifyStudio_Result:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"modifyStudio_Result:iError:" && iError>
+  [  7] pushcons 33 ............................. <"sStudioName:">
+  [  9] joinpadstr .............................. <"modifyStudio_Result:iError:" && iError && "sStudioName:">
+  [ 10] getparam 2 .............................. <sStudioName>
+  [ 12] joinpadstr .............................. <"modifyStudio_Result:iError:" && iError && "sStudioName:" && sStudioName>
+  [ 13] pushcons 34 ............................. <"sDescription:">
+  [ 15] joinpadstr .............................. <"modifyStudio_Result:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:">
+  [ 16] getparam 3 .............................. <sDescription>
+  [ 18] joinpadstr .............................. <"modifyStudio_Result:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription>
+  [ 19] pusharglistnoret 2 ...................... <me, "modifyStudio_Result:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription>
+  [ 21] objcall 4 ............................... me.debug("modifyStudio_Result:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription)
+  [ 23] getparam 1 .............................. <iError>
+  [ 25] peek 0 .................................. case iError of
+  [ 27] pushzero ................................ <0>
+  [ 28] eq
+  [ 29] jmpifz [ 35] ............................ (case) 0:
+  [ 32] jmp [146]
+  [ 35] peek 0
+  [ 37] pushint8 1 .............................. <1>
+  [ 39] inv ..................................... <-1>
+  [ 40] eq
+  [ 41] jmpifz [ 56] ............................ (case) (-1):
+  [ 44] pushcons 35 ............................. <"Failed: ">
+  [ 46] getparam 1 .............................. <iError>
+  [ 48] joinstr ................................. <"Failed: " & iError>
+  [ 49] pusharglistnoret 1 ...................... <"Failed: " & iError>
+  [ 51] extcall 171 ............................. alert("Failed: " & iError)
+  [ 53] jmp [146]
+  [ 56] peek 0
+  [ 58] pushint8 6 .............................. <6>
+  [ 60] inv ..................................... <-6>
+  [ 61] eq
+  [ 62] jmpifz [ 77] ............................ (case) (-6):
+  [ 65] pushcons 36 ............................. <"User not found: ">
+  [ 67] getparam 1 .............................. <iError>
+  [ 69] joinstr ................................. <"User not found: " & iError>
+  [ 70] pusharglistnoret 1 ...................... <"User not found: " & iError>
+  [ 72] extcall 171 ............................. alert("User not found: " & iError)
+  [ 74] jmp [146]
+  [ 77] peek 0
+  [ 79] pushint8 7 .............................. <7>
+  [ 81] inv ..................................... <-7>
+  [ 82] eq
+  [ 83] jmpifz [ 98] ............................ (case) (-7):
+  [ 86] pushcons 37 ............................. <"Name has foul language: ">
+  [ 88] getparam 1 .............................. <iError>
+  [ 90] joinstr ................................. <"Name has foul language: " & iError>
+  [ 91] pusharglistnoret 1 ...................... <"Name has foul language: " & iError>
+  [ 93] extcall 171 ............................. alert("Name has foul language: " & iError)
+  [ 95] jmp [146]
+  [ 98] peek 0
+  [100] pushint8 8 .............................. <8>
+  [102] inv ..................................... <-8>
+  [103] eq
+  [104] jmpifz [119] ............................ (case) (-8):
+  [107] pushcons 38 ............................. <"Description has foul language: ">
+  [109] getparam 1 .............................. <iError>
+  [111] joinstr ................................. <"Description has foul language: " & iError>
+  [112] pusharglistnoret 1 ...................... <"Description has foul language: " & iError>
+  [114] extcall 171 ............................. alert("Description has foul language: " & iError)
+  [116] jmp [146]
+  [119] peek 0
+  [121] pushint8 9 .............................. <9>
+  [123] inv ..................................... <-9>
+  [124] eq
+  [125] jmpifz [140] ............................ (case) (-9):
+  [128] pushcons 39 ............................. <"User has 6 or more studios: ">
+  [130] getparam 1 .............................. <iError>
+  [132] joinstr ................................. <"User has 6 or more studios: " & iError>
+  [133] pusharglistnoret 1 ...................... <"User has 6 or more studios: " & iError>
+  [135] extcall 171 ............................. alert("User has 6 or more studios: " & iError)
+  [137] jmp [146] ............................... (case) otherwise:
+  [140] pushcons 40 ............................. <"Failed: exception error.">
+  [142] pusharglistnoret 1 ...................... <"Failed: exception error.">
+  [144] extcall 171 ............................. alert("Failed: exception error.")
+  [146] pop 1 ................................... end case
+  [148] getglobal 298 ........................... <oEditStudioManager>
+  [151] getparam 1 .............................. <iError>
+  [153] getparam 2 .............................. <sStudioName>
+  [155] getparam 3 .............................. <sDescription>
+  [157] pusharglistnoret 4 ...................... <oEditStudioManager, iError, sStudioName, sDescription>
+  [159] objcall 299 ............................. oEditStudioManager.receiveModifyStudioResult(iError, sStudioName, sDescription)
+  [162] ret
+end
+
+on getByStudioId_Result me, iError, foStudio
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 41 ............................. <"getByStudioId_Result:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"getByStudioId_Result:iError:" && iError>
+  [  7] pushcons 42 ............................. <"foStudio:">
+  [  9] joinpadstr .............................. <"getByStudioId_Result:iError:" && iError && "foStudio:">
+  [ 10] getparam 2 .............................. <foStudio>
+  [ 12] joinpadstr .............................. <"getByStudioId_Result:iError:" && iError && "foStudio:" && foStudio>
+  [ 13] pusharglistnoret 2 ...................... <me, "getByStudioId_Result:iError:" && iError && "foStudio:" && foStudio>
+  [ 15] objcall 4 ............................... me.debug("getByStudioId_Result:iError:" && iError && "foStudio:" && foStudio)
+  [ 17] getparam 1 .............................. <iError>
+  [ 19] pushzero ................................ <0>
+  [ 20] nteq .................................... <iError <> 0>
+  [ 21] jmpifz [ 33] ............................ if iError <> 0 then
+  [ 24] pushcons 43 ............................. <"Error: getByStudioID:">
+  [ 26] getparam 1 .............................. <iError>
+  [ 28] joinpadstr .............................. <"Error: getByStudioID:" && iError>
+  [ 29] pusharglistnoret 1 ...................... <"Error: getByStudioID:" && iError>
+  [ 31] extcall 171 ............................. alert("Error: getByStudioID:" && iError)
+  [ 33] getparam 2 .............................. <foStudio>
+  [ 35] pusharglist 1 ........................... <foStudio>
+  [ 37] objcall 301 ............................. <foStudio.getOwnerName()>
+  [ 40] setlocal 0 .............................. sOwnerName = foStudio.getOwnerName()
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pushcons 44 ............................. <"getByStudioId_Result:sOwnerName:">
+  [ 46] getlocal 0 .............................. <sOwnerName>
+  [ 48] joinpadstr .............................. <"getByStudioId_Result:sOwnerName:" && sOwnerName>
+  [ 49] pusharglistnoret 2 ...................... <me, "getByStudioId_Result:sOwnerName:" && sOwnerName>
+  [ 51] objcall 4 ............................... me.debug("getByStudioId_Result:sOwnerName:" && sOwnerName)
+  [ 53] getglobal 52 ............................ <oUserDisplayManager>
+  [ 55] getlocal 0 .............................. <sOwnerName>
+  [ 57] pusharglistnoret 2 ...................... <oUserDisplayManager, sOwnerName>
+  [ 59] objcall 302 ............................. oUserDisplayManager.receiveGetByStudioId_Result(sOwnerName)
+  [ 62] ret
+end
+
+on getModeratorsOnline_Result me, aMods
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 45 ............................. <"getModeratorsOnline_Result() aMods: ">
+  [  4] getparam 1 .............................. <aMods>
+  [  6] joinstr ................................. <"getModeratorsOnline_Result() aMods: " & aMods>
+  [  7] pushint8 1 .............................. <1>
+  [  9] pusharglistnoret 3 ...................... <me, "getModeratorsOnline_Result() aMods: " & aMods, 1>
+  [ 11] objcall 4 ............................... me.debug("getModeratorsOnline_Result() aMods: " & aMods, 1)
+  [ 13] pushsymb 305 ............................ <#displayModsLoggedIn>
+  [ 16] getparam 1 .............................. <aMods>
+  [ 18] pusharglistnoret 2 ...................... <#displayModsLoggedIn, aMods>
+  [ 20] extcall 139 ............................. sendAllSprites(#displayModsLoggedIn, aMods)
+  [ 22] ret
+end
+
+on isPublicStudioWindowOpen me
+  [  0] pushzero ................................ <0>
+  [  1] pusharglistnoret 1 ...................... <0>
+  [  3] extcall 31 .............................. return 0
+  [  5] ret
+end
+
+on isPrivateStudioWindowOpen me
+  [  0] pushzero ................................ <0>
+  [  1] pusharglistnoret 1 ...................... <0>
+  [  3] extcall 31 .............................. return 0
+  [  5] ret
+end
+
+on getOpenWindowNames me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aList = []
+  [  5] getlocal 0 .............................. <aList>
+  [  7] pusharglistnoret 1 ...................... <aList>
+  [  9] extcall 31 .............................. return aList
+  [ 11] ret
+end

@@ -1,0 +1,405 @@
+property pStartChatLog, pFontStyle, pDeselectLineNum, pSprite, pPublicStudioData, pTime, pSelected, pItemNum, pFrame, pScrolltop, pDisplayLines, pActive, pDataType, pStudioList, pStudioID, pStudioName, pStudioOwner, pReceive, oController, bDebug, pSpriteWidth, pScrollLock, pBrowseScrolltop
+global oUserDisplayManager, aChatLogDisplaySprites, ElementMgr, sModScreenName
+
+on beginSprite me
+  [  0] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [  3] getparam 0 .............................. <me>
+  [  5] getobjprop 13 ........................... <me.spriteNum>
+  [  7] pusharglistnoret 2 ...................... <aChatLogDisplaySprites, me.spriteNum>
+  [  9] objcall 30 .............................. aChatLogDisplaySprites.add(me.spriteNum)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 13 ........................... <me.spriteNum>
+  [ 15] pusharglist 1 ........................... <me.spriteNum>
+  [ 17] extcall 12 .............................. <sprite(me.spriteNum)>
+  [ 19] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 21] getprop 11 .............................. <pSprite>
+  [ 23] getchainedprop 14 ....................... <pSprite.member>
+  [ 25] pushcons 0 .............................. <"inactive log">
+  [ 27] setobjprop 15 ........................... pSprite.member.text = "inactive log"
+  [ 29] pushint8 34 ............................. <34>
+  [ 31] get 7 ................................... <the timer>
+  [ 33] setprop 21 .............................. pTime = the timer
+  [ 35] pushzero ................................ <0>
+  [ 36] setprop 207 ............................. pSelected = 0
+  [ 38] pusharglist 0 ........................... <>
+  [ 40] thebuiltin 82 ........................... <the frame>
+  [ 42] setprop 208 ............................. pFrame = the frame
+  [ 44] getprop 11 .............................. <pSprite>
+  [ 46] getchainedprop 14 ....................... <pSprite.member>
+  [ 48] getobjprop 113 .......................... <pSprite.member.scrollTop>
+  [ 50] setprop 210 ............................. pScrolltop = pSprite.member.scrollTop
+  [ 52] getprop 11 .............................. <pSprite>
+  [ 54] getobjprop 379 .......................... <pSprite.height>
+  [ 57] getprop 11 .............................. <pSprite>
+  [ 59] getchainedprop 14 ....................... <pSprite.member>
+  [ 61] getobjprop 108 .......................... <pSprite.member.fixedLineSpace>
+  [ 63] div ..................................... <pSprite.height / pSprite.member.fixedLineSpace>
+  [ 64] setprop 378 ............................. pDisplayLines = pSprite.height / pSprite.member.fixedLineSpace
+  [ 67] pushzero ................................ <0>
+  [ 68] setprop 330 ............................. pActive = 0
+  [ 71] pushcons 1 .............................. <EMPTY>
+  [ 73] setprop 344 ............................. pDataType = EMPTY
+  [ 76] pushcons 1 .............................. <EMPTY>
+  [ 78] setprop 228 ............................. pStudioName = EMPTY
+  [ 80] pushcons 1 .............................. <EMPTY>
+  [ 82] setprop 229 ............................. pStudioOwner = EMPTY
+  [ 84] pushzero ................................ <0>
+  [ 85] setprop 371 ............................. pStartChatLog = 0
+  [ 88] pushcons 1 .............................. <EMPTY>
+  [ 90] setprop 380 ............................. pDeselectLineNum = EMPTY
+  [ 93] pushint8 1 .............................. <1>
+  [ 95] setprop 381 ............................. pReceive = 1
+  [ 98] getprop 11 .............................. <pSprite>
+  [100] getobjprop 383 .......................... <pSprite.width>
+  [103] pushint8 16 ............................. <16>
+  [105] sub ..................................... <pSprite.width - 16>
+  [106] setprop 382 ............................. pSpriteWidth = pSprite.width - 16
+  [109] pushint8 1 .............................. <1>
+  [111] setprop 384 ............................. pScrollLock = 1
+  [114] getparam 0 .............................. <me>
+  [116] pushzero ................................ <0>
+  [117] setobjprop 10 ........................... me.bDebug = 0
+  [119] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 31] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 2 .............................. <"b_ChatLogDisplay:aChatLogDisplaySprites[me.spriteNum]:">
+  [ 12] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 13 ........................... <me.spriteNum>
+  [ 19] pusharglist 2 ........................... <aChatLogDisplaySprites, me.spriteNum>
+  [ 21] objcall 33 .............................. <aChatLogDisplaySprites[me.spriteNum]>
+  [ 23] joinpadstr .............................. <"b_ChatLogDisplay:aChatLogDisplaySprites[me.spriteNum]:" && aChatLogDisplaySprites[me.spriteNum]>
+  [ 24] getparam 1 .............................. <sMessage>
+  [ 26] joinstr ................................. <"b_ChatLogDisplay:aChatLogDisplaySprites[me.spriteNum]:" && aChatLogDisplaySprites[me.spriteNum] & sMessage>
+  [ 27] pusharglistnoret 1 ...................... <"b_ChatLogDisplay:aChatLogDisplaySprites[me.spriteNum]:" && aChatLogDisplaySprites[me.spriteNum] & sMessage>
+  [ 29] extcall 38 .............................. put "b_ChatLogDisplay:aChatLogDisplaySprites[me.spriteNum]:" && aChatLogDisplaySprites[me.spriteNum] & sMessage
+  [ 31] ret
+end
+
+on mouseUp me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 385 .......................... <the doubleClick>
+  [  5] jmpifz [  9] ............................ if the doubleClick then
+  [  8] ret ..................................... exit
+  [  9] getmovieprop 224 ........................ <the mouseLoc>
+  [ 11] setlocal 0 .............................. pointClicked = the mouseLoc
+  [ 13] getprop 11 .............................. <pSprite>
+  [ 15] getlocal 0 .............................. <pointClicked>
+  [ 17] pusharglist 2 ........................... <pSprite, pointClicked>
+  [ 19] objcall 225 ............................. <pSprite.pointToItem(pointClicked)>
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] lt ...................................... <pSprite.pointToItem(pointClicked) < 1>
+  [ 24] jmpifz [ 28] ............................ if pSprite.pointToItem(pointClicked) < 1 then
+  [ 27] ret ..................................... exit
+  [ 28] getmovieprop 226 ........................ <the itemDelimiter>
+  [ 30] setlocal 1 .............................. sDefaultItemDelimiter = the itemDelimiter
+  [ 32] pushcons 3 .............................. <RETURN>
+  [ 34] setmovieprop 226 ........................ the itemDelimiter = RETURN
+  [ 36] getprop 11 .............................. <pSprite>
+  [ 38] getlocal 0 .............................. <pointClicked>
+  [ 40] pusharglist 2 ........................... <pSprite, pointClicked>
+  [ 42] objcall 225 ............................. <pSprite.pointToItem(pointClicked)>
+  [ 44] setprop 209 ............................. pItemNum = pSprite.pointToItem(pointClicked)
+  [ 46] getprop 11 .............................. <pSprite>
+  [ 48] getchainedprop 14 ....................... <pSprite.member>
+  [ 50] pushsymb 227 ............................ <#item>
+  [ 52] getprop 209 ............................. <pItemNum>
+  [ 54] pusharglist 3 ........................... <pSprite.member, #item, pItemNum>
+  [ 56] objcall 66 .............................. <pSprite.member.item[pItemNum]>
+  [ 58] setlocal 2 .............................. sChatLine = pSprite.member.item[pItemNum]
+  [ 60] getlocal 2 .............................. <sChatLine>
+  [ 62] pushcons 4 .............................. <"<-------------------">
+  [ 64] containsstr ............................. <sChatLine contains "<-------------------">
+  [ 65] getlocal 2 .............................. <sChatLine>
+  [ 67] pushcons 5 .............................. <":">
+  [ 69] containsstr ............................. <sChatLine contains ":">
+  [ 70] pushzero ................................ <0>
+  [ 71] eq ...................................... <(sChatLine contains ":") = 0>
+  [ 72] or ...................................... <(sChatLine contains "<-------------------") or ((sChatLine contains ":") = 0)>
+  [ 73] jmpifz [ 77] ............................ if (sChatLine contains "<-------------------") or ((sChatLine contains ":") = 0) then
+  [ 76] ret ..................................... exit
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pusharglistnoret 1 ...................... <me>
+  [ 81] localcall 3 ............................. deSelectLine(me)
+  [ 83] getlocal 1 .............................. <sDefaultItemDelimiter>
+  [ 85] setmovieprop 226 ........................ the itemDelimiter = sDefaultItemDelimiter
+  [ 87] getprop 11 .............................. <pSprite>
+  [ 89] getchainedprop 14 ....................... <pSprite.member>
+  [ 91] pushsymb 214 ............................ <#line>
+  [ 93] getprop 209 ............................. <pItemNum>
+  [ 95] pusharglist 3 ........................... <pSprite.member, #line, pItemNum>
+  [ 97] objcall 61 .............................. <pSprite.member.line[pItemNum]>
+  [ 99] getobjprop 104 .......................... <pSprite.member.line[pItemNum].fontStyle>
+  [101] setprop 386 ............................. pFontStyle = pSprite.member.line[pItemNum].fontStyle
+  [104] getprop 386 ............................. <pFontStyle>
+  [107] pusharglist 1 ........................... <pFontStyle>
+  [109] objcall 211 ............................. <pFontStyle.duplicate()>
+  [111] setlocal 3 .............................. underlineStyle = pFontStyle.duplicate()
+  [113] getlocal 3 .............................. <underlineStyle>
+  [115] pushsymb 106 ............................ <#plain>
+  [117] pusharglist 1 ........................... <[#plain]>
+  [119] pushlist ................................ <[#plain]>
+  [120] eq ...................................... <underlineStyle = [#plain]>
+  [121] jmpifz [129] ............................ if underlineStyle = [#plain] then
+  [124] pusharglist 0 ........................... <[]>
+  [126] pushlist ................................ <[]>
+  [127] setlocal 3 .............................. underlineStyle = []
+  [129] getlocal 3 .............................. <underlineStyle>
+  [131] pushsymb 215 ............................ <#underline>
+  [133] pusharglistnoret 2 ...................... <underlineStyle, #underline>
+  [135] objcall 30 .............................. underlineStyle.add(#underline)
+  [137] getprop 11 .............................. <pSprite>
+  [139] getchainedprop 14 ....................... <pSprite.member>
+  [141] pushsymb 214 ............................ <#line>
+  [143] getprop 209 ............................. <pItemNum>
+  [145] pusharglist 3 ........................... <pSprite.member, #line, pItemNum>
+  [147] objcall 61 .............................. <pSprite.member.line[pItemNum]>
+  [149] getlocal 3 .............................. <underlineStyle>
+  [151] setobjprop 104 .......................... pSprite.member.line[pItemNum].fontStyle = underlineStyle
+  [153] pushint8 1 .............................. <1>
+  [155] setprop 207 ............................. pSelected = 1
+  [157] getprop 209 ............................. <pItemNum>
+  [159] setprop 380 ............................. pDeselectLineNum = pItemNum
+  [162] getparam 0 .............................. <me>
+  [164] getlocal 2 .............................. <sChatLine>
+  [166] pusharglist 2 ........................... <me, sChatLine>
+  [168] localcall 4 ............................. <parseChatLine(me, sChatLine)>
+  [170] setlocal 4 .............................. sDenizenName = parseChatLine(me, sChatLine)
+  [172] getglobal 52 ............................ <oUserDisplayManager>
+  [174] getlocal 4 .............................. <sDenizenName>
+  [176] getprop 228 ............................. <pStudioName>
+  [178] getprop 229 ............................. <pStudioOwner>
+  [180] pushzero ................................ <0>
+  [181] pusharglistnoret 5 ...................... <oUserDisplayManager, sDenizenName, pStudioName, pStudioOwner, 0>
+  [183] objcall 53 .............................. oUserDisplayManager.displayExtendedUserInfo(sDenizenName, pStudioName, pStudioOwner, 0)
+  [185] ret
+end
+
+on deSelectLine me
+  [  0] getprop 380 ............................. <pDeselectLineNum>
+  [  3] pushcons 1 .............................. <EMPTY>
+  [  5] nteq .................................... <pDeselectLineNum <> EMPTY>
+  [  6] jmpifz [ 34] ............................ if pDeselectLineNum <> EMPTY then / else
+  [  9] pushzero ................................ <0>
+  [ 10] setprop 207 ............................. pSelected = 0
+  [ 12] getprop 11 .............................. <pSprite>
+  [ 14] getchainedprop 14 ....................... <pSprite.member>
+  [ 16] pushsymb 214 ............................ <#line>
+  [ 18] getprop 380 ............................. <pDeselectLineNum>
+  [ 21] pusharglist 3 ........................... <pSprite.member, #line, pDeselectLineNum>
+  [ 23] objcall 61 .............................. <pSprite.member.line[pDeselectLineNum]>
+  [ 25] getprop 386 ............................. <pFontStyle>
+  [ 28] setobjprop 104 .......................... pSprite.member.line[pDeselectLineNum].fontStyle = pFontStyle
+  [ 30] ret ..................................... exit
+  [ 31] jmp [186]
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] setlocal 0
+  [ 38] getlocal 0
+  [ 40] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 43] getobjprop 32 ........................... <aChatLogDisplaySprites.count>
+  [ 45] lteq
+  [ 46] jmpifz [186] ............................ repeat with i = 1 to aChatLogDisplaySprites.count
+  [ 49] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 52] getlocal 0 .............................. <i>
+  [ 54] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [ 56] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 13 ........................... <me.spriteNum>
+  [ 62] nteq .................................... <aChatLogDisplaySprites[i] <> me.spriteNum>
+  [ 63] jmpifz [177] ............................ if aChatLogDisplaySprites[i] <> me.spriteNum then
+  [ 66] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 69] getlocal 0 .............................. <i>
+  [ 71] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [ 73] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [ 75] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [ 77] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [ 79] getobjprop 380 .......................... <sprite(aChatLogDisplaySprites[i]).pDeselectLineNum>
+  [ 82] pushcons 1 .............................. <EMPTY>
+  [ 84] nteq .................................... <sprite(aChatLogDisplaySprites[i]).pDeselectLineNum <> EMPTY>
+  [ 85] jmpifz [177] ............................ if sprite(aChatLogDisplaySprites[i]).pDeselectLineNum <> EMPTY then
+  [ 88] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 91] getlocal 0 .............................. <i>
+  [ 93] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [ 95] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [ 97] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [ 99] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [101] pushzero ................................ <0>
+  [102] setobjprop 207 .......................... sprite(aChatLogDisplaySprites[i]).pSelected = 0
+  [104] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [107] getlocal 0 .............................. <i>
+  [109] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [111] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [113] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [115] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [117] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[i]).member>
+  [119] pushsymb 214 ............................ <#line>
+  [121] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [124] getlocal 0 .............................. <i>
+  [126] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [128] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [130] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [132] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [134] getobjprop 380 .......................... <sprite(aChatLogDisplaySprites[i]).pDeselectLineNum>
+  [137] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]).member, #line, sprite(aChatLogDisplaySprites[i]).pDeselectLineNum>
+  [139] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).member.line[sprite(aChatLogDisplaySprites[i]).pDeselectLineNum]>
+  [141] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [144] getlocal 0 .............................. <i>
+  [146] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [148] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [150] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [152] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [154] getobjprop 386 .......................... <sprite(aChatLogDisplaySprites[i]).pFontStyle>
+  [157] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[i]).member.line[sprite(aChatLogDisplaySprites[i]).pDeselectLineNum].fontStyle = sprite(aChatLogDisplaySprites[i]).pFontStyle
+  [159] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [162] getlocal 0 .............................. <i>
+  [164] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [166] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [168] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [170] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [172] pushcons 1 .............................. <EMPTY>
+  [174] setobjprop 380 .......................... sprite(aChatLogDisplaySprites[i]).pDeselectLineNum = EMPTY
+  [177] pushint8 1
+  [179] getlocal 0
+  [181] add
+  [182] setlocal 0
+  [184] endrepeat [ 38]
+  [186] ret
+end
+
+on parseChatLine me, sChatString
+  [  0] pushcons 5 .............................. <":">
+  [  2] getparam 1 .............................. <sChatString>
+  [  4] pusharglist 2 ........................... <":", sChatString>
+  [  6] extcall 160 ............................. <offset(":", sChatString)>
+  [  8] setlocal 0 .............................. sChar = offset(":", sChatString)
+  [ 10] getparam 1 .............................. <sChatString>
+  [ 12] pushsymb 65 ............................. <#char>
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] getlocal 0 .............................. <sChar>
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] sub ..................................... <sChar - 1>
+  [ 21] pusharglist 4 ........................... <sChatString, #char, 1, sChar - 1>
+  [ 23] objcall 66 .............................. <sChatString.char[1..sChar - 1]>
+  [ 25] setlocal 1 .............................. sScreenName = sChatString.char[1..sChar - 1]
+  [ 27] getlocal 1 .............................. <sScreenName>
+  [ 29] pusharglistnoret 1 ...................... <sScreenName>
+  [ 31] extcall 31 .............................. return sScreenName
+  [ 33] ret
+end
+
+on scrollDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"scrollDisplay():pActive:">
+  [  4] getprop 330 ............................. <pActive>
+  [  7] joinpadstr .............................. <"scrollDisplay():pActive:" && pActive>
+  [  8] pushcons 7 .............................. <"pScrolltop:">
+  [ 10] joinpadstr .............................. <"scrollDisplay():pActive:" && pActive && "pScrolltop:">
+  [ 11] getprop 210 ............................. <pScrolltop>
+  [ 13] joinpadstr .............................. <"scrollDisplay():pActive:" && pActive && "pScrolltop:" && pScrolltop>
+  [ 14] pushcons 8 .............................. <"pScrollLock:">
+  [ 16] joinpadstr .............................. <"scrollDisplay():pActive:" && pActive && "pScrolltop:" && pScrolltop && "pScrollLock:">
+  [ 17] getprop 384 ............................. <pScrollLock>
+  [ 20] joinpadstr .............................. <"scrollDisplay():pActive:" && pActive && "pScrolltop:" && pScrolltop && "pScrollLock:" && pScrollLock>
+  [ 21] pusharglistnoret 2 ...................... <me, "scrollDisplay():pActive:" && pActive && "pScrolltop:" && pScrolltop && "pScrollLock:" && pScrollLock>
+  [ 23] objcall 4 ............................... me.debug("scrollDisplay():pActive:" && pActive && "pScrolltop:" && pScrolltop && "pScrollLock:" && pScrollLock)
+  [ 25] getprop 330 ............................. <pActive>
+  [ 28] jmpifz [ 97] ............................ if pActive then
+  [ 31] getprop 11 .............................. <pSprite>
+  [ 33] getchainedprop 14 ....................... <pSprite.member>
+  [ 35] pushsymb 214 ............................ <#line>
+  [ 37] pusharglist 2 ........................... <pSprite.member, #line>
+  [ 39] objcall 32 .............................. <pSprite.member.line.count>
+  [ 41] getprop 378 ............................. <pDisplayLines>
+  [ 44] gt ...................................... <pSprite.member.line.count > pDisplayLines>
+  [ 45] jmpifz [ 97] ............................ if pSprite.member.line.count > pDisplayLines then
+  [ 48] getprop 11 .............................. <pSprite>
+  [ 50] getchainedprop 14 ....................... <pSprite.member>
+  [ 52] pushsymb 214 ............................ <#line>
+  [ 54] pusharglist 2 ........................... <pSprite.member, #line>
+  [ 56] objcall 32 .............................. <pSprite.member.line.count>
+  [ 58] getprop 378 ............................. <pDisplayLines>
+  [ 61] sub ..................................... <pSprite.member.line.count - pDisplayLines>
+  [ 62] getprop 11 .............................. <pSprite>
+  [ 64] getchainedprop 14 ....................... <pSprite.member>
+  [ 66] getobjprop 108 .......................... <pSprite.member.fixedLineSpace>
+  [ 68] mul ..................................... <(pSprite.member.line.count - pDisplayLines) * pSprite.member.fixedLineSpace>
+  [ 69] setprop 210 ............................. pScrolltop = (pSprite.member.line.count - pDisplayLines) * pSprite.member.fixedLineSpace
+  [ 71] getprop 384 ............................. <pScrollLock>
+  [ 74] jmpifz [ 88] ............................ if pScrollLock then / else
+  [ 77] getprop 11 .............................. <pSprite>
+  [ 79] getchainedprop 14 ....................... <pSprite.member>
+  [ 81] getprop 210 ............................. <pScrolltop>
+  [ 83] setobjprop 113 .......................... pSprite.member.scrollTop = pScrolltop
+  [ 85] jmp [ 97]
+  [ 88] getprop 11 .............................. <pSprite>
+  [ 90] getchainedprop 14 ....................... <pSprite.member>
+  [ 92] getprop 390 ............................. <pBrowseScrolltop>
+  [ 95] setobjprop 113 .......................... pSprite.member.scrollTop = pBrowseScrolltop
+  [ 97] ret
+end
+
+on exitFrame me
+  [  0] getprop 330 ............................. <pActive>
+  [  3] jmpifz [ 40] ............................ if pActive then
+  [  6] getprop 371 ............................. <pStartChatLog>
+  [  9] jmpifz [ 24] ............................ if pStartChatLog then
+  [ 12] getprop 11 .............................. <pSprite>
+  [ 14] getchainedprop 14 ....................... <pSprite.member>
+  [ 16] pushcons 9 .............................. <"active log">
+  [ 18] setobjprop 15 ........................... pSprite.member.text = "active log"
+  [ 20] pushzero ................................ <0>
+  [ 21] setprop 371 ............................. pStartChatLog = 0
+  [ 24] getprop 384 ............................. <pScrollLock>
+  [ 27] not ..................................... <not pScrollLock>
+  [ 28] jmpifz [ 40] ............................ if not pScrollLock then
+  [ 31] getprop 11 .............................. <pSprite>
+  [ 33] getchainedprop 14 ....................... <pSprite.member>
+  [ 35] getobjprop 113 .......................... <pSprite.member.scrollTop>
+  [ 37] setprop 390 ............................. pBrowseScrolltop = pSprite.member.scrollTop
+  [ 40] ret
+end
+
+on setController me, _oController
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_oController>
+  [  4] setobjprop 391 .......................... me.oController = _oController
+  [  7] ret
+end
+
+on getController me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 391 .......................... <me.oController>
+  [  5] pusharglistnoret 1 ...................... <me.oController>
+  [  7] extcall 31 .............................. return me.oController
+  [  9] ret
+end
+
+on initGetGameServerResult me, foGameServer
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 391 .......................... <me.oController>
+  [  5] pusharglist 1 ........................... <me.oController>
+  [  7] extcall 26 .............................. <voidp(me.oController)>
+  [  9] jmpifz [ 16] ............................ if voidp(me.oController) then
+  [ 12] pusharglistnoret 0 ...................... <>
+  [ 14] extcall 31 .............................. return 
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pushcons 10 ............................. <"b_ChatLogDisplay: initGameGameServerResult() ">
+  [ 20] getparam 1 .............................. <foGameServer>
+  [ 22] pusharglist 1 ........................... <foGameServer>
+  [ 24] objcall 198 ............................. <foGameServer.toString()>
+  [ 26] joinstr ................................. <"b_ChatLogDisplay: initGameGameServerResult() " & foGameServer.toString()>
+  [ 27] pusharglistnoret 2 ...................... <me, "b_ChatLogDisplay: initGameGameServerResult() " & foGameServer.toString()>
+  [ 29] objcall 4 ............................... me.debug("b_ChatLogDisplay: initGameGameServerResult() " & foGameServer.toString())
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getchainedprop 391 ...................... <me.oController>
+  [ 36] getparam 1 .............................. <foGameServer>
+  [ 38] pusharglistnoret 2 ...................... <me.oController, foGameServer>
+  [ 40] objcall 393 ............................. me.oController.receiveGameServerNotification(foGameServer)
+  [ 43] ret
+end

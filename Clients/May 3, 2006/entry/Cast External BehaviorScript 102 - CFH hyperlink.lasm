@@ -1,0 +1,95 @@
+property pWindowObject
+
+on new me, windowobject
+  [  0] getparam 1 .............................. <windowobject>
+  [  2] setprop 233 ............................. pWindowObject = windowobject
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 23 .............................. return me
+  [ 10] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 474 ............................. nothing()
+  [  5] ret
+end
+
+on mouseUp me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 228 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 36 .............................. <sprite(me.spriteNum)>
+  [  8] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 10] getobjprop 21 ........................... <sprite(me.spriteNum).member.name>
+  [ 12] setlocal 0 .............................. myName = sprite(me.spriteNum).member.name
+  [ 14] pushcons 0 .............................. <"_">
+  [ 16] setmovieprop 157 ........................ the itemDelimiter = "_"
+  [ 18] getlocal 0 .............................. <myName>
+  [ 20] pushsymb 158 ............................ <#item>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] getlocal 0 .............................. <myName>
+  [ 26] pushsymb 223 ............................ <#items>
+  [ 28] pusharglist 2 ........................... <myName, #items>
+  [ 30] objcall 29 .............................. <myName.items.count>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] sub ..................................... <myName.items.count - 1>
+  [ 35] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [ 37] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [ 39] pushcons 1 .............................. <"_LINK">
+  [ 41] joinstr ................................. <myName.item[1..myName.items.count - 1] & "_LINK">
+  [ 42] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & "_LINK"
+  [ 44] getglobal 91 ............................ <TextMgr>
+  [ 46] getlocal 0 .............................. <myName>
+  [ 48] pusharglist 2 ........................... <TextMgr, myName>
+  [ 50] objcall 93 .............................. <TextMgr.GetRefText(myName)>
+  [ 52] setlocal 1 .............................. mydef = TextMgr.GetRefText(myName)
+  [ 54] pushcons 2 .............................. <":">
+  [ 56] setmovieprop 157 ........................ the itemDelimiter = ":"
+  [ 58] getlocal 1 .............................. <mydef>
+  [ 60] pushsymb 158 ............................ <#item>
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] pusharglist 3 ........................... <mydef, #item, 1>
+  [ 66] objcall 149 ............................. <mydef.item[1]>
+  [ 68] setlocal 2 .............................. myType = mydef.item[1]
+  [ 70] getlocal 1 .............................. <mydef>
+  [ 72] pushsymb 158 ............................ <#item>
+  [ 74] pushint8 2 .............................. <2>
+  [ 76] pusharglist 3 ........................... <mydef, #item, 2>
+  [ 78] objcall 149 ............................. <mydef.item[2]>
+  [ 80] setlocal 3 .............................. myLink = mydef.item[2]
+  [ 82] pushcons 3 .............................. <",">
+  [ 84] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 86] getlocal 2 .............................. <myType>
+  [ 88] pushcons 4 .............................. <"external">
+  [ 90] eq ...................................... <myType = "external">
+  [ 91] jmpifz [106] ............................ if myType = "external" then / else
+  [ 94] pushcons 5 .............................. <"javascript:">
+  [ 96] getlocal 3 .............................. <myLink>
+  [ 98] joinstr ................................. <"javascript:" & myLink>
+  [ 99] pusharglistnoret 1 ...................... <"javascript:" & myLink>
+  [101] extcall 195 ............................. gotoNetPage("javascript:" & myLink)
+  [103] jmp [150]
+  [106] getglobal 309 ........................... <gFeatureSet>
+  [109] pushsymb 938 ............................ <#CALL_FOR_HELP>
+  [112] pusharglist 2 ........................... <gFeatureSet, #CALL_FOR_HELP>
+  [114] objcall 311 ............................. <gFeatureSet.isEnabled(#CALL_FOR_HELP)>
+  [117] not ..................................... <not gFeatureSet.isEnabled(#CALL_FOR_HELP)>
+  [118] jmpifz [133] ............................ if not gFeatureSet.isEnabled(#CALL_FOR_HELP) then
+  [121] getglobal 30 ............................ <ElementMgr>
+  [123] pushcons 6 .............................. <"FEATURE_DISABLED">
+  [125] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [127] objcall 245 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [129] pusharglistnoret 0 ...................... <>
+  [131] extcall 23 .............................. return 
+  [133] getprop 233 ............................. <pWindowObject>
+  [135] pusharglistnoret 1 ...................... <pWindowObject>
+  [137] objcall 5 ............................... pWindowObject.closeWindow()
+  [139] getglobal 30 ............................ <ElementMgr>
+  [141] getlocal 3 .............................. <myLink>
+  [143] pushcons 7 .............................. <".window">
+  [145] joinstr ................................. <myLink & ".window">
+  [146] pusharglistnoret 2 ...................... <ElementMgr, myLink & ".window">
+  [148] objcall 239 ............................. ElementMgr.newwindow(myLink & ".window")
+  [150] ret
+end

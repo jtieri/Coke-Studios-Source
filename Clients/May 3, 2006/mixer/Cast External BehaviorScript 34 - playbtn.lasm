@@ -1,0 +1,56 @@
+property pID
+
+on new me, id
+  [  0] getparam 1 .............................. <id>
+  [  2] setprop 84 .............................. pID = id
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 13 .............................. return me
+  [ 10] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 77 .............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 81 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 80 .............................. <sprite(me.spriteNum)>
+  [  8] getobjprop 72 ........................... <sprite(me.spriteNum).pStatus>
+  [ 10] pushsymb 79 ............................. <#down>
+  [ 12] eq ...................................... <sprite(me.spriteNum).pStatus = #down>
+  [ 13] jmpifz [ 59] ............................ if sprite(me.spriteNum).pStatus = #down then / else
+  [ 16] getglobal 31 ............................ <ElementMgr>
+  [ 18] pusharglist 1 ........................... <ElementMgr>
+  [ 20] objcall 86 .............................. <ElementMgr.getMixer()>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 84 ........................... <me.pID>
+  [ 26] pusharglist 2 ........................... <ElementMgr.getMixer(), me.pID>
+  [ 28] objcall 7 ............................... <ElementMgr.getMixer().playMix(me.pID)>
+  [ 30] setlocal 0 .............................. bResult = ElementMgr.getMixer().playMix(me.pID)
+  [ 32] getlocal 0 .............................. <bResult>
+  [ 34] not ..................................... <not bResult>
+  [ 35] jmpifz [ 56] ............................ if not bResult then
+  [ 38] pushsymb 71 ............................. <#setStatus>
+  [ 40] pushcons 0 .............................. <"PLAY">
+  [ 42] pushsymb 73 ............................. <#up>
+  [ 44] pusharglistnoret 3 ...................... <#setStatus, "PLAY", #up>
+  [ 46] extcall 78 .............................. sendAllSprites(#setStatus, "PLAY", #up)
+  [ 48] pusharglistnoret 0 ...................... <>
+  [ 50] extcall 87 .............................. stopEvent()
+  [ 52] pusharglistnoret 0 ...................... <>
+  [ 54] extcall 13 .............................. return 
+  [ 56] jmp [ 69]
+  [ 59] getglobal 31 ............................ <ElementMgr>
+  [ 61] pusharglist 1 ........................... <ElementMgr>
+  [ 63] objcall 86 .............................. <ElementMgr.getMixer()>
+  [ 65] pusharglistnoret 1 ...................... <ElementMgr.getMixer()>
+  [ 67] objcall 8 ............................... ElementMgr.getMixer().stopMix()
+  [ 69] pusharglistnoret 0 ...................... <>
+  [ 71] extcall 77 .............................. dontPassEvent()
+  [ 73] ret
+end

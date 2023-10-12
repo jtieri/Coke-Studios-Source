@@ -1,0 +1,402 @@
+property bDebug, bInitialized, bReadyForuse, foCatalogManager, fo_level0, ERROR_TYPE, aCachedProdList, iLastProductListUpdate, iCacheTimeLength
+global oCatalogManager, ElementMgr, gbTestMode, gFeatureSet
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 28 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushzero ................................ <0>
+  [  8] setobjprop 29 ........................... me.bInitialized = 0
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pushzero ................................ <0>
+  [ 13] setobjprop 30 ........................... me.bReadyForuse = 0
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushcons 0 .............................. <"FlashReturnStatusEnum">
+  [ 19] setobjprop 136 .......................... me.ERROR_TYPE = "FlashReturnStatusEnum"
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushint8 5 .............................. <5>
+  [ 25] pushint8 60 ............................. <60>
+  [ 27] pushint16 1000 .......................... <1000>
+  [ 30] mul ..................................... <60 * 1000>
+  [ 31] mul ..................................... <5 * (60 * 1000)>
+  [ 32] setobjprop 139 .......................... me.iCacheTimeLength = 5 * (60 * 1000)
+  [ 34] getparam 0 .............................. <me>
+  [ 36] setglobal 513 ........................... oCatalogManager = me
+  [ 39] pushcons 1 .............................. <"_TIMER_">
+  [ 41] pusharglist 1 ........................... <"_TIMER_">
+  [ 43] extcall 148 ............................. <script("_TIMER_")>
+  [ 45] pushint16 600 ........................... <600>
+  [ 48] pushsymb 90 ............................. <#Init>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pusharglistnoret 4 ...................... <script("_TIMER_"), 600, #Init, me>
+  [ 54] objcall 149 ............................. script("_TIMER_").new(600, #Init, me)
+  [ 56] ret
+end
+
+on Init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"init()">
+  [  4] pusharglistnoret 2 ...................... <me, "init()">
+  [  6] objcall 20 .............................. me.debug("init()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 3 ............................ <me.spriteNum>
+  [ 14] pusharglist 1 ........................... <me.spriteNum>
+  [ 16] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 18] pushcons 3 .............................. <"_level0.oCatalogManager">
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglist 3 ........................... <sprite(me.spriteNum), "_level0.oCatalogManager", 0>
+  [ 23] objcall 160 ............................. <sprite(me.spriteNum).getVariable("_level0.oCatalogManager", 0)>
+  [ 25] setobjprop 514 .......................... me.foCatalogManager = sprite(me.spriteNum).getVariable("_level0.oCatalogManager", 0)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pusharglistnoret 1 ...................... <me>
+  [ 32] objcall 89 .............................. me.setCallbacks()
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getobjprop 3 ............................ <me.spriteNum>
+  [ 40] pusharglist 1 ........................... <me.spriteNum>
+  [ 42] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 44] pushcons 4 .............................. <"_level0">
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglist 3 ........................... <sprite(me.spriteNum), "_level0", 0>
+  [ 49] objcall 160 ............................. <sprite(me.spriteNum).getVariable("_level0", 0)>
+  [ 51] setobjprop 161 .......................... me.fo_level0 = sprite(me.spriteNum).getVariable("_level0", 0)
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getchainedprop 514 ...................... <me.foCatalogManager>
+  [ 58] pushzero ................................ <0>
+  [ 59] setobjprop 28 ........................... me.foCatalogManager.bDebug = 0
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getchainedprop 514 ...................... <me.foCatalogManager>
+  [ 66] pushzero ................................ <0>
+  [ 67] setobjprop 162 .......................... me.foCatalogManager.bTestMode = 0
+  [ 69] getmovieprop 163 ........................ <the runMode>
+  [ 71] pushcons 5 .............................. <"Author">
+  [ 73] eq ...................................... <the runMode = "Author">
+  [ 74] jmpifz [ 86] ............................ if the runMode = "Author" then / else
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pushint8 1 .............................. <1>
+  [ 81] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 83] jmp [103]
+  [ 86] getparam 0 .............................. <me>
+  [ 88] getchainedprop 514 ...................... <me.foCatalogManager>
+  [ 91] getparam 0 .............................. <me>
+  [ 93] getchainedprop 161 ...................... <me.fo_level0>
+  [ 95] pusharglist 1 ........................... <me.fo_level0>
+  [ 97] objcall 164 ............................. <me.fo_level0.getGatewayConnection()>
+  [ 99] pusharglistnoret 2 ...................... <me.foCatalogManager, me.fo_level0.getGatewayConnection()>
+  [101] objcall 165 ............................. me.foCatalogManager.createGateway(me.fo_level0.getGatewayConnection())
+  [103] getparam 0 .............................. <me>
+  [105] pushint8 1 .............................. <1>
+  [107] setobjprop 29 ........................... me.bInitialized = 1
+  [109] ret
+end
+
+on beanCreated me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"beanCreated()">
+  [  4] pusharglistnoret 2 ...................... <me, "beanCreated()">
+  [  6] objcall 20 .............................. me.debug("beanCreated()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 14] ret
+end
+
+on setCallbacks me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 514 .......................... <me.foCatalogManager>
+  [ 13] pushcons 7 .............................. <"beanCreated">
+  [ 15] pushsymb 91 ............................. <#beanCreated>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foCatalogManager, "beanCreated", #beanCreated, me>
+  [ 21] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foCatalogManager, "beanCreated", #beanCreated, me)
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 3 ............................ <me.spriteNum>
+  [ 27] pusharglist 1 ........................... <me.spriteNum>
+  [ 29] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 514 .......................... <me.foCatalogManager>
+  [ 36] pushcons 8 .............................. <"getProductList_Result">
+  [ 38] pushsymb 511 ............................ <#getProductList_Result>
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foCatalogManager, "getProductList_Result", #getProductList_Result, me>
+  [ 45] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foCatalogManager, "getProductList_Result", #getProductList_Result, me)
+  [ 47] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 28 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 9 .............................. <"CatalogManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"CatalogManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"CatalogManager: " & sMessage>
+  [ 17] extcall 33 .............................. put "CatalogManager: " & sMessage
+  [ 19] ret
+end
+
+on getProductList me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"getProductList() ">
+  [  4] pusharglistnoret 2 ...................... <me, "getProductList() ">
+  [  6] objcall 20 .............................. me.debug("getProductList() ")
+  [  8] getglobal 250 ........................... <gFeatureSet>
+  [ 10] pushsymb 515 ............................ <#CATALOG>
+  [ 13] pusharglist 2 ........................... <gFeatureSet, #CATALOG>
+  [ 15] objcall 374 ............................. <gFeatureSet.isEnabled(#CATALOG)>
+  [ 18] not ..................................... <not gFeatureSet.isEnabled(#CATALOG)>
+  [ 19] jmpifz [ 26] ............................ if not gFeatureSet.isEnabled(#CATALOG) then
+  [ 22] pusharglistnoret 0 ...................... <>
+  [ 24] extcall 71 .............................. return 
+  [ 26] getglobal 167 ........................... <gbTestMode>
+  [ 28] jmpifz [ 79] ............................ if gbTestMode then
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pusharglist 1 ........................... <me>
+  [ 35] objcall 512 ............................. <me.getTestITems()>
+  [ 38] setlocal 0 .............................. aProdList = me.getTestITems()
+  [ 40] pushzero ................................ <0>
+  [ 41] setlocal 1 .............................. iError = 0
+  [ 43] getparam 0 .............................. <me>
+  [ 45] pushcons 11 ............................. <"getProductList_Result() aProdList: ">
+  [ 47] getlocal 0 .............................. <aProdList>
+  [ 49] joinstr ................................. <"getProductList_Result() aProdList: " & aProdList>
+  [ 50] pusharglistnoret 2 ...................... <me, "getProductList_Result() aProdList: " & aProdList>
+  [ 52] objcall 20 .............................. me.debug("getProductList_Result() aProdList: " & aProdList)
+  [ 54] getglobal 153 ........................... <ElementMgr>
+  [ 56] pusharglist 1 ........................... <ElementMgr>
+  [ 58] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 60] not ..................................... <not voidp(ElementMgr)>
+  [ 61] jmpifz [ 75] ............................ if not voidp(ElementMgr) then
+  [ 64] getglobal 153 ........................... <ElementMgr>
+  [ 66] getlocal 1 .............................. <iError>
+  [ 68] getlocal 0 .............................. <aProdList>
+  [ 70] pusharglistnoret 3 ...................... <ElementMgr, iError, aProdList>
+  [ 72] objcall 511 ............................. ElementMgr.getProductList_Result(iError, aProdList)
+  [ 75] pusharglistnoret 0 ...................... <>
+  [ 77] extcall 71 .............................. return 
+  [ 79] pushint8 1 .............................. <1>
+  [ 81] setlocal 2 .............................. bUseCache = 1
+  [ 83] getparam 0 .............................. <me>
+  [ 85] getobjprop 516 .......................... <me.iLastProductListUpdate>
+  [ 88] pusharglist 1 ........................... <me.iLastProductListUpdate>
+  [ 90] extcall 15 .............................. <voidp(me.iLastProductListUpdate)>
+  [ 92] not ..................................... <not voidp(me.iLastProductListUpdate)>
+  [ 93] jmpifz [122] ............................ if not voidp(me.iLastProductListUpdate) then / else
+  [ 96] getmovieprop 170 ........................ <the milliSeconds>
+  [ 98] getparam 0 .............................. <me>
+  [100] getobjprop 516 .......................... <me.iLastProductListUpdate>
+  [103] sub ..................................... <the milliSeconds - me.iLastProductListUpdate>
+  [104] setlocal 3 .............................. iElapsedTime = the milliSeconds - me.iLastProductListUpdate
+  [106] getlocal 3 .............................. <iElapsedTime>
+  [108] getparam 0 .............................. <me>
+  [110] getobjprop 139 .......................... <me.iCacheTimeLength>
+  [112] gteq .................................... <iElapsedTime >= me.iCacheTimeLength>
+  [113] jmpifz [119] ............................ if iElapsedTime >= me.iCacheTimeLength then
+  [116] pushzero ................................ <0>
+  [117] setlocal 2 .............................. bUseCache = 0
+  [119] jmp [125]
+  [122] pushzero ................................ <0>
+  [123] setlocal 2 .............................. bUseCache = 0
+  [125] getparam 0 .............................. <me>
+  [127] pushcons 12 ............................. <"getProductList() bUseCache: ">
+  [129] getlocal 2 .............................. <bUseCache>
+  [131] joinstr ................................. <"getProductList() bUseCache: " & bUseCache>
+  [132] pusharglistnoret 2 ...................... <me, "getProductList() bUseCache: " & bUseCache>
+  [134] objcall 20 .............................. me.debug("getProductList() bUseCache: " & bUseCache)
+  [136] getlocal 2 .............................. <bUseCache>
+  [138] not ..................................... <not bUseCache>
+  [139] getparam 0 .............................. <me>
+  [141] getobjprop 517 .......................... <me.aCachedProdList>
+  [144] pusharglist 1 ........................... <me.aCachedProdList>
+  [146] extcall 15 .............................. <voidp(me.aCachedProdList)>
+  [148] or ...................................... <not bUseCache or voidp(me.aCachedProdList)>
+  [149] jmpifz [165] ............................ if not bUseCache or voidp(me.aCachedProdList) then / else
+  [152] getparam 0 .............................. <me>
+  [154] getchainedprop 514 ...................... <me.foCatalogManager>
+  [157] pusharglistnoret 1 ...................... <me.foCatalogManager>
+  [159] objcall 510 ............................. me.foCatalogManager.getProductList()
+  [162] jmp [198]
+  [165] getparam 0 .............................. <me>
+  [167] pushcons 13 ............................. <"*** CACHED ****: getProductList_Result()">
+  [169] pushint8 1 .............................. <1>
+  [171] pusharglistnoret 3 ...................... <me, "*** CACHED ****: getProductList_Result()", 1>
+  [173] objcall 20 .............................. me.debug("*** CACHED ****: getProductList_Result()", 1)
+  [175] getglobal 153 ........................... <ElementMgr>
+  [177] pusharglist 1 ........................... <ElementMgr>
+  [179] extcall 15 .............................. <voidp(ElementMgr)>
+  [181] not ..................................... <not voidp(ElementMgr)>
+  [182] jmpifz [198] ............................ if not voidp(ElementMgr) then
+  [185] getglobal 153 ........................... <ElementMgr>
+  [187] pushzero ................................ <0>
+  [188] getparam 0 .............................. <me>
+  [190] getobjprop 517 .......................... <me.aCachedProdList>
+  [193] pusharglistnoret 3 ...................... <ElementMgr, 0, me.aCachedProdList>
+  [195] objcall 511 ............................. ElementMgr.getProductList_Result(0, me.aCachedProdList)
+  [198] ret
+end
+
+on getProductList_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"getProductList_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getProductList_Result()">
+  [  6] objcall 20 .............................. me.debug("getProductList_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 18] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 19] jmpifz [ 64] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 22] getparam 2 .............................. <oResult>
+  [ 24] pusharglist 1 ........................... <oResult>
+  [ 26] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 28] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushcons 15 ............................. <"getProductList_Result() ERROR ">
+  [ 34] getlocal 0 .............................. <iError>
+  [ 36] joinstr ................................. <"getProductList_Result() ERROR " & iError>
+  [ 37] pusharglistnoret 2 ...................... <me, "getProductList_Result() ERROR " & iError>
+  [ 39] objcall 20 .............................. me.debug("getProductList_Result() ERROR " & iError)
+  [ 41] getglobal 153 ........................... <ElementMgr>
+  [ 43] pusharglist 1 ........................... <ElementMgr>
+  [ 45] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 47] not ..................................... <not voidp(ElementMgr)>
+  [ 48] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 51] getglobal 153 ........................... <ElementMgr>
+  [ 53] getlocal 0 .............................. <iError>
+  [ 55] pusharglistnoret 2 ...................... <ElementMgr, iError>
+  [ 57] objcall 511 ............................. ElementMgr.getProductList_Result(iError)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getmovieprop 170 ........................ <the milliSeconds>
+  [ 68] setobjprop 516 .......................... me.iLastProductListUpdate = the milliSeconds
+  [ 71] pushzero ................................ <0>
+  [ 72] setlocal 0 .............................. iError = 0
+  [ 74] pusharglist 0 ........................... <[]>
+  [ 76] pushlist ................................ <[]>
+  [ 77] setlocal 1 .............................. aProdList = []
+  [ 79] getparam 2 .............................. <oResult>
+  [ 81] getobjprop 77 ........................... <oResult.length>
+  [ 83] setlocal 2 .............................. iLength = oResult.length
+  [ 85] pushzero ................................ <0>
+  [ 86] setlocal 3
+  [ 88] getlocal 3
+  [ 90] getlocal 2 .............................. <iLength>
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] sub ..................................... <iLength - 1>
+  [ 95] lteq
+  [ 96] jmpifz [171] ............................ repeat with i = 0 to iLength - 1
+  [ 99] getparam 2 .............................. <oResult>
+  [101] getlocal 3 .............................. <i>
+  [103] pusharglist 2 ........................... <oResult, i>
+  [105] objcall 43 .............................. <oResult[i]>
+  [107] setlocal 4 .............................. oItem = oResult[i]
+  [109] pusharglist 0 ........................... <[:]>
+  [111] pushproplist ............................ <[:]>
+  [112] setlocal 5 .............................. aItem = [:]
+  [114] getlocal 5 .............................. <aItem>
+  [116] pushsymb 519 ............................ <#prodID>
+  [119] getlocal 4 .............................. <oItem>
+  [121] pusharglist 1 ........................... <oItem>
+  [123] objcall 520 ............................. <oItem.getId()>
+  [126] pusharglist 1 ........................... <oItem.getId()>
+  [128] extcall 48 .............................. <integer(oItem.getId())>
+  [130] pusharglistnoret 3 ...................... <aItem, #prodID, integer(oItem.getId())>
+  [132] objcall 73 .............................. aItem[#prodID] = integer(oItem.getId())
+  [134] getlocal 5 .............................. <aItem>
+  [136] pushsymb 521 ............................ <#price>
+  [139] getlocal 4 .............................. <oItem>
+  [141] pusharglist 1 ........................... <oItem>
+  [143] objcall 522 ............................. <oItem.getPrice()>
+  [146] pusharglist 1 ........................... <oItem.getPrice()>
+  [148] extcall 48 .............................. <integer(oItem.getPrice())>
+  [150] pusharglistnoret 3 ...................... <aItem, #price, integer(oItem.getPrice())>
+  [152] objcall 73 .............................. aItem[#price] = integer(oItem.getPrice())
+  [154] getlocal 1 .............................. <aProdList>
+  [156] getlocal 5 .............................. <aItem>
+  [158] pusharglistnoret 2 ...................... <aProdList, aItem>
+  [160] objcall 55 .............................. aProdList.add(aItem)
+  [162] pushint8 1
+  [164] getlocal 3
+  [166] add
+  [167] setlocal 3
+  [169] endrepeat [ 88]
+  [171] getparam 0 .............................. <me>
+  [173] getlocal 1 .............................. <aProdList>
+  [175] setobjprop 517 .......................... me.aCachedProdList = aProdList
+  [178] getparam 0 .............................. <me>
+  [180] pushcons 11 ............................. <"getProductList_Result() aProdList: ">
+  [182] getlocal 1 .............................. <aProdList>
+  [184] joinstr ................................. <"getProductList_Result() aProdList: " & aProdList>
+  [185] pusharglistnoret 2 ...................... <me, "getProductList_Result() aProdList: " & aProdList>
+  [187] objcall 20 .............................. me.debug("getProductList_Result() aProdList: " & aProdList)
+  [189] getglobal 153 ........................... <ElementMgr>
+  [191] pusharglist 1 ........................... <ElementMgr>
+  [193] extcall 15 .............................. <voidp(ElementMgr)>
+  [195] not ..................................... <not voidp(ElementMgr)>
+  [196] jmpifz [210] ............................ if not voidp(ElementMgr) then
+  [199] getglobal 153 ........................... <ElementMgr>
+  [201] getlocal 0 .............................. <iError>
+  [203] getlocal 1 .............................. <aProdList>
+  [205] pusharglistnoret 3 ...................... <ElementMgr, iError, aProdList>
+  [207] objcall 511 ............................. ElementMgr.getProductList_Result(iError, aProdList)
+  [210] ret
+end
+
+on onStatus me, oCaller, oXml
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 16 ............................. <"onStatus()">
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglistnoret 3 ...................... <me, "onStatus()", 1>
+  [  8] objcall 20 .............................. me.debug("onStatus()", 1)
+  [ 10] ret
+end
+
+on getGatewaySprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] pusharglistnoret 1 ...................... <sprite(me.spriteNum)>
+  [ 10] extcall 71 .............................. return sprite(me.spriteNum)
+  [ 12] ret
+end
+
+on getTestITems me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aProdList = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] pushint8 81 ............................. <81>
+  [ 13] lteq
+  [ 14] jmpifz [ 45] ............................ repeat with i = 1 to 81
+  [ 17] getlocal 0 .............................. <aProdList>
+  [ 19] pushsymb 519 ............................ <#prodID>
+  [ 22] getlocal 1 .............................. <i>
+  [ 24] pushsymb 521 ............................ <#price>
+  [ 27] getlocal 1 .............................. <i>
+  [ 29] pusharglist 4 ........................... <[#prodID: i, #price: i]>
+  [ 31] pushproplist ............................ <[#prodID: i, #price: i]>
+  [ 32] pusharglistnoret 2 ...................... <aProdList, [#prodID: i, #price: i]>
+  [ 34] objcall 55 .............................. aProdList.add([#prodID: i, #price: i])
+  [ 36] pushint8 1
+  [ 38] getlocal 1
+  [ 40] add
+  [ 41] setlocal 1
+  [ 43] endrepeat [  9]
+  [ 45] getlocal 0 .............................. <aProdList>
+  [ 47] pusharglistnoret 1 ...................... <aProdList>
+  [ 49] extcall 71 .............................. return aProdList
+  [ 51] ret
+end

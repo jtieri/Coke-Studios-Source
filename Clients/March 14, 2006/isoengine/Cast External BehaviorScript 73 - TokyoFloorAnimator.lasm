@@ -1,0 +1,384 @@
+property iSprite, sCastLib, aMembers, iIndex, iState, iTimer, iTimeLength, iPatternTimer, iPatternTimeLength, aPatternNames, aPatternMembers, iPatternIndex, bDebug
+
+on new me, _iSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 338 .......................... me.bDebug = 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new() tokyo palette animator">
+  [ 10] pusharglistnoret 2 ...................... <me, "new() tokyo palette animator">
+  [ 12] objcall 332 ............................. me.debug("new() tokyo palette animator")
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getparam 1 .............................. <_iSprite>
+  [ 19] setobjprop 129 .......................... me.iSprite = _iSprite
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] objcall 1 ............................... me.init()
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pusharglistnoret 1 ...................... <me>
+  [ 31] extcall 52 .............................. return me
+  [ 33] ret
+end
+
+on endSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 727 .......................... <me.spriteNum>
+  [  5] pusharglist 1 ........................... <me.spriteNum>
+  [  7] extcall 119 ............................. <sprite(me.spriteNum)>
+  [  9] getchainedprop 30 ....................... <sprite(me.spriteNum).member>
+  [ 11] pushcons 1 .............................. <"tokyo_discofloor_peaceful_1">
+  [ 13] pusharglist 1 ........................... <"tokyo_discofloor_peaceful_1">
+  [ 15] extcall 30 .............................. <member("tokyo_discofloor_peaceful_1")>
+  [ 17] setobjprop 1522 ......................... sprite(me.spriteNum).member.paletteRef = member("tokyo_discofloor_peaceful_1")
+  [ 20] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"beginSprite() tokyo palette animator">
+  [  4] pusharglistnoret 2 ...................... <me, "beginSprite() tokyo palette animator">
+  [  6] objcall 332 ............................. me.debug("beginSprite() tokyo palette animator")
+  [  9] getparam 0 .............................. <me>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 727 .......................... <me.spriteNum>
+  [ 16] setobjprop 129 .......................... me.iSprite = me.spriteNum
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] objcall 1 ............................... me.init()
+  [ 24] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 129 .......................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 59 .............................. <voidp(me.iSprite)>
+  [  8] jmpifz [ 15] ............................ if voidp(me.iSprite) then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 52 .............................. return 
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushcons 3 .............................. <"tokyo_discofloor_peaceful_">
+  [ 19] pushcons 4 .............................. <"tokyo_discofloor_action_">
+  [ 21] pushcons 5 .............................. <"tokyo_discofloor_switch_">
+  [ 23] pusharglist 3 ........................... <["tokyo_discofloor_peaceful_", "tokyo_discofloor_action_", "tokyo_discofloor_switch_"]>
+  [ 25] pushlist ................................ <["tokyo_discofloor_peaceful_", "tokyo_discofloor_action_", "tokyo_discofloor_switch_"]>
+  [ 26] setobjprop 1536 ......................... me.aPatternNames = ["tokyo_discofloor_peaceful_", "tokyo_discofloor_action_", "tokyo_discofloor_switch_"]
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglist 0 ........................... <[]>
+  [ 33] pushlist ................................ <[]>
+  [ 34] setobjprop 1537 ......................... me.aPatternMembers = []
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getobjprop 129 .......................... <me.iSprite>
+  [ 43] pusharglist 1 ........................... <me.iSprite>
+  [ 45] extcall 119 ............................. <sprite(me.iSprite)>
+  [ 47] getchainedprop 30 ....................... <sprite(me.iSprite).member>
+  [ 49] getobjprop 1507 ......................... <sprite(me.iSprite).member.castLibNum>
+  [ 52] pusharglist 1 ........................... <sprite(me.iSprite).member.castLibNum>
+  [ 54] extcall 199 ............................. <castLib(sprite(me.iSprite).member.castLibNum)>
+  [ 56] getobjprop 99 ........................... <castLib(sprite(me.iSprite).member.castLibNum).name>
+  [ 58] setobjprop 48 ........................... me.sCastLib = castLib(sprite(me.iSprite).member.castLibNum).name
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] setlocal 0
+  [ 64] getlocal 0
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pushsymb 1536 ........................... <#aPatternNames>
+  [ 71] pusharglist 2 ........................... <me, #aPatternNames>
+  [ 73] objcall 155 ............................. <me.aPatternNames.count>
+  [ 75] lteq
+  [ 76] jmpifz [119] ............................ repeat with i = 1 to me.aPatternNames.count
+  [ 79] getparam 0 .............................. <me>
+  [ 81] getchainedprop 1537 ..................... <me.aPatternMembers>
+  [ 84] getparam 0 .............................. <me>
+  [ 86] getparam 0 .............................. <me>
+  [ 88] pushsymb 1536 ........................... <#aPatternNames>
+  [ 91] getlocal 0 .............................. <i>
+  [ 93] pusharglist 3 ........................... <me, #aPatternNames, i>
+  [ 95] objcall 104 ............................. <me.aPatternNames[i]>
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getobjprop 48 ........................... <me.sCastLib>
+  [101] pusharglist 3 ........................... <me, me.aPatternNames[i], me.sCastLib>
+  [103] objcall 1505 ............................ <me.getMembers(me.aPatternNames[i], me.sCastLib)>
+  [106] pusharglistnoret 2 ...................... <me.aPatternMembers, me.getMembers(me.aPatternNames[i], me.sCastLib)>
+  [108] objcall 140 ............................. me.aPatternMembers.add(me.getMembers(me.aPatternNames[i], me.sCastLib))
+  [110] pushint8 1
+  [112] getlocal 0
+  [114] add
+  [115] setlocal 0
+  [117] endrepeat [ 64]
+  [119] getparam 0 .............................. <me>
+  [121] pushint8 1 .............................. <1>
+  [123] setobjprop 1178 ......................... me.iPatternIndex = 1
+  [126] getparam 0 .............................. <me>
+  [128] pushint8 1 .............................. <1>
+  [130] setobjprop 733 .......................... me.iIndex = 1
+  [133] getparam 0 .............................. <me>
+  [135] pushzero ................................ <0>
+  [136] setobjprop 509 .......................... me.iState = 0
+  [139] getparam 0 .............................. <me>
+  [141] getmovieprop 369 ........................ <the milliSeconds>
+  [144] setobjprop 1344 ......................... me.iTimer = the milliSeconds
+  [147] getparam 0 .............................. <me>
+  [149] pushint16 150 ........................... <150>
+  [152] setobjprop 1329 ......................... me.iTimeLength = 150
+  [155] getparam 0 .............................. <me>
+  [157] getmovieprop 369 ........................ <the milliSeconds>
+  [160] setobjprop 1538 ......................... me.iPatternTimer = the milliSeconds
+  [163] getparam 0 .............................. <me>
+  [165] pushint16 4000 .......................... <4000>
+  [168] setobjprop 1539 ......................... me.iPatternTimeLength = 4000
+  [171] getparam 0 .............................. <me>
+  [173] pushcons 6 .............................. <"finished init tokyo palette animator">
+  [175] pusharglistnoret 2 ...................... <me, "finished init tokyo palette animator">
+  [177] objcall 332 ............................. me.debug("finished init tokyo palette animator")
+  [180] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 509 .......................... <me.iState>
+  [  5] pushint8 1 .............................. <1>
+  [  7] eq ...................................... <me.iState = 1>
+  [  8] jmpifz [ 50] ............................ if me.iState = 1 then
+  [ 11] getmovieprop 369 ........................ <the milliSeconds>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 1538 ......................... <me.iPatternTimer>
+  [ 19] sub ..................................... <the milliSeconds - me.iPatternTimer>
+  [ 20] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iPatternTimer
+  [ 22] getlocal 0 .............................. <iElapsedTime>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 1539 ......................... <me.iPatternTimeLength>
+  [ 29] gteq .................................... <iElapsedTime >= me.iPatternTimeLength>
+  [ 30] jmpifz [ 50] ............................ if iElapsedTime >= me.iPatternTimeLength then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglistnoret 2 ...................... <me, 1>
+  [ 39] objcall 1535 ............................ me.nextPattern(1)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getmovieprop 369 ........................ <the milliSeconds>
+  [ 47] setobjprop 1538 ......................... me.iPatternTimer = the milliSeconds
+  [ 50] getmovieprop 369 ........................ <the milliSeconds>
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getobjprop 1344 ......................... <me.iTimer>
+  [ 58] sub ..................................... <the milliSeconds - me.iTimer>
+  [ 59] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iTimer
+  [ 61] getlocal 0 .............................. <iElapsedTime>
+  [ 63] getparam 0 .............................. <me>
+  [ 65] getobjprop 1329 ......................... <me.iTimeLength>
+  [ 68] gteq .................................... <iElapsedTime >= me.iTimeLength>
+  [ 69] jmpifz [ 89] ............................ if iElapsedTime >= me.iTimeLength then
+  [ 72] getparam 0 .............................. <me>
+  [ 74] pushint8 1 .............................. <1>
+  [ 76] pusharglistnoret 2 ...................... <me, 1>
+  [ 78] objcall 1391 ............................ me.nextFrame(1)
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getmovieprop 369 ........................ <the milliSeconds>
+  [ 86] setobjprop 1344 ......................... me.iTimer = the milliSeconds
+  [ 89] ret
+end
+
+on destroy me
+  [  0] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 338 .......................... <me.bDebug>
+  [  5] getparam 2 .............................. <bForce>
+  [  7] or ...................................... <me.bDebug or bForce>
+  [  8] jmpifz [ 20] ............................ if me.bDebug or bForce then
+  [ 11] pushcons 7 .............................. <"PaletteAnim: ">
+  [ 13] getparam 1 .............................. <sMessage>
+  [ 15] joinstr ................................. <"PaletteAnim: " & sMessage>
+  [ 16] pusharglistnoret 1 ...................... <"PaletteAnim: " & sMessage>
+  [ 18] extcall 168 ............................. put "PaletteAnim: " & sMessage
+  [ 20] ret
+end
+
+on getPaletteBase me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 129 .......................... <me.iSprite>
+  [  4] pusharglist 1 ........................... <me.iSprite>
+  [  6] extcall 119 ............................. <sprite(me.iSprite)>
+  [  8] getchainedprop 30 ....................... <sprite(me.iSprite).member>
+  [ 10] getchainedprop 1522 ..................... <sprite(me.iSprite).member.paletteRef>
+  [ 13] getobjprop 99 ........................... <sprite(me.iSprite).member.paletteRef.name>
+  [ 15] setlocal 0 .............................. sName = sprite(me.iSprite).member.paletteRef.name
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setlocal 1 .............................. iFirstChar = 1
+  [ 21] getlocal 0 .............................. <sName>
+  [ 23] getobjprop 208 .......................... <sName.length>
+  [ 25] setlocal 2 .............................. iLastChar = sName.length
+  [ 27] getlocal 0 .............................. <sName>
+  [ 29] pushsymb 1471 ........................... <#char>
+  [ 32] getlocal 1 .............................. <iFirstChar>
+  [ 34] getlocal 2 .............................. <iLastChar>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] sub ..................................... <iLastChar - 1>
+  [ 39] pusharglist 4 ........................... <sName, #char, iFirstChar, iLastChar - 1>
+  [ 41] objcall 104 ............................. <sName.char[iFirstChar..iLastChar - 1]>
+  [ 43] setlocal 3 .............................. sPaletteBase = sName.char[iFirstChar..iLastChar - 1]
+  [ 45] getlocal 3 .............................. <sPaletteBase>
+  [ 47] pusharglistnoret 1 ...................... <sPaletteBase>
+  [ 49] extcall 52 .............................. return sPaletteBase
+  [ 51] ret
+end
+
+on startPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 369 ........................ <the milliSeconds>
+  [  5] setobjprop 1538 ......................... me.iPatternTimer = the milliSeconds
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 2 .............................. <2>
+  [ 12] setobjprop 1178 ......................... me.iPatternIndex = 2
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setobjprop 509 .......................... me.iState = 1
+  [ 22] ret
+end
+
+on stopPerformance me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 509 .......................... me.iState = 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setobjprop 1178 ......................... me.iPatternIndex = 1
+  [ 13] ret
+end
+
+on nextPattern me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1178 ......................... <me.iPatternIndex>
+  [  5] getparam 1 .............................. <iDir>
+  [  7] add ..................................... <me.iPatternIndex + iDir>
+  [  8] setlocal 0 .............................. iNextIndex = me.iPatternIndex + iDir
+  [ 10] getlocal 0 .............................. <iNextIndex>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 1537 ........................... <#aPatternMembers>
+  [ 17] pusharglist 2 ........................... <me, #aPatternMembers>
+  [ 19] objcall 155 ............................. <me.aPatternMembers.count>
+  [ 21] gt ...................................... <iNextIndex > me.aPatternMembers.count>
+  [ 22] jmpifz [ 29] ............................ if iNextIndex > me.aPatternMembers.count then
+  [ 25] pushint8 2 .............................. <2>
+  [ 27] setlocal 0 .............................. iNextIndex = 2
+  [ 29] getlocal 0 .............................. <iNextIndex>
+  [ 31] pushint8 2 .............................. <2>
+  [ 33] lt ...................................... <iNextIndex < 2>
+  [ 34] jmpifz [ 48] ............................ if iNextIndex < 2 then
+  [ 37] getparam 0 .............................. <me>
+  [ 39] pushsymb 1537 ........................... <#aPatternMembers>
+  [ 42] pusharglist 2 ........................... <me, #aPatternMembers>
+  [ 44] objcall 155 ............................. <me.aPatternMembers.count>
+  [ 46] setlocal 0 .............................. iNextIndex = me.aPatternMembers.count
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getlocal 0 .............................. <iNextIndex>
+  [ 52] setobjprop 1178 ......................... me.iPatternIndex = iNextIndex
+  [ 55] ret
+end
+
+on nextFrame me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 733 .......................... <me.iIndex>
+  [  5] getparam 1 .............................. <iDir>
+  [  7] add ..................................... <me.iIndex + iDir>
+  [  8] setlocal 0 .............................. iNextIndex = me.iIndex + iDir
+  [ 10] getlocal 0 .............................. <iNextIndex>
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 1537 ........................... <#aPatternMembers>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 1178 ......................... <me.iPatternIndex>
+  [ 22] pusharglist 3 ........................... <me, #aPatternMembers, me.iPatternIndex>
+  [ 24] objcall 678 ............................. <me.aPatternMembers[me.iPatternIndex]>
+  [ 27] getobjprop 155 .......................... <me.aPatternMembers[me.iPatternIndex].count>
+  [ 29] gt ...................................... <iNextIndex > me.aPatternMembers[me.iPatternIndex].count>
+  [ 30] jmpifz [ 37] ............................ if iNextIndex > me.aPatternMembers[me.iPatternIndex].count then
+  [ 33] pushint8 1 .............................. <1>
+  [ 35] setlocal 0 .............................. iNextIndex = 1
+  [ 37] getlocal 0 .............................. <iNextIndex>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] lt ...................................... <iNextIndex < 1>
+  [ 42] jmpifz [ 64] ............................ if iNextIndex < 1 then
+  [ 45] getparam 0 .............................. <me>
+  [ 47] pushsymb 1537 ........................... <#aPatternMembers>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 1178 ......................... <me.iPatternIndex>
+  [ 55] pusharglist 3 ........................... <me, #aPatternMembers, me.iPatternIndex>
+  [ 57] objcall 678 ............................. <me.aPatternMembers[me.iPatternIndex]>
+  [ 60] getobjprop 155 .......................... <me.aPatternMembers[me.iPatternIndex].count>
+  [ 62] setlocal 0 .............................. iNextIndex = me.aPatternMembers[me.iPatternIndex].count
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getlocal 0 .............................. <iNextIndex>
+  [ 68] setobjprop 733 .......................... me.iIndex = iNextIndex
+  [ 71] getparam 0 .............................. <me>
+  [ 73] pushsymb 1537 ........................... <#aPatternMembers>
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getobjprop 1178 ......................... <me.iPatternIndex>
+  [ 81] pusharglist 3 ........................... <me, #aPatternMembers, me.iPatternIndex>
+  [ 83] objcall 678 ............................. <me.aPatternMembers[me.iPatternIndex]>
+  [ 86] getparam 0 .............................. <me>
+  [ 88] getobjprop 733 .......................... <me.iIndex>
+  [ 91] pusharglist 2 ........................... <me.aPatternMembers[me.iPatternIndex], me.iIndex>
+  [ 93] objcall 72 .............................. <me.aPatternMembers[me.iPatternIndex][me.iIndex]>
+  [ 95] setlocal 1 .............................. sMember = me.aPatternMembers[me.iPatternIndex][me.iIndex]
+  [ 97] getparam 0 .............................. <me>
+  [ 99] getobjprop 727 .......................... <me.spriteNum>
+  [102] pusharglist 1 ........................... <me.spriteNum>
+  [104] extcall 119 ............................. <sprite(me.spriteNum)>
+  [106] getchainedprop 30 ....................... <sprite(me.spriteNum).member>
+  [108] getlocal 1 .............................. <sMember>
+  [110] getparam 0 .............................. <me>
+  [112] getobjprop 48 ........................... <me.sCastLib>
+  [114] pusharglist 2 ........................... <sMember, me.sCastLib>
+  [116] extcall 30 .............................. <member(sMember, me.sCastLib)>
+  [118] setobjprop 1522 ......................... sprite(me.spriteNum).member.paletteRef = member(sMember, me.sCastLib)
+  [121] ret
+end
+
+on getMembers me, _sImageBase, _sCastLib
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. _aMembers = []
+  [  5] getparam 2 .............................. <_sCastLib>
+  [  7] pushint8 2 .............................. <2>
+  [  9] get 8 ................................... <the number of castMembers of castLib _sCastLib>
+  [ 11] setlocal 1 .............................. iLength = the number of castMembers of castLib _sCastLib
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setlocal 2
+  [ 17] getlocal 2
+  [ 19] getlocal 1 .............................. <iLength>
+  [ 21] lteq
+  [ 22] jmpifz [ 82] ............................ repeat with i = 1 to iLength
+  [ 25] getlocal 2 .............................. <i>
+  [ 27] getparam 2 .............................. <_sCastLib>
+  [ 29] pusharglist 2 ........................... <i, _sCastLib>
+  [ 31] extcall 30 .............................. <member(i, _sCastLib)>
+  [ 33] setlocal 3 .............................. oMember = member(i, _sCastLib)
+  [ 35] getlocal 3 .............................. <oMember>
+  [ 37] getobjprop 1247 ......................... <oMember.type>
+  [ 40] setlocal 4 .............................. sType = oMember.type
+  [ 42] getlocal 4 .............................. <sType>
+  [ 44] pushsymb 826 ............................ <#palette>
+  [ 47] eq ...................................... <sType = #palette>
+  [ 48] jmpifz [ 73] ............................ if sType = #palette then
+  [ 51] getlocal 3 .............................. <oMember>
+  [ 53] getobjprop 99 ........................... <oMember.name>
+  [ 55] setlocal 5 .............................. sName = oMember.name
+  [ 57] getlocal 5 .............................. <sName>
+  [ 59] getparam 1 .............................. <_sImageBase>
+  [ 61] containsstr ............................. <sName contains _sImageBase>
+  [ 62] jmpifz [ 73] ............................ if sName contains _sImageBase then
+  [ 65] getlocal 0 .............................. <_aMembers>
+  [ 67] getlocal 5 .............................. <sName>
+  [ 69] pusharglistnoret 2 ...................... <_aMembers, sName>
+  [ 71] objcall 140 ............................. _aMembers.add(sName)
+  [ 73] pushint8 1
+  [ 75] getlocal 2
+  [ 77] add
+  [ 78] setlocal 2
+  [ 80] endrepeat [ 17]
+  [ 82] getlocal 0 .............................. <_aMembers>
+  [ 84] pusharglistnoret 1 ...................... <_aMembers>
+  [ 86] extcall 52 .............................. return _aMembers
+  [ 88] ret
+end

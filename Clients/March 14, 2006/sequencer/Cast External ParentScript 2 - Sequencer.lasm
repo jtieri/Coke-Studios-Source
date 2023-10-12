@@ -1,0 +1,1746 @@
+property iTimeLength, iBeatsPerMinute, iBeatInterval, iNumTracks, aTracks, iVolumeAdjust, sCastLib, sAssetCastLib, oSoundLibrary, sDefaultSequence, iSampleChannel, sName, sAuthor, sState, bDebug
+global gSoundLevel
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 30 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 0 .............................. <"new()">
+  [  9] pusharglistnoret 2 ...................... <me, "new()">
+  [ 11] objcall 1 ............................... me.debug("new()")
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushint32 60000 ......................... <60000>
+  [ 20] setobjprop 31 ........................... me.iTimeLength = 60000
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pushint8 120 ............................ <120>
+  [ 26] setobjprop 32 ........................... me.iBeatsPerMinute = 120
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 31 ........................... <me.iTimeLength>
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getobjprop 32 ........................... <me.iBeatsPerMinute>
+  [ 38] div ..................................... <me.iTimeLength / me.iBeatsPerMinute>
+  [ 39] setobjprop 33 ........................... me.iBeatInterval = me.iTimeLength / me.iBeatsPerMinute
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pushint8 6 .............................. <6>
+  [ 45] setobjprop 34 ........................... me.iNumTracks = 6
+  [ 47] getparam 0 .............................. <me>
+  [ 49] pushint8 8 .............................. <8>
+  [ 51] setobjprop 35 ........................... me.iSampleChannel = 8
+  [ 53] getparam 0 .............................. <me>
+  [ 55] pusharglist 0 ........................... <[]>
+  [ 57] pushlist ................................ <[]>
+  [ 58] setobjprop 36 ........................... me.aTracks = []
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pushint8 100 ............................ <100>
+  [ 64] setobjprop 37 ........................... me.iVolumeAdjust = 100
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pushcons 1 .............................. <"Sequencer">
+  [ 70] setobjprop 38 ........................... me.sCastLib = "Sequencer"
+  [ 72] getparam 0 .............................. <me>
+  [ 74] pushcons 2 .............................. <"SoundLibrary">
+  [ 76] setobjprop 39 ........................... me.sAssetCastLib = "SoundLibrary"
+  [ 78] getparam 0 .............................. <me>
+  [ 80] pushcons 2 .............................. <"SoundLibrary">
+  [ 82] pusharglist 1 ........................... <"SoundLibrary">
+  [ 84] extcall 40 .............................. <script("SoundLibrary")>
+  [ 86] getparam 0 .............................. <me>
+  [ 88] getobjprop 38 ........................... <me.sCastLib>
+  [ 90] getparam 0 .............................. <me>
+  [ 92] getobjprop 39 ........................... <me.sAssetCastLib>
+  [ 94] pusharglist 3 ........................... <script("SoundLibrary"), me.sCastLib, me.sAssetCastLib>
+  [ 96] objcall 0 ............................... <script("SoundLibrary").new(me.sCastLib, me.sAssetCastLib)>
+  [ 98] setobjprop 41 ........................... me.oSoundLibrary = script("SoundLibrary").new(me.sCastLib, me.sAssetCastLib)
+  [100] getparam 0 .............................. <me>
+  [102] pushcons 3 .............................. <EMPTY>
+  [104] setobjprop 42 ........................... me.sName = EMPTY
+  [106] getparam 0 .............................. <me>
+  [108] pushcons 3 .............................. <EMPTY>
+  [110] setobjprop 43 ........................... me.sAuthor = EMPTY
+  [112] getparam 0 .............................. <me>
+  [114] pushcons 4 .............................. <"DefaultSequence">
+  [116] setobjprop 44 ........................... me.sDefaultSequence = "DefaultSequence"
+  [118] getparam 0 .............................. <me>
+  [120] pusharglistnoret 1 ...................... <me>
+  [122] objcall 3 ............................... me.initTracks()
+  [124] getparam 0 .............................. <me>
+  [126] pushcons 5 .............................. <"Stop">
+  [128] setobjprop 45 ........................... me.sState = "Stop"
+  [130] getparam 0 .............................. <me>
+  [132] pusharglistnoret 1 ...................... <me>
+  [134] extcall 46 .............................. return me
+  [136] ret
+end
+
+on debug me, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 30 ........................... <me.bDebug>
+  [  4] jmpifz [ 16] ............................ if me.bDebug then
+  [  7] pushcons 6 .............................. <"Sequencer.">
+  [  9] getparam 1 .............................. <sMessage>
+  [ 11] joinstr ................................. <"Sequencer." & sMessage>
+  [ 12] pusharglistnoret 1 ...................... <"Sequencer." & sMessage>
+  [ 14] extcall 48 .............................. put "Sequencer." & sMessage
+  [ 16] ret
+end
+
+on sampleSound me, oSound
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 35 ........................... <me.iSampleChannel>
+  [  4] pusharglist 1 ........................... <me.iSampleChannel>
+  [  6] extcall 50 .............................. <sound(me.iSampleChannel)>
+  [  8] pusharglistnoret 1 ...................... <sound(me.iSampleChannel)>
+  [ 10] objcall 16 .............................. sound(me.iSampleChannel).stop()
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 35 ........................... <me.iSampleChannel>
+  [ 16] pusharglist 1 ........................... <me.iSampleChannel>
+  [ 18] extcall 50 .............................. <sound(me.iSampleChannel)>
+  [ 20] pusharglist 0 ........................... <[]>
+  [ 22] pushlist ................................ <[]>
+  [ 23] pusharglistnoret 2 ...................... <sound(me.iSampleChannel), []>
+  [ 25] objcall 51 .............................. sound(me.iSampleChannel).setPlayList([])
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 35 ........................... <me.iSampleChannel>
+  [ 31] pusharglist 1 ........................... <me.iSampleChannel>
+  [ 33] extcall 50 .............................. <sound(me.iSampleChannel)>
+  [ 35] pushint16 255 ........................... <255>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getobjprop 37 ........................... <me.iVolumeAdjust>
+  [ 42] pushcons 7 .............................. <0.01>
+  [ 44] mul ..................................... <me.iVolumeAdjust * 0.01>
+  [ 45] mul ..................................... <255 * (me.iVolumeAdjust * 0.01)>
+  [ 46] setobjprop 52 ........................... sound(me.iSampleChannel).volume = 255 * (me.iVolumeAdjust * 0.01)
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 35 ........................... <me.iSampleChannel>
+  [ 52] pusharglist 1 ........................... <me.iSampleChannel>
+  [ 54] extcall 50 .............................. <sound(me.iSampleChannel)>
+  [ 56] pushsymb 53 ............................. <#member>
+  [ 58] getparam 1 .............................. <oSound>
+  [ 60] pusharglist 1 ........................... <oSound>
+  [ 62] objcall 54 .............................. <oSound.getMember()>
+  [ 64] pushsymb 55 ............................. <#loopCount>
+  [ 66] pushint8 1 .............................. <1>
+  [ 68] pusharglist 4 ........................... <[#member: oSound.getMember(), #loopCount: 1]>
+  [ 70] pushproplist ............................ <[#member: oSound.getMember(), #loopCount: 1]>
+  [ 71] pusharglistnoret 2 ...................... <sound(me.iSampleChannel), [#member: oSound.getMember(), #loopCount: 1]>
+  [ 73] objcall 15 .............................. sound(me.iSampleChannel).play([#member: oSound.getMember(), #loopCount: 1])
+  [ 75] ret
+end
+
+on initTracks me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 36 ........................... me.aTracks = []
+  [  7] pushint8 1 .............................. <1>
+  [  9] setlocal 0
+  [ 11] getlocal 0
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 34 ........................... <me.iNumTracks>
+  [ 17] lteq
+  [ 18] jmpifz [ 56] ............................ repeat with i = 1 to me.iNumTracks
+  [ 21] pushcons 8 .............................. <"Track">
+  [ 23] pusharglist 1 ........................... <"Track">
+  [ 25] extcall 40 .............................. <script("Track")>
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getlocal 0 .............................. <i>
+  [ 31] pusharglist 3 ........................... <script("Track"), me, i>
+  [ 33] objcall 0 ............................... <script("Track").new(me, i)>
+  [ 35] setlocal 1 .............................. oTrack = script("Track").new(me, i)
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 36 ....................... <me.aTracks>
+  [ 41] getlocal 1 .............................. <oTrack>
+  [ 43] pusharglistnoret 2 ...................... <me.aTracks, oTrack>
+  [ 45] objcall 57 .............................. me.aTracks.add(oTrack)
+  [ 47] pushint8 1
+  [ 49] getlocal 0
+  [ 51] add
+  [ 52] setlocal 0
+  [ 54] endrepeat [ 11]
+  [ 56] ret
+end
+
+on getTotalBeats me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 31 ........................... <me.iTimeLength>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 33 ........................... <me.iBeatInterval>
+  [  8] div ..................................... <me.iTimeLength / me.iBeatInterval>
+  [  9] pusharglistnoret 1 ...................... <me.iTimeLength / me.iBeatInterval>
+  [ 11] extcall 46 .............................. return me.iTimeLength / me.iBeatInterval
+  [ 13] ret
+end
+
+on getStartTime me, iBeat
+  [  0] getparam 1 .............................. <iBeat>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 33 ........................... <me.iBeatInterval>
+  [  6] mul ..................................... <iBeat * me.iBeatInterval>
+  [  7] pusharglistnoret 1 ...................... <iBeat * me.iBeatInterval>
+  [  9] extcall 46 .............................. return iBeat * me.iBeatInterval
+  [ 11] ret
+end
+
+on getEventLength me, oEvent, oSound
+  [  0] getparam 2 .............................. <oSound>
+  [  2] pusharglist 1 ........................... <oSound>
+  [  4] objcall 61 .............................. <oSound.getBeats()>
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 33 ........................... <me.iBeatInterval>
+  [ 10] mul ..................................... <oSound.getBeats() * me.iBeatInterval>
+  [ 11] getparam 1 .............................. <oEvent>
+  [ 13] pusharglist 1 ........................... <oEvent>
+  [ 15] objcall 62 .............................. <oEvent.getLoopCount()>
+  [ 17] mul ..................................... <oSound.getBeats() * me.iBeatInterval * oEvent.getLoopCount()>
+  [ 18] pusharglistnoret 1 ...................... <oSound.getBeats() * me.iBeatInterval * oEvent.getLoopCount()>
+  [ 20] extcall 46 .............................. return oSound.getBeats() * me.iBeatInterval * oEvent.getLoopCount()
+  [ 22] ret
+end
+
+on getBeatFromTime me, iTime
+  [  0] getparam 1 .............................. <iTime>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 33 ........................... <me.iBeatInterval>
+  [  6] div ..................................... <iTime / me.iBeatInterval>
+  [  7] pusharglistnoret 1 ...................... <iTime / me.iBeatInterval>
+  [  9] extcall 46 .............................. return iTime / me.iBeatInterval
+  [ 11] ret
+end
+
+on queueSequence me, iStartBeat
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 36 ............................. <#aTracks>
+  [  4] pusharglist 2 ........................... <me, #aTracks>
+  [  6] objcall 65 .............................. <me.aTracks.count>
+  [  8] setlocal 0 .............................. iTrackCount = me.aTracks.count
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setlocal 1
+  [ 14] getlocal 1
+  [ 16] getlocal 0 .............................. <iTrackCount>
+  [ 18] lteq
+  [ 19] jmpifz [ 55] ............................ repeat with i = 1 to iTrackCount
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pushsymb 36 ............................. <#aTracks>
+  [ 26] getlocal 1 .............................. <i>
+  [ 28] pusharglist 3 ........................... <me, #aTracks, i>
+  [ 30] objcall 66 .............................. <me.aTracks[i]>
+  [ 32] setlocal 2 .............................. oTrack = me.aTracks[i]
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getlocal 2 .............................. <oTrack>
+  [ 38] getlocal 1 .............................. <i>
+  [ 40] getparam 1 .............................. <iStartBeat>
+  [ 42] pusharglistnoret 4 ...................... <me, oTrack, i, iStartBeat>
+  [ 44] objcall 9 ............................... me.queueTrack(oTrack, i, iStartBeat)
+  [ 46] pushint8 1
+  [ 48] getlocal 1
+  [ 50] add
+  [ 51] setlocal 1
+  [ 53] endrepeat [ 14]
+  [ 55] ret
+end
+
+on queueTrack me, oTrack, iChannel, iStartBeat
+  [  0] getparam 1 .............................. <oTrack>
+  [  2] pusharglist 1 ........................... <oTrack>
+  [  4] objcall 69 .............................. <oTrack.getSound()>
+  [  6] setlocal 0 .............................. oSound = oTrack.getSound()
+  [  8] getlocal 0 .............................. <oSound>
+  [ 10] pusharglist 1 ........................... <oSound>
+  [ 12] objcall 54 .............................. <oSound.getMember()>
+  [ 14] setlocal 1 .............................. oSoundMember = oSound.getMember()
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getchainedprop 41 ....................... <me.oSoundLibrary>
+  [ 20] getlocal 0 .............................. <oSound>
+  [ 22] pusharglist 1 ........................... <oSound>
+  [ 24] objcall 61 .............................. <oSound.getBeats()>
+  [ 26] pusharglist 2 ........................... <me.oSoundLibrary, oSound.getBeats()>
+  [ 28] objcall 70 .............................. <me.oSoundLibrary.getSilence(oSound.getBeats())>
+  [ 30] setlocal 2 .............................. oSilence = me.oSoundLibrary.getSilence(oSound.getBeats())
+  [ 32] getlocal 2 .............................. <oSilence>
+  [ 34] getchainedprop 71 ....................... <oSilence.oMember>
+  [ 36] getobjprop 72 ........................... <oSilence.oMember.duration>
+  [ 38] setlocal 3 .............................. iSilenceDuration = oSilence.oMember.duration
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getparam 3 .............................. <iStartBeat>
+  [ 44] pusharglist 2 ........................... <me, iStartBeat>
+  [ 46] objcall 5 ............................... <me.getStartTime(iStartBeat)>
+  [ 48] setlocal 4 .............................. iStartTime = me.getStartTime(iStartBeat)
+  [ 50] getlocal 4 .............................. <iStartTime>
+  [ 52] setlocal 5 .............................. iCursor = iStartTime
+  [ 54] getparam 1 .............................. <oTrack>
+  [ 56] pusharglist 1 ........................... <oTrack>
+  [ 58] objcall 73 .............................. <oTrack.getSoundEvents()>
+  [ 60] setlocal 6 .............................. aSoundEvents = oTrack.getSoundEvents()
+  [ 62] getparam 0 .............................. <me>
+  [ 64] getlocal 6 .............................. <aSoundEvents>
+  [ 66] getparam 3 .............................. <iStartBeat>
+  [ 68] getlocal 0 .............................. <oSound>
+  [ 70] pusharglist 4 ........................... <me, aSoundEvents, iStartBeat, oSound>
+  [ 72] objcall 11 .............................. <me.removeEventsBeforeBeat(aSoundEvents, iStartBeat, oSound)>
+  [ 74] setlocal 6 .............................. aSoundEvents = me.removeEventsBeforeBeat(aSoundEvents, iStartBeat, oSound)
+  [ 76] getlocal 6 .............................. <aSoundEvents>
+  [ 78] getobjprop 65 ........................... <aSoundEvents.count>
+  [ 80] setlocal 7 .............................. iEventCount = aSoundEvents.count
+  [ 82] pushint8 1 .............................. <1>
+  [ 84] setlocal 8
+  [ 86] getlocal 8
+  [ 88] getlocal 7 .............................. <iEventCount>
+  [ 90] lteq
+  [ 91] jmpifz [253] ............................ repeat with ii = 1 to iEventCount
+  [ 94] getlocal 6 .............................. <aSoundEvents>
+  [ 96] getlocal 8 .............................. <ii>
+  [ 98] pusharglist 2 ........................... <aSoundEvents, ii>
+  [100] objcall 74 .............................. <aSoundEvents[ii]>
+  [102] setlocal 9 .............................. oEvent = aSoundEvents[ii]
+  [104] getparam 0 .............................. <me>
+  [106] getlocal 9 .............................. <oEvent>
+  [108] getlocal 0 .............................. <oSound>
+  [110] pusharglist 3 ........................... <me, oEvent, oSound>
+  [112] objcall 6 ............................... <me.getEventLength(oEvent, oSound)>
+  [114] setlocal 10 ............................. iEventLength = me.getEventLength(oEvent, oSound)
+  [116] getparam 0 .............................. <me>
+  [118] getlocal 9 .............................. <oEvent>
+  [120] pusharglist 1 ........................... <oEvent>
+  [122] objcall 75 .............................. <oEvent.getBeat()>
+  [124] pusharglist 2 ........................... <me, oEvent.getBeat()>
+  [126] objcall 5 ............................... <me.getStartTime(oEvent.getBeat())>
+  [128] setlocal 11 ............................. iEventStartTime = me.getStartTime(oEvent.getBeat())
+  [130] getlocal 11 ............................. <iEventStartTime>
+  [132] getlocal 10 ............................. <iEventLength>
+  [134] add ..................................... <iEventStartTime + iEventLength>
+  [135] setlocal 12 ............................. iEventStopTime = iEventStartTime + iEventLength
+  [137] getlocal 11 ............................. <iEventStartTime>
+  [139] getlocal 5 .............................. <iCursor>
+  [141] sub ..................................... <iEventStartTime - iCursor>
+  [142] setlocal 13 ............................. iSilenceLength = iEventStartTime - iCursor
+  [144] getlocal 13 ............................. <iSilenceLength>
+  [146] pushzero ................................ <0>
+  [147] gt ...................................... <iSilenceLength > 0>
+  [148] jmpifz [200] ............................ if iSilenceLength > 0 then
+  [151] getlocal 13 ............................. <iSilenceLength>
+  [153] getlocal 3 .............................. <iSilenceDuration>
+  [155] div ..................................... <iSilenceLength / iSilenceDuration>
+  [156] setlocal 14 ............................. iSilenceLoopCount = iSilenceLength / iSilenceDuration
+  [158] getparam 0 .............................. <me>
+  [160] getlocal 5 .............................. <iCursor>
+  [162] pusharglist 2 ........................... <me, iCursor>
+  [164] objcall 7 ............................... <me.getBeatFromTime(iCursor)>
+  [166] setlocal 15 ............................. iBeat = me.getBeatFromTime(iCursor)
+  [168] getparam 2 .............................. <iChannel>
+  [170] pusharglist 1 ........................... <iChannel>
+  [172] extcall 50 .............................. <sound(iChannel)>
+  [174] pushsymb 53 ............................. <#member>
+  [176] getlocal 2 .............................. <oSilence>
+  [178] getobjprop 71 ........................... <oSilence.oMember>
+  [180] pushsymb 55 ............................. <#loopCount>
+  [182] getlocal 14 ............................. <iSilenceLoopCount>
+  [184] pushsymb 76 ............................. <#preloadTime>
+  [186] pushint16 1000 .......................... <1000>
+  [189] pushsymb 77 ............................. <#beat>
+  [191] getlocal 15 ............................. <iBeat>
+  [193] pusharglist 8 ........................... <[#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [195] pushproplist ............................ <[#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [196] pusharglistnoret 2 ...................... <sound(iChannel), [#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [198] objcall 78 .............................. sound(iChannel).queue([#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat])
+  [200] getparam 2 .............................. <iChannel>
+  [202] pusharglist 1 ........................... <iChannel>
+  [204] extcall 50 .............................. <sound(iChannel)>
+  [206] pushsymb 53 ............................. <#member>
+  [208] getlocal 0 .............................. <oSound>
+  [210] getobjprop 71 ........................... <oSound.oMember>
+  [212] pushsymb 55 ............................. <#loopCount>
+  [214] getlocal 9 .............................. <oEvent>
+  [216] pusharglist 1 ........................... <oEvent>
+  [218] objcall 62 .............................. <oEvent.getLoopCount()>
+  [220] pushsymb 76 ............................. <#preloadTime>
+  [222] pushint16 3000 .......................... <3000>
+  [225] pushsymb 77 ............................. <#beat>
+  [227] getlocal 9 .............................. <oEvent>
+  [229] pusharglist 1 ........................... <oEvent>
+  [231] objcall 75 .............................. <oEvent.getBeat()>
+  [233] pusharglist 8 ........................... <[#member: oSound.oMember, #loopCount: oEvent.getLoopCount(), #preloadTime: 3000, #beat: oEvent.getBeat()]>
+  [235] pushproplist ............................ <[#member: oSound.oMember, #loopCount: oEvent.getLoopCount(), #preloadTime: 3000, #beat: oEvent.getBeat()]>
+  [236] pusharglistnoret 2 ...................... <sound(iChannel), [#member: oSound.oMember, #loopCount: oEvent.getLoopCount(), #preloadTime: 3000, #beat: oEvent.getBeat()]>
+  [238] objcall 78 .............................. sound(iChannel).queue([#member: oSound.oMember, #loopCount: oEvent.getLoopCount(), #preloadTime: 3000, #beat: oEvent.getBeat()])
+  [240] getlocal 12 ............................. <iEventStopTime>
+  [242] setlocal 5 .............................. iCursor = iEventStopTime
+  [244] pushint8 1
+  [246] getlocal 8
+  [248] add
+  [249] setlocal 8
+  [251] endrepeat [ 86]
+  [253] getparam 0 .............................. <me>
+  [255] getobjprop 31 ........................... <me.iTimeLength>
+  [257] getlocal 5 .............................. <iCursor>
+  [259] sub ..................................... <me.iTimeLength - iCursor>
+  [260] setlocal 13 ............................. iSilenceLength = me.iTimeLength - iCursor
+  [262] getlocal 13 ............................. <iSilenceLength>
+  [264] pushzero ................................ <0>
+  [265] gt ...................................... <iSilenceLength > 0>
+  [266] jmpifz [318] ............................ if iSilenceLength > 0 then
+  [269] getlocal 13 ............................. <iSilenceLength>
+  [271] getlocal 3 .............................. <iSilenceDuration>
+  [273] div ..................................... <iSilenceLength / iSilenceDuration>
+  [274] setlocal 14 ............................. iSilenceLoopCount = iSilenceLength / iSilenceDuration
+  [276] getparam 0 .............................. <me>
+  [278] getlocal 5 .............................. <iCursor>
+  [280] pusharglist 2 ........................... <me, iCursor>
+  [282] objcall 7 ............................... <me.getBeatFromTime(iCursor)>
+  [284] setlocal 15 ............................. iBeat = me.getBeatFromTime(iCursor)
+  [286] getparam 2 .............................. <iChannel>
+  [288] pusharglist 1 ........................... <iChannel>
+  [290] extcall 50 .............................. <sound(iChannel)>
+  [292] pushsymb 53 ............................. <#member>
+  [294] getlocal 2 .............................. <oSilence>
+  [296] getobjprop 71 ........................... <oSilence.oMember>
+  [298] pushsymb 55 ............................. <#loopCount>
+  [300] getlocal 14 ............................. <iSilenceLoopCount>
+  [302] pushsymb 76 ............................. <#preloadTime>
+  [304] pushint16 1000 .......................... <1000>
+  [307] pushsymb 77 ............................. <#beat>
+  [309] getlocal 15 ............................. <iBeat>
+  [311] pusharglist 8 ........................... <[#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [313] pushproplist ............................ <[#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [314] pusharglistnoret 2 ...................... <sound(iChannel), [#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat]>
+  [316] objcall 78 .............................. sound(iChannel).queue([#member: oSilence.oMember, #loopCount: iSilenceLoopCount, #preloadTime: 1000, #beat: iBeat])
+  [318] ret
+end
+
+on updatePlayList me, oTrack, iChannel, iBeat
+  [  0] getparam 2 .............................. <iChannel>
+  [  2] pusharglist 1 ........................... <iChannel>
+  [  4] extcall 50 .............................. <sound(iChannel)>
+  [  6] pusharglistnoret 1 ...................... <sound(iChannel)>
+  [  8] objcall 93 .............................. sound(iChannel).breakLoop()
+  [ 10] getparam 2 .............................. <iChannel>
+  [ 12] pusharglist 1 ........................... <iChannel>
+  [ 14] extcall 50 .............................. <sound(iChannel)>
+  [ 16] pusharglist 0 ........................... <[]>
+  [ 18] pushlist ................................ <[]>
+  [ 19] pusharglistnoret 2 ...................... <sound(iChannel), []>
+  [ 21] objcall 51 .............................. sound(iChannel).setPlayList([])
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getparam 1 .............................. <oTrack>
+  [ 27] getparam 2 .............................. <iChannel>
+  [ 29] getparam 3 .............................. <iBeat>
+  [ 31] pusharglistnoret 4 ...................... <me, oTrack, iChannel, iBeat>
+  [ 33] objcall 9 ............................... me.queueTrack(oTrack, iChannel, iBeat)
+  [ 35] ret
+end
+
+on removeEventsBeforeBeat me, aSoundEvents, iBeat, oSound
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNewSoundEvents = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getparam 1 .............................. <aSoundEvents>
+  [ 13] getobjprop 65 ........................... <aSoundEvents.count>
+  [ 15] lteq
+  [ 16] jmpifz [ 96] ............................ repeat with i = 1 to aSoundEvents.count
+  [ 19] getparam 1 .............................. <aSoundEvents>
+  [ 21] getlocal 1 .............................. <i>
+  [ 23] pusharglist 2 ........................... <aSoundEvents, i>
+  [ 25] objcall 74 .............................. <aSoundEvents[i]>
+  [ 27] setlocal 2 .............................. oEvent = aSoundEvents[i]
+  [ 29] getparam 0 .............................. <me>
+  [ 31] getlocal 2 .............................. <oEvent>
+  [ 33] getparam 2 .............................. <iBeat>
+  [ 35] getparam 3 .............................. <oSound>
+  [ 37] pusharglist 4 ........................... <me, oEvent, iBeat, oSound>
+  [ 39] objcall 13 .............................. <me.eventCrossesBeat(oEvent, iBeat, oSound)>
+  [ 41] jmpifz [ 69] ............................ if me.eventCrossesBeat(oEvent, iBeat, oSound) then
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getlocal 2 .............................. <oEvent>
+  [ 48] getparam 2 .............................. <iBeat>
+  [ 50] getparam 3 .............................. <oSound>
+  [ 52] pusharglist 4 ........................... <me, oEvent, iBeat, oSound>
+  [ 54] objcall 12 .............................. <me.clipEvent(oEvent, iBeat, oSound)>
+  [ 56] setlocal 3 .............................. oClipEvent = me.clipEvent(oEvent, iBeat, oSound)
+  [ 58] getlocal 0 .............................. <aNewSoundEvents>
+  [ 60] getlocal 3 .............................. <oClipEvent>
+  [ 62] pusharglistnoret 2 ...................... <aNewSoundEvents, oClipEvent>
+  [ 64] objcall 57 .............................. aNewSoundEvents.add(oClipEvent)
+  [ 66] jmp [ 87] ............................... next repeat
+  [ 69] getlocal 2 .............................. <oEvent>
+  [ 71] getobjprop 60 ........................... <oEvent.iBeat>
+  [ 73] getparam 2 .............................. <iBeat>
+  [ 75] gteq .................................... <oEvent.iBeat >= iBeat>
+  [ 76] jmpifz [ 87] ............................ if oEvent.iBeat >= iBeat then
+  [ 79] getlocal 0 .............................. <aNewSoundEvents>
+  [ 81] getlocal 2 .............................. <oEvent>
+  [ 83] pusharglistnoret 2 ...................... <aNewSoundEvents, oEvent>
+  [ 85] objcall 57 .............................. aNewSoundEvents.add(oEvent)
+  [ 87] pushint8 1
+  [ 89] getlocal 1
+  [ 91] add
+  [ 92] setlocal 1
+  [ 94] endrepeat [  9]
+  [ 96] getlocal 0 .............................. <aNewSoundEvents>
+  [ 98] pusharglistnoret 1 ...................... <aNewSoundEvents>
+  [100] extcall 46 .............................. return aNewSoundEvents
+  [102] ret
+end
+
+on clipEvent me, oEvent, iBeat, oSound
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oEvent>
+  [  4] getparam 3 .............................. <oSound>
+  [  6] pusharglist 3 ........................... <me, oEvent, oSound>
+  [  8] objcall 6 ............................... <me.getEventLength(oEvent, oSound)>
+  [ 10] setlocal 0 .............................. iEventLength = me.getEventLength(oEvent, oSound)
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getparam 1 .............................. <oEvent>
+  [ 16] pusharglist 1 ........................... <oEvent>
+  [ 18] objcall 75 .............................. <oEvent.getBeat()>
+  [ 20] pusharglist 2 ........................... <me, oEvent.getBeat()>
+  [ 22] objcall 5 ............................... <me.getStartTime(oEvent.getBeat())>
+  [ 24] setlocal 1 .............................. iEventStartTime = me.getStartTime(oEvent.getBeat())
+  [ 26] getlocal 1 .............................. <iEventStartTime>
+  [ 28] getlocal 0 .............................. <iEventLength>
+  [ 30] add ..................................... <iEventStartTime + iEventLength>
+  [ 31] setlocal 2 .............................. iEventStopTime = iEventStartTime + iEventLength
+  [ 33] getparam 1 .............................. <oEvent>
+  [ 35] getobjprop 60 ........................... <oEvent.iBeat>
+  [ 37] setlocal 3 .............................. iEventStartBeat = oEvent.iBeat
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getlocal 2 .............................. <iEventStopTime>
+  [ 43] pusharglist 2 ........................... <me, iEventStopTime>
+  [ 45] objcall 7 ............................... <me.getBeatFromTime(iEventStopTime)>
+  [ 47] setlocal 4 .............................. iEventEndBeat = me.getBeatFromTime(iEventStopTime)
+  [ 49] getlocal 4 .............................. <iEventEndBeat>
+  [ 51] getparam 2 .............................. <iBeat>
+  [ 53] sub ..................................... <iEventEndBeat - iBeat>
+  [ 54] setlocal 5 .............................. iNewBeatDuration = iEventEndBeat - iBeat
+  [ 56] getparam 3 .............................. <oSound>
+  [ 58] pusharglist 1 ........................... <oSound>
+  [ 60] objcall 61 .............................. <oSound.getBeats()>
+  [ 62] setlocal 6 .............................. iSoundBeatDuration = oSound.getBeats()
+  [ 64] getlocal 5 .............................. <iNewBeatDuration>
+  [ 66] getlocal 6 .............................. <iSoundBeatDuration>
+  [ 68] div ..................................... <iNewBeatDuration / iSoundBeatDuration>
+  [ 69] setlocal 7 .............................. iLoopCount = iNewBeatDuration / iSoundBeatDuration
+  [ 71] pushcons 9 .............................. <"SoundEvent">
+  [ 73] pusharglist 1 ........................... <"SoundEvent">
+  [ 75] extcall 40 .............................. <script("SoundEvent")>
+  [ 77] getparam 2 .............................. <iBeat>
+  [ 79] getlocal 7 .............................. <iLoopCount>
+  [ 81] pusharglist 3 ........................... <script("SoundEvent"), iBeat, iLoopCount>
+  [ 83] objcall 0 ............................... <script("SoundEvent").new(iBeat, iLoopCount)>
+  [ 85] setlocal 8 .............................. oClipEvent = script("SoundEvent").new(iBeat, iLoopCount)
+  [ 87] getlocal 8 .............................. <oClipEvent>
+  [ 89] pusharglistnoret 1 ...................... <oClipEvent>
+  [ 91] extcall 46 .............................. return oClipEvent
+  [ 93] ret
+end
+
+on eventCrossesBeat me, oEvent, iBeat, oSound
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <oEvent>
+  [  4] getparam 3 .............................. <oSound>
+  [  6] pusharglist 3 ........................... <me, oEvent, oSound>
+  [  8] objcall 6 ............................... <me.getEventLength(oEvent, oSound)>
+  [ 10] setlocal 0 .............................. iEventLength = me.getEventLength(oEvent, oSound)
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getparam 1 .............................. <oEvent>
+  [ 16] pusharglist 1 ........................... <oEvent>
+  [ 18] objcall 75 .............................. <oEvent.getBeat()>
+  [ 20] pusharglist 2 ........................... <me, oEvent.getBeat()>
+  [ 22] objcall 5 ............................... <me.getStartTime(oEvent.getBeat())>
+  [ 24] setlocal 1 .............................. iEventStartTime = me.getStartTime(oEvent.getBeat())
+  [ 26] getlocal 1 .............................. <iEventStartTime>
+  [ 28] getlocal 0 .............................. <iEventLength>
+  [ 30] add ..................................... <iEventStartTime + iEventLength>
+  [ 31] setlocal 2 .............................. iEventStopTime = iEventStartTime + iEventLength
+  [ 33] getparam 1 .............................. <oEvent>
+  [ 35] getobjprop 60 ........................... <oEvent.iBeat>
+  [ 37] setlocal 3 .............................. iEventStartBeat = oEvent.iBeat
+  [ 39] getparam 0 .............................. <me>
+  [ 41] getlocal 2 .............................. <iEventStopTime>
+  [ 43] pusharglist 2 ........................... <me, iEventStopTime>
+  [ 45] objcall 7 ............................... <me.getBeatFromTime(iEventStopTime)>
+  [ 47] setlocal 4 .............................. iEventEndBeat = me.getBeatFromTime(iEventStopTime)
+  [ 49] getlocal 3 .............................. <iEventStartBeat>
+  [ 51] getparam 2 .............................. <iBeat>
+  [ 53] lt ...................................... <iEventStartBeat < iBeat>
+  [ 54] getlocal 4 .............................. <iEventEndBeat>
+  [ 56] getparam 2 .............................. <iBeat>
+  [ 58] gt ...................................... <iEventEndBeat > iBeat>
+  [ 59] and ..................................... <(iEventStartBeat < iBeat) and (iEventEndBeat > iBeat)>
+  [ 60] jmpifz [ 72] ............................ if (iEventStartBeat < iBeat) and (iEventEndBeat > iBeat) then / else
+  [ 63] pushint8 1 .............................. <1>
+  [ 65] pusharglistnoret 1 ...................... <1>
+  [ 67] extcall 46 .............................. return 1
+  [ 69] jmp [ 77]
+  [ 72] pushzero ................................ <0>
+  [ 73] pusharglistnoret 1 ...................... <0>
+  [ 75] extcall 46 .............................. return 0
+  [ 77] ret
+end
+
+on clearPlaylist me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 36 ............................. <#aTracks>
+  [ 10] pusharglist 2 ........................... <me, #aTracks>
+  [ 12] objcall 65 .............................. <me.aTracks.count>
+  [ 14] lteq
+  [ 15] jmpifz [ 50] ............................ repeat with i = 1 to me.aTracks.count
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 1 ........................... <i>
+  [ 22] extcall 50 .............................. <sound(i)>
+  [ 24] pusharglistnoret 1 ...................... <sound(i)>
+  [ 26] objcall 16 .............................. sound(i).stop()
+  [ 28] getlocal 0 .............................. <i>
+  [ 30] pusharglist 1 ........................... <i>
+  [ 32] extcall 50 .............................. <sound(i)>
+  [ 34] pusharglist 0 ........................... <[]>
+  [ 36] pushlist ................................ <[]>
+  [ 37] pusharglistnoret 2 ...................... <sound(i), []>
+  [ 39] objcall 51 .............................. sound(i).setPlayList([])
+  [ 41] pushint8 1
+  [ 43] getlocal 0
+  [ 45] add
+  [ 46] setlocal 0
+  [ 48] endrepeat [  4]
+  [ 50] ret
+end
+
+on play me, iBeat
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"play() ">
+  [  4] getparam 1 .............................. <iBeat>
+  [  6] joinstr ................................. <"play() " & iBeat>
+  [  7] pusharglistnoret 2 ...................... <me, "play() " & iBeat>
+  [  9] objcall 1 ............................... me.debug("play() " & iBeat)
+  [ 11] getparam 1 .............................. <iBeat>
+  [ 13] pusharglist 1 ........................... <iBeat>
+  [ 15] extcall 101 ............................. <voidp(iBeat)>
+  [ 17] jmpifz [ 23] ............................ if voidp(iBeat) then
+  [ 20] pushzero ................................ <0>
+  [ 21] setparam 1 .............................. iBeat = 0
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 45 ........................... <me.sState>
+  [ 27] pushcons 11 ............................. <"Pause">
+  [ 29] eq ...................................... <me.sState = "Pause">
+  [ 30] jmpifz [ 43] ............................ if me.sState = "Pause" then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 18 .............................. me.unpause()
+  [ 39] pusharglistnoret 0 ...................... <>
+  [ 41] extcall 46 .............................. return 
+  [ 43] getparam 0 .............................. <me>
+  [ 45] pusharglistnoret 1 ...................... <me>
+  [ 47] objcall 14 .............................. me.clearPlaylist()
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getchainedprop 41 ....................... <me.oSoundLibrary>
+  [ 53] pushint8 2 .............................. <2>
+  [ 55] pusharglist 2 ........................... <me.oSoundLibrary, 2>
+  [ 57] objcall 70 .............................. <me.oSoundLibrary.getSilence(2)>
+  [ 59] pusharglist 1 ........................... <me.oSoundLibrary.getSilence(2)>
+  [ 61] objcall 54 .............................. <me.oSoundLibrary.getSilence(2).getMember()>
+  [ 63] setlocal 0 .............................. oSilence = me.oSoundLibrary.getSilence(2).getMember()
+  [ 65] pushint8 1 .............................. <1>
+  [ 67] setlocal 1
+  [ 69] getlocal 1
+  [ 71] getparam 0 .............................. <me>
+  [ 73] pushsymb 36 ............................. <#aTracks>
+  [ 75] pusharglist 2 ........................... <me, #aTracks>
+  [ 77] objcall 65 .............................. <me.aTracks.count>
+  [ 79] lteq
+  [ 80] jmpifz [119] ............................ repeat with i = 1 to me.aTracks.count
+  [ 83] getlocal 1 .............................. <i>
+  [ 85] pusharglist 1 ........................... <i>
+  [ 87] extcall 50 .............................. <sound(i)>
+  [ 89] pushsymb 53 ............................. <#member>
+  [ 91] getlocal 0 .............................. <oSilence>
+  [ 93] pusharglist 2 ........................... <[#member: oSilence]>
+  [ 95] pushproplist ............................ <[#member: oSilence]>
+  [ 96] pusharglistnoret 2 ...................... <sound(i), [#member: oSilence]>
+  [ 98] objcall 78 .............................. sound(i).queue([#member: oSilence])
+  [100] getlocal 1 .............................. <i>
+  [102] pusharglist 1 ........................... <i>
+  [104] extcall 50 .............................. <sound(i)>
+  [106] pusharglistnoret 1 ...................... <sound(i)>
+  [108] objcall 15 .............................. sound(i).play()
+  [110] pushint8 1
+  [112] getlocal 1
+  [114] add
+  [115] setlocal 1
+  [117] endrepeat [ 69]
+  [119] getparam 0 .............................. <me>
+  [121] getparam 1 .............................. <iBeat>
+  [123] pusharglistnoret 2 ...................... <me, iBeat>
+  [125] objcall 8 ............................... me.queueSequence(iBeat)
+  [127] pushint8 1 .............................. <1>
+  [129] setlocal 1
+  [131] getlocal 1
+  [133] getparam 0 .............................. <me>
+  [135] pushsymb 36 ............................. <#aTracks>
+  [137] pusharglist 2 ........................... <me, #aTracks>
+  [139] objcall 65 .............................. <me.aTracks.count>
+  [141] lteq
+  [142] jmpifz [164] ............................ repeat with i = 1 to me.aTracks.count
+  [145] getlocal 1 .............................. <i>
+  [147] pusharglist 1 ........................... <i>
+  [149] extcall 50 .............................. <sound(i)>
+  [151] pusharglistnoret 1 ...................... <sound(i)>
+  [153] objcall 104 ............................. sound(i).playNext()
+  [155] pushint8 1
+  [157] getlocal 1
+  [159] add
+  [160] setlocal 1
+  [162] endrepeat [131]
+  [164] getparam 0 .............................. <me>
+  [166] pushcons 12 ............................. <"Play">
+  [168] setobjprop 45 ........................... me.sState = "Play"
+  [170] ret
+end
+
+on stop me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 36 ............................. <#aTracks>
+  [ 10] pusharglist 2 ........................... <me, #aTracks>
+  [ 12] objcall 65 .............................. <me.aTracks.count>
+  [ 14] lteq
+  [ 15] jmpifz [ 68] ............................ repeat with i = 1 to me.aTracks.count
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] setlocal 1
+  [ 22] getlocal 1
+  [ 24] pushint8 100 ............................ <100>
+  [ 26] lteq
+  [ 27] jmpifz [ 49] ............................ repeat with j = 1 to 100
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 1 ........................... <i>
+  [ 34] extcall 50 .............................. <sound(i)>
+  [ 36] pusharglistnoret 1 ...................... <sound(i)>
+  [ 38] objcall 104 ............................. sound(i).playNext()
+  [ 40] pushint8 1
+  [ 42] getlocal 1
+  [ 44] add
+  [ 45] setlocal 1
+  [ 47] endrepeat [ 22]
+  [ 49] getlocal 0 .............................. <i>
+  [ 51] pusharglist 1 ........................... <i>
+  [ 53] extcall 50 .............................. <sound(i)>
+  [ 55] pusharglistnoret 1 ...................... <sound(i)>
+  [ 57] objcall 16 .............................. sound(i).stop()
+  [ 59] pushint8 1
+  [ 61] getlocal 0
+  [ 63] add
+  [ 64] setlocal 0
+  [ 66] endrepeat [  4]
+  [ 68] getparam 0 .............................. <me>
+  [ 70] pusharglistnoret 1 ...................... <me>
+  [ 72] objcall 14 .............................. me.clearPlaylist()
+  [ 74] getparam 0 .............................. <me>
+  [ 76] pushcons 5 .............................. <"Stop">
+  [ 78] setobjprop 45 ........................... me.sState = "Stop"
+  [ 80] ret
+end
+
+on pause me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 45 ........................... <me.sState>
+  [  4] pushcons 12 ............................. <"Play">
+  [  6] eq ...................................... <me.sState = "Play">
+  [  7] not ..................................... <not (me.sState = "Play")>
+  [  8] jmpifz [ 15] ............................ if not (me.sState = "Play") then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 46 .............................. return 
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 0
+  [ 19] getlocal 0
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushsymb 36 ............................. <#aTracks>
+  [ 25] pusharglist 2 ........................... <me, #aTracks>
+  [ 27] objcall 65 .............................. <me.aTracks.count>
+  [ 29] lteq
+  [ 30] jmpifz [ 52] ............................ repeat with i = 1 to me.aTracks.count
+  [ 33] getlocal 0 .............................. <i>
+  [ 35] pusharglist 1 ........................... <i>
+  [ 37] extcall 50 .............................. <sound(i)>
+  [ 39] pusharglistnoret 1 ...................... <sound(i)>
+  [ 41] objcall 17 .............................. sound(i).pause()
+  [ 43] pushint8 1
+  [ 45] getlocal 0
+  [ 47] add
+  [ 48] setlocal 0
+  [ 50] endrepeat [ 19]
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pushcons 11 ............................. <"Pause">
+  [ 56] setobjprop 45 ........................... me.sState = "Pause"
+  [ 58] ret
+end
+
+on unpause me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 45 ........................... <me.sState>
+  [  4] pushcons 11 ............................. <"Pause">
+  [  6] eq ...................................... <me.sState = "Pause">
+  [  7] not ..................................... <not (me.sState = "Pause")>
+  [  8] jmpifz [ 15] ............................ if not (me.sState = "Pause") then
+  [ 11] pusharglistnoret 0 ...................... <>
+  [ 13] extcall 46 .............................. return 
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 0
+  [ 19] getlocal 0
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushsymb 36 ............................. <#aTracks>
+  [ 25] pusharglist 2 ........................... <me, #aTracks>
+  [ 27] objcall 65 .............................. <me.aTracks.count>
+  [ 29] lteq
+  [ 30] jmpifz [ 52] ............................ repeat with i = 1 to me.aTracks.count
+  [ 33] getlocal 0 .............................. <i>
+  [ 35] pusharglist 1 ........................... <i>
+  [ 37] extcall 50 .............................. <sound(i)>
+  [ 39] pusharglistnoret 1 ...................... <sound(i)>
+  [ 41] objcall 15 .............................. sound(i).play()
+  [ 43] pushint8 1
+  [ 45] getlocal 0
+  [ 47] add
+  [ 48] setlocal 0
+  [ 50] endrepeat [ 19]
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pushcons 12 ............................. <"Play">
+  [ 56] setobjprop 45 ........................... me.sState = "Play"
+  [ 58] ret
+end
+
+on loadDefaultSequence me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 44 ........................... <me.sDefaultSequence>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 38 ........................... <me.sCastLib>
+  [  8] pusharglist 2 ........................... <me.sDefaultSequence, me.sCastLib>
+  [ 10] extcall 53 .............................. <member(me.sDefaultSequence, me.sCastLib)>
+  [ 12] getobjprop 106 .......................... <member(me.sDefaultSequence, me.sCastLib).text>
+  [ 14] setlocal 0 .............................. sData = member(me.sDefaultSequence, me.sCastLib).text
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getlocal 0 .............................. <sData>
+  [ 20] pusharglistnoret 2 ...................... <me, sData>
+  [ 22] objcall 21 .............................. me.loadSequence(sData)
+  [ 24] ret
+end
+
+on printPlayList me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 36 ............................. <#aTracks>
+  [ 10] pusharglist 2 ........................... <me, #aTracks>
+  [ 12] objcall 65 .............................. <me.aTracks.count>
+  [ 14] lteq
+  [ 15] jmpifz [116] ............................ repeat with i = 1 to me.aTracks.count
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 1 ........................... <i>
+  [ 22] extcall 50 .............................. <sound(i)>
+  [ 24] pusharglist 1 ........................... <sound(i)>
+  [ 26] objcall 108 ............................. <sound(i).getPlaylist()>
+  [ 28] setlocal 1 .............................. aPlaylist = sound(i).getPlaylist()
+  [ 30] pushcons 13 ............................. <"[ ** SOUND ">
+  [ 32] getlocal 0 .............................. <i>
+  [ 34] joinstr ................................. <"[ ** SOUND " & i>
+  [ 35] pushcons 14 ............................. <" ** ]">
+  [ 37] joinstr ................................. <"[ ** SOUND " & i & " ** ]">
+  [ 38] pusharglistnoret 1 ...................... <"[ ** SOUND " & i & " ** ]">
+  [ 40] extcall 48 .............................. put "[ ** SOUND " & i & " ** ]"
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] setlocal 2
+  [ 46] getlocal 2
+  [ 48] getlocal 1 .............................. <aPlaylist>
+  [ 50] getobjprop 65 ........................... <aPlaylist.count>
+  [ 52] lteq
+  [ 53] jmpifz [107] ............................ repeat with ii = 1 to aPlaylist.count
+  [ 56] getlocal 1 .............................. <aPlaylist>
+  [ 58] getlocal 2 .............................. <ii>
+  [ 60] pusharglist 2 ........................... <aPlaylist, ii>
+  [ 62] objcall 74 .............................. <aPlaylist[ii]>
+  [ 64] setlocal 3 .............................. aevent = aPlaylist[ii]
+  [ 66] pushcons 15 ............................. <"EVENT: ">
+  [ 68] pushcons 16 ............................. <"#beat: ">
+  [ 70] joinstr ................................. <"EVENT: " & "#beat: ">
+  [ 71] getlocal 3 .............................. <aevent>
+  [ 73] getobjprop 77 ........................... <aevent.beat>
+  [ 75] joinstr ................................. <"EVENT: " & "#beat: " & aevent.beat>
+  [ 76] pushcons 17 ............................. <", #member: ">
+  [ 78] joinpadstr .............................. <"EVENT: " & "#beat: " & aevent.beat && ", #member: ">
+  [ 79] getlocal 3 .............................. <aevent>
+  [ 81] getchainedprop 53 ....................... <aevent.member>
+  [ 83] getobjprop 109 .......................... <aevent.member.name>
+  [ 85] joinstr ................................. <"EVENT: " & "#beat: " & aevent.beat && ", #member: " & aevent.member.name>
+  [ 86] pushcons 18 ............................. <", #loopCount: ">
+  [ 88] joinpadstr .............................. <"EVENT: " & "#beat: " & aevent.beat && ", #member: " & aevent.member.name && ", #loopCount: ">
+  [ 89] getlocal 3 .............................. <aevent>
+  [ 91] getobjprop 55 ........................... <aevent.loopCount>
+  [ 93] joinstr ................................. <"EVENT: " & "#beat: " & aevent.beat && ", #member: " & aevent.member.name && ", #loopCount: " & aevent.loopCount>
+  [ 94] pusharglistnoret 1 ...................... <"EVENT: " & "#beat: " & aevent.beat && ", #member: " & aevent.member.name && ", #loopCount: " & aevent.loopCount>
+  [ 96] extcall 48 .............................. put "EVENT: " & "#beat: " & aevent.beat && ", #member: " & aevent.member.name && ", #loopCount: " & aevent.loopCount
+  [ 98] pushint8 1
+  [100] getlocal 2
+  [102] add
+  [103] setlocal 2
+  [105] endrepeat [ 46]
+  [107] pushint8 1
+  [109] getlocal 0
+  [111] add
+  [112] setlocal 0
+  [114] endrepeat [  4]
+  [116] ret
+end
+
+on loadSequence me, sData
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 16 .............................. me.stop()
+  [  6] pushcons 19 ............................. <"XML">
+  [  8] pusharglist 1 ........................... <"XML">
+  [ 10] extcall 112 ............................. <newObject("XML")>
+  [ 12] setlocal 0 .............................. oXml = newObject("XML")
+  [ 14] getlocal 0 .............................. <oXml>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setobjprop 113 .......................... oXml.ignoreWhite = 1
+  [ 20] getlocal 0 .............................. <oXml>
+  [ 22] getparam 1 .............................. <sData>
+  [ 24] pusharglistnoret 2 ...................... <oXml, sData>
+  [ 26] objcall 114 ............................. oXml.parseXML(sData)
+  [ 28] getlocal 0 .............................. <oXml>
+  [ 30] getobjprop 115 .......................... <oXml.firstChild>
+  [ 32] setlocal 1 .............................. oRootNode = oXml.firstChild
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getlocal 1 .............................. <oRootNode>
+  [ 38] getchainedprop 116 ...................... <oRootNode.attributes>
+  [ 40] getobjprop 109 .......................... <oRootNode.attributes.name>
+  [ 42] setobjprop 42 ........................... me.sName = oRootNode.attributes.name
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getlocal 1 .............................. <oRootNode>
+  [ 48] getchainedprop 116 ...................... <oRootNode.attributes>
+  [ 50] getobjprop 117 .......................... <oRootNode.attributes.author>
+  [ 52] setobjprop 43 ........................... me.sAuthor = oRootNode.attributes.author
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getlocal 1 .............................. <oRootNode>
+  [ 58] pushcons 8 .............................. <"Track">
+  [ 60] pusharglist 3 ........................... <me, oRootNode, "Track">
+  [ 62] objcall 24 .............................. <me.getNodes(oRootNode, "Track")>
+  [ 64] setlocal 2 .............................. aTrackNodes = me.getNodes(oRootNode, "Track")
+  [ 66] getlocal 2 .............................. <aTrackNodes>
+  [ 68] getobjprop 65 ........................... <aTrackNodes.count>
+  [ 70] setprop 34 .............................. iNumTracks = aTrackNodes.count
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] setlocal 3
+  [ 76] getlocal 3
+  [ 78] getprop 34 .............................. <iNumTracks>
+  [ 80] lteq
+  [ 81] jmpifz [234] ............................ repeat with i = 1 to iNumTracks
+  [ 84] getlocal 2 .............................. <aTrackNodes>
+  [ 86] getlocal 3 .............................. <i>
+  [ 88] pusharglist 2 ........................... <aTrackNodes, i>
+  [ 90] objcall 74 .............................. <aTrackNodes[i]>
+  [ 92] setlocal 4 .............................. oTrackNode = aTrackNodes[i]
+  [ 94] getlocal 4 .............................. <oTrackNode>
+  [ 96] getchainedprop 116 ...................... <oTrackNode.attributes>
+  [ 98] getobjprop 52 ........................... <oTrackNode.attributes.volume>
+  [100] pusharglist 1 ........................... <oTrackNode.attributes.volume>
+  [102] extcall 118 ............................. <integer(oTrackNode.attributes.volume)>
+  [104] setlocal 5 .............................. iVolume = integer(oTrackNode.attributes.volume)
+  [106] getlocal 4 .............................. <oTrackNode>
+  [108] getchainedprop 116 ...................... <oTrackNode.attributes>
+  [110] getobjprop 119 .......................... <oTrackNode.attributes.asset>
+  [112] setlocal 6 .............................. sAsset = oTrackNode.attributes.asset
+  [114] getparam 0 .............................. <me>
+  [116] pushsymb 36 ............................. <#aTracks>
+  [118] getlocal 3 .............................. <i>
+  [120] pusharglist 3 ........................... <me, #aTracks, i>
+  [122] objcall 66 .............................. <me.aTracks[i]>
+  [124] setlocal 7 .............................. oTrack = me.aTracks[i]
+  [126] getlocal 7 .............................. <oTrack>
+  [128] getlocal 5 .............................. <iVolume>
+  [130] pusharglistnoret 2 ...................... <oTrack, iVolume>
+  [132] objcall 120 ............................. oTrack.setVolume(iVolume)
+  [134] getlocal 7 .............................. <oTrack>
+  [136] getlocal 6 .............................. <sAsset>
+  [138] pusharglistnoret 2 ...................... <oTrack, sAsset>
+  [140] objcall 121 ............................. oTrack.setSoundByAsset(sAsset)
+  [142] getparam 0 .............................. <me>
+  [144] getlocal 4 .............................. <oTrackNode>
+  [146] pushcons 20 ............................. <"Event">
+  [148] pusharglist 3 ........................... <me, oTrackNode, "Event">
+  [150] objcall 24 .............................. <me.getNodes(oTrackNode, "Event")>
+  [152] setlocal 8 .............................. oEventNodes = me.getNodes(oTrackNode, "Event")
+  [154] getlocal 8 .............................. <oEventNodes>
+  [156] getobjprop 65 ........................... <oEventNodes.count>
+  [158] setlocal 9 .............................. iNumEvents = oEventNodes.count
+  [160] pushint8 1 .............................. <1>
+  [162] setlocal 10
+  [164] getlocal 10
+  [166] getlocal 9 .............................. <iNumEvents>
+  [168] lteq
+  [169] jmpifz [225] ............................ repeat with ii = 1 to iNumEvents
+  [172] getlocal 8 .............................. <oEventNodes>
+  [174] getlocal 10 ............................. <ii>
+  [176] pusharglist 2 ........................... <oEventNodes, ii>
+  [178] objcall 74 .............................. <oEventNodes[ii]>
+  [180] setlocal 11 ............................. oEventNode = oEventNodes[ii]
+  [182] getlocal 11 ............................. <oEventNode>
+  [184] getchainedprop 116 ...................... <oEventNode.attributes>
+  [186] getobjprop 77 ........................... <oEventNode.attributes.beat>
+  [188] pusharglist 1 ........................... <oEventNode.attributes.beat>
+  [190] extcall 118 ............................. <integer(oEventNode.attributes.beat)>
+  [192] setlocal 12 ............................. iBeat = integer(oEventNode.attributes.beat)
+  [194] getlocal 11 ............................. <oEventNode>
+  [196] getchainedprop 116 ...................... <oEventNode.attributes>
+  [198] getobjprop 55 ........................... <oEventNode.attributes.loopCount>
+  [200] pusharglist 1 ........................... <oEventNode.attributes.loopCount>
+  [202] extcall 118 ............................. <integer(oEventNode.attributes.loopCount)>
+  [204] setlocal 13 ............................. iLoopCount = integer(oEventNode.attributes.loopCount)
+  [206] getlocal 7 .............................. <oTrack>
+  [208] getlocal 12 ............................. <iBeat>
+  [210] getlocal 13 ............................. <iLoopCount>
+  [212] pusharglistnoret 3 ...................... <oTrack, iBeat, iLoopCount>
+  [214] objcall 122 ............................. oTrack.addSoundEvent(iBeat, iLoopCount)
+  [216] pushint8 1
+  [218] getlocal 10
+  [220] add
+  [221] setlocal 10
+  [223] endrepeat [164]
+  [225] pushint8 1
+  [227] getlocal 3
+  [229] add
+  [230] setlocal 3
+  [232] endrepeat [ 76]
+  [234] ret
+end
+
+on storeSequence me
+  [  0] pushcons 19 ............................. <"XML">
+  [  2] pusharglist 1 ........................... <"XML">
+  [  4] extcall 112 ............................. <newObject("XML")>
+  [  6] setlocal 0 .............................. oXml = newObject("XML")
+  [  8] getlocal 0 .............................. <oXml>
+  [ 10] pushcons 21 ............................. <"Sequence">
+  [ 12] pusharglist 2 ........................... <oXml, "Sequence">
+  [ 14] objcall 132 ............................. <oXml.createElement("Sequence")>
+  [ 16] setlocal 1 .............................. oRoot = oXml.createElement("Sequence")
+  [ 18] getlocal 1 .............................. <oRoot>
+  [ 20] getchainedprop 116 ...................... <oRoot.attributes>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 42 ........................... <me.sName>
+  [ 26] setobjprop 109 .......................... oRoot.attributes.name = me.sName
+  [ 28] getlocal 1 .............................. <oRoot>
+  [ 30] getchainedprop 116 ...................... <oRoot.attributes>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 43 ........................... <me.sAuthor>
+  [ 36] setobjprop 117 .......................... oRoot.attributes.author = me.sAuthor
+  [ 38] pushint8 1 .............................. <1>
+  [ 40] setlocal 2
+  [ 42] getlocal 2
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pushsymb 36 ............................. <#aTracks>
+  [ 48] pusharglist 2 ........................... <me, #aTracks>
+  [ 50] objcall 65 .............................. <me.aTracks.count>
+  [ 52] lteq
+  [ 53] jmpifz [206] ............................ repeat with i = 1 to me.aTracks.count
+  [ 56] getparam 0 .............................. <me>
+  [ 58] pushsymb 36 ............................. <#aTracks>
+  [ 60] getlocal 2 .............................. <i>
+  [ 62] pusharglist 3 ........................... <me, #aTracks, i>
+  [ 64] objcall 66 .............................. <me.aTracks[i]>
+  [ 66] setlocal 3 .............................. oTrack = me.aTracks[i]
+  [ 68] getlocal 0 .............................. <oXml>
+  [ 70] pushcons 8 .............................. <"Track">
+  [ 72] pusharglist 2 ........................... <oXml, "Track">
+  [ 74] objcall 132 ............................. <oXml.createElement("Track")>
+  [ 76] setlocal 4 .............................. oTrackNode = oXml.createElement("Track")
+  [ 78] getlocal 4 .............................. <oTrackNode>
+  [ 80] getchainedprop 116 ...................... <oTrackNode.attributes>
+  [ 82] getlocal 3 .............................. <oTrack>
+  [ 84] pusharglist 1 ........................... <oTrack>
+  [ 86] objcall 103 ............................. <oTrack.getVolume()>
+  [ 88] setobjprop 52 ........................... oTrackNode.attributes.volume = oTrack.getVolume()
+  [ 90] getlocal 4 .............................. <oTrackNode>
+  [ 92] getchainedprop 116 ...................... <oTrackNode.attributes>
+  [ 94] getlocal 3 .............................. <oTrack>
+  [ 96] pusharglist 1 ........................... <oTrack>
+  [ 98] objcall 69 .............................. <oTrack.getSound()>
+  [100] pusharglist 1 ........................... <oTrack.getSound()>
+  [102] objcall 133 ............................. <oTrack.getSound().getAsset()>
+  [104] setobjprop 119 .......................... oTrackNode.attributes.asset = oTrack.getSound().getAsset()
+  [106] getlocal 3 .............................. <oTrack>
+  [108] pusharglist 1 ........................... <oTrack>
+  [110] objcall 73 .............................. <oTrack.getSoundEvents()>
+  [112] setlocal 5 .............................. aSoundEvents = oTrack.getSoundEvents()
+  [114] pushint8 1 .............................. <1>
+  [116] setlocal 6
+  [118] getlocal 6
+  [120] getlocal 5 .............................. <aSoundEvents>
+  [122] getobjprop 65 ........................... <aSoundEvents.count>
+  [124] lteq
+  [125] jmpifz [189] ............................ repeat with ii = 1 to aSoundEvents.count
+  [128] getlocal 5 .............................. <aSoundEvents>
+  [130] getlocal 6 .............................. <ii>
+  [132] pusharglist 2 ........................... <aSoundEvents, ii>
+  [134] objcall 74 .............................. <aSoundEvents[ii]>
+  [136] setlocal 7 .............................. aSoundEvent = aSoundEvents[ii]
+  [138] getlocal 0 .............................. <oXml>
+  [140] pushcons 20 ............................. <"Event">
+  [142] pusharglist 2 ........................... <oXml, "Event">
+  [144] objcall 132 ............................. <oXml.createElement("Event")>
+  [146] setlocal 8 .............................. oEventNode = oXml.createElement("Event")
+  [148] getlocal 8 .............................. <oEventNode>
+  [150] getchainedprop 116 ...................... <oEventNode.attributes>
+  [152] getlocal 7 .............................. <aSoundEvent>
+  [154] pusharglist 1 ........................... <aSoundEvent>
+  [156] objcall 75 .............................. <aSoundEvent.getBeat()>
+  [158] setobjprop 77 ........................... oEventNode.attributes.beat = aSoundEvent.getBeat()
+  [160] getlocal 8 .............................. <oEventNode>
+  [162] getchainedprop 116 ...................... <oEventNode.attributes>
+  [164] getlocal 7 .............................. <aSoundEvent>
+  [166] pusharglist 1 ........................... <aSoundEvent>
+  [168] objcall 62 .............................. <aSoundEvent.getLoopCount()>
+  [170] setobjprop 55 ........................... oEventNode.attributes.loopCount = aSoundEvent.getLoopCount()
+  [172] getlocal 4 .............................. <oTrackNode>
+  [174] getlocal 8 .............................. <oEventNode>
+  [176] pusharglistnoret 2 ...................... <oTrackNode, oEventNode>
+  [178] objcall 134 ............................. oTrackNode.appendChild(oEventNode)
+  [180] pushint8 1
+  [182] getlocal 6
+  [184] add
+  [185] setlocal 6
+  [187] endrepeat [118]
+  [189] getlocal 1 .............................. <oRoot>
+  [191] getlocal 4 .............................. <oTrackNode>
+  [193] pusharglistnoret 2 ...................... <oRoot, oTrackNode>
+  [195] objcall 134 ............................. oRoot.appendChild(oTrackNode)
+  [197] pushint8 1
+  [199] getlocal 2
+  [201] add
+  [202] setlocal 2
+  [204] endrepeat [ 42]
+  [206] getlocal 0 .............................. <oXml>
+  [208] getlocal 1 .............................. <oRoot>
+  [210] pusharglistnoret 2 ...................... <oXml, oRoot>
+  [212] objcall 134 ............................. oXml.appendChild(oRoot)
+  [214] ret
+end
+
+on getNode me, oXml, sNodeName
+  [  0] getparam 1 .............................. <oXml>
+  [  2] getobjprop 138 .......................... <oXml.childNodes>
+  [  4] setlocal 0 .............................. aChildren = oXml.childNodes
+  [  6] pushzero ................................ <0>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getlocal 0 .............................. <aChildren>
+  [ 13] getobjprop 139 .......................... <aChildren.length>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] sub ..................................... <aChildren.length - 1>
+  [ 18] lteq
+  [ 19] jmpifz [ 57] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 22] getlocal 0 .............................. <aChildren>
+  [ 24] getlocal 1 .............................. <i>
+  [ 26] pusharglist 2 ........................... <aChildren, i>
+  [ 28] objcall 74 .............................. <aChildren[i]>
+  [ 30] setlocal 2 .............................. oNode = aChildren[i]
+  [ 32] getlocal 2 .............................. <oNode>
+  [ 34] getobjprop 140 .......................... <oNode.nodeName>
+  [ 36] getparam 2 .............................. <sNodeName>
+  [ 38] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 39] jmpifz [ 48] ............................ if oNode.nodeName = sNodeName then
+  [ 42] getlocal 2 .............................. <oNode>
+  [ 44] pusharglistnoret 1 ...................... <oNode>
+  [ 46] extcall 46 .............................. return oNode
+  [ 48] pushint8 1
+  [ 50] getlocal 1
+  [ 52] add
+  [ 53] setlocal 1
+  [ 55] endrepeat [  9]
+  [ 57] ret
+end
+
+on getNodes me, oXml, sNodeName
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNodes = []
+  [  5] getparam 1 .............................. <oXml>
+  [  7] getobjprop 138 .......................... <oXml.childNodes>
+  [  9] setlocal 1 .............................. aChildren = oXml.childNodes
+  [ 11] pushzero ................................ <0>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] getlocal 1 .............................. <aChildren>
+  [ 18] getobjprop 139 .......................... <aChildren.length>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] sub ..................................... <aChildren.length - 1>
+  [ 23] lteq
+  [ 24] jmpifz [ 64] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 27] getlocal 1 .............................. <aChildren>
+  [ 29] getlocal 2 .............................. <i>
+  [ 31] pusharglist 2 ........................... <aChildren, i>
+  [ 33] objcall 74 .............................. <aChildren[i]>
+  [ 35] setlocal 3 .............................. oNode = aChildren[i]
+  [ 37] getlocal 3 .............................. <oNode>
+  [ 39] getobjprop 140 .......................... <oNode.nodeName>
+  [ 41] getparam 2 .............................. <sNodeName>
+  [ 43] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 44] jmpifz [ 55] ............................ if oNode.nodeName = sNodeName then
+  [ 47] getlocal 0 .............................. <aNodes>
+  [ 49] getlocal 3 .............................. <oNode>
+  [ 51] pusharglistnoret 2 ...................... <aNodes, oNode>
+  [ 53] objcall 57 .............................. aNodes.add(oNode)
+  [ 55] pushint8 1
+  [ 57] getlocal 2
+  [ 59] add
+  [ 60] setlocal 2
+  [ 62] endrepeat [ 14]
+  [ 64] getlocal 0 .............................. <aNodes>
+  [ 66] pusharglistnoret 1 ...................... <aNodes>
+  [ 68] extcall 46 .............................. return aNodes
+  [ 70] ret
+end
+
+on resetVolume me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 36 ............................. <#aTracks>
+  [ 10] pusharglist 2 ........................... <me, #aTracks>
+  [ 12] objcall 65 .............................. <me.aTracks.count>
+  [ 14] lteq
+  [ 15] jmpifz [ 45] ............................ repeat with i = 1 to me.aTracks.count
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 36 ............................. <#aTracks>
+  [ 22] getlocal 0 .............................. <i>
+  [ 24] pusharglist 3 ........................... <me, #aTracks, i>
+  [ 26] objcall 66 .............................. <me.aTracks[i]>
+  [ 28] setlocal 1 .............................. oTrack = me.aTracks[i]
+  [ 30] getlocal 1 .............................. <oTrack>
+  [ 32] pusharglistnoret 1 ...................... <oTrack>
+  [ 34] objcall 232 ............................. oTrack.resetVolume()
+  [ 36] pushint8 1
+  [ 38] getlocal 0
+  [ 40] add
+  [ 41] setlocal 0
+  [ 43] endrepeat [  4]
+  [ 45] ret
+end
+
+on loadOddCastSequence me, sData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 22 ............................. <"loadOddCastSequence() ">
+  [  4] getparam 1 .............................. <sData>
+  [  6] joinstr ................................. <"loadOddCastSequence() " & sData>
+  [  7] pusharglistnoret 2 ...................... <me, "loadOddCastSequence() " & sData>
+  [  9] objcall 1 ............................... me.debug("loadOddCastSequence() " & sData)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] objcall 3 ............................... me.initTracks()
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getparam 1 .............................. <sData>
+  [ 21] pusharglist 2 ........................... <me, sData>
+  [ 23] objcall 26 .............................. <me.parseEDL(sData)>
+  [ 25] setlocal 0 .............................. scList = me.parseEDL(sData)
+  [ 27] pushint8 1 .............................. <1>
+  [ 29] setlocal 1
+  [ 31] getlocal 1
+  [ 33] getlocal 0 .............................. <scList>
+  [ 35] getobjprop 65 ........................... <scList.count>
+  [ 37] lteq
+  [ 38] jmpifz [293] ............................ repeat with iTrack = 1 to scList.count
+  [ 41] getlocal 0 .............................. <scList>
+  [ 43] getlocal 1 .............................. <iTrack>
+  [ 45] pusharglist 2 ........................... <scList, iTrack>
+  [ 47] objcall 74 .............................. <scList[iTrack]>
+  [ 49] setlocal 2 .............................. scTrack = scList[iTrack]
+  [ 51] getlocal 2 .............................. <scTrack>
+  [ 53] pushsymb 42 ............................. <#sName>
+  [ 55] pusharglist 2 ........................... <scTrack, #sName>
+  [ 57] objcall 74 .............................. <scTrack[#sName]>
+  [ 59] setlocal 3 .............................. sAsset = scTrack[#sName]
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getlocal 2 .............................. <scTrack>
+  [ 65] pushsymb 146 ............................ <#svol>
+  [ 67] pusharglist 2 ........................... <scTrack, #svol>
+  [ 69] objcall 74 .............................. <scTrack[#svol]>
+  [ 71] pusharglist 1 ........................... <scTrack[#svol]>
+  [ 73] extcall 145 ............................. <float(scTrack[#svol])>
+  [ 75] pushfloat32 0.0 ......................... <0.0>
+  [ 80] pushfloat32 100.0 ....................... <100.0>
+  [ 85] pushfloat32 0.0 ......................... <0.0>
+  [ 90] pushfloat32 255.0 ....................... <255.0>
+  [ 95] pusharglist 6 ........................... <me, float(scTrack[#svol]), 0.0, 100.0, 0.0, 255.0>
+  [ 97] objcall 29 .............................. <me.mapPoints(float(scTrack[#svol]), 0.0, 100.0, 0.0, 255.0)>
+  [ 99] setlocal 4 .............................. iVolume = me.mapPoints(float(scTrack[#svol]), 0.0, 100.0, 0.0, 255.0)
+  [101] getlocal 2 .............................. <scTrack>
+  [103] pushsymb 147 ............................ <#loopNum>
+  [105] pusharglist 2 ........................... <scTrack, #loopNum>
+  [107] objcall 74 .............................. <scTrack[#loopNum]>
+  [109] setlocal 5 .............................. aLoopList = scTrack[#loopNum]
+  [111] getlocal 2 .............................. <scTrack>
+  [113] pushsymb 148 ............................ <#sttime>
+  [115] pusharglist 2 ........................... <scTrack, #sttime>
+  [117] objcall 74 .............................. <scTrack[#sttime]>
+  [119] setlocal 6 .............................. aStartTimes = scTrack[#sttime]
+  [121] getlocal 2 .............................. <scTrack>
+  [123] pushsymb 149 ............................ <#sptime>
+  [125] pusharglist 2 ........................... <scTrack, #sptime>
+  [127] objcall 74 .............................. <scTrack[#sptime]>
+  [129] setlocal 7 .............................. aStopTimes = scTrack[#sptime]
+  [131] getlocal 1 .............................. <iTrack>
+  [133] pushint8 6 .............................. <6>
+  [135] eq ...................................... <iTrack = 6>
+  [136] jmpifz [143] ............................ if iTrack = 6 then
+  [139] pusharglistnoret 0 ...................... <>
+  [141] extcall 150 ............................. nothing()
+  [143] getparam 0 .............................. <me>
+  [145] pushsymb 36 ............................. <#aTracks>
+  [147] getlocal 1 .............................. <iTrack>
+  [149] pusharglist 3 ........................... <me, #aTracks, iTrack>
+  [151] objcall 66 .............................. <me.aTracks[iTrack]>
+  [153] setlocal 8 .............................. oTrack = me.aTracks[iTrack]
+  [155] getlocal 8 .............................. <oTrack>
+  [157] pusharglistnoret 1 ...................... <oTrack>
+  [159] objcall 219 ............................. oTrack.reset()
+  [161] getlocal 8 .............................. <oTrack>
+  [163] getlocal 4 .............................. <iVolume>
+  [165] pusharglistnoret 2 ...................... <oTrack, iVolume>
+  [167] objcall 120 ............................. oTrack.setVolume(iVolume)
+  [169] getlocal 8 .............................. <oTrack>
+  [171] getlocal 3 .............................. <sAsset>
+  [173] pusharglistnoret 2 ...................... <oTrack, sAsset>
+  [175] objcall 121 ............................. oTrack.setSoundByAsset(sAsset)
+  [177] getlocal 8 .............................. <oTrack>
+  [179] pusharglist 1 ........................... <oTrack>
+  [181] objcall 69 .............................. <oTrack.getSound()>
+  [183] pusharglist 1 ........................... <oTrack.getSound()>
+  [185] objcall 61 .............................. <oTrack.getSound().getBeats()>
+  [187] setlocal 9 .............................. iSoundBeatCount = oTrack.getSound().getBeats()
+  [189] getlocal 5 .............................. <aLoopList>
+  [191] getobjprop 65 ........................... <aLoopList.count>
+  [193] setlocal 10 ............................. iNumEvents = aLoopList.count
+  [195] pushint8 1 .............................. <1>
+  [197] setlocal 11
+  [199] getlocal 11
+  [201] getlocal 10 ............................. <iNumEvents>
+  [203] lteq
+  [204] jmpifz [283] ............................ repeat with iEvent = 1 to iNumEvents
+  [207] getlocal 5 .............................. <aLoopList>
+  [209] getlocal 11 ............................. <iEvent>
+  [211] pusharglist 2 ........................... <aLoopList, iEvent>
+  [213] objcall 74 .............................. <aLoopList[iEvent]>
+  [215] setlocal 12 ............................. iEventLoopCount = aLoopList[iEvent]
+  [217] getlocal 6 .............................. <aStartTimes>
+  [219] getlocal 11 ............................. <iEvent>
+  [221] pusharglist 2 ........................... <aStartTimes, iEvent>
+  [223] objcall 74 .............................. <aStartTimes[iEvent]>
+  [225] setlocal 13 ............................. iEventStartTime = aStartTimes[iEvent]
+  [227] getlocal 7 .............................. <aStopTimes>
+  [229] getlocal 11 ............................. <iEvent>
+  [231] pusharglist 2 ........................... <aStopTimes, iEvent>
+  [233] objcall 74 .............................. <aStopTimes[iEvent]>
+  [235] setlocal 14 ............................. iStopTime = aStopTimes[iEvent]
+  [237] getparam 0 .............................. <me>
+  [239] getlocal 13 ............................. <iEventStartTime>
+  [241] pusharglist 2 ........................... <me, iEventStartTime>
+  [243] objcall 7 ............................... <me.getBeatFromTime(iEventStartTime)>
+  [245] setlocal 15 ............................. iBeat = me.getBeatFromTime(iEventStartTime)
+  [247] getlocal 15 ............................. <iBeat>
+  [249] getlocal 9 .............................. <iSoundBeatCount>
+  [251] mod ..................................... <iBeat mod iSoundBeatCount>
+  [252] pushzero ................................ <0>
+  [253] nteq .................................... <(iBeat mod iSoundBeatCount) <> 0>
+  [254] jmpifz [264] ............................ if (iBeat mod iSoundBeatCount) <> 0 then
+  [257] getlocal 15 ............................. <iBeat>
+  [259] pushint8 1 .............................. <1>
+  [261] add ..................................... <iBeat + 1>
+  [262] setlocal 15 ............................. iBeat = iBeat + 1
+  [264] getlocal 8 .............................. <oTrack>
+  [266] getlocal 15 ............................. <iBeat>
+  [268] getlocal 12 ............................. <iEventLoopCount>
+  [270] pusharglistnoret 3 ...................... <oTrack, iBeat, iEventLoopCount>
+  [272] objcall 122 ............................. oTrack.addSoundEvent(iBeat, iEventLoopCount)
+  [274] pushint8 1
+  [276] getlocal 11
+  [278] add
+  [279] setlocal 11
+  [281] endrepeat [199]
+  [283] pushint8 1
+  [285] getlocal 1
+  [287] add
+  [288] setlocal 1
+  [290] endrepeat [ 31]
+  [293] ret
+end
+
+on parseEDL me, sData
+  [  0] getparam 1 .............................. <sData>
+  [  2] setlocal 0 .............................. tmpv = sData
+  [  4] pusharglist 0 ........................... <[]>
+  [  6] pushlist ................................ <[]>
+  [  7] setlocal 1 .............................. scList = []
+  [  9] getparam 0 .............................. <me>
+  [ 11] getlocal 0 .............................. <tmpv>
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] pushcons 23 ............................. <"^">
+  [ 17] getlocal 0 .............................. <tmpv>
+  [ 19] pusharglist 2 ........................... <"^", tmpv>
+  [ 21] extcall 162 ............................. <offset("^", tmpv)>
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] sub ..................................... <offset("^", tmpv) - 1>
+  [ 26] pusharglist 3 ........................... <tmpv, 1, offset("^", tmpv) - 1>
+  [ 28] extcall 161 ............................. <chars(tmpv, 1, offset("^", tmpv) - 1)>
+  [ 30] pusharglistnoret 2 ...................... <me, chars(tmpv, 1, offset("^", tmpv) - 1)>
+  [ 32] objcall 27 .............................. me.setClassProps(chars(tmpv, 1, offset("^", tmpv) - 1))
+  [ 34] getlocal 0 .............................. <tmpv>
+  [ 36] pushcons 23 ............................. <"^">
+  [ 38] getlocal 0 .............................. <tmpv>
+  [ 40] pusharglist 2 ........................... <"^", tmpv>
+  [ 42] extcall 162 ............................. <offset("^", tmpv)>
+  [ 44] pushint8 1 .............................. <1>
+  [ 46] add ..................................... <offset("^", tmpv) + 1>
+  [ 47] getlocal 0 .............................. <tmpv>
+  [ 49] getobjprop 139 .......................... <tmpv.length>
+  [ 51] pusharglist 3 ........................... <tmpv, offset("^", tmpv) + 1, tmpv.length>
+  [ 53] extcall 161 ............................. <chars(tmpv, offset("^", tmpv) + 1, tmpv.length)>
+  [ 55] setlocal 0 .............................. tmpv = chars(tmpv, offset("^", tmpv) + 1, tmpv.length)
+  [ 57] getlocal 0 .............................. <tmpv>
+  [ 59] getobjprop 139 .......................... <tmpv.length>
+  [ 61] pushzero ................................ <0>
+  [ 62] gt ...................................... <tmpv.length > 0>
+  [ 63] jmpifz [507] ............................ repeat while tmpv.length > 0
+  [ 66] getlocal 0 .............................. <tmpv>
+  [ 68] pushint8 1 .............................. <1>
+  [ 70] pushcons 23 ............................. <"^">
+  [ 72] getlocal 0 .............................. <tmpv>
+  [ 74] pusharglist 2 ........................... <"^", tmpv>
+  [ 76] extcall 162 ............................. <offset("^", tmpv)>
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] sub ..................................... <offset("^", tmpv) - 1>
+  [ 81] pusharglist 3 ........................... <tmpv, 1, offset("^", tmpv) - 1>
+  [ 83] extcall 161 ............................. <chars(tmpv, 1, offset("^", tmpv) - 1)>
+  [ 85] setlocal 2 .............................. tr1 = chars(tmpv, 1, offset("^", tmpv) - 1)
+  [ 87] getlocal 0 .............................. <tmpv>
+  [ 89] pushcons 23 ............................. <"^">
+  [ 91] getlocal 0 .............................. <tmpv>
+  [ 93] pusharglist 2 ........................... <"^", tmpv>
+  [ 95] extcall 162 ............................. <offset("^", tmpv)>
+  [ 97] pushint8 1 .............................. <1>
+  [ 99] add ..................................... <offset("^", tmpv) + 1>
+  [100] getlocal 0 .............................. <tmpv>
+  [102] getobjprop 139 .......................... <tmpv.length>
+  [104] pusharglist 3 ........................... <tmpv, offset("^", tmpv) + 1, tmpv.length>
+  [106] extcall 161 ............................. <chars(tmpv, offset("^", tmpv) + 1, tmpv.length)>
+  [108] setlocal 0 .............................. tmpv = chars(tmpv, offset("^", tmpv) + 1, tmpv.length)
+  [110] pushint8 1 .............................. <1>
+  [112] setlocal 3 .............................. virgin = 1
+  [114] pushsymb 163 ............................ <#stCheckNum>
+  [116] pushint8 1 .............................. <1>
+  [118] pushsymb 164 ............................ <#spCheckNum>
+  [120] pushint8 1 .............................. <1>
+  [122] pusharglist 4 ........................... <[#stCheckNum: 1, #spCheckNum: 1]>
+  [124] pushproplist ............................ <[#stCheckNum: 1, #spCheckNum: 1]>
+  [125] setlocal 4 .............................. tmplist1 = [#stCheckNum: 1, #spCheckNum: 1]
+  [127] pusharglist 0 ........................... <[]>
+  [129] pushlist ................................ <[]>
+  [130] setlocal 5 .............................. sttmplist = []
+  [132] pusharglist 0 ........................... <[]>
+  [134] pushlist ................................ <[]>
+  [135] setlocal 6 .............................. lptmplist = []
+  [137] pusharglist 0 ........................... <[]>
+  [139] pushlist ................................ <[]>
+  [140] setlocal 7 .............................. sptmplist = []
+  [142] getlocal 2 .............................. <tr1>
+  [144] getobjprop 139 .......................... <tr1.length>
+  [146] pushzero ................................ <0>
+  [147] gt ...................................... <tr1.length > 0>
+  [148] jmpifz [466] ............................ repeat while tr1.length > 0
+  [151] getlocal 2 .............................. <tr1>
+  [153] pushint8 1 .............................. <1>
+  [155] pushcons 24 ............................. <"{">
+  [157] getlocal 2 .............................. <tr1>
+  [159] pusharglist 2 ........................... <"{", tr1>
+  [161] extcall 162 ............................. <offset("{", tr1)>
+  [163] pushint8 1 .............................. <1>
+  [165] sub ..................................... <offset("{", tr1) - 1>
+  [166] pusharglist 3 ........................... <tr1, 1, offset("{", tr1) - 1>
+  [168] extcall 161 ............................. <chars(tr1, 1, offset("{", tr1) - 1)>
+  [170] setlocal 8 .............................. tr2 = chars(tr1, 1, offset("{", tr1) - 1)
+  [172] getlocal 2 .............................. <tr1>
+  [174] pushcons 24 ............................. <"{">
+  [176] getlocal 2 .............................. <tr1>
+  [178] pusharglist 2 ........................... <"{", tr1>
+  [180] extcall 162 ............................. <offset("{", tr1)>
+  [182] pushint8 1 .............................. <1>
+  [184] add ..................................... <offset("{", tr1) + 1>
+  [185] getlocal 2 .............................. <tr1>
+  [187] getobjprop 139 .......................... <tr1.length>
+  [189] pusharglist 3 ........................... <tr1, offset("{", tr1) + 1, tr1.length>
+  [191] extcall 161 ............................. <chars(tr1, offset("{", tr1) + 1, tr1.length)>
+  [193] setlocal 2 .............................. tr1 = chars(tr1, offset("{", tr1) + 1, tr1.length)
+  [195] getlocal 3 .............................. <virgin>
+  [197] pushint8 1 .............................. <1>
+  [199] eq ...................................... <virgin = 1>
+  [200] jmpifz [321] ............................ if virgin = 1 then
+  [203] pushzero ................................ <0>
+  [204] setlocal 3 .............................. virgin = 0
+  [206] pushint8 1 .............................. <1>
+  [208] setlocal 9
+  [210] getlocal 9
+  [212] pushint8 4 .............................. <4>
+  [214] lteq
+  [215] jmpifz [318] ............................ repeat with i = 1 to 4
+  [218] getlocal 8 .............................. <tr2>
+  [220] pushint8 1 .............................. <1>
+  [222] pushcons 25 ............................. <",">
+  [224] getlocal 8 .............................. <tr2>
+  [226] pusharglist 2 ........................... <",", tr2>
+  [228] extcall 162 ............................. <offset(",", tr2)>
+  [230] pushint8 1 .............................. <1>
+  [232] sub ..................................... <offset(",", tr2) - 1>
+  [233] pusharglist 3 ........................... <tr2, 1, offset(",", tr2) - 1>
+  [235] extcall 161 ............................. <chars(tr2, 1, offset(",", tr2) - 1)>
+  [237] setlocal 10 ............................. tr3 = chars(tr2, 1, offset(",", tr2) - 1)
+  [239] getlocal 8 .............................. <tr2>
+  [241] pushcons 25 ............................. <",">
+  [243] getlocal 8 .............................. <tr2>
+  [245] pusharglist 2 ........................... <",", tr2>
+  [247] extcall 162 ............................. <offset(",", tr2)>
+  [249] pushint8 1 .............................. <1>
+  [251] add ..................................... <offset(",", tr2) + 1>
+  [252] getlocal 8 .............................. <tr2>
+  [254] getobjprop 139 .......................... <tr2.length>
+  [256] pusharglist 3 ........................... <tr2, offset(",", tr2) + 1, tr2.length>
+  [258] extcall 161 ............................. <chars(tr2, offset(",", tr2) + 1, tr2.length)>
+  [260] setlocal 8 .............................. tr2 = chars(tr2, offset(",", tr2) + 1, tr2.length)
+  [262] getlocal 9 .............................. <i>
+  [264] peek 0 .................................. case i of
+  [266] pushint8 2 .............................. <2>
+  [268] eq
+  [269] jmpifz [289] ............................ (case) 2:
+  [272] getlocal 4 .............................. <tmplist1>
+  [274] pushsymb 146 ............................ <#svol>
+  [276] getlocal 10 ............................. <tr3>
+  [278] pusharglist 1 ........................... <tr3>
+  [280] extcall 118 ............................. <integer(tr3)>
+  [282] pusharglistnoret 3 ...................... <tmplist1, #svol, integer(tr3)>
+  [284] objcall 165 ............................. tmplist1.addProp(#svol, integer(tr3))
+  [286] jmp [307]
+  [289] peek 0
+  [291] pushint8 4 .............................. <4>
+  [293] eq
+  [294] jmpifz [307] ............................ (case) 4:
+  [297] getlocal 4 .............................. <tmplist1>
+  [299] pushsymb 42 ............................. <#sName>
+  [301] getlocal 10 ............................. <tr3>
+  [303] pusharglistnoret 3 ...................... <tmplist1, #sName, tr3>
+  [305] objcall 165 ............................. tmplist1.addProp(#sName, tr3)
+  [307] pop 1 ................................... end case
+  [309] pushint8 1
+  [311] getlocal 9
+  [313] add
+  [314] setlocal 9
+  [316] endrepeat [210]
+  [318] jmp [463] ............................... next repeat
+  [321] pushint8 1 .............................. <1>
+  [323] setlocal 9
+  [325] getlocal 9
+  [327] pushint8 2 .............................. <2>
+  [329] lteq
+  [330] jmpifz [433] ............................ repeat with i = 1 to 2
+  [333] getlocal 8 .............................. <tr2>
+  [335] pushint8 1 .............................. <1>
+  [337] pushcons 25 ............................. <",">
+  [339] getlocal 8 .............................. <tr2>
+  [341] pusharglist 2 ........................... <",", tr2>
+  [343] extcall 162 ............................. <offset(",", tr2)>
+  [345] pushint8 1 .............................. <1>
+  [347] sub ..................................... <offset(",", tr2) - 1>
+  [348] pusharglist 3 ........................... <tr2, 1, offset(",", tr2) - 1>
+  [350] extcall 161 ............................. <chars(tr2, 1, offset(",", tr2) - 1)>
+  [352] setlocal 10 ............................. tr3 = chars(tr2, 1, offset(",", tr2) - 1)
+  [354] getlocal 8 .............................. <tr2>
+  [356] pushcons 25 ............................. <",">
+  [358] getlocal 8 .............................. <tr2>
+  [360] pusharglist 2 ........................... <",", tr2>
+  [362] extcall 162 ............................. <offset(",", tr2)>
+  [364] pushint8 1 .............................. <1>
+  [366] add ..................................... <offset(",", tr2) + 1>
+  [367] getlocal 8 .............................. <tr2>
+  [369] getobjprop 139 .......................... <tr2.length>
+  [371] pusharglist 3 ........................... <tr2, offset(",", tr2) + 1, tr2.length>
+  [373] extcall 161 ............................. <chars(tr2, offset(",", tr2) + 1, tr2.length)>
+  [375] setlocal 8 .............................. tr2 = chars(tr2, offset(",", tr2) + 1, tr2.length)
+  [377] getlocal 9 .............................. <i>
+  [379] peek 0 .................................. case i of
+  [381] pushint8 1 .............................. <1>
+  [383] eq
+  [384] jmpifz [402] ............................ (case) 1:
+  [387] getlocal 6 .............................. <lptmplist>
+  [389] getlocal 10 ............................. <tr3>
+  [391] pusharglist 1 ........................... <tr3>
+  [393] extcall 118 ............................. <integer(tr3)>
+  [395] pusharglistnoret 2 ...................... <lptmplist, integer(tr3)>
+  [397] objcall 57 .............................. lptmplist.add(integer(tr3))
+  [399] jmp [422]
+  [402] peek 0
+  [404] pushint8 2 .............................. <2>
+  [406] eq
+  [407] jmpifz [422] ............................ (case) 2:
+  [410] getlocal 5 .............................. <sttmplist>
+  [412] getlocal 10 ............................. <tr3>
+  [414] pusharglist 1 ........................... <tr3>
+  [416] extcall 118 ............................. <integer(tr3)>
+  [418] pusharglistnoret 2 ...................... <sttmplist, integer(tr3)>
+  [420] objcall 57 .............................. sttmplist.add(integer(tr3))
+  [422] pop 1 ................................... end case
+  [424] pushint8 1
+  [426] getlocal 9
+  [428] add
+  [429] setlocal 9
+  [431] endrepeat [325]
+  [433] getlocal 7 .............................. <sptmplist>
+  [435] getlocal 4 .............................. <tmplist1>
+  [437] getobjprop 42 ........................... <tmplist1.sName>
+  [439] pusharglist 1 ........................... <tmplist1.sName>
+  [441] extcall 53 .............................. <member(tmplist1.sName)>
+  [443] getobjprop 72 ........................... <member(tmplist1.sName).duration>
+  [445] getlocal 6 .............................. <lptmplist>
+  [447] pusharglist 1 ........................... <lptmplist>
+  [449] objcall 166 ............................. <lptmplist.getLast()>
+  [451] mul ..................................... <member(tmplist1.sName).duration * lptmplist.getLast()>
+  [452] getlocal 5 .............................. <sttmplist>
+  [454] pusharglist 1 ........................... <sttmplist>
+  [456] objcall 166 ............................. <sttmplist.getLast()>
+  [458] add ..................................... <(member(tmplist1.sName).duration * lptmplist.getLast()) + sttmplist.getLast()>
+  [459] pusharglistnoret 2 ...................... <sptmplist, (member(tmplist1.sName).duration * lptmplist.getLast()) + sttmplist.getLast()>
+  [461] objcall 57 .............................. sptmplist.add((member(tmplist1.sName).duration * lptmplist.getLast()) + sttmplist.getLast())
+  [463] endrepeat [142]
+  [466] getlocal 4 .............................. <tmplist1>
+  [468] pushsymb 147 ............................ <#loopNum>
+  [470] getlocal 6 .............................. <lptmplist>
+  [472] pusharglistnoret 3 ...................... <tmplist1, #loopNum, lptmplist>
+  [474] objcall 165 ............................. tmplist1.addProp(#loopNum, lptmplist)
+  [476] getlocal 4 .............................. <tmplist1>
+  [478] pushsymb 148 ............................ <#sttime>
+  [480] getlocal 5 .............................. <sttmplist>
+  [482] pusharglistnoret 3 ...................... <tmplist1, #sttime, sttmplist>
+  [484] objcall 165 ............................. tmplist1.addProp(#sttime, sttmplist)
+  [486] getlocal 4 .............................. <tmplist1>
+  [488] pushsymb 149 ............................ <#sptime>
+  [490] getlocal 7 .............................. <sptmplist>
+  [492] pusharglistnoret 3 ...................... <tmplist1, #sptime, sptmplist>
+  [494] objcall 165 ............................. tmplist1.addProp(#sptime, sptmplist)
+  [496] getlocal 1 .............................. <scList>
+  [498] getlocal 4 .............................. <tmplist1>
+  [500] pusharglistnoret 2 ...................... <scList, tmplist1>
+  [502] objcall 57 .............................. scList.add(tmplist1)
+  [504] endrepeat [ 57]
+  [507] getlocal 1 .............................. <scList>
+  [509] pusharglistnoret 1 ...................... <scList>
+  [511] extcall 46 .............................. return scList
+  [513] ret
+end
+
+on setClassProps me, textIn
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] pushint8 2 .............................. <2>
+  [  8] lteq
+  [  9] jmpifz [ 88] ............................ repeat with i = 1 to 2
+  [ 12] getparam 1 .............................. <textIn>
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] pushcons 25 ............................. <",">
+  [ 18] getparam 1 .............................. <textIn>
+  [ 20] pusharglist 2 ........................... <",", textIn>
+  [ 22] extcall 162 ............................. <offset(",", textIn)>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] sub ..................................... <offset(",", textIn) - 1>
+  [ 27] pusharglist 3 ........................... <textIn, 1, offset(",", textIn) - 1>
+  [ 29] extcall 161 ............................. <chars(textIn, 1, offset(",", textIn) - 1)>
+  [ 31] setlocal 1 .............................. tmpt = chars(textIn, 1, offset(",", textIn) - 1)
+  [ 33] getparam 1 .............................. <textIn>
+  [ 35] pushcons 25 ............................. <",">
+  [ 37] getparam 1 .............................. <textIn>
+  [ 39] pusharglist 2 ........................... <",", textIn>
+  [ 41] extcall 162 ............................. <offset(",", textIn)>
+  [ 43] pushint8 1 .............................. <1>
+  [ 45] add ..................................... <offset(",", textIn) + 1>
+  [ 46] getparam 1 .............................. <textIn>
+  [ 48] getobjprop 139 .......................... <textIn.length>
+  [ 50] pusharglist 3 ........................... <textIn, offset(",", textIn) + 1, textIn.length>
+  [ 52] extcall 161 ............................. <chars(textIn, offset(",", textIn) + 1, textIn.length)>
+  [ 54] setparam 1 .............................. textIn = chars(textIn, offset(",", textIn) + 1, textIn.length)
+  [ 56] getlocal 0 .............................. <i>
+  [ 58] peek 0 .................................. case i of
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] eq
+  [ 63] jmpifz [ 69] ............................ (case) 1:
+  [ 66] jmp [ 77]
+  [ 69] peek 0
+  [ 71] pushint8 2 .............................. <2>
+  [ 73] eq
+  [ 74] jmpifz [ 77] ............................ (case) 2:
+  [ 77] pop 1 ................................... end case
+  [ 79] pushint8 1
+  [ 81] getlocal 0
+  [ 83] add
+  [ 84] setlocal 0
+  [ 86] endrepeat [  4]
+  [ 88] ret
+end
+
+on printEdl me, scList
+  [  0] pushcons 26 ............................. <"[ EDL ]">
+  [  2] pusharglistnoret 1 ...................... <"[ EDL ]">
+  [  4] extcall 48 .............................. put "[ EDL ]"
+  [  6] pushint8 1 .............................. <1>
+  [  8] setlocal 0
+  [ 10] getlocal 0
+  [ 12] getparam 1 .............................. <scList>
+  [ 14] pusharglist 1 ........................... <scList>
+  [ 16] objcall 65 .............................. <scList.count()>
+  [ 18] lteq
+  [ 19] jmpifz [ 43] ............................ repeat with i = 1 to scList.count()
+  [ 22] getparam 1 .............................. <scList>
+  [ 24] getlocal 0 .............................. <i>
+  [ 26] pusharglist 2 ........................... <scList, i>
+  [ 28] objcall 74 .............................. <scList[i]>
+  [ 30] pusharglistnoret 1 ...................... <scList[i]>
+  [ 32] extcall 48 .............................. put scList[i]
+  [ 34] pushint8 1
+  [ 36] getlocal 0
+  [ 38] add
+  [ 39] setlocal 0
+  [ 41] endrepeat [ 10]
+  [ 43] ret
+end
+
+on mapPoints me, inVal, inLow, inHi, outLow, outHi
+  [  0] getparam 1 .............................. <inVal>
+  [  2] getparam 2 .............................. <inLow>
+  [  4] sub ..................................... <inVal - inLow>
+  [  5] getparam 3 .............................. <inHi>
+  [  7] getparam 2 .............................. <inLow>
+  [  9] sub ..................................... <inHi - inLow>
+  [ 10] div ..................................... <(inVal - inLow) / (inHi - inLow)>
+  [ 11] getparam 5 .............................. <outHi>
+  [ 13] getparam 4 .............................. <outLow>
+  [ 15] sub ..................................... <outHi - outLow>
+  [ 16] mul ..................................... <(inVal - inLow) / (inHi - inLow) * (outHi - outLow)>
+  [ 17] getparam 4 .............................. <outLow>
+  [ 19] add ..................................... <((inVal - inLow) / (inHi - inLow) * (outHi - outLow)) + outLow>
+  [ 20] setlocal 0 .............................. outVal = ((inVal - inLow) / (inHi - inLow) * (outHi - outLow)) + outLow
+  [ 22] getlocal 0 .............................. <outVal>
+  [ 24] pusharglistnoret 1 ...................... <outVal>
+  [ 26] extcall 46 .............................. return outVal
+  [ 28] ret
+end

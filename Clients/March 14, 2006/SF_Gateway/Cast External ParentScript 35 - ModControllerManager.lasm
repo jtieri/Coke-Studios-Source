@@ -1,0 +1,95 @@
+property aControllers, iNumControllers, bDebug, oCFHController
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 85 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 5 .............................. <5>
+  [ 10] setobjprop 1169 ......................... me.iNumControllers = 5
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pusharglistnoret 1 ...................... <me>
+  [ 17] objcall 1167 ............................ me.setControllers()
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] extcall 121 ............................. return me
+  [ 26] ret
+end
+
+on getCFHController me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1170 ......................... <me.oCFHController>
+  [  5] pusharglist 1 ........................... <me.oCFHController>
+  [  7] extcall 135 ............................. <voidp(me.oCFHController)>
+  [  9] jmpifz [ 27] ............................ if voidp(me.oCFHController) then
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushcons 0 .............................. <"ModCFHController">
+  [ 16] pusharglist 1 ........................... <"ModCFHController">
+  [ 18] extcall 101 ............................. <script("ModCFHController")>
+  [ 20] pusharglist 1 ........................... <script("ModCFHController")>
+  [ 22] objcall 99 .............................. <script("ModCFHController").new()>
+  [ 24] setobjprop 1170 ......................... me.oCFHController = script("ModCFHController").new()
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 1170 ......................... <me.oCFHController>
+  [ 32] pusharglistnoret 1 ...................... <me.oCFHController>
+  [ 34] extcall 121 ............................. return me.oCFHController
+  [ 36] ret
+end
+
+on setControllers me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 1123 ......................... me.aControllers = []
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 1169 ......................... <me.iNumControllers>
+  [ 19] lteq
+  [ 20] jmpifz [ 57] ............................ repeat with i = 1 to me.iNumControllers
+  [ 23] pushcons 1 .............................. <"ModStudioController">
+  [ 25] pusharglist 1 ........................... <"ModStudioController">
+  [ 27] extcall 101 ............................. <script("ModStudioController")>
+  [ 29] getlocal 0 .............................. <i>
+  [ 31] pusharglist 2 ........................... <script("ModStudioController"), i>
+  [ 33] objcall 99 .............................. <script("ModStudioController").new(i)>
+  [ 35] setlocal 1 .............................. oController = script("ModStudioController").new(i)
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 1123 ..................... <me.aControllers>
+  [ 42] getlocal 1 .............................. <oController>
+  [ 44] pusharglistnoret 2 ...................... <me.aControllers, oController>
+  [ 46] objcall 241 ............................. me.aControllers.add(oController)
+  [ 48] pushint8 1
+  [ 50] getlocal 0
+  [ 52] add
+  [ 53] setlocal 0
+  [ 55] endrepeat [ 12]
+  [ 57] ret
+end
+
+on getControllerBySlot me, iSlot
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 1123 ........................... <#aControllers>
+  [  5] getparam 1 .............................. <iSlot>
+  [  7] pusharglist 3 ........................... <me, #aControllers, iSlot>
+  [  9] objcall 375 ............................. <me.aControllers[iSlot]>
+  [ 12] pusharglistnoret 1 ...................... <me.aControllers[iSlot]>
+  [ 14] extcall 121 ............................. return me.aControllers[iSlot]
+  [ 16] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 85 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 21] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 2 .............................. <"ModSessionManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"ModSessionManager: " & sMessage>
+  [ 15] getparam 2 .............................. <bForce>
+  [ 17] pusharglistnoret 2 ...................... <"ModSessionManager: " & sMessage, bForce>
+  [ 19] extcall 118 ............................. put "ModSessionManager: " & sMessage, bForce
+  [ 21] ret
+end

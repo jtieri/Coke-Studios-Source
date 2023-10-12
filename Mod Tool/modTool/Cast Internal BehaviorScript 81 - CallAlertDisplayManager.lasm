@@ -1,0 +1,969 @@
+property pSprite, aCallAlertList, aCallList, aAlertList, pCallAlertList, iCallAlertNum, iCallAlertTotalNum, pDisplayIndexSprite, pPublicStudioData, pTime, pInterval, pStudioID, bDebug, bSoundOn, iCallID, aDeletedIDList
+global oCallAlertDisplayManager, oUserDisplayManager, oStudioManager, oDenizenManager
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 10 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] getobjprop 13 ........................... <me.spriteNum>
+  [ 10] pusharglist 1 ........................... <me.spriteNum>
+  [ 12] extcall 12 .............................. <sprite(me.spriteNum)>
+  [ 14] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 16] getprop 11 .............................. <pSprite>
+  [ 18] getchainedprop 14 ....................... <pSprite.member>
+  [ 20] pushcons 0 .............................. <EMPTY>
+  [ 22] setobjprop 15 ........................... pSprite.member.text = EMPTY
+  [ 24] getparam 0 .............................. <me>
+  [ 26] setglobal 16 ............................ oCallAlertDisplayManager = me
+  [ 28] pusharglist 0 ........................... <[]>
+  [ 30] pushlist ................................ <[]>
+  [ 31] setprop 17 .............................. aCallAlertList = []
+  [ 33] pusharglist 0 ........................... <[]>
+  [ 35] pushlist ................................ <[]>
+  [ 36] setprop 18 .............................. aCallList = []
+  [ 38] pusharglist 0 ........................... <[]>
+  [ 40] pushlist ................................ <[]>
+  [ 41] setprop 19 .............................. aAlertList = []
+  [ 43] getprop 17 .............................. <aCallAlertList>
+  [ 45] setprop 20 .............................. pCallAlertList = aCallAlertList
+  [ 47] pushint8 34 ............................. <34>
+  [ 49] get 7 ................................... <the timer>
+  [ 51] setprop 21 .............................. pTime = the timer
+  [ 53] getprop 22 .............................. <pInterval>
+  [ 55] pushint8 60 ............................. <60>
+  [ 57] mul ..................................... <pInterval * 60>
+  [ 58] setprop 22 .............................. pInterval = pInterval * 60
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pushzero ................................ <0>
+  [ 63] setobjprop 23 ........................... me.iCallAlertNum = 0
+  [ 65] getparam 0 .............................. <me>
+  [ 67] pushint8 1 .............................. <1>
+  [ 69] setobjprop 24 ........................... me.bSoundOn = 1
+  [ 71] ret
+end
+
+on addDeletedID me, iThisCallID
+  [  0] pushcons 1 .............................. <"addDeletedID() ">
+  [  2] getparam 1 .............................. <iThisCallID>
+  [  4] joinstr ................................. <"addDeletedID() " & iThisCallID>
+  [  5] pusharglistnoret 1 ...................... <"addDeletedID() " & iThisCallID>
+  [  7] extcall 38 .............................. put "addDeletedID() " & iThisCallID
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 27 ........................... <me.aDeletedIDList>
+  [ 13] pusharglist 1 ........................... <me.aDeletedIDList>
+  [ 15] extcall 26 .............................. <voidp(me.aDeletedIDList)>
+  [ 17] jmpifz [ 27] ............................ if voidp(me.aDeletedIDList) then
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 0 ........................... <[]>
+  [ 24] pushlist ................................ <[]>
+  [ 25] setobjprop 27 ........................... me.aDeletedIDList = []
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 27 ........................... <me.aDeletedIDList>
+  [ 31] getparam 1 .............................. <iThisCallID>
+  [ 33] pusharglist 2 ........................... <me.aDeletedIDList, iThisCallID>
+  [ 35] objcall 29 .............................. <me.aDeletedIDList.getOne(iThisCallID)>
+  [ 37] pushzero ................................ <0>
+  [ 38] eq ...................................... <me.aDeletedIDList.getOne(iThisCallID) = 0>
+  [ 39] jmpifz [ 52] ............................ if me.aDeletedIDList.getOne(iThisCallID) = 0 then
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 27 ........................... <me.aDeletedIDList>
+  [ 46] getparam 1 .............................. <iThisCallID>
+  [ 48] pusharglistnoret 2 ...................... <me.aDeletedIDList, iThisCallID>
+  [ 50] objcall 30 .............................. me.aDeletedIDList.add(iThisCallID)
+  [ 52] ret
+end
+
+on isDeletedID me, iThisCallID
+  [  0] pushcons 2 .............................. <"isDeletedID() ">
+  [  2] getparam 1 .............................. <iThisCallID>
+  [  4] joinstr ................................. <"isDeletedID() " & iThisCallID>
+  [  5] pusharglistnoret 1 ...................... <"isDeletedID() " & iThisCallID>
+  [  7] extcall 38 .............................. put "isDeletedID() " & iThisCallID
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 27 ........................... <me.aDeletedIDList>
+  [ 13] pusharglist 1 ........................... <me.aDeletedIDList>
+  [ 15] extcall 26 .............................. <voidp(me.aDeletedIDList)>
+  [ 17] jmpifz [ 27] ............................ if voidp(me.aDeletedIDList) then
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 0 ........................... <[]>
+  [ 24] pushlist ................................ <[]>
+  [ 25] setobjprop 27 ........................... me.aDeletedIDList = []
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 27 ........................... <me.aDeletedIDList>
+  [ 31] getparam 1 .............................. <iThisCallID>
+  [ 33] pusharglist 2 ........................... <me.aDeletedIDList, iThisCallID>
+  [ 35] objcall 151 ............................. <me.aDeletedIDList.getPos(iThisCallID)>
+  [ 37] pushzero ................................ <0>
+  [ 38] gt ...................................... <me.aDeletedIDList.getPos(iThisCallID) > 0>
+  [ 39] jmpifz [ 48] ............................ if me.aDeletedIDList.getPos(iThisCallID) > 0 then
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] pusharglistnoret 1 ...................... <1>
+  [ 46] extcall 31 .............................. return 1
+  [ 48] pushzero ................................ <0>
+  [ 49] pusharglistnoret 1 ...................... <0>
+  [ 51] extcall 31 .............................. return 0
+  [ 53] ret
+end
+
+on filterDeletedIDs me, aList
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNewList = []
+  [  5] getparam 1 .............................. <aList>
+  [  7] peek 0
+  [  9] pusharglist 1
+  [ 11] extcall 32
+  [ 13] pushint8 1
+  [ 15] peek 0
+  [ 17] peek 2
+  [ 19] lteq
+  [ 20] jmpifz [ 73] ............................ repeat with aCallAlert in aList
+  [ 23] peek 2
+  [ 25] peek 1
+  [ 27] pusharglist 2
+  [ 29] extcall 33
+  [ 31] setlocal 1
+  [ 33] getlocal 1 .............................. <aCallAlert>
+  [ 35] pushsymb 34 ............................. <#callID>
+  [ 37] pusharglist 2 ........................... <aCallAlert, #callID>
+  [ 39] objcall 33 .............................. <aCallAlert[#callID]>
+  [ 41] setlocal 2 .............................. iThisCallID = aCallAlert[#callID]
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getlocal 2 .............................. <iThisCallID>
+  [ 47] pusharglist 2 ........................... <me, iThisCallID>
+  [ 49] objcall 2 ............................... <me.isDeletedID(iThisCallID)>
+  [ 51] jmpifz [ 60] ............................ if me.isDeletedID(iThisCallID) then
+  [ 54] jmp [ 68] ............................... next repeat
+  [ 57] jmp [ 68] ............................... next repeat
+  [ 60] getlocal 0 .............................. <aNewList>
+  [ 62] getlocal 1 .............................. <aCallAlert>
+  [ 64] pusharglistnoret 2 ...................... <aNewList, aCallAlert>
+  [ 66] objcall 30 .............................. aNewList.add(aCallAlert)
+  [ 68] pushint8 1
+  [ 70] add
+  [ 71] endrepeat [ 15]
+  [ 73] pop 3
+  [ 75] getlocal 0 .............................. <aNewList>
+  [ 77] pusharglistnoret 1 ...................... <aNewList>
+  [ 79] extcall 31 .............................. return aNewList
+  [ 81] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 3 .............................. <"oCallAlertDisplayManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oCallAlertDisplayManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oCallAlertDisplayManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oCallAlertDisplayManager: " & sMessage
+  [ 19] ret
+end
+
+on displayCallAlert me, aList
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 4 .............................. <"displayCallAlert:aList">
+  [  4] getparam 1 .............................. <aList>
+  [  6] joinpadstr .............................. <"displayCallAlert:aList" && aList>
+  [  7] pusharglistnoret 2 ...................... <me, "displayCallAlert:aList" && aList>
+  [  9] objcall 4 ............................... me.debug("displayCallAlert:aList" && aList)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getparam 1 .............................. <aList>
+  [ 15] getobjprop 32 ........................... <aList.count>
+  [ 17] setobjprop 41 ........................... me.iCallAlertTotalNum = aList.count
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 41 ........................... <me.iCallAlertTotalNum>
+  [ 23] pushzero ................................ <0>
+  [ 24] eq ...................................... <me.iCallAlertTotalNum = 0>
+  [ 25] jmpifz [ 40] ............................ if me.iCallAlertTotalNum = 0 then / else
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushzero ................................ <0>
+  [ 31] setobjprop 23 ........................... me.iCallAlertNum = 0
+  [ 33] pushcons 0 .............................. <EMPTY>
+  [ 35] setlocal 0 .............................. sString = EMPTY
+  [ 37] jmp [216]
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getobjprop 23 ........................... <me.iCallAlertNum>
+  [ 44] pushzero ................................ <0>
+  [ 45] eq ...................................... <me.iCallAlertNum = 0>
+  [ 46] jmpifz [ 58] ............................ if me.iCallAlertNum = 0 then / else
+  [ 49] getparam 0 .............................. <me>
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] setobjprop 23 ........................... me.iCallAlertNum = 1
+  [ 55] jmp [ 78]
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 23 ........................... <me.iCallAlertNum>
+  [ 62] getparam 0 .............................. <me>
+  [ 64] getobjprop 41 ........................... <me.iCallAlertTotalNum>
+  [ 66] gt ...................................... <me.iCallAlertNum > me.iCallAlertTotalNum>
+  [ 67] jmpifz [ 78] ............................ if me.iCallAlertNum > me.iCallAlertTotalNum then
+  [ 70] getparam 0 .............................. <me>
+  [ 72] getparam 0 .............................. <me>
+  [ 74] getobjprop 41 ........................... <me.iCallAlertTotalNum>
+  [ 76] setobjprop 23 ........................... me.iCallAlertNum = me.iCallAlertTotalNum
+  [ 78] getparam 1 .............................. <aList>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 23 ........................... <me.iCallAlertNum>
+  [ 84] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [ 86] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [ 88] getobjprop 42 ........................... <aList[me.iCallAlertNum].isAlert>
+  [ 90] jmpifz [100] ............................ if aList[me.iCallAlertNum].isAlert then / else
+  [ 93] pushcons 5 .............................. <"Automatically generated warning">
+  [ 95] setlocal 1 .............................. sAlertString = "Automatically generated warning"
+  [ 97] jmp [149]
+  [100] getparam 1 .............................. <aList>
+  [102] getparam 0 .............................. <me>
+  [104] getobjprop 23 ........................... <me.iCallAlertNum>
+  [106] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [108] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [110] getobjprop 43 ........................... <aList[me.iCallAlertNum].isPickedUp>
+  [112] jmpifz [145] ............................ if aList[me.iCallAlertNum].isPickedUp then / else
+  [115] pushcons 6 .............................. <"Call for assistance">
+  [117] pushcons 7 .............................. <"(picked by:">
+  [119] joinpadstr .............................. <"Call for assistance" && "(picked by:">
+  [120] getparam 1 .............................. <aList>
+  [122] getparam 0 .............................. <me>
+  [124] getobjprop 23 ........................... <me.iCallAlertNum>
+  [126] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [128] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [130] getobjprop 45 ........................... <aList[me.iCallAlertNum].pickedUpBy>
+  [132] pusharglist 1 ........................... <aList[me.iCallAlertNum].pickedUpBy>
+  [134] extcall 44 .............................. <modLookUp(aList[me.iCallAlertNum].pickedUpBy)>
+  [136] joinpadstr .............................. <"Call for assistance" && "(picked by:" && modLookUp(aList[me.iCallAlertNum].pickedUpBy)>
+  [137] pushcons 8 .............................. <")">
+  [139] joinstr ................................. <"Call for assistance" && "(picked by:" && modLookUp(aList[me.iCallAlertNum].pickedUpBy) & ")">
+  [140] setlocal 1 .............................. sAlertString = "Call for assistance" && "(picked by:" && modLookUp(aList[me.iCallAlertNum].pickedUpBy) & ")"
+  [142] jmp [149]
+  [145] pushcons 6 .............................. <"Call for assistance">
+  [147] setlocal 1 .............................. sAlertString = "Call for assistance"
+  [149] pushcons 9 .............................. <"User:">
+  [151] getparam 1 .............................. <aList>
+  [153] getparam 0 .............................. <me>
+  [155] getobjprop 23 ........................... <me.iCallAlertNum>
+  [157] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [159] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [161] getobjprop 46 ........................... <aList[me.iCallAlertNum].screenName>
+  [163] joinpadstr .............................. <"User:" && aList[me.iCallAlertNum].screenName>
+  [164] setlocal 2 .............................. sUserName = "User:" && aList[me.iCallAlertNum].screenName
+  [166] pushcons 10 ............................. <"Studio:">
+  [168] getparam 1 .............................. <aList>
+  [170] getparam 0 .............................. <me>
+  [172] getobjprop 23 ........................... <me.iCallAlertNum>
+  [174] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [176] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [178] getobjprop 47 ........................... <aList[me.iCallAlertNum].studioName>
+  [180] joinpadstr .............................. <"Studio:" && aList[me.iCallAlertNum].studioName>
+  [181] pushcons 11 ............................. <"[">
+  [183] joinpadstr .............................. <"Studio:" && aList[me.iCallAlertNum].studioName && "[">
+  [184] getparam 1 .............................. <aList>
+  [186] getparam 0 .............................. <me>
+  [188] getobjprop 23 ........................... <me.iCallAlertNum>
+  [190] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [192] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [194] getobjprop 48 ........................... <aList[me.iCallAlertNum].studioOwner>
+  [196] joinstr ................................. <"Studio:" && aList[me.iCallAlertNum].studioName && "[" & aList[me.iCallAlertNum].studioOwner>
+  [197] pushcons 12 ............................. <"]">
+  [199] joinstr ................................. <"Studio:" && aList[me.iCallAlertNum].studioName && "[" & aList[me.iCallAlertNum].studioOwner & "]">
+  [200] setlocal 3 .............................. sStudioNameOwner = "Studio:" && aList[me.iCallAlertNum].studioName && "[" & aList[me.iCallAlertNum].studioOwner & "]"
+  [202] getparam 1 .............................. <aList>
+  [204] getparam 0 .............................. <me>
+  [206] getobjprop 23 ........................... <me.iCallAlertNum>
+  [208] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [210] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [212] getobjprop 49 ........................... <aList[me.iCallAlertNum].message>
+  [214] setlocal 4 .............................. sMessage = aList[me.iCallAlertNum].message
+  [216] getlocal 1 .............................. <sAlertString>
+  [218] pushcons 13 ............................. <RETURN>
+  [220] joinstr ................................. <sAlertString & RETURN>
+  [221] getlocal 2 .............................. <sUserName>
+  [223] joinstr ................................. <sAlertString & RETURN & sUserName>
+  [224] pushcons 13 ............................. <RETURN>
+  [226] joinstr ................................. <sAlertString & RETURN & sUserName & RETURN>
+  [227] getlocal 3 .............................. <sStudioNameOwner>
+  [229] joinstr ................................. <sAlertString & RETURN & sUserName & RETURN & sStudioNameOwner>
+  [230] pushcons 13 ............................. <RETURN>
+  [232] joinstr ................................. <sAlertString & RETURN & sUserName & RETURN & sStudioNameOwner & RETURN>
+  [233] getlocal 4 .............................. <sMessage>
+  [235] joinstr ................................. <sAlertString & RETURN & sUserName & RETURN & sStudioNameOwner & RETURN & sMessage>
+  [236] setlocal 0 .............................. sString = sAlertString & RETURN & sUserName & RETURN & sStudioNameOwner & RETURN & sMessage
+  [238] getprop 11 .............................. <pSprite>
+  [240] getchainedprop 14 ....................... <pSprite.member>
+  [242] getlocal 0 .............................. <sString>
+  [244] setobjprop 15 ........................... pSprite.member.text = sString
+  [246] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [248] getchainedprop 50 ....................... <oCallAlertDisplayManager.pDisplayIndexSprite>
+  [250] getparam 0 .............................. <me>
+  [252] getobjprop 23 ........................... <me.iCallAlertNum>
+  [254] getparam 0 .............................. <me>
+  [256] getobjprop 41 ........................... <me.iCallAlertTotalNum>
+  [258] pusharglistnoret 3 ...................... <oCallAlertDisplayManager.pDisplayIndexSprite, me.iCallAlertNum, me.iCallAlertTotalNum>
+  [260] objcall 51 .............................. oCallAlertDisplayManager.pDisplayIndexSprite.displayIndex(me.iCallAlertNum, me.iCallAlertTotalNum)
+  [262] getparam 0 .............................. <me>
+  [264] getobjprop 41 ........................... <me.iCallAlertTotalNum>
+  [266] pushzero ................................ <0>
+  [267] gt ...................................... <me.iCallAlertTotalNum > 0>
+  [268] jmpifz [327] ............................ if me.iCallAlertTotalNum > 0 then
+  [271] getparam 1 .............................. <aList>
+  [273] getparam 0 .............................. <me>
+  [275] getobjprop 23 ........................... <me.iCallAlertNum>
+  [277] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [279] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [281] getobjprop 46 ........................... <aList[me.iCallAlertNum].screenName>
+  [283] setlocal 5 .............................. sScreenName = aList[me.iCallAlertNum].screenName
+  [285] getparam 1 .............................. <aList>
+  [287] getparam 0 .............................. <me>
+  [289] getobjprop 23 ........................... <me.iCallAlertNum>
+  [291] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [293] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [295] getobjprop 47 ........................... <aList[me.iCallAlertNum].studioName>
+  [297] setlocal 6 .............................. sStudioName = aList[me.iCallAlertNum].studioName
+  [299] getparam 1 .............................. <aList>
+  [301] getparam 0 .............................. <me>
+  [303] getobjprop 23 ........................... <me.iCallAlertNum>
+  [305] pusharglist 2 ........................... <aList, me.iCallAlertNum>
+  [307] objcall 33 .............................. <aList[me.iCallAlertNum]>
+  [309] getobjprop 48 ........................... <aList[me.iCallAlertNum].studioOwner>
+  [311] setlocal 7 .............................. sStudioOwner = aList[me.iCallAlertNum].studioOwner
+  [313] getglobal 52 ............................ <oUserDisplayManager>
+  [315] getlocal 5 .............................. <sScreenName>
+  [317] getlocal 6 .............................. <sStudioName>
+  [319] getlocal 7 .............................. <sStudioOwner>
+  [321] pushint8 1 .............................. <1>
+  [323] pusharglistnoret 5 ...................... <oUserDisplayManager, sScreenName, sStudioName, sStudioOwner, 1>
+  [325] objcall 53 .............................. oUserDisplayManager.displayExtendedUserInfo(sScreenName, sStudioName, sStudioOwner, 1)
+  [327] ret
+end
+
+on replaceCallAlertData me, aCallAlertData
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushsymb 17 ............................. <#aCallAlertList>
+  [ 10] pusharglist 2 ........................... <me, #aCallAlertList>
+  [ 12] objcall 32 .............................. <me.aCallAlertList.count>
+  [ 14] lteq
+  [ 15] jmpifz [ 62] ............................ repeat with i = 1 to me.aCallAlertList.count
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pushsymb 17 ............................. <#aCallAlertList>
+  [ 22] getlocal 0 .............................. <i>
+  [ 24] pusharglist 3 ........................... <me, #aCallAlertList, i>
+  [ 26] objcall 61 .............................. <me.aCallAlertList[i]>
+  [ 28] getobjprop 34 ........................... <me.aCallAlertList[i].callID>
+  [ 30] getparam 1 .............................. <aCallAlertData>
+  [ 32] getobjprop 34 ........................... <aCallAlertData.callID>
+  [ 34] eq ...................................... <me.aCallAlertList[i].callID = aCallAlertData.callID>
+  [ 35] jmpifz [ 53] ............................ if me.aCallAlertList[i].callID = aCallAlertData.callID then
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushsymb 17 ............................. <#aCallAlertList>
+  [ 42] getlocal 0 .............................. <i>
+  [ 44] getparam 1 .............................. <aCallAlertData>
+  [ 46] pusharglistnoret 4 ...................... <me, #aCallAlertList, i, aCallAlertData>
+  [ 48] objcall 62 .............................. me.aCallAlertList[i] = aCallAlertData
+  [ 50] jmp [ 62] ............................... exit repeat
+  [ 53] pushint8 1
+  [ 55] getlocal 0
+  [ 57] add
+  [ 58] setlocal 0
+  [ 60] endrepeat [  4]
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] setlocal 0
+  [ 66] getlocal 0
+  [ 68] getparam 0 .............................. <me>
+  [ 70] pushsymb 18 ............................. <#aCallList>
+  [ 72] pusharglist 2 ........................... <me, #aCallList>
+  [ 74] objcall 32 .............................. <me.aCallList.count>
+  [ 76] lteq
+  [ 77] jmpifz [124] ............................ repeat with i = 1 to me.aCallList.count
+  [ 80] getparam 0 .............................. <me>
+  [ 82] pushsymb 18 ............................. <#aCallList>
+  [ 84] getlocal 0 .............................. <i>
+  [ 86] pusharglist 3 ........................... <me, #aCallList, i>
+  [ 88] objcall 61 .............................. <me.aCallList[i]>
+  [ 90] getobjprop 34 ........................... <me.aCallList[i].callID>
+  [ 92] getparam 1 .............................. <aCallAlertData>
+  [ 94] getobjprop 34 ........................... <aCallAlertData.callID>
+  [ 96] eq ...................................... <me.aCallList[i].callID = aCallAlertData.callID>
+  [ 97] jmpifz [115] ............................ if me.aCallList[i].callID = aCallAlertData.callID then
+  [100] getparam 0 .............................. <me>
+  [102] pushsymb 18 ............................. <#aCallList>
+  [104] getlocal 0 .............................. <i>
+  [106] getparam 1 .............................. <aCallAlertData>
+  [108] pusharglistnoret 4 ...................... <me, #aCallList, i, aCallAlertData>
+  [110] objcall 62 .............................. me.aCallList[i] = aCallAlertData
+  [112] jmp [124] ............................... exit repeat
+  [115] pushint8 1
+  [117] getlocal 0
+  [119] add
+  [120] setlocal 0
+  [122] endrepeat [ 66]
+  [124] pushint8 1 .............................. <1>
+  [126] setlocal 0
+  [128] getlocal 0
+  [130] getparam 0 .............................. <me>
+  [132] pushsymb 19 ............................. <#aAlertList>
+  [134] pusharglist 2 ........................... <me, #aAlertList>
+  [136] objcall 32 .............................. <me.aAlertList.count>
+  [138] lteq
+  [139] jmpifz [186] ............................ repeat with i = 1 to me.aAlertList.count
+  [142] getparam 0 .............................. <me>
+  [144] pushsymb 19 ............................. <#aAlertList>
+  [146] getlocal 0 .............................. <i>
+  [148] pusharglist 3 ........................... <me, #aAlertList, i>
+  [150] objcall 61 .............................. <me.aAlertList[i]>
+  [152] getobjprop 34 ........................... <me.aAlertList[i].callID>
+  [154] getparam 1 .............................. <aCallAlertData>
+  [156] getobjprop 34 ........................... <aCallAlertData.callID>
+  [158] eq ...................................... <me.aAlertList[i].callID = aCallAlertData.callID>
+  [159] jmpifz [177] ............................ if me.aAlertList[i].callID = aCallAlertData.callID then
+  [162] getparam 0 .............................. <me>
+  [164] pushsymb 19 ............................. <#aAlertList>
+  [166] getlocal 0 .............................. <i>
+  [168] getparam 1 .............................. <aCallAlertData>
+  [170] pusharglistnoret 4 ...................... <me, #aAlertList, i, aCallAlertData>
+  [172] objcall 62 .............................. me.aAlertList[i] = aCallAlertData
+  [174] jmp [186] ............................... exit repeat
+  [177] pushint8 1
+  [179] getlocal 0
+  [181] add
+  [182] setlocal 0
+  [184] endrepeat [128]
+  [186] getparam 0 .............................. <me>
+  [188] getprop 20 .............................. <pCallAlertList>
+  [190] pusharglistnoret 2 ...................... <me, pCallAlertList>
+  [192] localcall 5 ............................. displayCallAlert(me, pCallAlertList)
+  [194] ret
+end
+
+on receiveStudioCallAlert me, aCallAlertData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"receiveStudioCallAlert:aCallAlertData">
+  [  4] getparam 1 .............................. <aCallAlertData>
+  [  6] joinpadstr .............................. <"receiveStudioCallAlert:aCallAlertData" && aCallAlertData>
+  [  7] pushint8 1 .............................. <1>
+  [  9] pusharglistnoret 3 ...................... <me, "receiveStudioCallAlert:aCallAlertData" && aCallAlertData, 1>
+  [ 11] objcall 4 ............................... me.debug("receiveStudioCallAlert:aCallAlertData" && aCallAlertData, 1)
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <aCallAlertData>
+  [ 17] getobjprop 34 ........................... <aCallAlertData.callID>
+  [ 19] pusharglist 2 ........................... <me, aCallAlertData.callID>
+  [ 21] objcall 2 ............................... <me.isDeletedID(aCallAlertData.callID)>
+  [ 23] jmpifz [ 36] ............................ if me.isDeletedID(aCallAlertData.callID) then
+  [ 26] pushcons 15 ............................. <"received deleted id: returning">
+  [ 28] pusharglistnoret 1 ...................... <"received deleted id: returning">
+  [ 30] extcall 38 .............................. put "received deleted id: returning"
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 31 .............................. return 
+  [ 36] getparam 1 .............................. <aCallAlertData>
+  [ 38] getchainedprop 48 ....................... <aCallAlertData.studioOwner>
+  [ 40] pushsymb 65 ............................. <#char>
+  [ 42] pushint8 1 .............................. <1>
+  [ 44] pusharglist 3 ........................... <aCallAlertData.studioOwner, #char, 1>
+  [ 46] objcall 66 .............................. <aCallAlertData.studioOwner.char[1]>
+  [ 48] pushcons 16 ............................. <"$">
+  [ 50] eq ...................................... <aCallAlertData.studioOwner.char[1] = "$">
+  [ 51] jmpifz [ 60] ............................ if aCallAlertData.studioOwner.char[1] = "$" then
+  [ 54] getparam 1 .............................. <aCallAlertData>
+  [ 56] pushcons 17 ............................. <"public">
+  [ 58] setobjprop 48 ........................... aCallAlertData.studioOwner = "public"
+  [ 60] getparam 1 .............................. <aCallAlertData>
+  [ 62] pushsymb 67 ............................. <#studioId>
+  [ 64] pushcons 0 .............................. <EMPTY>
+  [ 66] pusharglistnoret 3 ...................... <aCallAlertData, #studioId, EMPTY>
+  [ 68] objcall 68 .............................. aCallAlertData[#studioId] = EMPTY
+  [ 70] pushint8 1 .............................. <1>
+  [ 72] setlocal 0
+  [ 74] getlocal 0
+  [ 76] getparam 0 .............................. <me>
+  [ 78] pushsymb 17 ............................. <#aCallAlertList>
+  [ 80] pusharglist 2 ........................... <me, #aCallAlertList>
+  [ 82] objcall 32 .............................. <me.aCallAlertList.count>
+  [ 84] lteq
+  [ 85] jmpifz [132] ............................ repeat with i = 1 to me.aCallAlertList.count
+  [ 88] getparam 0 .............................. <me>
+  [ 90] pushsymb 17 ............................. <#aCallAlertList>
+  [ 92] getlocal 0 .............................. <i>
+  [ 94] pusharglist 3 ........................... <me, #aCallAlertList, i>
+  [ 96] objcall 61 .............................. <me.aCallAlertList[i]>
+  [ 98] getobjprop 34 ........................... <me.aCallAlertList[i].callID>
+  [100] getparam 1 .............................. <aCallAlertData>
+  [102] getobjprop 34 ........................... <aCallAlertData.callID>
+  [104] eq ...................................... <me.aCallAlertList[i].callID = aCallAlertData.callID>
+  [105] jmpifz [123] ............................ if me.aCallAlertList[i].callID = aCallAlertData.callID then
+  [108] pushcons 18 ............................. <"replacing old call alet">
+  [110] pusharglistnoret 1 ...................... <"replacing old call alet">
+  [112] extcall 38 .............................. put "replacing old call alet"
+  [114] getparam 0 .............................. <me>
+  [116] getparam 1 .............................. <aCallAlertData>
+  [118] pusharglistnoret 2 ...................... <me, aCallAlertData>
+  [120] objcall 6 ............................... me.replaceCallAlertData(aCallAlertData)
+  [122] ret ..................................... exit
+  [123] pushint8 1
+  [125] getlocal 0
+  [127] add
+  [128] setlocal 0
+  [130] endrepeat [ 74]
+  [132] getparam 0 .............................. <me>
+  [134] getparam 1 .............................. <aCallAlertData>
+  [136] getobjprop 34 ........................... <aCallAlertData.callID>
+  [138] setobjprop 28 ........................... me.iCallID = aCallAlertData.callID
+  [140] getglobal 69 ............................ <oDenizenManager>
+  [142] getparam 1 .............................. <aCallAlertData>
+  [144] getobjprop 46 ........................... <aCallAlertData.screenName>
+  [146] pusharglistnoret 2 ...................... <oDenizenManager, aCallAlertData.screenName>
+  [148] objcall 70 .............................. oDenizenManager.getDenizenByScreenName(aCallAlertData.screenName)
+  [150] getparam 0 .............................. <me>
+  [152] getchainedprop 17 ....................... <me.aCallAlertList>
+  [154] getparam 1 .............................. <aCallAlertData>
+  [156] pusharglistnoret 2 ...................... <me.aCallAlertList, aCallAlertData>
+  [158] objcall 30 .............................. me.aCallAlertList.add(aCallAlertData)
+  [160] getparam 1 .............................. <aCallAlertData>
+  [162] getobjprop 42 ........................... <aCallAlertData.isAlert>
+  [164] jmpifz [180] ............................ if aCallAlertData.isAlert then / else
+  [167] getparam 0 .............................. <me>
+  [169] getchainedprop 19 ....................... <me.aAlertList>
+  [171] getparam 1 .............................. <aCallAlertData>
+  [173] pusharglistnoret 2 ...................... <me.aAlertList, aCallAlertData>
+  [175] objcall 30 .............................. me.aAlertList.add(aCallAlertData)
+  [177] jmp [190]
+  [180] getparam 0 .............................. <me>
+  [182] getchainedprop 18 ....................... <me.aCallList>
+  [184] getparam 1 .............................. <aCallAlertData>
+  [186] pusharglistnoret 2 ...................... <me.aCallList, aCallAlertData>
+  [188] objcall 30 .............................. me.aCallList.add(aCallAlertData)
+  [190] getparam 0 .............................. <me>
+  [192] getobjprop 24 ........................... <me.bSoundOn>
+  [194] pushint8 1 .............................. <1>
+  [196] eq ...................................... <me.bSoundOn = 1>
+  [197] jmpifz [204] ............................ if me.bSoundOn = 1 then
+  [200] pusharglistnoret 0 ...................... <>
+  [202] extcall 71 .............................. beep()
+  [204] getparam 0 .............................. <me>
+  [206] getprop 20 .............................. <pCallAlertList>
+  [208] pusharglistnoret 2 ...................... <me, pCallAlertList>
+  [210] localcall 5 ............................. displayCallAlert(me, pCallAlertList)
+  [212] ret
+end
+
+on receiveStudioID me, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 19 ............................. <"receiveStudioID:sStudioID">
+  [  4] getparam 1 .............................. <sStudioID>
+  [  6] joinpadstr .............................. <"receiveStudioID:sStudioID" && sStudioID>
+  [  7] pusharglistnoret 2 ...................... <me, "receiveStudioID:sStudioID" && sStudioID>
+  [  9] objcall 4 ............................... me.debug("receiveStudioID:sStudioID" && sStudioID)
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 0
+  [ 15] getlocal 0
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushsymb 17 ............................. <#aCallAlertList>
+  [ 21] pusharglist 2 ........................... <me, #aCallAlertList>
+  [ 23] objcall 32 .............................. <me.aCallAlertList.count>
+  [ 25] lteq
+  [ 26] jmpifz [234] ............................ repeat with i = 1 to me.aCallAlertList.count
+  [ 29] pushcons 20 ............................. <"receiveStudioID: me.iCallID">
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 28 ........................... <me.iCallID>
+  [ 35] joinpadstr .............................. <"receiveStudioID: me.iCallID" && me.iCallID>
+  [ 36] pusharglistnoret 1 ...................... <"receiveStudioID: me.iCallID" && me.iCallID>
+  [ 38] extcall 38 .............................. put "receiveStudioID: me.iCallID" && me.iCallID
+  [ 40] getparam 0 .............................. <me>
+  [ 42] pushsymb 17 ............................. <#aCallAlertList>
+  [ 44] getlocal 0 .............................. <i>
+  [ 46] pusharglist 3 ........................... <me, #aCallAlertList, i>
+  [ 48] objcall 61 .............................. <me.aCallAlertList[i]>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 28 ........................... <me.iCallID>
+  [ 54] pusharglist 2 ........................... <me.aCallAlertList[i], me.iCallID>
+  [ 56] objcall 29 .............................. <me.aCallAlertList[i].getOne(me.iCallID)>
+  [ 58] pushzero ................................ <0>
+  [ 59] nteq .................................... <me.aCallAlertList[i].getOne(me.iCallID) <> 0>
+  [ 60] jmpifz [225] ............................ if me.aCallAlertList[i].getOne(me.iCallID) <> 0 then
+  [ 63] getparam 0 .............................. <me>
+  [ 65] pushsymb 17 ............................. <#aCallAlertList>
+  [ 67] getlocal 0 .............................. <i>
+  [ 69] pusharglist 3 ........................... <me, #aCallAlertList, i>
+  [ 71] objcall 61 .............................. <me.aCallAlertList[i]>
+  [ 73] getparam 1 .............................. <sStudioID>
+  [ 75] setobjprop 67 ........................... me.aCallAlertList[i].studioId = sStudioID
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pushsymb 17 ............................. <#aCallAlertList>
+  [ 81] getlocal 0 .............................. <i>
+  [ 83] pusharglist 3 ........................... <me, #aCallAlertList, i>
+  [ 85] objcall 61 .............................. <me.aCallAlertList[i]>
+  [ 87] getobjprop 42 ........................... <me.aCallAlertList[i].isAlert>
+  [ 89] jmpifz [160] ............................ if me.aCallAlertList[i].isAlert then
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] setlocal 1
+  [ 96] getlocal 1
+  [ 98] getparam 0 .............................. <me>
+  [100] pushsymb 19 ............................. <#aAlertList>
+  [102] pusharglist 2 ........................... <me, #aAlertList>
+  [104] objcall 32 .............................. <me.aAlertList.count>
+  [106] lteq
+  [107] jmpifz [157] ............................ repeat with ii = 1 to me.aAlertList.count
+  [110] getparam 0 .............................. <me>
+  [112] pushsymb 19 ............................. <#aAlertList>
+  [114] getlocal 1 .............................. <ii>
+  [116] pusharglist 3 ........................... <me, #aAlertList, ii>
+  [118] objcall 61 .............................. <me.aAlertList[ii]>
+  [120] getparam 0 .............................. <me>
+  [122] getobjprop 28 ........................... <me.iCallID>
+  [124] pusharglist 2 ........................... <me.aAlertList[ii], me.iCallID>
+  [126] objcall 29 .............................. <me.aAlertList[ii].getOne(me.iCallID)>
+  [128] pushzero ................................ <0>
+  [129] nteq .................................... <me.aAlertList[ii].getOne(me.iCallID) <> 0>
+  [130] jmpifz [148] ............................ if me.aAlertList[ii].getOne(me.iCallID) <> 0 then
+  [133] getparam 0 .............................. <me>
+  [135] pushsymb 19 ............................. <#aAlertList>
+  [137] getlocal 1 .............................. <ii>
+  [139] pusharglist 3 ........................... <me, #aAlertList, ii>
+  [141] objcall 61 .............................. <me.aAlertList[ii]>
+  [143] getparam 1 .............................. <sStudioID>
+  [145] setobjprop 67 ........................... me.aAlertList[ii].studioId = sStudioID
+  [147] ret ..................................... exit
+  [148] pushint8 1
+  [150] getlocal 1
+  [152] add
+  [153] setlocal 1
+  [155] endrepeat [ 96]
+  [157] jmp [225] ............................... next repeat
+  [160] pushint8 1 .............................. <1>
+  [162] setlocal 1
+  [164] getlocal 1
+  [166] getparam 0 .............................. <me>
+  [168] pushsymb 18 ............................. <#aCallList>
+  [170] pusharglist 2 ........................... <me, #aCallList>
+  [172] objcall 32 .............................. <me.aCallList.count>
+  [174] lteq
+  [175] jmpifz [225] ............................ repeat with ii = 1 to me.aCallList.count
+  [178] getparam 0 .............................. <me>
+  [180] pushsymb 18 ............................. <#aCallList>
+  [182] getlocal 1 .............................. <ii>
+  [184] pusharglist 3 ........................... <me, #aCallList, ii>
+  [186] objcall 61 .............................. <me.aCallList[ii]>
+  [188] getparam 0 .............................. <me>
+  [190] getobjprop 28 ........................... <me.iCallID>
+  [192] pusharglist 2 ........................... <me.aCallList[ii], me.iCallID>
+  [194] objcall 29 .............................. <me.aCallList[ii].getOne(me.iCallID)>
+  [196] pushzero ................................ <0>
+  [197] nteq .................................... <me.aCallList[ii].getOne(me.iCallID) <> 0>
+  [198] jmpifz [216] ............................ if me.aCallList[ii].getOne(me.iCallID) <> 0 then
+  [201] getparam 0 .............................. <me>
+  [203] pushsymb 18 ............................. <#aCallList>
+  [205] getlocal 1 .............................. <ii>
+  [207] pusharglist 3 ........................... <me, #aCallList, ii>
+  [209] objcall 61 .............................. <me.aCallList[ii]>
+  [211] getparam 1 .............................. <sStudioID>
+  [213] setobjprop 67 ........................... me.aCallList[ii].studioId = sStudioID
+  [215] ret ..................................... exit
+  [216] pushint8 1
+  [218] getlocal 1
+  [220] add
+  [221] setlocal 1
+  [223] endrepeat [164]
+  [225] pushint8 1
+  [227] getlocal 0
+  [229] add
+  [230] setlocal 0
+  [232] endrepeat [ 15]
+  [234] ret
+end
+
+on sendCallAlert me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aTestCallAlertData = [:]
+  [  5] pushint8 5 .............................. <5>
+  [  7] pusharglist 1 ........................... <5>
+  [  9] extcall 74 .............................. <random(5)>
+  [ 11] setlocal 1 .............................. iNum = random(5)
+  [ 13] getlocal 1 .............................. <iNum>
+  [ 15] peek 0 .................................. case iNum of
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] eq
+  [ 20] jmpifz [127] ............................ (case) 1:
+  [ 23] getlocal 0 .............................. <aTestCallAlertData>
+  [ 25] pushsymb 34 ............................. <#callID>
+  [ 27] pushint8 10 ............................. <10>
+  [ 29] pushint8 10 ............................. <10>
+  [ 31] pusharglist 2 ........................... <10, 10>
+  [ 33] extcall 75 .............................. <power(10, 10)>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] sub ..................................... <power(10, 10) - 1>
+  [ 38] pusharglist 1 ........................... <power(10, 10) - 1>
+  [ 40] extcall 74 .............................. <random(power(10, 10) - 1)>
+  [ 42] pusharglistnoret 3 ...................... <aTestCallAlertData, #callID, random(power(10, 10) - 1)>
+  [ 44] objcall 68 .............................. aTestCallAlertData[#callID] = random(power(10, 10) - 1)
+  [ 46] getlocal 0 .............................. <aTestCallAlertData>
+  [ 48] pushsymb 42 ............................. <#isAlert>
+  [ 50] pushzero ................................ <0>
+  [ 51] pusharglistnoret 3 ...................... <aTestCallAlertData, #isAlert, 0>
+  [ 53] objcall 68 .............................. aTestCallAlertData[#isAlert] = 0
+  [ 55] getlocal 0 .............................. <aTestCallAlertData>
+  [ 57] pushsymb 46 ............................. <#screenName>
+  [ 59] pushcons 21 ............................. <"freeble">
+  [ 61] pusharglistnoret 3 ...................... <aTestCallAlertData, #screenName, "freeble">
+  [ 63] objcall 68 .............................. aTestCallAlertData[#screenName] = "freeble"
+  [ 65] getlocal 0 .............................. <aTestCallAlertData>
+  [ 67] pushsymb 67 ............................. <#studioId>
+  [ 69] pushcons 22 ............................. <"freeble1">
+  [ 71] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioId, "freeble1">
+  [ 73] objcall 68 .............................. aTestCallAlertData[#studioId] = "freeble1"
+  [ 75] getlocal 0 .............................. <aTestCallAlertData>
+  [ 77] pushsymb 47 ............................. <#studioName>
+  [ 79] pushcons 23 ............................. <"freeblesHut">
+  [ 81] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioName, "freeblesHut">
+  [ 83] objcall 68 .............................. aTestCallAlertData[#studioName] = "freeblesHut"
+  [ 85] getlocal 0 .............................. <aTestCallAlertData>
+  [ 87] pushsymb 48 ............................. <#studioOwner>
+  [ 89] pushcons 21 ............................. <"freeble">
+  [ 91] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioOwner, "freeble">
+  [ 93] objcall 68 .............................. aTestCallAlertData[#studioOwner] = "freeble"
+  [ 95] getlocal 0 .............................. <aTestCallAlertData>
+  [ 97] pushsymb 49 ............................. <#message>
+  [ 99] pushcons 24 ............................. <"Help! I got scammed by britneySpears22!">
+  [101] pusharglistnoret 3 ...................... <aTestCallAlertData, #message, "Help! I got scammed by britneySpears22!">
+  [103] objcall 68 .............................. aTestCallAlertData[#message] = "Help! I got scammed by britneySpears22!"
+  [105] getlocal 0 .............................. <aTestCallAlertData>
+  [107] pushsymb 43 ............................. <#isPickedUp>
+  [109] pushzero ................................ <0>
+  [110] pusharglistnoret 3 ...................... <aTestCallAlertData, #isPickedUp, 0>
+  [112] objcall 68 .............................. aTestCallAlertData[#isPickedUp] = 0
+  [114] getlocal 0 .............................. <aTestCallAlertData>
+  [116] pushsymb 45 ............................. <#pickedUpBy>
+  [118] pushcons 0 .............................. <EMPTY>
+  [120] pusharglistnoret 3 ...................... <aTestCallAlertData, #pickedUpBy, EMPTY>
+  [122] objcall 68 .............................. aTestCallAlertData[#pickedUpBy] = EMPTY
+  [124] jmp [564]
+  [127] peek 0
+  [129] pushint8 2 .............................. <2>
+  [131] eq
+  [132] jmpifz [239] ............................ (case) 2:
+  [135] getlocal 0 .............................. <aTestCallAlertData>
+  [137] pushsymb 34 ............................. <#callID>
+  [139] pushint8 10 ............................. <10>
+  [141] pushint8 10 ............................. <10>
+  [143] pusharglist 2 ........................... <10, 10>
+  [145] extcall 75 .............................. <power(10, 10)>
+  [147] pushint8 1 .............................. <1>
+  [149] sub ..................................... <power(10, 10) - 1>
+  [150] pusharglist 1 ........................... <power(10, 10) - 1>
+  [152] extcall 74 .............................. <random(power(10, 10) - 1)>
+  [154] pusharglistnoret 3 ...................... <aTestCallAlertData, #callID, random(power(10, 10) - 1)>
+  [156] objcall 68 .............................. aTestCallAlertData[#callID] = random(power(10, 10) - 1)
+  [158] getlocal 0 .............................. <aTestCallAlertData>
+  [160] pushsymb 42 ............................. <#isAlert>
+  [162] pushzero ................................ <0>
+  [163] pusharglistnoret 3 ...................... <aTestCallAlertData, #isAlert, 0>
+  [165] objcall 68 .............................. aTestCallAlertData[#isAlert] = 0
+  [167] getlocal 0 .............................. <aTestCallAlertData>
+  [169] pushsymb 46 ............................. <#screenName>
+  [171] pushcons 25 ............................. <"jesus">
+  [173] pusharglistnoret 3 ...................... <aTestCallAlertData, #screenName, "jesus">
+  [175] objcall 68 .............................. aTestCallAlertData[#screenName] = "jesus"
+  [177] getlocal 0 .............................. <aTestCallAlertData>
+  [179] pushsymb 67 ............................. <#studioId>
+  [181] pushcons 26 ............................. <"aslan1">
+  [183] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioId, "aslan1">
+  [185] objcall 68 .............................. aTestCallAlertData[#studioId] = "aslan1"
+  [187] getlocal 0 .............................. <aTestCallAlertData>
+  [189] pushsymb 47 ............................. <#studioName>
+  [191] pushcons 27 ............................. <"theLion">
+  [193] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioName, "theLion">
+  [195] objcall 68 .............................. aTestCallAlertData[#studioName] = "theLion"
+  [197] getlocal 0 .............................. <aTestCallAlertData>
+  [199] pushsymb 48 ............................. <#studioOwner>
+  [201] pushcons 28 ............................. <"aslan">
+  [203] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioOwner, "aslan">
+  [205] objcall 68 .............................. aTestCallAlertData[#studioOwner] = "aslan"
+  [207] getlocal 0 .............................. <aTestCallAlertData>
+  [209] pushsymb 49 ............................. <#message>
+  [211] pushcons 29 ............................. <"Kick oldFart69...he's harassing me.">
+  [213] pusharglistnoret 3 ...................... <aTestCallAlertData, #message, "Kick oldFart69...he's harassing me.">
+  [215] objcall 68 .............................. aTestCallAlertData[#message] = "Kick oldFart69...he's harassing me."
+  [217] getlocal 0 .............................. <aTestCallAlertData>
+  [219] pushsymb 43 ............................. <#isPickedUp>
+  [221] pushzero ................................ <0>
+  [222] pusharglistnoret 3 ...................... <aTestCallAlertData, #isPickedUp, 0>
+  [224] objcall 68 .............................. aTestCallAlertData[#isPickedUp] = 0
+  [226] getlocal 0 .............................. <aTestCallAlertData>
+  [228] pushsymb 45 ............................. <#pickedUpBy>
+  [230] pushcons 0 .............................. <EMPTY>
+  [232] pusharglistnoret 3 ...................... <aTestCallAlertData, #pickedUpBy, EMPTY>
+  [234] objcall 68 .............................. aTestCallAlertData[#pickedUpBy] = EMPTY
+  [236] jmp [564]
+  [239] peek 0
+  [241] pushint8 3 .............................. <3>
+  [243] eq
+  [244] jmpifz [342] ............................ (case) 3:
+  [247] getlocal 0 .............................. <aTestCallAlertData>
+  [249] pushsymb 34 ............................. <#callID>
+  [251] pushint32 443888215 ..................... <443888215>
+  [256] pusharglistnoret 3 ...................... <aTestCallAlertData, #callID, 443888215>
+  [258] objcall 68 .............................. aTestCallAlertData[#callID] = 443888215
+  [260] getlocal 0 .............................. <aTestCallAlertData>
+  [262] pushsymb 42 ............................. <#isAlert>
+  [264] pushint8 1 .............................. <1>
+  [266] pusharglistnoret 3 ...................... <aTestCallAlertData, #isAlert, 1>
+  [268] objcall 68 .............................. aTestCallAlertData[#isAlert] = 1
+  [270] getlocal 0 .............................. <aTestCallAlertData>
+  [272] pushsymb 46 ............................. <#screenName>
+  [274] pushcons 30 ............................. <"rupaul">
+  [276] pusharglistnoret 3 ...................... <aTestCallAlertData, #screenName, "rupaul">
+  [278] objcall 68 .............................. aTestCallAlertData[#screenName] = "rupaul"
+  [280] getlocal 0 .............................. <aTestCallAlertData>
+  [282] pushsymb 67 ............................. <#studioId>
+  [284] pushcons 31 ............................. <"aslan2">
+  [286] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioId, "aslan2">
+  [288] objcall 68 .............................. aTestCallAlertData[#studioId] = "aslan2"
+  [290] getlocal 0 .............................. <aTestCallAlertData>
+  [292] pushsymb 47 ............................. <#studioName>
+  [294] pushcons 32 ............................. <"theWitch">
+  [296] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioName, "theWitch">
+  [298] objcall 68 .............................. aTestCallAlertData[#studioName] = "theWitch"
+  [300] getlocal 0 .............................. <aTestCallAlertData>
+  [302] pushsymb 48 ............................. <#studioOwner>
+  [304] pushcons 28 ............................. <"aslan">
+  [306] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioOwner, "aslan">
+  [308] objcall 68 .............................. aTestCallAlertData[#studioOwner] = "aslan"
+  [310] getlocal 0 .............................. <aTestCallAlertData>
+  [312] pushsymb 49 ............................. <#message>
+  [314] pushcons 0 .............................. <EMPTY>
+  [316] pusharglistnoret 3 ...................... <aTestCallAlertData, #message, EMPTY>
+  [318] objcall 68 .............................. aTestCallAlertData[#message] = EMPTY
+  [320] getlocal 0 .............................. <aTestCallAlertData>
+  [322] pushsymb 43 ............................. <#isPickedUp>
+  [324] pushzero ................................ <0>
+  [325] pusharglistnoret 3 ...................... <aTestCallAlertData, #isPickedUp, 0>
+  [327] objcall 68 .............................. aTestCallAlertData[#isPickedUp] = 0
+  [329] getlocal 0 .............................. <aTestCallAlertData>
+  [331] pushsymb 45 ............................. <#pickedUpBy>
+  [333] pushcons 0 .............................. <EMPTY>
+  [335] pusharglistnoret 3 ...................... <aTestCallAlertData, #pickedUpBy, EMPTY>
+  [337] objcall 68 .............................. aTestCallAlertData[#pickedUpBy] = EMPTY
+  [339] jmp [564]
+  [342] peek 0
+  [344] pushint8 4 .............................. <4>
+  [346] eq
+  [347] jmpifz [455] ............................ (case) 4:
+  [350] getlocal 0 .............................. <aTestCallAlertData>
+  [352] pushsymb 34 ............................. <#callID>
+  [354] pushint8 10 ............................. <10>
+  [356] pushint8 10 ............................. <10>
+  [358] pusharglist 2 ........................... <10, 10>
+  [360] extcall 75 .............................. <power(10, 10)>
+  [362] pushint8 1 .............................. <1>
+  [364] sub ..................................... <power(10, 10) - 1>
+  [365] pusharglist 1 ........................... <power(10, 10) - 1>
+  [367] extcall 74 .............................. <random(power(10, 10) - 1)>
+  [369] pusharglistnoret 3 ...................... <aTestCallAlertData, #callID, random(power(10, 10) - 1)>
+  [371] objcall 68 .............................. aTestCallAlertData[#callID] = random(power(10, 10) - 1)
+  [373] getlocal 0 .............................. <aTestCallAlertData>
+  [375] pushsymb 42 ............................. <#isAlert>
+  [377] pushint8 1 .............................. <1>
+  [379] pusharglistnoret 3 ...................... <aTestCallAlertData, #isAlert, 1>
+  [381] objcall 68 .............................. aTestCallAlertData[#isAlert] = 1
+  [383] getlocal 0 .............................. <aTestCallAlertData>
+  [385] pushsymb 46 ............................. <#screenName>
+  [387] pushcons 33 ............................. <"SammyJenkins">
+  [389] pusharglistnoret 3 ...................... <aTestCallAlertData, #screenName, "SammyJenkins">
+  [391] objcall 68 .............................. aTestCallAlertData[#screenName] = "SammyJenkins"
+  [393] getlocal 0 .............................. <aTestCallAlertData>
+  [395] pushsymb 67 ............................. <#studioId>
+  [397] pushcons 22 ............................. <"freeble1">
+  [399] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioId, "freeble1">
+  [401] objcall 68 .............................. aTestCallAlertData[#studioId] = "freeble1"
+  [403] getlocal 0 .............................. <aTestCallAlertData>
+  [405] pushsymb 47 ............................. <#studioName>
+  [407] pushcons 23 ............................. <"freeblesHut">
+  [409] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioName, "freeblesHut">
+  [411] objcall 68 .............................. aTestCallAlertData[#studioName] = "freeblesHut"
+  [413] getlocal 0 .............................. <aTestCallAlertData>
+  [415] pushsymb 48 ............................. <#studioOwner>
+  [417] pushcons 21 ............................. <"freeble">
+  [419] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioOwner, "freeble">
+  [421] objcall 68 .............................. aTestCallAlertData[#studioOwner] = "freeble"
+  [423] getlocal 0 .............................. <aTestCallAlertData>
+  [425] pushsymb 49 ............................. <#message>
+  [427] pushcons 0 .............................. <EMPTY>
+  [429] pusharglistnoret 3 ...................... <aTestCallAlertData, #message, EMPTY>
+  [431] objcall 68 .............................. aTestCallAlertData[#message] = EMPTY
+  [433] getlocal 0 .............................. <aTestCallAlertData>
+  [435] pushsymb 43 ............................. <#isPickedUp>
+  [437] pushzero ................................ <0>
+  [438] pusharglistnoret 3 ...................... <aTestCallAlertData, #isPickedUp, 0>
+  [440] objcall 68 .............................. aTestCallAlertData[#isPickedUp] = 0
+  [442] getlocal 0 .............................. <aTestCallAlertData>
+  [444] pushsymb 45 ............................. <#pickedUpBy>
+  [446] pushcons 0 .............................. <EMPTY>
+  [448] pusharglistnoret 3 ...................... <aTestCallAlertData, #pickedUpBy, EMPTY>
+  [450] objcall 68 .............................. aTestCallAlertData[#pickedUpBy] = EMPTY
+  [452] jmp [564]
+  [455] peek 0
+  [457] pushint8 5 .............................. <5>
+  [459] eq
+  [460] jmpifz [564] ............................ (case) 5:
+  [463] getlocal 0 .............................. <aTestCallAlertData>
+  [465] pushsymb 34 ............................. <#callID>
+  [467] pushint8 10 ............................. <10>
+  [469] pushint8 10 ............................. <10>
+  [471] pusharglist 2 ........................... <10, 10>
+  [473] extcall 75 .............................. <power(10, 10)>
+  [475] pushint8 1 .............................. <1>
+  [477] sub ..................................... <power(10, 10) - 1>
+  [478] pusharglist 1 ........................... <power(10, 10) - 1>
+  [480] extcall 74 .............................. <random(power(10, 10) - 1)>
+  [482] pusharglistnoret 3 ...................... <aTestCallAlertData, #callID, random(power(10, 10) - 1)>
+  [484] objcall 68 .............................. aTestCallAlertData[#callID] = random(power(10, 10) - 1)
+  [486] getlocal 0 .............................. <aTestCallAlertData>
+  [488] pushsymb 42 ............................. <#isAlert>
+  [490] pushzero ................................ <0>
+  [491] pusharglistnoret 3 ...................... <aTestCallAlertData, #isAlert, 0>
+  [493] objcall 68 .............................. aTestCallAlertData[#isAlert] = 0
+  [495] getlocal 0 .............................. <aTestCallAlertData>
+  [497] pushsymb 46 ............................. <#screenName>
+  [499] pushcons 34 ............................. <"fuzzy_lollipop">
+  [501] pusharglistnoret 3 ...................... <aTestCallAlertData, #screenName, "fuzzy_lollipop">
+  [503] objcall 68 .............................. aTestCallAlertData[#screenName] = "fuzzy_lollipop"
+  [505] getlocal 0 .............................. <aTestCallAlertData>
+  [507] pushsymb 67 ............................. <#studioId>
+  [509] pushcons 22 ............................. <"freeble1">
+  [511] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioId, "freeble1">
+  [513] objcall 68 .............................. aTestCallAlertData[#studioId] = "freeble1"
+  [515] getlocal 0 .............................. <aTestCallAlertData>
+  [517] pushsymb 47 ............................. <#studioName>
+  [519] pushcons 23 ............................. <"freeblesHut">
+  [521] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioName, "freeblesHut">
+  [523] objcall 68 .............................. aTestCallAlertData[#studioName] = "freeblesHut"
+  [525] getlocal 0 .............................. <aTestCallAlertData>
+  [527] pushsymb 48 ............................. <#studioOwner>
+  [529] pushcons 21 ............................. <"freeble">
+  [531] pusharglistnoret 3 ...................... <aTestCallAlertData, #studioOwner, "freeble">
+  [533] objcall 68 .............................. aTestCallAlertData[#studioOwner] = "freeble"
+  [535] getlocal 0 .............................. <aTestCallAlertData>
+  [537] pushsymb 49 ............................. <#message>
+  [539] pushcons 35 ............................. <"Crazy8s is spamming ad infinitum.">
+  [541] pusharglistnoret 3 ...................... <aTestCallAlertData, #message, "Crazy8s is spamming ad infinitum.">
+  [543] objcall 68 .............................. aTestCallAlertData[#message] = "Crazy8s is spamming ad infinitum."
+  [545] getlocal 0 .............................. <aTestCallAlertData>
+  [547] pushsymb 43 ............................. <#isPickedUp>
+  [549] pushzero ................................ <0>
+  [550] pusharglistnoret 3 ...................... <aTestCallAlertData, #isPickedUp, 0>
+  [552] objcall 68 .............................. aTestCallAlertData[#isPickedUp] = 0
+  [554] getlocal 0 .............................. <aTestCallAlertData>
+  [556] pushsymb 45 ............................. <#pickedUpBy>
+  [558] pushcons 0 .............................. <EMPTY>
+  [560] pusharglistnoret 3 ...................... <aTestCallAlertData, #pickedUpBy, EMPTY>
+  [562] objcall 68 .............................. aTestCallAlertData[#pickedUpBy] = EMPTY
+  [564] pop 1 ................................... end case
+  [566] getparam 0 .............................. <me>
+  [568] getlocal 0 .............................. <aTestCallAlertData>
+  [570] pusharglistnoret 2 ...................... <me, aTestCallAlertData>
+  [572] objcall 7 ............................... me.receiveStudioCallAlert(aTestCallAlertData)
+  [574] ret
+end

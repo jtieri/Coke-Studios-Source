@@ -1,0 +1,100 @@
+property ancestor
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 779 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 93 .............................. return me
+  [ 25] ret
+end
+
+on mouseDownEvent me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 977 .......................... <the doubleClick>
+  [  5] jmpifz [ 15] ............................ if the doubleClick then
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] objcall 1475 ............................ me.launchChart()
+  [ 15] ret
+end
+
+on launchChart me, iDate
+  [  0] getglobal 194 ........................... <gFeatureSet>
+  [  2] pushsymb 1476 ........................... <#CHARTS>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #CHARTS>
+  [  7] objcall 196 ............................. <gFeatureSet.isEnabled(#CHARTS)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#CHARTS)>
+  [ 10] jmpifz [ 24] ............................ if not gFeatureSet.isEnabled(#CHARTS) then
+  [ 13] pushcons 1 .............................. <"CHARTS NOT ENABLED">
+  [ 15] pusharglistnoret 1 ...................... <"CHARTS NOT ENABLED">
+  [ 17] extcall 274 ............................. put "CHARTS NOT ENABLED"
+  [ 20] pusharglistnoret 0 ...................... <>
+  [ 22] extcall 93 .............................. return 
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 225 ...................... <me.oItem>
+  [ 28] pushsymb 289 ............................ <#aAttributes>
+  [ 31] pushsymb 1086 ........................... <#type>
+  [ 34] pusharglist 3 ........................... <me.oItem, #aAttributes, #type>
+  [ 36] objcall 611 ............................. <me.oItem.aAttributes[#type]>
+  [ 39] setlocal 0 .............................. sType = me.oItem.aAttributes[#type]
+  [ 41] getparam 0 .............................. <me>
+  [ 43] getchainedprop 225 ...................... <me.oItem>
+  [ 45] pushsymb 289 ............................ <#aAttributes>
+  [ 48] pushsymb 1477 ........................... <#time>
+  [ 51] pusharglist 3 ........................... <me.oItem, #aAttributes, #time>
+  [ 53] objcall 611 ............................. <me.oItem.aAttributes[#time]>
+  [ 56] setlocal 1 .............................. iTime = me.oItem.aAttributes[#time]
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getchainedprop 225 ...................... <me.oItem>
+  [ 62] pushsymb 289 ............................ <#aAttributes>
+  [ 65] pushsymb 1478 ........................... <#author>
+  [ 68] pusharglist 3 ........................... <me.oItem, #aAttributes, #author>
+  [ 70] objcall 611 ............................. <me.oItem.aAttributes[#author]>
+  [ 73] setlocal 2 .............................. sAuthor = me.oItem.aAttributes[#author]
+  [ 75] getparam 0 .............................. <me>
+  [ 77] getchainedprop 225 ...................... <me.oItem>
+  [ 79] pushsymb 289 ............................ <#aAttributes>
+  [ 82] pushsymb 1479 ........................... <#title>
+  [ 85] pusharglist 3 ........................... <me.oItem, #aAttributes, #title>
+  [ 87] objcall 611 ............................. <me.oItem.aAttributes[#title]>
+  [ 90] setlocal 3 .............................. sTitle = me.oItem.aAttributes[#title]
+  [ 92] pushcons 2 .............................. <"/sf/charts/chart.jsp">
+  [ 94] setlocal 4 .............................. sUrl = "/sf/charts/chart.jsp"
+  [ 96] getlocal 0 .............................. <sType>
+  [ 98] pusharglist 1 ........................... <sType>
+  [100] extcall 106 ............................. <voidp(sType)>
+  [102] not ..................................... <not voidp(sType)>
+  [103] getlocal 1 .............................. <iTime>
+  [105] pusharglist 1 ........................... <iTime>
+  [107] extcall 106 ............................. <voidp(iTime)>
+  [109] not ..................................... <not voidp(iTime)>
+  [110] and ..................................... <not voidp(sType) and not voidp(iTime)>
+  [111] jmpifz [136] ............................ if not voidp(sType) and not voidp(iTime) then
+  [114] getlocal 4 .............................. <sUrl>
+  [116] pushcons 3 .............................. <"?">
+  [118] joinstr ................................. <sUrl & "?">
+  [119] pushcons 4 .............................. <"type=">
+  [121] joinstr ................................. <sUrl & "?" & "type=">
+  [122] getlocal 0 .............................. <sType>
+  [124] joinstr ................................. <sUrl & "?" & "type=" & sType>
+  [125] pushcons 5 .............................. <"&">
+  [127] joinstr ................................. <sUrl & "?" & "type=" & sType & "&">
+  [128] pushcons 6 .............................. <"time=">
+  [130] joinstr ................................. <sUrl & "?" & "type=" & sType & "&" & "time=">
+  [131] getlocal 1 .............................. <iTime>
+  [133] joinstr ................................. <sUrl & "?" & "type=" & sType & "&" & "time=" & iTime>
+  [134] setlocal 4 .............................. sUrl = sUrl & "?" & "type=" & sType & "&" & "time=" & iTime
+  [136] getlocal 4 .............................. <sUrl>
+  [138] pushcons 7 .............................. <"Top40Chart">
+  [140] pusharglistnoret 2 ...................... <sUrl, "Top40Chart">
+  [142] extcall 1220 ............................ gotoNetPage(sUrl, "Top40Chart")
+  [145] ret
+end

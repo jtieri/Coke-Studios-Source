@@ -1,0 +1,157 @@
+global oAvatar, oIsoScene
+
+on beginSprite me
+  [  0] pushcons 0 .............................. <"isoScene">
+  [  2] pusharglist 1 ........................... <"isoScene">
+  [  4] extcall 26 .............................. <script("isoScene")>
+  [  6] pusharglist 1 ........................... <script("isoScene")>
+  [  8] objcall 25 .............................. <script("isoScene").new()>
+  [ 10] setglobal 124 ........................... oIsoScene = script("isoScene").new()
+  [ 12] getglobal 124 ........................... <oIsoScene>
+  [ 14] pusharglistnoret 1 ...................... <oIsoScene>
+  [ 16] objcall 125 ............................. oIsoScene.init()
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] setlocal 0 .............................. iRow = 1
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] setlocal 1 .............................. iCol = 1
+  [ 26] pushint8 5 .............................. <5>
+  [ 28] setlocal 2 .............................. iRows = 5
+  [ 30] pushint8 8 .............................. <8>
+  [ 32] setlocal 3 .............................. iCols = 8
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] setlocal 4 .............................. iNumAvatars = 1
+  [ 38] pushint8 120 ............................ <120>
+  [ 40] setlocal 5 .............................. iSprite = 120
+  [ 42] pushint8 121 ............................ <121>
+  [ 44] setlocal 6 .............................. iShadowSprite = 121
+  [ 46] pushint8 20 ............................. <20>
+  [ 48] pushint16 200 ........................... <200>
+  [ 51] pusharglist 2 ........................... <20, 200>
+  [ 53] extcall 143 ............................. <point(20, 200)>
+  [ 55] setlocal 7 .............................. oLoc = point(20, 200)
+  [ 57] pushint8 50 ............................. <50>
+  [ 59] setlocal 8 .............................. iColOff = 50
+  [ 61] pushint8 50 ............................. <50>
+  [ 63] setlocal 9 .............................. iRowOff = 50
+  [ 65] pusharglist 0 ........................... <>
+  [ 67] thebuiltin 353 .......................... <the shiftDown>
+  [ 70] jmpifz [ 77] ............................ if the shiftDown then
+  [ 73] pushint8 25 ............................. <25>
+  [ 75] setlocal 4 .............................. iNumAvatars = 25
+  [ 77] pushint8 1 .............................. <1>
+  [ 79] setlocal 10
+  [ 81] getlocal 10
+  [ 83] getlocal 4 .............................. <iNumAvatars>
+  [ 85] lteq
+  [ 86] jmpifz [293] ............................ repeat with i = 1 to iNumAvatars
+  [ 89] getlocal 7 .............................. <oLoc>
+  [ 91] getlocal 8 .............................. <iColOff>
+  [ 93] getlocal 1 .............................. <iCol>
+  [ 95] pushint8 1 .............................. <1>
+  [ 97] sub ..................................... <iCol - 1>
+  [ 98] mul ..................................... <iColOff * (iCol - 1)>
+  [ 99] getlocal 9 .............................. <iRowOff>
+  [101] getlocal 0 .............................. <iRow>
+  [103] pushint8 1 .............................. <1>
+  [105] sub ..................................... <iRow - 1>
+  [106] mul ..................................... <iRowOff * (iRow - 1)>
+  [107] pusharglist 2 ........................... <iColOff * (iCol - 1), iRowOff * (iRow - 1)>
+  [109] extcall 143 ............................. <point(iColOff * (iCol - 1), iRowOff * (iRow - 1))>
+  [111] add ..................................... <oLoc + point(iColOff * (iCol - 1), iRowOff * (iRow - 1))>
+  [112] setlocal 11 ............................. oNewLoc = oLoc + point(iColOff * (iCol - 1), iRowOff * (iRow - 1))
+  [114] pushcons 1 .............................. <"AvatarEngine">
+  [116] pusharglist 1 ........................... <"AvatarEngine">
+  [118] extcall 26 .............................. <script("AvatarEngine")>
+  [120] pusharglist 1 ........................... <script("AvatarEngine")>
+  [122] extcall 25 .............................. <new(script("AvatarEngine"))>
+  [124] setlocal 12 ............................. oNewAvatar = new(script("AvatarEngine"))
+  [126] getlocal 12 ............................. <oNewAvatar>
+  [128] getlocal 5 .............................. <iSprite>
+  [130] getlocal 6 .............................. <iShadowSprite>
+  [132] pusharglistnoret 3 ...................... <oNewAvatar, iSprite, iShadowSprite>
+  [134] objcall 146 ............................. oNewAvatar.initSprites(iSprite, iShadowSprite)
+  [136] getlocal 4 .............................. <iNumAvatars>
+  [138] pushint8 1 .............................. <1>
+  [140] eq ...................................... <iNumAvatars = 1>
+  [141] jmpifz [170] ............................ if iNumAvatars = 1 then / else
+  [144] getlocal 12 ............................. <oNewAvatar>
+  [146] pushsymb 354 ............................ <#getInitLoc>
+  [149] pusharglist 1 ........................... <#getInitLoc>
+  [151] extcall 148 ............................. <sendAllSprites(#getInitLoc)>
+  [153] pusharglistnoret 2 ...................... <oNewAvatar, sendAllSprites(#getInitLoc)>
+  [155] objcall 355 ............................. oNewAvatar.setLoc(sendAllSprites(#getInitLoc))
+  [158] pushsymb 356 ............................ <#setVisible>
+  [161] pushint8 1 .............................. <1>
+  [163] pusharglistnoret 2 ...................... <#setVisible, 1>
+  [165] extcall 148 ............................. sendAllSprites(#setVisible, 1)
+  [167] jmp [187]
+  [170] getlocal 12 ............................. <oNewAvatar>
+  [172] getlocal 11 ............................. <oNewLoc>
+  [174] pusharglistnoret 2 ...................... <oNewAvatar, oNewLoc>
+  [176] objcall 355 ............................. oNewAvatar.setLoc(oNewLoc)
+  [179] pushsymb 356 ............................ <#setVisible>
+  [182] pushzero ................................ <0>
+  [183] pusharglistnoret 2 ...................... <#setVisible, 0>
+  [185] extcall 148 ............................. sendAllSprites(#setVisible, 0)
+  [187] getlocal 10 ............................. <i>
+  [189] pushint8 1 .............................. <1>
+  [191] eq ...................................... <i = 1>
+  [192] jmpifz [202] ............................ if i = 1 then
+  [195] getlocal 12 ............................. <oNewAvatar>
+  [197] pushint8 1 .............................. <1>
+  [199] setobjprop 357 .......................... oNewAvatar.bDisplayStatus = 1
+  [202] getlocal 11 ............................. <oNewLoc>
+  [204] pusharglistnoret 1 ...................... <oNewLoc>
+  [206] extcall 358 ............................. put oNewLoc
+  [209] getlocal 10 ............................. <i>
+  [211] pushint8 1 .............................. <1>
+  [213] eq ...................................... <i = 1>
+  [214] jmpifz [221] ............................ if i = 1 then
+  [217] getlocal 12 ............................. <oNewAvatar>
+  [219] setglobal 144 ........................... oAvatar = oNewAvatar
+  [221] getmovieprop 23 ......................... <the actorList>
+  [223] getlocal 12 ............................. <oNewAvatar>
+  [225] pusharglistnoret 2 ...................... <the actorList, oNewAvatar>
+  [227] objcall 135 ............................. (the actorList).add(oNewAvatar)
+  [229] getlocal 10 ............................. <i>
+  [231] pushint8 2 .............................. <2>
+  [233] mod ..................................... <i mod 2>
+  [234] pushzero ................................ <0>
+  [235] eq ...................................... <(i mod 2) = 0>
+  [236] jmpifz [248] ............................ if (i mod 2) = 0 then
+  [239] getlocal 12 ............................. <oNewAvatar>
+  [241] pushcons 2 .............................. <"wlk">
+  [243] pusharglistnoret 2 ...................... <oNewAvatar, "wlk">
+  [245] objcall 359 ............................. oNewAvatar.setBodyAction("wlk")
+  [248] getlocal 5 .............................. <iSprite>
+  [250] pushint8 20 ............................. <20>
+  [252] add ..................................... <iSprite + 20>
+  [253] setlocal 5 .............................. iSprite = iSprite + 20
+  [255] getlocal 1 .............................. <iCol>
+  [257] getlocal 3 .............................. <iCols>
+  [259] eq ...................................... <iCol = iCols>
+  [260] jmpifz [277] ............................ if iCol = iCols then
+  [263] getlocal 0 .............................. <iRow>
+  [265] pushint8 1 .............................. <1>
+  [267] add ..................................... <iRow + 1>
+  [268] setlocal 0 .............................. iRow = iRow + 1
+  [270] pushint8 1 .............................. <1>
+  [272] setlocal 1 .............................. iCol = 1
+  [274] jmp [284] ............................... next repeat
+  [277] getlocal 1 .............................. <iCol>
+  [279] pushint8 1 .............................. <1>
+  [281] add ..................................... <iCol + 1>
+  [282] setlocal 1 .............................. iCol = iCol + 1
+  [284] pushint8 1
+  [286] getlocal 10
+  [288] add
+  [289] setlocal 10
+  [291] endrepeat [ 81]
+  [293] pushcons 3 .............................. <"AvatarAttributes">
+  [295] pusharglist 1 ........................... <"AvatarAttributes">
+  [297] extcall 32 .............................. <member("AvatarAttributes")>
+  [299] getglobal 144 ........................... <oAvatar>
+  [301] getobjprop 360 .......................... <oAvatar.sDefaultString>
+  [304] setobjprop 95 ........................... member("AvatarAttributes").text = oAvatar.sDefaultString
+  [306] ret
+end

@@ -1,0 +1,1060 @@
+property pStatus, pWindowObject, pDecalList, pRectDecal, pIndex, pItems, pcurrentpage, pTotalPages, pTotalItems
+global oStudio
+
+on new me, windowobject
+  [  0] pushsymb 883 ............................ <#popup>
+  [  3] setprop 426 ............................. pStatus = #popup
+  [  6] getparam 1 .............................. <windowobject>
+  [  8] setprop 434 ............................. pWindowObject = windowobject
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setprop 253 ............................. pIndex = 1
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglistnoret 1 ...................... <me>
+  [ 19] extcall 78 .............................. return me
+  [ 21] ret
+end
+
+on getBackpackCurrentPage me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 252 .......................... <me.pcurrentpage>
+  [  4] pusharglistnoret 1 ...................... <me.pcurrentpage>
+  [  6] extcall 78 .............................. return me.pcurrentpage
+  [  8] ret
+end
+
+on mouseDown me
+  [  0] getprop 426 ............................. <pStatus>
+  [  3] pushsymb 441 ............................ <#idle>
+  [  6] eq ...................................... <pStatus = #idle>
+  [  7] jmpifz [212] ............................ if pStatus = #idle then
+  [ 10] getglobal 86 ............................ <ElementMgr>
+  [ 12] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 14] getprop 434 ............................. <pWindowObject>
+  [ 17] pusharglist 2 ........................... <ElementMgr.pOpenWindows, pWindowObject>
+  [ 19] extcall 448 ............................. <getPos(ElementMgr.pOpenWindows, pWindowObject)>
+  [ 22] getglobal 86 ............................ <ElementMgr>
+  [ 24] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 26] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 28] extcall 104 ............................. <count(ElementMgr.pOpenWindows)>
+  [ 30] lt ...................................... <getPos(ElementMgr.pOpenWindows, pWindowObject) < count(ElementMgr.pOpenWindows)>
+  [ 31] jmpifz [ 41] ............................ if getPos(ElementMgr.pOpenWindows, pWindowObject) < count(ElementMgr.pOpenWindows) then
+  [ 34] getprop 434 ............................. <pWindowObject>
+  [ 37] pusharglistnoret 1 ...................... <pWindowObject>
+  [ 39] objcall 91 .............................. pWindowObject.bringtofront()
+  [ 41] pusharglist 0 ........................... <[]>
+  [ 43] pushlist ................................ <[]>
+  [ 44] setprop 449 ............................. pDecalList = []
+  [ 47] getprop 434 ............................. <pWindowObject>
+  [ 50] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [ 52] peek 0
+  [ 54] pusharglist 1
+  [ 56] extcall 104
+  [ 58] pushint8 1
+  [ 60] peek 0
+  [ 62] peek 2
+  [ 64] lteq
+  [ 65] jmpifz [105] ............................ repeat with n in pWindowObject.pSpritelist
+  [ 68] peek 2
+  [ 70] peek 1
+  [ 72] pusharglist 2
+  [ 74] extcall 95
+  [ 76] setlocal 0
+  [ 78] getprop 449 ............................. <pDecalList>
+  [ 81] pusharglist 0 ........................... <>
+  [ 83] thebuiltin 444 .......................... <the clickLoc>
+  [ 86] getlocal 0 .............................. <n>
+  [ 88] pusharglist 1 ........................... <n>
+  [ 90] extcall 177 ............................. <sprite(n)>
+  [ 92] getobjprop 450 .......................... <sprite(n).loc>
+  [ 95] sub ..................................... <the clickLoc - sprite(n).loc>
+  [ 96] pusharglistnoret 2 ...................... <pDecalList, the clickLoc - sprite(n).loc>
+  [ 98] extcall 190 ............................. append(pDecalList, the clickLoc - sprite(n).loc)
+  [100] pushint8 1
+  [102] add
+  [103] endrepeat [ 60]
+  [105] pop 3
+  [107] getprop 434 ............................. <pWindowObject>
+  [110] getobjprop 196 .......................... <pWindowObject.prect>
+  [112] setlocal 1 .............................. oldrect = pWindowObject.prect
+  [114] getlocal 1 .............................. <oldrect>
+  [116] pushint8 1 .............................. <1>
+  [118] pusharglist 2 ........................... <oldrect, 1>
+  [120] objcall 95 .............................. <oldrect[1]>
+  [122] getlocal 1 .............................. <oldrect>
+  [124] pushint8 2 .............................. <2>
+  [126] pusharglist 2 ........................... <oldrect, 2>
+  [128] objcall 95 .............................. <oldrect[2]>
+  [130] getlocal 1 .............................. <oldrect>
+  [132] pushint8 3 .............................. <3>
+  [134] pusharglist 2 ........................... <oldrect, 3>
+  [136] objcall 95 .............................. <oldrect[3]>
+  [138] getlocal 1 .............................. <oldrect>
+  [140] pushint8 4 .............................. <4>
+  [142] pusharglist 2 ........................... <oldrect, 4>
+  [144] objcall 95 .............................. <oldrect[4]>
+  [146] pusharglist 4 ........................... <oldrect[1], oldrect[2], oldrect[3], oldrect[4]>
+  [148] extcall 88 .............................. <rect(oldrect[1], oldrect[2], oldrect[3], oldrect[4])>
+  [150] getparam 0 .............................. <me>
+  [152] getobjprop 429 .......................... <me.spriteNum>
+  [155] pusharglist 1 ........................... <me.spriteNum>
+  [157] extcall 177 ............................. <sprite(me.spriteNum)>
+  [159] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [162] getparam 0 .............................. <me>
+  [164] getobjprop 429 .......................... <me.spriteNum>
+  [167] pusharglist 1 ........................... <me.spriteNum>
+  [169] extcall 177 ............................. <sprite(me.spriteNum)>
+  [171] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [174] getparam 0 .............................. <me>
+  [176] getobjprop 429 .......................... <me.spriteNum>
+  [179] pusharglist 1 ........................... <me.spriteNum>
+  [181] extcall 177 ............................. <sprite(me.spriteNum)>
+  [183] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [186] getparam 0 .............................. <me>
+  [188] getobjprop 429 .......................... <me.spriteNum>
+  [191] pusharglist 1 ........................... <me.spriteNum>
+  [193] extcall 177 ............................. <sprite(me.spriteNum)>
+  [195] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [198] pusharglist 4 ........................... <sprite(me.spriteNum).left, sprite(me.spriteNum).top, sprite(me.spriteNum).left, sprite(me.spriteNum).top>
+  [200] extcall 88 .............................. <rect(sprite(me.spriteNum).left, sprite(me.spriteNum).top, sprite(me.spriteNum).left, sprite(me.spriteNum).top)>
+  [202] sub ..................................... <rect(oldrect[1], oldrect[2], oldrect[3], oldrect[4]) - rect(sprite(me.spriteNum).left, sprite(me.spriteNum).top, sprite(me.spriteNum).left, sprite(me.spriteNum).top)>
+  [203] setprop 451 ............................. pRectDecal = rect(oldrect[1], oldrect[2], oldrect[3], oldrect[4]) - rect(sprite(me.spriteNum).left, sprite(me.spriteNum).top, sprite(me.spriteNum).left, sprite(me.spriteNum).top)
+  [206] pushsymb 452 ............................ <#drag>
+  [209] setprop 426 ............................. pStatus = #drag
+  [212] pusharglistnoret 0 ...................... <>
+  [214] extcall 430 ............................. stopEvent()
+  [217] ret
+end
+
+on getBackpackBackgroundSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 429 .......................... <me.spriteNum>
+  [  5] pusharglistnoret 1 ...................... <me.spriteNum>
+  [  7] extcall 78 .............................. return me.spriteNum
+  [  9] ret
+end
+
+on mouseUp me
+  [  0] getprop 426 ............................. <pStatus>
+  [  3] pushsymb 452 ............................ <#drag>
+  [  6] eq ...................................... <pStatus = #drag>
+  [  7] jmpifz [146] ............................ if pStatus = #drag then
+  [ 10] getprop 434 ............................. <pWindowObject>
+  [ 13] pushsymb 196 ............................ <#prect>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 429 .......................... <me.spriteNum>
+  [ 22] pusharglist 1 ........................... <me.spriteNum>
+  [ 24] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 26] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [ 29] getprop 451 ............................. <pRectDecal>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] pusharglist 2 ........................... <pRectDecal, 1>
+  [ 36] objcall 95 .............................. <pRectDecal[1]>
+  [ 38] add ..................................... <sprite(me.spriteNum).left + pRectDecal[1]>
+  [ 39] pusharglistnoret 4 ...................... <pWindowObject, #prect, 1, sprite(me.spriteNum).left + pRectDecal[1]>
+  [ 41] objcall 454 ............................. pWindowObject.prect[1] = sprite(me.spriteNum).left + pRectDecal[1]
+  [ 44] getprop 434 ............................. <pWindowObject>
+  [ 47] pushsymb 196 ............................ <#prect>
+  [ 49] pushint8 2 .............................. <2>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getobjprop 429 .......................... <me.spriteNum>
+  [ 56] pusharglist 1 ........................... <me.spriteNum>
+  [ 58] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 60] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [ 63] getprop 451 ............................. <pRectDecal>
+  [ 66] pushint8 2 .............................. <2>
+  [ 68] pusharglist 2 ........................... <pRectDecal, 2>
+  [ 70] objcall 95 .............................. <pRectDecal[2]>
+  [ 72] add ..................................... <sprite(me.spriteNum).top + pRectDecal[2]>
+  [ 73] pusharglistnoret 4 ...................... <pWindowObject, #prect, 2, sprite(me.spriteNum).top + pRectDecal[2]>
+  [ 75] objcall 454 ............................. pWindowObject.prect[2] = sprite(me.spriteNum).top + pRectDecal[2]
+  [ 78] getprop 434 ............................. <pWindowObject>
+  [ 81] pushsymb 196 ............................ <#prect>
+  [ 83] pushint8 3 .............................. <3>
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getobjprop 429 .......................... <me.spriteNum>
+  [ 90] pusharglist 1 ........................... <me.spriteNum>
+  [ 92] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 94] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [ 97] getprop 451 ............................. <pRectDecal>
+  [100] pushint8 3 .............................. <3>
+  [102] pusharglist 2 ........................... <pRectDecal, 3>
+  [104] objcall 95 .............................. <pRectDecal[3]>
+  [106] add ..................................... <sprite(me.spriteNum).left + pRectDecal[3]>
+  [107] pusharglistnoret 4 ...................... <pWindowObject, #prect, 3, sprite(me.spriteNum).left + pRectDecal[3]>
+  [109] objcall 454 ............................. pWindowObject.prect[3] = sprite(me.spriteNum).left + pRectDecal[3]
+  [112] getprop 434 ............................. <pWindowObject>
+  [115] pushsymb 196 ............................ <#prect>
+  [117] pushint8 4 .............................. <4>
+  [119] getparam 0 .............................. <me>
+  [121] getobjprop 429 .......................... <me.spriteNum>
+  [124] pusharglist 1 ........................... <me.spriteNum>
+  [126] extcall 177 ............................. <sprite(me.spriteNum)>
+  [128] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [131] getprop 451 ............................. <pRectDecal>
+  [134] pushint8 4 .............................. <4>
+  [136] pusharglist 2 ........................... <pRectDecal, 4>
+  [138] objcall 95 .............................. <pRectDecal[4]>
+  [140] add ..................................... <sprite(me.spriteNum).top + pRectDecal[4]>
+  [141] pusharglistnoret 4 ...................... <pWindowObject, #prect, 4, sprite(me.spriteNum).top + pRectDecal[4]>
+  [143] objcall 454 ............................. pWindowObject.prect[4] = sprite(me.spriteNum).top + pRectDecal[4]
+  [146] pushsymb 441 ............................ <#idle>
+  [149] setprop 426 ............................. pStatus = #idle
+  [152] pusharglistnoret 0 ...................... <>
+  [154] extcall 430 ............................. stopEvent()
+  [157] ret
+end
+
+on mouseUpOutSide me
+  [  0] getprop 426 ............................. <pStatus>
+  [  3] pushsymb 452 ............................ <#drag>
+  [  6] eq ...................................... <pStatus = #drag>
+  [  7] jmpifz [146] ............................ if pStatus = #drag then
+  [ 10] getprop 434 ............................. <pWindowObject>
+  [ 13] pushsymb 196 ............................ <#prect>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 429 .......................... <me.spriteNum>
+  [ 22] pusharglist 1 ........................... <me.spriteNum>
+  [ 24] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 26] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [ 29] getprop 451 ............................. <pRectDecal>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] pusharglist 2 ........................... <pRectDecal, 1>
+  [ 36] objcall 95 .............................. <pRectDecal[1]>
+  [ 38] add ..................................... <sprite(me.spriteNum).left + pRectDecal[1]>
+  [ 39] pusharglistnoret 4 ...................... <pWindowObject, #prect, 1, sprite(me.spriteNum).left + pRectDecal[1]>
+  [ 41] objcall 454 ............................. pWindowObject.prect[1] = sprite(me.spriteNum).left + pRectDecal[1]
+  [ 44] getprop 434 ............................. <pWindowObject>
+  [ 47] pushsymb 196 ............................ <#prect>
+  [ 49] pushint8 2 .............................. <2>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getobjprop 429 .......................... <me.spriteNum>
+  [ 56] pusharglist 1 ........................... <me.spriteNum>
+  [ 58] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 60] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [ 63] getprop 451 ............................. <pRectDecal>
+  [ 66] pushint8 2 .............................. <2>
+  [ 68] pusharglist 2 ........................... <pRectDecal, 2>
+  [ 70] objcall 95 .............................. <pRectDecal[2]>
+  [ 72] add ..................................... <sprite(me.spriteNum).top + pRectDecal[2]>
+  [ 73] pusharglistnoret 4 ...................... <pWindowObject, #prect, 2, sprite(me.spriteNum).top + pRectDecal[2]>
+  [ 75] objcall 454 ............................. pWindowObject.prect[2] = sprite(me.spriteNum).top + pRectDecal[2]
+  [ 78] getprop 434 ............................. <pWindowObject>
+  [ 81] pushsymb 196 ............................ <#prect>
+  [ 83] pushint8 3 .............................. <3>
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getobjprop 429 .......................... <me.spriteNum>
+  [ 90] pusharglist 1 ........................... <me.spriteNum>
+  [ 92] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 94] getobjprop 446 .......................... <sprite(me.spriteNum).left>
+  [ 97] getprop 451 ............................. <pRectDecal>
+  [100] pushint8 3 .............................. <3>
+  [102] pusharglist 2 ........................... <pRectDecal, 3>
+  [104] objcall 95 .............................. <pRectDecal[3]>
+  [106] add ..................................... <sprite(me.spriteNum).left + pRectDecal[3]>
+  [107] pusharglistnoret 4 ...................... <pWindowObject, #prect, 3, sprite(me.spriteNum).left + pRectDecal[3]>
+  [109] objcall 454 ............................. pWindowObject.prect[3] = sprite(me.spriteNum).left + pRectDecal[3]
+  [112] getprop 434 ............................. <pWindowObject>
+  [115] pushsymb 196 ............................ <#prect>
+  [117] pushint8 4 .............................. <4>
+  [119] getparam 0 .............................. <me>
+  [121] getobjprop 429 .......................... <me.spriteNum>
+  [124] pusharglist 1 ........................... <me.spriteNum>
+  [126] extcall 177 ............................. <sprite(me.spriteNum)>
+  [128] getobjprop 447 .......................... <sprite(me.spriteNum).top>
+  [131] getprop 451 ............................. <pRectDecal>
+  [134] pushint8 4 .............................. <4>
+  [136] pusharglist 2 ........................... <pRectDecal, 4>
+  [138] objcall 95 .............................. <pRectDecal[4]>
+  [140] add ..................................... <sprite(me.spriteNum).top + pRectDecal[4]>
+  [141] pusharglistnoret 4 ...................... <pWindowObject, #prect, 4, sprite(me.spriteNum).top + pRectDecal[4]>
+  [143] objcall 454 ............................. pWindowObject.prect[4] = sprite(me.spriteNum).top + pRectDecal[4]
+  [146] pushsymb 441 ............................ <#idle>
+  [149] setprop 426 ............................. pStatus = #idle
+  [152] ret
+end
+
+on exitFrame me
+  [  0] getprop 426 ............................. <pStatus>
+  [  3] pushsymb 452 ............................ <#drag>
+  [  6] eq ...................................... <pStatus = #drag>
+  [  7] jmpifz [318] ............................ if pStatus = #drag then / else
+  [ 10] getmovieprop 455 ........................ <the mouseLoc>
+  [ 13] setlocal 0 .............................. pointloc = the mouseLoc
+  [ 15] getlocal 0 .............................. <pointloc>
+  [ 17] getprop 449 ............................. <pDecalList>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] pusharglist 2 ........................... <pDecalList, 1>
+  [ 24] objcall 95 .............................. <pDecalList[1]>
+  [ 26] sub ..................................... <pointloc - pDecalList[1]>
+  [ 27] getobjprop 456 .......................... <(pointloc - pDecalList[1]).locH>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 429 .......................... <me.spriteNum>
+  [ 35] pusharglist 1 ........................... <me.spriteNum>
+  [ 37] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 39] getobjprop 457 .......................... <sprite(me.spriteNum).width>
+  [ 42] add ..................................... <(pointloc - pDecalList[1]).locH + sprite(me.spriteNum).width>
+  [ 43] getmovieprop 458 ........................ <the stage>
+  [ 46] getchainedprop 88 ....................... <(the stage).rect>
+  [ 48] getobjprop 457 .......................... <(the stage).rect.width>
+  [ 51] gt ...................................... <((pointloc - pDecalList[1]).locH + sprite(me.spriteNum).width) > (the stage).rect.width>
+  [ 52] jmpifz [ 97] ............................ if ((pointloc - pDecalList[1]).locH + sprite(me.spriteNum).width) > (the stage).rect.width then / else
+  [ 55] getlocal 0 .............................. <pointloc>
+  [ 57] getmovieprop 458 ........................ <the stage>
+  [ 60] getchainedprop 88 ....................... <(the stage).rect>
+  [ 62] getobjprop 457 .......................... <(the stage).rect.width>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getobjprop 429 .......................... <me.spriteNum>
+  [ 70] pusharglist 1 ........................... <me.spriteNum>
+  [ 72] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 74] getobjprop 457 .......................... <sprite(me.spriteNum).width>
+  [ 77] sub ..................................... <(the stage).rect.width - sprite(me.spriteNum).width>
+  [ 78] getprop 449 ............................. <pDecalList>
+  [ 81] pushint8 1 .............................. <1>
+  [ 83] pusharglist 2 ........................... <pDecalList, 1>
+  [ 85] objcall 95 .............................. <pDecalList[1]>
+  [ 87] getobjprop 456 .......................... <pDecalList[1].locH>
+  [ 90] add ..................................... <(the stage).rect.width - sprite(me.spriteNum).width + pDecalList[1].locH>
+  [ 91] setobjprop 456 .......................... pointloc.locH = (the stage).rect.width - sprite(me.spriteNum).width + pDecalList[1].locH
+  [ 94] jmp [134]
+  [ 97] getlocal 0 .............................. <pointloc>
+  [ 99] getprop 449 ............................. <pDecalList>
+  [102] pushint8 1 .............................. <1>
+  [104] pusharglist 2 ........................... <pDecalList, 1>
+  [106] objcall 95 .............................. <pDecalList[1]>
+  [108] sub ..................................... <pointloc - pDecalList[1]>
+  [109] getobjprop 456 .......................... <(pointloc - pDecalList[1]).locH>
+  [112] pushzero ................................ <0>
+  [113] lt ...................................... <(pointloc - pDecalList[1]).locH < 0>
+  [114] jmpifz [134] ............................ if (pointloc - pDecalList[1]).locH < 0 then
+  [117] getlocal 0 .............................. <pointloc>
+  [119] getprop 449 ............................. <pDecalList>
+  [122] pushint8 1 .............................. <1>
+  [124] pusharglist 2 ........................... <pDecalList, 1>
+  [126] objcall 95 .............................. <pDecalList[1]>
+  [128] getobjprop 456 .......................... <pDecalList[1].locH>
+  [131] setobjprop 456 .......................... pointloc.locH = pDecalList[1].locH
+  [134] getlocal 0 .............................. <pointloc>
+  [136] getprop 449 ............................. <pDecalList>
+  [139] pushint8 1 .............................. <1>
+  [141] pusharglist 2 ........................... <pDecalList, 1>
+  [143] objcall 95 .............................. <pDecalList[1]>
+  [145] sub ..................................... <pointloc - pDecalList[1]>
+  [146] getobjprop 459 .......................... <(pointloc - pDecalList[1]).locV>
+  [149] getparam 0 .............................. <me>
+  [151] getobjprop 429 .......................... <me.spriteNum>
+  [154] pusharglist 1 ........................... <me.spriteNum>
+  [156] extcall 177 ............................. <sprite(me.spriteNum)>
+  [158] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [161] add ..................................... <(pointloc - pDecalList[1]).locV + sprite(me.spriteNum).height>
+  [162] getmovieprop 458 ........................ <the stage>
+  [165] getchainedprop 88 ....................... <(the stage).rect>
+  [167] getobjprop 460 .......................... <(the stage).rect.height>
+  [170] gt ...................................... <((pointloc - pDecalList[1]).locV + sprite(me.spriteNum).height) > (the stage).rect.height>
+  [171] jmpifz [216] ............................ if ((pointloc - pDecalList[1]).locV + sprite(me.spriteNum).height) > (the stage).rect.height then / else
+  [174] getlocal 0 .............................. <pointloc>
+  [176] getmovieprop 458 ........................ <the stage>
+  [179] getchainedprop 88 ....................... <(the stage).rect>
+  [181] getobjprop 460 .......................... <(the stage).rect.height>
+  [184] getparam 0 .............................. <me>
+  [186] getobjprop 429 .......................... <me.spriteNum>
+  [189] pusharglist 1 ........................... <me.spriteNum>
+  [191] extcall 177 ............................. <sprite(me.spriteNum)>
+  [193] getobjprop 460 .......................... <sprite(me.spriteNum).height>
+  [196] sub ..................................... <(the stage).rect.height - sprite(me.spriteNum).height>
+  [197] getprop 449 ............................. <pDecalList>
+  [200] pushint8 1 .............................. <1>
+  [202] pusharglist 2 ........................... <pDecalList, 1>
+  [204] objcall 95 .............................. <pDecalList[1]>
+  [206] getobjprop 459 .......................... <pDecalList[1].locV>
+  [209] add ..................................... <(the stage).rect.height - sprite(me.spriteNum).height + pDecalList[1].locV>
+  [210] setobjprop 459 .......................... pointloc.locV = (the stage).rect.height - sprite(me.spriteNum).height + pDecalList[1].locV
+  [213] jmp [253]
+  [216] getlocal 0 .............................. <pointloc>
+  [218] getprop 449 ............................. <pDecalList>
+  [221] pushint8 1 .............................. <1>
+  [223] pusharglist 2 ........................... <pDecalList, 1>
+  [225] objcall 95 .............................. <pDecalList[1]>
+  [227] sub ..................................... <pointloc - pDecalList[1]>
+  [228] getobjprop 459 .......................... <(pointloc - pDecalList[1]).locV>
+  [231] pushzero ................................ <0>
+  [232] lt ...................................... <(pointloc - pDecalList[1]).locV < 0>
+  [233] jmpifz [253] ............................ if (pointloc - pDecalList[1]).locV < 0 then
+  [236] getlocal 0 .............................. <pointloc>
+  [238] getprop 449 ............................. <pDecalList>
+  [241] pushint8 1 .............................. <1>
+  [243] pusharglist 2 ........................... <pDecalList, 1>
+  [245] objcall 95 .............................. <pDecalList[1]>
+  [247] getobjprop 459 .......................... <pDecalList[1].locV>
+  [250] setobjprop 459 .......................... pointloc.locV = pDecalList[1].locV
+  [253] pushint8 1 .............................. <1>
+  [255] setlocal 1
+  [257] getlocal 1
+  [259] getprop 434 ............................. <pWindowObject>
+  [262] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [264] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [266] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [268] lteq
+  [269] jmpifz [315] ............................ repeat with n = 1 to count(pWindowObject.pSpritelist)
+  [272] getprop 449 ............................. <pDecalList>
+  [275] getlocal 1 .............................. <n>
+  [277] pusharglist 2 ........................... <pDecalList, n>
+  [279] objcall 95 .............................. <pDecalList[n]>
+  [281] setlocal 2 .............................. delta = pDecalList[n]
+  [283] getprop 434 ............................. <pWindowObject>
+  [286] pushsymb 250 ............................ <#pSpritelist>
+  [288] getlocal 1 .............................. <n>
+  [290] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n>
+  [292] objcall 108 ............................. <pWindowObject.pSpritelist[n]>
+  [294] pusharglist 1 ........................... <pWindowObject.pSpritelist[n]>
+  [296] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n])>
+  [298] getlocal 0 .............................. <pointloc>
+  [300] getlocal 2 .............................. <delta>
+  [302] sub ..................................... <pointloc - delta>
+  [303] setobjprop 450 .......................... sprite(pWindowObject.pSpritelist[n]).loc = pointloc - delta
+  [306] pushint8 1
+  [308] getlocal 1
+  [310] add
+  [311] setlocal 1
+  [313] endrepeat [257]
+  [315] jmp [884]
+  [318] getprop 426 ............................. <pStatus>
+  [321] pushsymb 883 ............................ <#popup>
+  [324] eq ...................................... <pStatus = #popup>
+  [325] jmpifz [610] ............................ if pStatus = #popup then / else
+  [328] getprop 434 ............................. <pWindowObject>
+  [331] pushsymb 196 ............................ <#prect>
+  [333] pushint8 2 .............................. <2>
+  [335] pusharglist 3 ........................... <pWindowObject, #prect, 2>
+  [337] objcall 108 ............................. <pWindowObject.prect[2]>
+  [339] pushint8 21 ............................. <21>
+  [341] sub ..................................... <pWindowObject.prect[2] - 21>
+  [342] pushfloat32 5.0 ......................... <5.0>
+  [347] div ..................................... <(pWindowObject.prect[2] - 21) / 5.0>
+  [348] setlocal 3 .............................. diff = (pWindowObject.prect[2] - 21) / 5.0
+  [350] getlocal 3 .............................. <diff>
+  [352] pushint8 1 .............................. <1>
+  [354] lt ...................................... <diff < 1>
+  [355] jmpifz [496] ............................ if diff < 1 then / else
+  [358] pushsymb 441 ............................ <#idle>
+  [361] setprop 426 ............................. pStatus = #idle
+  [364] getglobal 118 ........................... <oDenizenManager>
+  [366] pusharglist 1 ........................... <oDenizenManager>
+  [368] objcall 197 ............................. <oDenizenManager.getScreenName()>
+  [370] setlocal 4 .............................. myscreenname = oDenizenManager.getScreenName()
+  [372] getglobal 289 ........................... <oPossessionManager>
+  [375] getlocal 4 .............................. <myscreenname>
+  [377] pushint8 1 .............................. <1>
+  [379] pushint8 25 ............................. <25>
+  [381] pusharglistnoret 4 ...................... <oPossessionManager, myscreenname, 1, 25>
+  [383] objcall 290 ............................. oPossessionManager.getPossessionsInBackpack(myscreenname, 1, 25)
+  [386] getprop 434 ............................. <pWindowObject>
+  [389] pushsymb 250 ............................ <#pSpritelist>
+  [391] getprop 434 ............................. <pWindowObject>
+  [394] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [396] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [398] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [400] pushint8 1 .............................. <1>
+  [402] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [403] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [405] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [407] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [409] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [411] pushcons 0 .............................. <"cc.backpack.front.down">
+  [413] pusharglist 1 ........................... <"cc.backpack.front.down">
+  [415] extcall 101 ............................. <member("cc.backpack.front.down")>
+  [417] setobjprop 101 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).member = member("cc.backpack.front.down")
+  [419] getprop 434 ............................. <pWindowObject>
+  [422] pushsymb 250 ............................ <#pSpritelist>
+  [424] getprop 434 ............................. <pWindowObject>
+  [427] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [429] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [431] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [433] pushint8 1 .............................. <1>
+  [435] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [436] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [438] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [440] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [442] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [444] pushcons 0 .............................. <"cc.backpack.front.down">
+  [446] pusharglist 1 ........................... <"cc.backpack.front.down">
+  [448] extcall 101 ............................. <member("cc.backpack.front.down")>
+  [450] getobjprop 457 .......................... <member("cc.backpack.front.down").width>
+  [453] setobjprop 457 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).width = member("cc.backpack.front.down").width
+  [456] getprop 434 ............................. <pWindowObject>
+  [459] pushsymb 250 ............................ <#pSpritelist>
+  [461] getprop 434 ............................. <pWindowObject>
+  [464] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [466] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [468] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [470] pushint8 1 .............................. <1>
+  [472] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [473] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [475] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [477] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [479] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [481] pushcons 0 .............................. <"cc.backpack.front.down">
+  [483] pusharglist 1 ........................... <"cc.backpack.front.down">
+  [485] extcall 101 ............................. <member("cc.backpack.front.down")>
+  [487] getobjprop 460 .......................... <member("cc.backpack.front.down").height>
+  [490] setobjprop 460 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).height = member("cc.backpack.front.down").height
+  [493] jmp [607]
+  [496] getprop 434 ............................. <pWindowObject>
+  [499] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [501] peek 0
+  [503] pusharglist 1
+  [505] extcall 104
+  [507] pushint8 1
+  [509] peek 0
+  [511] peek 2
+  [513] lteq
+  [514] jmpifz [553] ............................ repeat with n in pWindowObject.pSpritelist
+  [517] peek 2
+  [519] peek 1
+  [521] pusharglist 2
+  [523] extcall 95
+  [525] setlocal 1
+  [527] getlocal 1 .............................. <n>
+  [529] pusharglist 1 ........................... <n>
+  [531] extcall 177 ............................. <sprite(n)>
+  [533] getlocal 1 .............................. <n>
+  [535] pusharglist 1 ........................... <n>
+  [537] extcall 177 ............................. <sprite(n)>
+  [539] getobjprop 459 .......................... <sprite(n).locV>
+  [542] getlocal 3 .............................. <diff>
+  [544] sub ..................................... <sprite(n).locV - diff>
+  [545] setobjprop 459 .......................... sprite(n).locV = sprite(n).locV - diff
+  [548] pushint8 1
+  [550] add
+  [551] endrepeat [509]
+  [553] pop 3
+  [555] getprop 434 ............................. <pWindowObject>
+  [558] pushsymb 196 ............................ <#prect>
+  [560] pushint8 2 .............................. <2>
+  [562] getprop 434 ............................. <pWindowObject>
+  [565] pushsymb 196 ............................ <#prect>
+  [567] pushint8 2 .............................. <2>
+  [569] pusharglist 3 ........................... <pWindowObject, #prect, 2>
+  [571] objcall 108 ............................. <pWindowObject.prect[2]>
+  [573] getlocal 3 .............................. <diff>
+  [575] sub ..................................... <pWindowObject.prect[2] - diff>
+  [576] pusharglistnoret 4 ...................... <pWindowObject, #prect, 2, pWindowObject.prect[2] - diff>
+  [578] objcall 454 ............................. pWindowObject.prect[2] = pWindowObject.prect[2] - diff
+  [581] getprop 434 ............................. <pWindowObject>
+  [584] pushsymb 196 ............................ <#prect>
+  [586] pushint8 4 .............................. <4>
+  [588] getprop 434 ............................. <pWindowObject>
+  [591] pushsymb 196 ............................ <#prect>
+  [593] pushint8 4 .............................. <4>
+  [595] pusharglist 3 ........................... <pWindowObject, #prect, 4>
+  [597] objcall 108 ............................. <pWindowObject.prect[4]>
+  [599] getlocal 3 .............................. <diff>
+  [601] sub ..................................... <pWindowObject.prect[4] - diff>
+  [602] pusharglistnoret 4 ...................... <pWindowObject, #prect, 4, pWindowObject.prect[4] - diff>
+  [604] objcall 454 ............................. pWindowObject.prect[4] = pWindowObject.prect[4] - diff
+  [607] jmp [884]
+  [610] getprop 426 ............................. <pStatus>
+  [613] pushsymb 884 ............................ <#popdown>
+  [616] eq ...................................... <pStatus = #popdown>
+  [617] jmpifz [884] ............................ if pStatus = #popdown then
+  [620] getmovieprop 458 ........................ <the stage>
+  [623] getchainedprop 88 ....................... <(the stage).rect>
+  [625] getobjprop 460 .......................... <(the stage).rect.height>
+  [628] getprop 434 ............................. <pWindowObject>
+  [631] pushsymb 196 ............................ <#prect>
+  [633] pushint8 2 .............................. <2>
+  [635] pusharglist 3 ........................... <pWindowObject, #prect, 2>
+  [637] objcall 108 ............................. <pWindowObject.prect[2]>
+  [639] sub ..................................... <(the stage).rect.height - pWindowObject.prect[2]>
+  [640] pushfloat32 5.0 ......................... <5.0>
+  [645] div ..................................... <((the stage).rect.height - pWindowObject.prect[2]) / 5.0>
+  [646] setlocal 3 .............................. diff = ((the stage).rect.height - pWindowObject.prect[2]) / 5.0
+  [648] getprop 434 ............................. <pWindowObject>
+  [651] pushsymb 250 ............................ <#pSpritelist>
+  [653] getprop 434 ............................. <pWindowObject>
+  [656] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [658] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [660] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [662] pushint8 1 .............................. <1>
+  [664] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [665] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [667] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [669] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [671] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [673] pushcons 1 .............................. <"cc.backpack.front">
+  [675] pusharglist 1 ........................... <"cc.backpack.front">
+  [677] extcall 101 ............................. <member("cc.backpack.front")>
+  [679] setobjprop 101 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).member = member("cc.backpack.front")
+  [681] getprop 434 ............................. <pWindowObject>
+  [684] pushsymb 250 ............................ <#pSpritelist>
+  [686] getprop 434 ............................. <pWindowObject>
+  [689] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [691] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [693] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [695] pushint8 1 .............................. <1>
+  [697] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [698] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [700] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [702] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [704] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [706] pushcons 1 .............................. <"cc.backpack.front">
+  [708] pusharglist 1 ........................... <"cc.backpack.front">
+  [710] extcall 101 ............................. <member("cc.backpack.front")>
+  [712] getobjprop 457 .......................... <member("cc.backpack.front").width>
+  [715] setobjprop 457 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).width = member("cc.backpack.front").width
+  [718] getprop 434 ............................. <pWindowObject>
+  [721] pushsymb 250 ............................ <#pSpritelist>
+  [723] getprop 434 ............................. <pWindowObject>
+  [726] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [728] pusharglist 1 ........................... <pWindowObject.pSpritelist>
+  [730] extcall 104 ............................. <count(pWindowObject.pSpritelist)>
+  [732] pushint8 1 .............................. <1>
+  [734] sub ..................................... <count(pWindowObject.pSpritelist) - 1>
+  [735] pusharglist 3 ........................... <pWindowObject, #pSpritelist, count(pWindowObject.pSpritelist) - 1>
+  [737] objcall 108 ............................. <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [739] pusharglist 1 ........................... <pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]>
+  [741] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1])>
+  [743] pushcons 1 .............................. <"cc.backpack.front">
+  [745] pusharglist 1 ........................... <"cc.backpack.front">
+  [747] extcall 101 ............................. <member("cc.backpack.front")>
+  [749] getobjprop 460 .......................... <member("cc.backpack.front").height>
+  [752] setobjprop 460 .......................... sprite(pWindowObject.pSpritelist[count(pWindowObject.pSpritelist) - 1]).height = member("cc.backpack.front").height
+  [755] getlocal 3 .............................. <diff>
+  [757] pushint8 1 .............................. <1>
+  [759] lt ...................................... <diff < 1>
+  [760] jmpifz [773] ............................ if diff < 1 then / else
+  [763] getprop 434 ............................. <pWindowObject>
+  [766] pusharglistnoret 1 ...................... <pWindowObject>
+  [768] objcall 180 ............................. pWindowObject.closeWindow()
+  [770] jmp [884]
+  [773] getprop 434 ............................. <pWindowObject>
+  [776] getobjprop 250 .......................... <pWindowObject.pSpritelist>
+  [778] peek 0
+  [780] pusharglist 1
+  [782] extcall 104
+  [784] pushint8 1
+  [786] peek 0
+  [788] peek 2
+  [790] lteq
+  [791] jmpifz [830] ............................ repeat with n in pWindowObject.pSpritelist
+  [794] peek 2
+  [796] peek 1
+  [798] pusharglist 2
+  [800] extcall 95
+  [802] setlocal 1
+  [804] getlocal 1 .............................. <n>
+  [806] pusharglist 1 ........................... <n>
+  [808] extcall 177 ............................. <sprite(n)>
+  [810] getlocal 1 .............................. <n>
+  [812] pusharglist 1 ........................... <n>
+  [814] extcall 177 ............................. <sprite(n)>
+  [816] getobjprop 459 .......................... <sprite(n).locV>
+  [819] getlocal 3 .............................. <diff>
+  [821] add ..................................... <sprite(n).locV + diff>
+  [822] setobjprop 459 .......................... sprite(n).locV = sprite(n).locV + diff
+  [825] pushint8 1
+  [827] add
+  [828] endrepeat [786]
+  [830] pop 3
+  [832] getprop 434 ............................. <pWindowObject>
+  [835] pushsymb 196 ............................ <#prect>
+  [837] pushint8 2 .............................. <2>
+  [839] getprop 434 ............................. <pWindowObject>
+  [842] pushsymb 196 ............................ <#prect>
+  [844] pushint8 2 .............................. <2>
+  [846] pusharglist 3 ........................... <pWindowObject, #prect, 2>
+  [848] objcall 108 ............................. <pWindowObject.prect[2]>
+  [850] getlocal 3 .............................. <diff>
+  [852] add ..................................... <pWindowObject.prect[2] + diff>
+  [853] pusharglistnoret 4 ...................... <pWindowObject, #prect, 2, pWindowObject.prect[2] + diff>
+  [855] objcall 454 ............................. pWindowObject.prect[2] = pWindowObject.prect[2] + diff
+  [858] getprop 434 ............................. <pWindowObject>
+  [861] pushsymb 196 ............................ <#prect>
+  [863] pushint8 4 .............................. <4>
+  [865] getprop 434 ............................. <pWindowObject>
+  [868] pushsymb 196 ............................ <#prect>
+  [870] pushint8 4 .............................. <4>
+  [872] pusharglist 3 ........................... <pWindowObject, #prect, 4>
+  [874] objcall 108 ............................. <pWindowObject.prect[4]>
+  [876] getlocal 3 .............................. <diff>
+  [878] add ..................................... <pWindowObject.prect[4] + diff>
+  [879] pusharglistnoret 4 ...................... <pWindowObject, #prect, 4, pWindowObject.prect[4] + diff>
+  [881] objcall 454 ............................. pWindowObject.prect[4] = pWindowObject.prect[4] + diff
+  [884] ret
+end
+
+on updatedisplay me
+  [  0] getprop 254 ............................. <pTotalPages>
+  [  2] pushint8 2 .............................. <2>
+  [  4] lt ...................................... <pTotalPages < 2>
+  [  5] jmpifz [ 39] ............................ if pTotalPages < 2 then / else
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setprop 253 ............................. pIndex = 1
+  [ 12] pushsymb 886 ............................ <#hideleftarrow>
+  [ 15] pusharglistnoret 1 ...................... <#hideleftarrow>
+  [ 17] extcall 188 ............................. sendAllSprites(#hideleftarrow)
+  [ 19] pushsymb 887 ............................ <#hiderightarrow>
+  [ 22] pusharglistnoret 1 ...................... <#hiderightarrow>
+  [ 24] extcall 188 ............................. sendAllSprites(#hiderightarrow)
+  [ 26] pushcons 2 .............................. <"cc.pack.pagecount">
+  [ 28] pusharglist 1 ........................... <"cc.pack.pagecount">
+  [ 30] extcall 101 ............................. <member("cc.pack.pagecount")>
+  [ 32] pushcons 3 .............................. <EMPTY>
+  [ 34] setobjprop 129 .......................... member("cc.pack.pagecount").text = EMPTY
+  [ 36] jmp [158]
+  [ 39] pushsymb 888 ............................ <#showleftarrow>
+  [ 42] pusharglistnoret 1 ...................... <#showleftarrow>
+  [ 44] extcall 188 ............................. sendAllSprites(#showleftarrow)
+  [ 46] pushsymb 889 ............................ <#showrightarrow>
+  [ 49] pusharglistnoret 1 ...................... <#showrightarrow>
+  [ 51] extcall 188 ............................. sendAllSprites(#showrightarrow)
+  [ 53] getglobal 178 ........................... <TextMgr>
+  [ 55] pushcons 4 .............................. <"USER_ITEMS_PAGE">
+  [ 57] pusharglist 2 ........................... <TextMgr, "USER_ITEMS_PAGE">
+  [ 59] objcall 179 ............................. <TextMgr.GetRefText("USER_ITEMS_PAGE")>
+  [ 61] setlocal 0 .............................. mytemplate = TextMgr.GetRefText("USER_ITEMS_PAGE")
+  [ 63] pushcons 5 .............................. <"{num1}">
+  [ 65] getlocal 0 .............................. <mytemplate>
+  [ 67] pusharglist 2 ........................... <"{num1}", mytemplate>
+  [ 69] extcall 163 ............................. <offset("{num1}", mytemplate)>
+  [ 71] setlocal 1 .............................. mychar = offset("{num1}", mytemplate)
+  [ 73] getlocal 1 .............................. <mychar>
+  [ 75] getlocal 1 .............................. <mychar>
+  [ 77] pushint8 5 .............................. <5>
+  [ 79] add ..................................... <mychar + 5>
+  [ 80] pushzero ................................ <0>
+  [ 81] pushzero ................................ <0>
+  [ 82] pushzero ................................ <0>
+  [ 83] pushzero ................................ <0>
+  [ 84] pushzero ................................ <0>
+  [ 85] pushzero ................................ <0>
+  [ 86] pushzero ................................ <0>
+  [ 87] deletechunk 5 ........................... delete char mychar to mychar + 5 of mytemplate
+  [ 89] getparam 0 .............................. <me>
+  [ 91] getobjprop 252 .......................... <me.pcurrentpage>
+  [ 93] pushcons 6 .............................. <" ">
+  [ 95] joinstr ................................. <me.pcurrentpage & " ">
+  [ 96] getlocal 1 .............................. <mychar>
+  [ 98] pushzero ................................ <0>
+  [ 99] pushzero ................................ <0>
+  [100] pushzero ................................ <0>
+  [101] pushzero ................................ <0>
+  [102] pushzero ................................ <0>
+  [103] pushzero ................................ <0>
+  [104] pushzero ................................ <0>
+  [105] pushzero ................................ <0>
+  [106] putchunk 21 ............................. put me.pcurrentpage & " " into char mychar of mytemplate
+  [108] pushcons 7 .............................. <"{num2}">
+  [110] getlocal 0 .............................. <mytemplate>
+  [112] pusharglist 2 ........................... <"{num2}", mytemplate>
+  [114] extcall 163 ............................. <offset("{num2}", mytemplate)>
+  [116] setlocal 1 .............................. mychar = offset("{num2}", mytemplate)
+  [118] getlocal 1 .............................. <mychar>
+  [120] getlocal 1 .............................. <mychar>
+  [122] pushint8 5 .............................. <5>
+  [124] add ..................................... <mychar + 5>
+  [125] pushzero ................................ <0>
+  [126] pushzero ................................ <0>
+  [127] pushzero ................................ <0>
+  [128] pushzero ................................ <0>
+  [129] pushzero ................................ <0>
+  [130] pushzero ................................ <0>
+  [131] pushzero ................................ <0>
+  [132] deletechunk 5 ........................... delete char mychar to mychar + 5 of mytemplate
+  [134] getprop 254 ............................. <pTotalPages>
+  [136] getlocal 1 .............................. <mychar>
+  [138] pushzero ................................ <0>
+  [139] pushzero ................................ <0>
+  [140] pushzero ................................ <0>
+  [141] pushzero ................................ <0>
+  [142] pushzero ................................ <0>
+  [143] pushzero ................................ <0>
+  [144] pushzero ................................ <0>
+  [145] pushzero ................................ <0>
+  [146] putchunk 21 ............................. put pTotalPages into char mychar of mytemplate
+  [148] pushcons 2 .............................. <"cc.pack.pagecount">
+  [150] pusharglist 1 ........................... <"cc.pack.pagecount">
+  [152] extcall 101 ............................. <member("cc.pack.pagecount")>
+  [154] getlocal 0 .............................. <mytemplate>
+  [156] setobjprop 129 .......................... member("cc.pack.pagecount").text = mytemplate
+  [158] pushint8 1 .............................. <1>
+  [160] setlocal 2
+  [162] getlocal 2
+  [164] pushint8 25 ............................. <25>
+  [166] lteq
+  [167] jmpifz [251] ............................ repeat with n = 1 to 25
+  [170] getprop 434 ............................. <pWindowObject>
+  [173] pushsymb 250 ............................ <#pSpritelist>
+  [175] getlocal 2 .............................. <n>
+  [177] pushint8 3 .............................. <3>
+  [179] add ..................................... <n + 3>
+  [180] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [182] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [184] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [186] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [188] pushcons 8 .............................. <"room_object_placeholder_sd">
+  [190] pusharglist 1 ........................... <"room_object_placeholder_sd">
+  [192] extcall 101 ............................. <member("room_object_placeholder_sd")>
+  [194] setobjprop 101 .......................... sprite(pWindowObject.pSpritelist[n + 3]).member = member("room_object_placeholder_sd")
+  [196] getprop 434 ............................. <pWindowObject>
+  [199] pushsymb 250 ............................ <#pSpritelist>
+  [201] getlocal 2 .............................. <n>
+  [203] pushint8 3 .............................. <3>
+  [205] add ..................................... <n + 3>
+  [206] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [208] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [210] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [212] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [214] pushint8 1 .............................. <1>
+  [216] setobjprop 457 .......................... sprite(pWindowObject.pSpritelist[n + 3]).width = 1
+  [219] getprop 434 ............................. <pWindowObject>
+  [222] pushsymb 250 ............................ <#pSpritelist>
+  [224] getlocal 2 .............................. <n>
+  [226] pushint8 3 .............................. <3>
+  [228] add ..................................... <n + 3>
+  [229] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [231] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [233] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [235] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [237] pushint8 1 .............................. <1>
+  [239] setobjprop 460 .......................... sprite(pWindowObject.pSpritelist[n + 3]).height = 1
+  [242] pushint8 1
+  [244] getlocal 2
+  [246] add
+  [247] setlocal 2
+  [249] endrepeat [162]
+  [251] getglobal 86 ............................ <ElementMgr>
+  [253] pusharglist 1 ........................... <ElementMgr>
+  [255] objcall 30 .............................. <ElementMgr.getcatalogueitems()>
+  [257] setlocal 3 .............................. catalogueitems = ElementMgr.getcatalogueitems()
+  [259] pushint8 1 .............................. <1>
+  [261] setlocal 2
+  [263] getlocal 2
+  [265] getprop 251 ............................. <pItems>
+  [267] pusharglist 1 ........................... <pItems>
+  [269] extcall 104 ............................. <count(pItems)>
+  [271] pushint8 25 ............................. <25>
+  [273] pusharglist 2 ........................... <count(pItems), 25>
+  [275] extcall 581 ............................. <min(count(pItems), 25)>
+  [278] lteq
+  [279] jmpifz [740] ............................ repeat with n = 1 to min(count(pItems), 25)
+  [282] getprop 251 ............................. <pItems>
+  [284] getlocal 2 .............................. <n>
+  [286] pusharglist 2 ........................... <pItems, n>
+  [288] objcall 95 .............................. <pItems[n]>
+  [290] setlocal 4 .............................. myitem = pItems[n]
+  [292] getlocal 4 .............................. <myitem>
+  [294] getobjprop 279 .......................... <myitem.prodID>
+  [297] setlocal 5 .............................. myProdID = myitem.prodID
+  [299] getlocal 3 .............................. <catalogueitems>
+  [301] getlocal 5 .............................. <myProdID>
+  [303] pusharglist 2 ........................... <catalogueitems, myProdID>
+  [305] objcall 95 .............................. <catalogueitems[myProdID]>
+  [307] getobjprop 279 .......................... <catalogueitems[myProdID].prodID>
+  [310] getlocal 5 .............................. <myProdID>
+  [312] nteq .................................... <catalogueitems[myProdID].prodID <> myProdID>
+  [313] jmpifz [368] ............................ if catalogueitems[myProdID].prodID <> myProdID then / else
+  [316] pushint8 1 .............................. <1>
+  [318] setlocal 6
+  [320] getlocal 6
+  [322] getlocal 3 .............................. <catalogueitems>
+  [324] pusharglist 1 ........................... <catalogueitems>
+  [326] extcall 104 ............................. <count(catalogueitems)>
+  [328] lteq
+  [329] jmpifz [365] ............................ repeat with m = 1 to count(catalogueitems)
+  [332] getlocal 3 .............................. <catalogueitems>
+  [334] getlocal 6 .............................. <m>
+  [336] pusharglist 2 ........................... <catalogueitems, m>
+  [338] objcall 95 .............................. <catalogueitems[m]>
+  [340] setlocal 7 .............................. myList = catalogueitems[m]
+  [342] getlocal 7 .............................. <myList>
+  [344] getobjprop 279 .......................... <myList.prodID>
+  [347] getlocal 5 .............................. <myProdID>
+  [349] eq ...................................... <myList.prodID = myProdID>
+  [350] jmpifz [356] ............................ if myList.prodID = myProdID then
+  [353] jmp [365] ............................... exit repeat
+  [356] pushint8 1
+  [358] getlocal 6
+  [360] add
+  [361] setlocal 6
+  [363] endrepeat [320]
+  [365] jmp [378]
+  [368] getlocal 3 .............................. <catalogueitems>
+  [370] getlocal 5 .............................. <myProdID>
+  [372] pusharglist 2 ........................... <catalogueitems, myProdID>
+  [374] objcall 95 .............................. <catalogueitems[myProdID]>
+  [376] setlocal 7 .............................. myList = catalogueitems[myProdID]
+  [378] getlocal 7 .............................. <myList>
+  [380] getobjprop 890 .......................... <myList.imageBase>
+  [383] setlocal 8 .............................. myImgBase = myList.imageBase
+  [385] getlocal 7 .............................. <myList>
+  [387] pushsymb 891 ............................ <#attributes>
+  [390] pushsymb 892 ............................ <#color_small>
+  [393] pusharglist 3 ........................... <myList, #attributes, #color_small>
+  [395] objcall 108 ............................. <myList.attributes[#color_small]>
+  [397] pusharglist 1 ........................... <myList.attributes[#color_small]>
+  [399] extcall 87 .............................. <voidp(myList.attributes[#color_small])>
+  [401] pushzero ................................ <0>
+  [402] eq ...................................... <voidp(myList.attributes[#color_small]) = 0>
+  [403] jmpifz [428] ............................ if voidp(myList.attributes[#color_small]) = 0 then / else
+  [406] getlocal 7 .............................. <myList>
+  [408] pushsymb 891 ............................ <#attributes>
+  [411] pushsymb 892 ............................ <#color_small>
+  [414] pusharglist 3 ........................... <myList, #attributes, #color_small>
+  [416] objcall 108 ............................. <myList.attributes[#color_small]>
+  [418] pusharglist 1 ........................... <myList.attributes[#color_small]>
+  [420] extcall 480 ............................. <rgb(myList.attributes[#color_small])>
+  [423] setlocal 9 .............................. myColor = rgb(myList.attributes[#color_small])
+  [425] jmp [444]
+  [428] pushint16 255 ........................... <255>
+  [431] pushint16 255 ........................... <255>
+  [434] pushint16 255 ........................... <255>
+  [437] pusharglist 3 ........................... <255, 255, 255>
+  [439] extcall 480 ............................. <rgb(255, 255, 255)>
+  [442] setlocal 9 .............................. myColor = rgb(255, 255, 255)
+  [444] getlocal 4 .............................. <myitem>
+  [446] getobjprop 893 .......................... <myitem.posId>
+  [449] setlocal 10 ............................. myPosId = myitem.posId
+  [451] getprop 434 ............................. <pWindowObject>
+  [454] pushsymb 250 ............................ <#pSpritelist>
+  [456] getlocal 2 .............................. <n>
+  [458] pushint8 3 .............................. <3>
+  [460] add ..................................... <n + 3>
+  [461] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [463] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [465] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [467] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [469] getlocal 9 .............................. <myColor>
+  [471] setobjprop 383 .......................... sprite(pWindowObject.pSpritelist[n + 3]).bgColor = myColor
+  [474] getprop 434 ............................. <pWindowObject>
+  [477] pushsymb 250 ............................ <#pSpritelist>
+  [479] getlocal 2 .............................. <n>
+  [481] pushint8 3 .............................. <3>
+  [483] add ..................................... <n + 3>
+  [484] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [486] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [488] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [490] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [492] pushint8 36 ............................. <36>
+  [494] setobjprop 516 .......................... sprite(pWindowObject.pSpritelist[n + 3]).ink = 36
+  [497] getlocal 7 .............................. <myList>
+  [499] pushsymb 412 ............................ <#type>
+  [502] pusharglist 2 ........................... <myList, #type>
+  [504] objcall 95 .............................. <myList[#type]>
+  [506] pushcons 9 .............................. <"Separator">
+  [508] eq ...................................... <myList[#type] = "Separator">
+  [509] jmpifz [535] ............................ if myList[#type] = "Separator" then
+  [512] getprop 434 ............................. <pWindowObject>
+  [515] pushsymb 250 ............................ <#pSpritelist>
+  [517] getlocal 2 .............................. <n>
+  [519] pushint8 3 .............................. <3>
+  [521] add ..................................... <n + 3>
+  [522] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [524] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [526] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [528] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [530] pushint8 41 ............................. <41>
+  [532] setobjprop 516 .......................... sprite(pWindowObject.pSpritelist[n + 3]).ink = 41
+  [535] getprop 434 ............................. <pWindowObject>
+  [538] pushsymb 250 ............................ <#pSpritelist>
+  [540] getlocal 2 .............................. <n>
+  [542] pushint8 3 .............................. <3>
+  [544] add ..................................... <n + 3>
+  [545] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [547] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [549] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [551] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [553] getlocal 8 .............................. <myImgBase>
+  [555] pushcons 10 ............................. <"_small">
+  [557] joinstr ................................. <myImgBase & "_small">
+  [558] pusharglist 1 ........................... <myImgBase & "_small">
+  [560] extcall 101 ............................. <member(myImgBase & "_small")>
+  [562] setobjprop 101 .......................... sprite(pWindowObject.pSpritelist[n + 3]).member = member(myImgBase & "_small")
+  [564] getprop 434 ............................. <pWindowObject>
+  [567] pushsymb 250 ............................ <#pSpritelist>
+  [569] getlocal 2 .............................. <n>
+  [571] pushint8 3 .............................. <3>
+  [573] add ..................................... <n + 3>
+  [574] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [576] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [578] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [580] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [582] getlocal 7 .............................. <myList>
+  [584] getobjprop 90 ........................... <myList.name>
+  [586] setobjprop 241 .......................... sprite(pWindowObject.pSpritelist[n + 3]).pname = myList.name
+  [588] getprop 434 ............................. <pWindowObject>
+  [591] pushsymb 250 ............................ <#pSpritelist>
+  [593] getlocal 2 .............................. <n>
+  [595] pushint8 3 .............................. <3>
+  [597] add ..................................... <n + 3>
+  [598] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [600] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [602] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [604] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [606] getlocal 5 .............................. <myProdID>
+  [608] setobjprop 894 .......................... sprite(pWindowObject.pSpritelist[n + 3]).pProdID = myProdID
+  [611] getprop 434 ............................. <pWindowObject>
+  [614] pushsymb 250 ............................ <#pSpritelist>
+  [616] getlocal 2 .............................. <n>
+  [618] pushint8 3 .............................. <3>
+  [620] add ..................................... <n + 3>
+  [621] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [623] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [625] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [627] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [629] getlocal 10 ............................. <myPosId>
+  [631] setobjprop 895 .......................... sprite(pWindowObject.pSpritelist[n + 3]).pPosId = myPosId
+  [634] getprop 434 ............................. <pWindowObject>
+  [637] pushsymb 250 ............................ <#pSpritelist>
+  [639] getlocal 2 .............................. <n>
+  [641] pushint8 3 .............................. <3>
+  [643] add ..................................... <n + 3>
+  [644] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [646] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [648] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [650] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [652] getlocal 4 .............................. <myitem>
+  [654] pushsymb 891 ............................ <#attributes>
+  [657] pusharglist 2 ........................... <myitem, #attributes>
+  [659] objcall 95 .............................. <myitem[#attributes]>
+  [661] setobjprop 284 .......................... sprite(pWindowObject.pSpritelist[n + 3]).aAttributes = myitem[#attributes]
+  [664] getprop 434 ............................. <pWindowObject>
+  [667] pushsymb 250 ............................ <#pSpritelist>
+  [669] getlocal 2 .............................. <n>
+  [671] pushint8 3 .............................. <3>
+  [673] add ..................................... <n + 3>
+  [674] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [676] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [678] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [680] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [682] getlocal 8 .............................. <myImgBase>
+  [684] pushcons 10 ............................. <"_small">
+  [686] joinstr ................................. <myImgBase & "_small">
+  [687] pusharglist 1 ........................... <myImgBase & "_small">
+  [689] extcall 101 ............................. <member(myImgBase & "_small")>
+  [691] getobjprop 457 .......................... <member(myImgBase & "_small").width>
+  [694] setobjprop 457 .......................... sprite(pWindowObject.pSpritelist[n + 3]).width = member(myImgBase & "_small").width
+  [697] getprop 434 ............................. <pWindowObject>
+  [700] pushsymb 250 ............................ <#pSpritelist>
+  [702] getlocal 2 .............................. <n>
+  [704] pushint8 3 .............................. <3>
+  [706] add ..................................... <n + 3>
+  [707] pusharglist 3 ........................... <pWindowObject, #pSpritelist, n + 3>
+  [709] objcall 108 ............................. <pWindowObject.pSpritelist[n + 3]>
+  [711] pusharglist 1 ........................... <pWindowObject.pSpritelist[n + 3]>
+  [713] extcall 177 ............................. <sprite(pWindowObject.pSpritelist[n + 3])>
+  [715] getlocal 8 .............................. <myImgBase>
+  [717] pushcons 10 ............................. <"_small">
+  [719] joinstr ................................. <myImgBase & "_small">
+  [720] pusharglist 1 ........................... <myImgBase & "_small">
+  [722] extcall 101 ............................. <member(myImgBase & "_small")>
+  [724] getobjprop 460 .......................... <member(myImgBase & "_small").height>
+  [727] setobjprop 460 .......................... sprite(pWindowObject.pSpritelist[n + 3]).height = member(myImgBase & "_small").height
+  [730] pushint8 1
+  [732] getlocal 2
+  [734] add
+  [735] setlocal 2
+  [737] endrepeat [263]
+  [740] ret
+end

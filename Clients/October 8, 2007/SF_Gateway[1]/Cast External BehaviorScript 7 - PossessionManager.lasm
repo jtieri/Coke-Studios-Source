@@ -1,0 +1,1647 @@
+property bDebug, bInitialized, bReadyForuse, foPossessionManager, fo_level0, ERROR_TYPE, bPendingPurchase
+global oPossessionManager, oDenizenManager, ElementMgr, gbTestMode, gFeatureSet
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 561 .......................... me.bPendingPurchase = 0
+  [  6] getparam 0 .............................. <me>
+  [  8] pushzero ................................ <0>
+  [  9] setobjprop 28 ........................... me.bDebug = 0
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushzero ................................ <0>
+  [ 14] setobjprop 29 ........................... me.bInitialized = 0
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pushzero ................................ <0>
+  [ 19] setobjprop 30 ........................... me.bReadyForuse = 0
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pushcons 0 .............................. <"FlashReturnStatusEnum">
+  [ 25] setobjprop 136 .......................... me.ERROR_TYPE = "FlashReturnStatusEnum"
+  [ 27] getparam 0 .............................. <me>
+  [ 29] setglobal 213 ........................... oPossessionManager = me
+  [ 31] pushcons 1 .............................. <"_TIMER_">
+  [ 33] pusharglist 1 ........................... <"_TIMER_">
+  [ 35] extcall 148 ............................. <script("_TIMER_")>
+  [ 37] pushint16 700 ........................... <700>
+  [ 40] pushsymb 90 ............................. <#Init>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 4 ...................... <script("_TIMER_"), 700, #Init, me>
+  [ 46] objcall 149 ............................. script("_TIMER_").new(700, #Init, me)
+  [ 48] ret
+end
+
+on Init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"init()">
+  [  4] pusharglistnoret 2 ...................... <me, "init()">
+  [  6] objcall 20 .............................. me.debug("init()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 3 ............................ <me.spriteNum>
+  [ 14] pusharglist 1 ........................... <me.spriteNum>
+  [ 16] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 18] pushcons 3 .............................. <"_level0.oPosessionManager">
+  [ 20] pushzero ................................ <0>
+  [ 21] pusharglist 3 ........................... <sprite(me.spriteNum), "_level0.oPosessionManager", 0>
+  [ 23] objcall 160 ............................. <sprite(me.spriteNum).getVariable("_level0.oPosessionManager", 0)>
+  [ 25] setobjprop 562 .......................... me.foPossessionManager = sprite(me.spriteNum).getVariable("_level0.oPosessionManager", 0)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pusharglistnoret 1 ...................... <me>
+  [ 32] objcall 89 .............................. me.setCallbacks()
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getobjprop 3 ............................ <me.spriteNum>
+  [ 40] pusharglist 1 ........................... <me.spriteNum>
+  [ 42] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 44] pushcons 4 .............................. <"_level0">
+  [ 46] pushzero ................................ <0>
+  [ 47] pusharglist 3 ........................... <sprite(me.spriteNum), "_level0", 0>
+  [ 49] objcall 160 ............................. <sprite(me.spriteNum).getVariable("_level0", 0)>
+  [ 51] setobjprop 161 .......................... me.fo_level0 = sprite(me.spriteNum).getVariable("_level0", 0)
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 58] pushzero ................................ <0>
+  [ 59] setobjprop 28 ........................... me.foPossessionManager.bDebug = 0
+  [ 61] getparam 0 .............................. <me>
+  [ 63] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 66] pushzero ................................ <0>
+  [ 67] setobjprop 162 .......................... me.foPossessionManager.bTestMode = 0
+  [ 69] getmovieprop 163 ........................ <the runMode>
+  [ 71] pushcons 5 .............................. <"Author">
+  [ 73] eq ...................................... <the runMode = "Author">
+  [ 74] jmpifz [ 86] ............................ if the runMode = "Author" then / else
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pushint8 1 .............................. <1>
+  [ 81] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 83] jmp [103]
+  [ 86] getparam 0 .............................. <me>
+  [ 88] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 91] getparam 0 .............................. <me>
+  [ 93] getchainedprop 161 ...................... <me.fo_level0>
+  [ 95] pusharglist 1 ........................... <me.fo_level0>
+  [ 97] objcall 164 ............................. <me.fo_level0.getGatewayConnection()>
+  [ 99] pusharglistnoret 2 ...................... <me.foPossessionManager, me.fo_level0.getGatewayConnection()>
+  [101] objcall 165 ............................. me.foPossessionManager.createGateway(me.fo_level0.getGatewayConnection())
+  [103] getparam 0 .............................. <me>
+  [105] pushint8 1 .............................. <1>
+  [107] setobjprop 29 ........................... me.bInitialized = 1
+  [109] ret
+end
+
+on beanCreated me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"beanCreated()">
+  [  4] pusharglistnoret 2 ...................... <me, "beanCreated()">
+  [  6] objcall 20 .............................. me.debug("beanCreated()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 14] ret
+end
+
+on setCallbacks me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 562 .......................... <me.foPossessionManager>
+  [ 13] pushcons 7 .............................. <"beanCreated">
+  [ 15] pushsymb 91 ............................. <#beanCreated>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "beanCreated", #beanCreated, me>
+  [ 21] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "beanCreated", #beanCreated, me)
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 3 ............................ <me.spriteNum>
+  [ 27] pusharglist 1 ........................... <me.spriteNum>
+  [ 29] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 562 .......................... <me.foPossessionManager>
+  [ 36] pushcons 8 .............................. <"getPossessionsInBackpack_Result">
+  [ 38] pushsymb 550 ............................ <#getPossessionsInBackpack_Result>
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "getPossessionsInBackpack_Result", #getPossessionsInBackpack_Result, me>
+  [ 45] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "getPossessionsInBackpack_Result", #getPossessionsInBackpack_Result, me)
+  [ 47] getparam 0 .............................. <me>
+  [ 49] getobjprop 3 ............................ <me.spriteNum>
+  [ 51] pusharglist 1 ........................... <me.spriteNum>
+  [ 53] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 55] getparam 0 .............................. <me>
+  [ 57] getobjprop 562 .......................... <me.foPossessionManager>
+  [ 60] pushcons 9 .............................. <"getPossessionsInStudio_Result">
+  [ 62] pushsymb 551 ............................ <#getPossessionsInStudio_Result>
+  [ 65] getparam 0 .............................. <me>
+  [ 67] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "getPossessionsInStudio_Result", #getPossessionsInStudio_Result, me>
+  [ 69] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "getPossessionsInStudio_Result", #getPossessionsInStudio_Result, me)
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getobjprop 3 ............................ <me.spriteNum>
+  [ 75] pusharglist 1 ........................... <me.spriteNum>
+  [ 77] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 79] getparam 0 .............................. <me>
+  [ 81] getobjprop 562 .......................... <me.foPossessionManager>
+  [ 84] pushcons 10 ............................. <"purchaseItem_Result">
+  [ 86] pushsymb 552 ............................ <#purchaseItem_Result>
+  [ 89] getparam 0 .............................. <me>
+  [ 91] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "purchaseItem_Result", #purchaseItem_Result, me>
+  [ 93] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "purchaseItem_Result", #purchaseItem_Result, me)
+  [ 95] getparam 0 .............................. <me>
+  [ 97] getobjprop 3 ............................ <me.spriteNum>
+  [ 99] pusharglist 1 ........................... <me.spriteNum>
+  [101] extcall 2 ............................... <sprite(me.spriteNum)>
+  [103] getparam 0 .............................. <me>
+  [105] getobjprop 562 .......................... <me.foPossessionManager>
+  [108] pushcons 11 ............................. <"prePurchaseItem_Result">
+  [110] pushsymb 553 ............................ <#prePurchaseItem_Result>
+  [113] getparam 0 .............................. <me>
+  [115] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "prePurchaseItem_Result", #prePurchaseItem_Result, me>
+  [117] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "prePurchaseItem_Result", #prePurchaseItem_Result, me)
+  [119] getparam 0 .............................. <me>
+  [121] getobjprop 3 ............................ <me.spriteNum>
+  [123] pusharglist 1 ........................... <me.spriteNum>
+  [125] extcall 2 ............................... <sprite(me.spriteNum)>
+  [127] getparam 0 .............................. <me>
+  [129] getobjprop 562 .......................... <me.foPossessionManager>
+  [132] pushcons 12 ............................. <"dispenseItem_Result">
+  [134] pushsymb 554 ............................ <#dispenseItem_Result>
+  [137] getparam 0 .............................. <me>
+  [139] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "dispenseItem_Result", #dispenseItem_Result, me>
+  [141] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "dispenseItem_Result", #dispenseItem_Result, me)
+  [143] getparam 0 .............................. <me>
+  [145] getobjprop 3 ............................ <me.spriteNum>
+  [147] pusharglist 1 ........................... <me.spriteNum>
+  [149] extcall 2 ............................... <sprite(me.spriteNum)>
+  [151] getparam 0 .............................. <me>
+  [153] getobjprop 562 .......................... <me.foPossessionManager>
+  [156] pushcons 13 ............................. <"getBurnedCdsInBackpack_Result">
+  [158] pushsymb 555 ............................ <#getBurnedCdsInBackpack_Result>
+  [161] getparam 0 .............................. <me>
+  [163] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "getBurnedCdsInBackpack_Result", #getBurnedCdsInBackpack_Result, me>
+  [165] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "getBurnedCdsInBackpack_Result", #getBurnedCdsInBackpack_Result, me)
+  [167] getparam 0 .............................. <me>
+  [169] getobjprop 3 ............................ <me.spriteNum>
+  [171] pusharglist 1 ........................... <me.spriteNum>
+  [173] extcall 2 ............................... <sprite(me.spriteNum)>
+  [175] getparam 0 .............................. <me>
+  [177] getobjprop 562 .......................... <me.foPossessionManager>
+  [180] pushcons 14 ............................. <"getBackPack_Result">
+  [182] pushsymb 540 ............................ <#getBackPack_Result>
+  [185] getparam 0 .............................. <me>
+  [187] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "getBackPack_Result", #getBackPack_Result, me>
+  [189] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "getBackPack_Result", #getBackPack_Result, me)
+  [191] getparam 0 .............................. <me>
+  [193] getobjprop 3 ............................ <me.spriteNum>
+  [195] pusharglist 1 ........................... <me.spriteNum>
+  [197] extcall 2 ............................... <sprite(me.spriteNum)>
+  [199] getparam 0 .............................. <me>
+  [201] getobjprop 562 .......................... <me.foPossessionManager>
+  [204] pushcons 15 ............................. <"getPossessionList_Result">
+  [206] pushsymb 542 ............................ <#getPossessionList_Result>
+  [209] getparam 0 .............................. <me>
+  [211] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foPossessionManager, "getPossessionList_Result", #getPossessionList_Result, me>
+  [213] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foPossessionManager, "getPossessionList_Result", #getPossessionList_Result, me)
+  [215] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 28 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 16 ............................. <"PossessionManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"PossessionManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"PossessionManager: " & sMessage>
+  [ 17] extcall 33 .............................. put "PossessionManager: " & sMessage
+  [ 19] ret
+end
+
+on getBackpack me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 17 ............................. <"getBackPack()">
+  [  4] pusharglistnoret 2 ...................... <me, "getBackPack()">
+  [  6] objcall 20 .............................. me.debug("getBackPack()")
+  [  8] getglobal 256 ........................... <gFeatureSet>
+  [ 11] pushsymb 563 ............................ <#BACKPACK>
+  [ 14] pusharglist 2 ........................... <gFeatureSet, #BACKPACK>
+  [ 16] objcall 384 ............................. <gFeatureSet.isEnabled(#BACKPACK)>
+  [ 19] not ..................................... <not gFeatureSet.isEnabled(#BACKPACK)>
+  [ 20] jmpifz [ 27] ............................ if not gFeatureSet.isEnabled(#BACKPACK) then
+  [ 23] pusharglistnoret 0 ...................... <>
+  [ 25] extcall 71 .............................. return 
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 32] getglobal 193 ........................... <oDenizenManager>
+  [ 34] pusharglist 1 ........................... <oDenizenManager>
+  [ 36] objcall 198 ............................. <oDenizenManager.getScreenName()>
+  [ 38] getglobal 193 ........................... <oDenizenManager>
+  [ 40] pusharglist 1 ........................... <oDenizenManager>
+  [ 42] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [ 44] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [ 46] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [ 48] pusharglistnoret 3 ...................... <me.foPossessionManager, oDenizenManager.getScreenName(), oDenizenManager.getDenizen().getSecret()>
+  [ 50] objcall 214 ............................. me.foPossessionManager.getBackpack(oDenizenManager.getScreenName(), oDenizenManager.getDenizen().getSecret())
+  [ 52] ret
+end
+
+on getBackPack_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 18 ............................. <"getPackPack_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getPackPack_Result()">
+  [  6] objcall 20 .............................. me.debug("getPackPack_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] extcall 15 .............................. <voidp(oResult)>
+  [ 14] jmpifz [ 29] ............................ if voidp(oResult) then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushcons 19 ............................. <"ERROR ON RESULT FOR BACKPACK">
+  [ 21] pusharglistnoret 2 ...................... <me, "ERROR ON RESULT FOR BACKPACK">
+  [ 23] objcall 20 .............................. me.debug("ERROR ON RESULT FOR BACKPACK")
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 71 .............................. return 
+  [ 29] getparam 2 .............................. <oResult>
+  [ 31] pusharglist 1 ........................... <oResult>
+  [ 33] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 39] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 40] jmpifz [ 66] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 43] getparam 2 .............................. <oResult>
+  [ 45] pusharglist 1 ........................... <oResult>
+  [ 47] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 49] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pushcons 20 ............................. <"getBackPack_Result() ERROR ">
+  [ 55] getlocal 0 .............................. <iError>
+  [ 57] joinstr ................................. <"getBackPack_Result() ERROR " & iError>
+  [ 58] pusharglistnoret 2 ...................... <me, "getBackPack_Result() ERROR " & iError>
+  [ 60] objcall 20 .............................. me.debug("getBackPack_Result() ERROR " & iError)
+  [ 62] pusharglistnoret 0 ...................... <>
+  [ 64] extcall 71 .............................. return 
+  [ 66] getglobal 193 ........................... <oDenizenManager>
+  [ 68] getparam 2 .............................. <oResult>
+  [ 70] pusharglistnoret 2 ...................... <oDenizenManager, oResult>
+  [ 72] objcall 313 ............................. oDenizenManager.setBackPack(oResult)
+  [ 75] getparam 0 .............................. <me>
+  [ 77] getglobal 193 ........................... <oDenizenManager>
+  [ 79] pusharglist 1 ........................... <oDenizenManager>
+  [ 81] objcall 198 ............................. <oDenizenManager.getScreenName()>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] pushint8 25 ............................. <25>
+  [ 87] pusharglistnoret 4 ...................... <me, oDenizenManager.getScreenName(), 1, 25>
+  [ 89] objcall 543 ............................. me.getPossessionsInBackpack(oDenizenManager.getScreenName(), 1, 25)
+  [ 92] getparam 0 .............................. <me>
+  [ 94] pushcons 21 ............................. <"** BACKPACK: ">
+  [ 96] getparam 2 .............................. <oResult>
+  [ 98] pusharglist 1 ........................... <oResult>
+  [100] objcall 564 ............................. <oResult.getPossessionIDs()>
+  [103] pusharglist 1 ........................... <oResult.getPossessionIDs()>
+  [105] objcall 208 ............................. <oResult.getPossessionIDs().toString()>
+  [107] joinstr ................................. <"** BACKPACK: " & oResult.getPossessionIDs().toString()>
+  [108] pusharglistnoret 2 ...................... <me, "** BACKPACK: " & oResult.getPossessionIDs().toString()>
+  [110] objcall 20 .............................. me.debug("** BACKPACK: " & oResult.getPossessionIDs().toString())
+  [112] ret
+end
+
+on getPossessionList me, aIDs
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 22 ............................. <"getPossessionList() ">
+  [  4] getparam 1 .............................. <aIDs>
+  [  6] getobjprop 77 ........................... <aIDs.length>
+  [  8] joinstr ................................. <"getPossessionList() " & aIDs.length>
+  [  9] pushcons 23 ............................. <": ">
+  [ 11] joinstr ................................. <"getPossessionList() " & aIDs.length & ": ">
+  [ 12] getparam 1 .............................. <aIDs>
+  [ 14] pusharglist 1 ........................... <aIDs>
+  [ 16] objcall 208 ............................. <aIDs.toString()>
+  [ 18] joinstr ................................. <"getPossessionList() " & aIDs.length & ": " & aIDs.toString()>
+  [ 19] pusharglistnoret 2 ...................... <me, "getPossessionList() " & aIDs.length & ": " & aIDs.toString()>
+  [ 21] objcall 20 .............................. me.debug("getPossessionList() " & aIDs.length & ": " & aIDs.toString())
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 28] getglobal 193 ........................... <oDenizenManager>
+  [ 30] pusharglist 1 ........................... <oDenizenManager>
+  [ 32] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [ 34] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [ 36] objcall 198 ............................. <oDenizenManager.getDenizen().getScreenName()>
+  [ 38] getglobal 193 ........................... <oDenizenManager>
+  [ 40] pusharglist 1 ........................... <oDenizenManager>
+  [ 42] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [ 44] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [ 46] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [ 48] getparam 1 .............................. <aIDs>
+  [ 50] pusharglistnoret 4 ...................... <me.foPossessionManager, oDenizenManager.getDenizen().getScreenName(), oDenizenManager.getDenizen().getSecret(), aIDs>
+  [ 52] objcall 541 ............................. me.foPossessionManager.getPossessionList(oDenizenManager.getDenizen().getScreenName(), oDenizenManager.getDenizen().getSecret(), aIDs)
+  [ 55] ret
+end
+
+on getPossessionList_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 24 ............................. <"getPossessionList_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getPossessionList_Result()">
+  [  6] objcall 20 .............................. me.debug("getPossessionList_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] extcall 15 .............................. <voidp(oResult)>
+  [ 14] jmpifz [ 29] ............................ if voidp(oResult) then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushcons 25 ............................. <"ERROR ON RESULT FOR getPossessionList_Result">
+  [ 21] pusharglistnoret 2 ...................... <me, "ERROR ON RESULT FOR getPossessionList_Result">
+  [ 23] objcall 20 .............................. me.debug("ERROR ON RESULT FOR getPossessionList_Result")
+  [ 25] pusharglistnoret 0 ...................... <>
+  [ 27] extcall 71 .............................. return 
+  [ 29] getglobal 193 ........................... <oDenizenManager>
+  [ 31] pusharglist 1 ........................... <oDenizenManager>
+  [ 33] objcall 214 ............................. <oDenizenManager.getBackpack()>
+  [ 35] setlocal 0 .............................. oBackPack = oDenizenManager.getBackpack()
+  [ 37] getlocal 0 .............................. <oBackPack>
+  [ 39] pusharglist 1 ........................... <oBackPack>
+  [ 41] extcall 15 .............................. <voidp(oBackPack)>
+  [ 43] jmpifz [ 50] ............................ if voidp(oBackPack) then
+  [ 46] pusharglistnoret 0 ...................... <>
+  [ 48] extcall 71 .............................. return 
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pushcons 26 ............................. <"getPossessionList_Result() COUNT: ">
+  [ 54] getparam 2 .............................. <oResult>
+  [ 56] getobjprop 77 ........................... <oResult.length>
+  [ 58] joinstr ................................. <"getPossessionList_Result() COUNT: " & oResult.length>
+  [ 59] pusharglistnoret 2 ...................... <me, "getPossessionList_Result() COUNT: " & oResult.length>
+  [ 61] objcall 20 .............................. me.debug("getPossessionList_Result() COUNT: " & oResult.length)
+  [ 63] getglobal 193 ........................... <oDenizenManager>
+  [ 65] pusharglist 1 ........................... <oDenizenManager>
+  [ 67] objcall 214 ............................. <oDenizenManager.getBackpack()>
+  [ 69] getparam 2 .............................. <oResult>
+  [ 71] pushzero ................................ <0>
+  [ 72] pusharglistnoret 3 ...................... <oDenizenManager.getBackpack(), oResult, 0>
+  [ 74] objcall 566 ............................. oDenizenManager.getBackpack().addPossessions(oResult, 0)
+  [ 77] getparam 0 .............................. <me>
+  [ 79] pusharglist 0 ........................... <>
+  [ 81] extcall 190 ............................. <VOID>
+  [ 83] getlocal 0 .............................. <oBackPack>
+  [ 85] pusharglistnoret 3 ...................... <me, VOID, oBackPack>
+  [ 87] objcall 550 ............................. me.getPossessionsInBackpack_Result(VOID, oBackPack)
+  [ 90] ret
+end
+
+on getPossessionsInBackpack me, sScreenName, iPage, iPageSize
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 27 ............................. <"getPossessionsInBackpack() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"getPossessionsInBackpack() " & sScreenName>
+  [  7] getparam 2 .............................. <iPage>
+  [  9] joinpadstr .............................. <"getPossessionsInBackpack() " & sScreenName && iPage>
+  [ 10] getparam 3 .............................. <iPageSize>
+  [ 12] joinpadstr .............................. <"getPossessionsInBackpack() " & sScreenName && iPage && iPageSize>
+  [ 13] pusharglistnoret 2 ...................... <me, "getPossessionsInBackpack() " & sScreenName && iPage && iPageSize>
+  [ 15] objcall 20 .............................. me.debug("getPossessionsInBackpack() " & sScreenName && iPage && iPageSize)
+  [ 17] getparam 2 .............................. <iPage>
+  [ 19] pusharglist 1 ........................... <iPage>
+  [ 21] extcall 15 .............................. <voidp(iPage)>
+  [ 23] jmpifz [ 30] ............................ if voidp(iPage) then
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] setparam 2 .............................. iPage = 1
+  [ 30] getparam 3 .............................. <iPageSize>
+  [ 32] pusharglist 1 ........................... <iPageSize>
+  [ 34] extcall 15 .............................. <voidp(iPageSize)>
+  [ 36] jmpifz [ 43] ............................ if voidp(iPageSize) then
+  [ 39] pushint8 25 ............................. <25>
+  [ 41] setparam 3 .............................. iPageSize = 25
+  [ 43] getglobal 193 ........................... <oDenizenManager>
+  [ 45] pusharglist 1 ........................... <oDenizenManager>
+  [ 47] objcall 214 ............................. <oDenizenManager.getBackpack()>
+  [ 49] setlocal 0 .............................. oBackPack = oDenizenManager.getBackpack()
+  [ 51] getlocal 0 .............................. <oBackPack>
+  [ 53] pusharglist 1 ........................... <oBackPack>
+  [ 55] extcall 15 .............................. <voidp(oBackPack)>
+  [ 57] jmpifz [ 64] ............................ if voidp(oBackPack) then
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] getlocal 0 .............................. <oBackPack>
+  [ 66] getparam 2 .............................. <iPage>
+  [ 68] pusharglistnoret 2 ...................... <oBackPack, iPage>
+  [ 70] objcall 568 ............................. oBackPack.setCurrentPage(iPage)
+  [ 73] getlocal 0 .............................. <oBackPack>
+  [ 75] getparam 2 .............................. <iPage>
+  [ 77] pusharglist 2 ........................... <oBackPack, iPage>
+  [ 79] objcall 569 ............................. <oBackPack.getPossessionIDsByPage(iPage)>
+  [ 82] setlocal 1 .............................. aIDs = oBackPack.getPossessionIDsByPage(iPage)
+  [ 84] getlocal 0 .............................. <oBackPack>
+  [ 86] getparam 2 .............................. <iPage>
+  [ 88] pusharglist 2 ........................... <oBackPack, iPage>
+  [ 90] objcall 570 ............................. <oBackPack.getPossessionsByPage(iPage)>
+  [ 93] setlocal 2 .............................. aPos = oBackPack.getPossessionsByPage(iPage)
+  [ 95] getlocal 1 .............................. <aIDs>
+  [ 97] getobjprop 77 ........................... <aIDs.length>
+  [ 99] getlocal 2 .............................. <aPos>
+  [101] getobjprop 77 ........................... <aPos.length>
+  [103] eq ...................................... <aIDs.length = aPos.length>
+  [104] jmpifz [127] ............................ if aIDs.length = aPos.length then / else
+  [107] getparam 0 .............................. <me>
+  [109] pusharglist 0 ........................... <>
+  [111] extcall 190 ............................. <VOID>
+  [113] getlocal 0 .............................. <oBackPack>
+  [115] pusharglistnoret 3 ...................... <me, VOID, oBackPack>
+  [117] objcall 550 ............................. me.getPossessionsInBackpack_Result(VOID, oBackPack)
+  [120] pusharglistnoret 0 ...................... <>
+  [122] extcall 71 .............................. return 
+  [124] jmp [136]
+  [127] getparam 0 .............................. <me>
+  [129] getlocal 1 .............................. <aIDs>
+  [131] pusharglistnoret 2 ...................... <me, aIDs>
+  [133] objcall 541 ............................. me.getPossessionList(aIDs)
+  [136] ret
+end
+
+on getPossessionsInStudio me, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 28 ............................. <"getPossessionsInStudio() ">
+  [  4] getparam 1 .............................. <sStudioID>
+  [  6] joinstr ................................. <"getPossessionsInStudio() " & sStudioID>
+  [  7] pusharglistnoret 2 ...................... <me, "getPossessionsInStudio() " & sStudioID>
+  [  9] objcall 20 .............................. me.debug("getPossessionsInStudio() " & sStudioID)
+  [ 11] getglobal 167 ........................... <gbTestMode>
+  [ 13] jmpifz [ 64] ............................ if gbTestMode then
+  [ 16] pushzero ................................ <0>
+  [ 17] setlocal 0 .............................. iError = 0
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglist 1 ........................... <me>
+  [ 23] objcall 558 ............................. <me.getTestStudioItems()>
+  [ 26] setlocal 1 .............................. aProdList = me.getTestStudioItems()
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushcons 29 ............................. <"getPossessionsInStudio() aProdList: ">
+  [ 32] getlocal 1 .............................. <aProdList>
+  [ 34] joinstr ................................. <"getPossessionsInStudio() aProdList: " & aProdList>
+  [ 35] pusharglistnoret 2 ...................... <me, "getPossessionsInStudio() aProdList: " & aProdList>
+  [ 37] objcall 20 .............................. me.debug("getPossessionsInStudio() aProdList: " & aProdList)
+  [ 39] getglobal 153 ........................... <ElementMgr>
+  [ 41] pusharglist 1 ........................... <ElementMgr>
+  [ 43] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 45] not ..................................... <not voidp(ElementMgr)>
+  [ 46] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 49] getglobal 153 ........................... <ElementMgr>
+  [ 51] getlocal 0 .............................. <iError>
+  [ 53] getlocal 1 .............................. <aProdList>
+  [ 55] pusharglistnoret 3 ...................... <ElementMgr, iError, aProdList>
+  [ 57] objcall 551 ............................. ElementMgr.getPossessionsInStudio_Result(iError, aProdList)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 69] getparam 1 .............................. <sStudioID>
+  [ 71] pusharglistnoret 2 ...................... <me.foPossessionManager, sStudioID>
+  [ 73] objcall 544 ............................. me.foPossessionManager.getPossessionsInStudio(sStudioID)
+  [ 76] ret
+end
+
+on purchaseItem me, sScreenName, iCatId, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 30 ............................. <"purchaseItem() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"purchaseItem() " & sScreenName>
+  [  7] getparam 2 .............................. <iCatId>
+  [  9] joinpadstr .............................. <"purchaseItem() " & sScreenName && iCatId>
+  [ 10] getparam 3 .............................. <aAttributes>
+  [ 12] joinpadstr .............................. <"purchaseItem() " & sScreenName && iCatId && aAttributes>
+  [ 13] pusharglistnoret 2 ...................... <me, "purchaseItem() " & sScreenName && iCatId && aAttributes>
+  [ 15] objcall 20 .............................. me.debug("purchaseItem() " & sScreenName && iCatId && aAttributes)
+  [ 17] getglobal 256 ........................... <gFeatureSet>
+  [ 20] pushsymb 574 ............................ <#PURCHASING>
+  [ 23] pusharglist 2 ........................... <gFeatureSet, #PURCHASING>
+  [ 25] objcall 384 ............................. <gFeatureSet.isEnabled(#PURCHASING)>
+  [ 28] not ..................................... <not gFeatureSet.isEnabled(#PURCHASING)>
+  [ 29] jmpifz [ 36] ............................ if not gFeatureSet.isEnabled(#PURCHASING) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 71 .............................. return 
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getobjprop 561 .......................... <me.bPendingPurchase>
+  [ 41] jmpifz [ 56] ............................ if me.bPendingPurchase then
+  [ 44] getglobal 153 ........................... <ElementMgr>
+  [ 46] pushcons 31 ............................. <"ALERT_PENDING_PURCHASE">
+  [ 48] pusharglistnoret 2 ...................... <ElementMgr, "ALERT_PENDING_PURCHASE">
+  [ 50] objcall 206 ............................. ElementMgr.alert("ALERT_PENDING_PURCHASE")
+  [ 52] pusharglistnoret 0 ...................... <>
+  [ 54] extcall 71 .............................. return 
+  [ 56] getparam 3 .............................. <aAttributes>
+  [ 58] pusharglist 1 ........................... <aAttributes>
+  [ 60] extcall 15 .............................. <voidp(aAttributes)>
+  [ 62] jmpifz [ 72] ............................ if voidp(aAttributes) then / else
+  [ 65] pushcons 32 ............................. <"[:]">
+  [ 67] setparam 3 .............................. aAttributes = "[:]"
+  [ 69] jmp [ 81]
+  [ 72] getparam 3 .............................. <aAttributes>
+  [ 74] pusharglist 1 ........................... <aAttributes>
+  [ 76] extcall 575 ............................. <string(aAttributes)>
+  [ 79] setparam 3 .............................. aAttributes = string(aAttributes)
+  [ 81] getglobal 167 ........................... <gbTestMode>
+  [ 83] jmpifz [127] ............................ if gbTestMode then
+  [ 86] pushint8 2 .............................. <2>
+  [ 88] pusharglist 1 ........................... <2>
+  [ 90] extcall 246 ............................. <random(2)>
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] sub ..................................... <random(2) - 1>
+  [ 95] setlocal 0 .............................. iError = random(2) - 1
+  [ 97] getparam 0 .............................. <me>
+  [ 99] pushcons 33 ............................. <"purchaseItem_Result() ">
+  [101] getlocal 0 .............................. <iError>
+  [103] joinstr ................................. <"purchaseItem_Result() " & iError>
+  [104] pusharglistnoret 2 ...................... <me, "purchaseItem_Result() " & iError>
+  [106] objcall 20 .............................. me.debug("purchaseItem_Result() " & iError)
+  [108] getglobal 153 ........................... <ElementMgr>
+  [110] pusharglist 1 ........................... <ElementMgr>
+  [112] extcall 15 .............................. <voidp(ElementMgr)>
+  [114] not ..................................... <not voidp(ElementMgr)>
+  [115] jmpifz [127] ............................ if not voidp(ElementMgr) then
+  [118] getglobal 153 ........................... <ElementMgr>
+  [120] getlocal 0 .............................. <iError>
+  [122] pusharglistnoret 2 ...................... <ElementMgr, iError>
+  [124] objcall 552 ............................. ElementMgr.purchaseItem_Result(iError)
+  [127] getparam 0 .............................. <me>
+  [129] pushint8 1 .............................. <1>
+  [131] setobjprop 561 .......................... me.bPendingPurchase = 1
+  [134] getparam 0 .............................. <me>
+  [136] getchainedprop 562 ...................... <me.foPossessionManager>
+  [139] getparam 1 .............................. <sScreenName>
+  [141] getglobal 193 ........................... <oDenizenManager>
+  [143] pusharglist 1 ........................... <oDenizenManager>
+  [145] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [147] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [149] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [151] getparam 2 .............................. <iCatId>
+  [153] getparam 3 .............................. <aAttributes>
+  [155] pusharglist 1 ........................... <aAttributes>
+  [157] extcall 575 ............................. <string(aAttributes)>
+  [160] pusharglistnoret 5 ...................... <me.foPossessionManager, sScreenName, oDenizenManager.getDenizen().getSecret(), iCatId, string(aAttributes)>
+  [162] objcall 545 ............................. me.foPossessionManager.purchaseItem(sScreenName, oDenizenManager.getDenizen().getSecret(), iCatId, string(aAttributes))
+  [165] ret
+end
+
+on prePurchaseItem me, sScreenName, iCatId, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 34 ............................. <"prePurchaseItem() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"prePurchaseItem() " & sScreenName>
+  [  7] getparam 2 .............................. <iCatId>
+  [  9] joinpadstr .............................. <"prePurchaseItem() " & sScreenName && iCatId>
+  [ 10] getparam 3 .............................. <aAttributes>
+  [ 12] joinpadstr .............................. <"prePurchaseItem() " & sScreenName && iCatId && aAttributes>
+  [ 13] pusharglistnoret 2 ...................... <me, "prePurchaseItem() " & sScreenName && iCatId && aAttributes>
+  [ 15] objcall 20 .............................. me.debug("prePurchaseItem() " & sScreenName && iCatId && aAttributes)
+  [ 17] getglobal 256 ........................... <gFeatureSet>
+  [ 20] pushsymb 574 ............................ <#PURCHASING>
+  [ 23] pusharglist 2 ........................... <gFeatureSet, #PURCHASING>
+  [ 25] objcall 384 ............................. <gFeatureSet.isEnabled(#PURCHASING)>
+  [ 28] not ..................................... <not gFeatureSet.isEnabled(#PURCHASING)>
+  [ 29] jmpifz [ 36] ............................ if not gFeatureSet.isEnabled(#PURCHASING) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 71 .............................. return 
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getobjprop 561 .......................... <me.bPendingPurchase>
+  [ 41] jmpifz [ 56] ............................ if me.bPendingPurchase then
+  [ 44] getglobal 153 ........................... <ElementMgr>
+  [ 46] pushcons 31 ............................. <"ALERT_PENDING_PURCHASE">
+  [ 48] pusharglistnoret 2 ...................... <ElementMgr, "ALERT_PENDING_PURCHASE">
+  [ 50] objcall 206 ............................. ElementMgr.alert("ALERT_PENDING_PURCHASE")
+  [ 52] pusharglistnoret 0 ...................... <>
+  [ 54] extcall 71 .............................. return 
+  [ 56] getparam 2 .............................. <iCatId>
+  [ 58] pusharglist 1 ........................... <iCatId>
+  [ 60] extcall 48 .............................. <integer(iCatId)>
+  [ 62] setparam 2 .............................. iCatId = integer(iCatId)
+  [ 64] getparam 3 .............................. <aAttributes>
+  [ 66] pusharglist 1 ........................... <aAttributes>
+  [ 68] extcall 15 .............................. <voidp(aAttributes)>
+  [ 70] jmpifz [ 80] ............................ if voidp(aAttributes) then / else
+  [ 73] pushcons 32 ............................. <"[:]">
+  [ 75] setparam 3 .............................. aAttributes = "[:]"
+  [ 77] jmp [ 89]
+  [ 80] getparam 3 .............................. <aAttributes>
+  [ 82] pusharglist 1 ........................... <aAttributes>
+  [ 84] extcall 575 ............................. <string(aAttributes)>
+  [ 87] setparam 3 .............................. aAttributes = string(aAttributes)
+  [ 89] getglobal 167 ........................... <gbTestMode>
+  [ 91] jmpifz [151] ............................ if gbTestMode then
+  [ 94] pushzero ................................ <0>
+  [ 95] setlocal 0 .............................. iError = 0
+  [ 97] pushint8 2 .............................. <2>
+  [ 99] setlocal 1 .............................. iBalance = 2
+  [101] pushint16 500 ........................... <500>
+  [104] setlocal 2 .............................. iPrice = 500
+  [106] pushint8 4 .............................. <4>
+  [108] setlocal 3 .............................. iProdId = 4
+  [110] getparam 0 .............................. <me>
+  [112] pushcons 35 ............................. <"prePurchaseItem_Result() ">
+  [114] getlocal 1 .............................. <iBalance>
+  [116] joinstr ................................. <"prePurchaseItem_Result() " & iBalance>
+  [117] getlocal 2 .............................. <iPrice>
+  [119] joinpadstr .............................. <"prePurchaseItem_Result() " & iBalance && iPrice>
+  [120] pusharglistnoret 2 ...................... <me, "prePurchaseItem_Result() " & iBalance && iPrice>
+  [122] objcall 20 .............................. me.debug("prePurchaseItem_Result() " & iBalance && iPrice)
+  [124] getglobal 153 ........................... <ElementMgr>
+  [126] pusharglist 1 ........................... <ElementMgr>
+  [128] extcall 15 .............................. <voidp(ElementMgr)>
+  [130] not ..................................... <not voidp(ElementMgr)>
+  [131] jmpifz [151] ............................ if not voidp(ElementMgr) then
+  [134] getglobal 153 ........................... <ElementMgr>
+  [136] getlocal 0 .............................. <iError>
+  [138] getlocal 1 .............................. <iBalance>
+  [140] getlocal 2 .............................. <iPrice>
+  [142] getlocal 3 .............................. <iProdId>
+  [144] getparam 3 .............................. <aAttributes>
+  [146] pusharglistnoret 6 ...................... <ElementMgr, iError, iBalance, iPrice, iProdId, aAttributes>
+  [148] objcall 553 ............................. ElementMgr.prePurchaseItem_Result(iError, iBalance, iPrice, iProdId, aAttributes)
+  [151] getparam 0 .............................. <me>
+  [153] getchainedprop 562 ...................... <me.foPossessionManager>
+  [156] getparam 1 .............................. <sScreenName>
+  [158] getglobal 193 ........................... <oDenizenManager>
+  [160] pusharglist 1 ........................... <oDenizenManager>
+  [162] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [164] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [166] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [168] getparam 2 .............................. <iCatId>
+  [170] getparam 3 .............................. <aAttributes>
+  [172] pusharglistnoret 5 ...................... <me.foPossessionManager, sScreenName, oDenizenManager.getDenizen().getSecret(), iCatId, aAttributes>
+  [174] objcall 546 ............................. me.foPossessionManager.prePurchaseItem(sScreenName, oDenizenManager.getDenizen().getSecret(), iCatId, aAttributes)
+  [177] ret
+end
+
+on dispenseItem me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 36 ............................. <"dispenseItem() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"dispenseItem() " & sScreenName>
+  [  7] pusharglistnoret 2 ...................... <me, "dispenseItem() " & sScreenName>
+  [  9] objcall 20 .............................. me.debug("dispenseItem() " & sScreenName)
+  [ 11] getglobal 256 ........................... <gFeatureSet>
+  [ 14] pushsymb 580 ............................ <#ITEM_DISPENSER>
+  [ 17] pusharglist 2 ........................... <gFeatureSet, #ITEM_DISPENSER>
+  [ 19] objcall 384 ............................. <gFeatureSet.isEnabled(#ITEM_DISPENSER)>
+  [ 22] not ..................................... <not gFeatureSet.isEnabled(#ITEM_DISPENSER)>
+  [ 23] jmpifz [ 30] ............................ if not gFeatureSet.isEnabled(#ITEM_DISPENSER) then
+  [ 26] pusharglistnoret 0 ...................... <>
+  [ 28] extcall 71 .............................. return 
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 35] getparam 1 .............................. <sScreenName>
+  [ 37] getglobal 193 ........................... <oDenizenManager>
+  [ 39] pusharglist 1 ........................... <oDenizenManager>
+  [ 41] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [ 43] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [ 45] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [ 47] pusharglistnoret 3 ...................... <me.foPossessionManager, sScreenName, oDenizenManager.getDenizen().getSecret()>
+  [ 49] objcall 547 ............................. me.foPossessionManager.dispenseItem(sScreenName, oDenizenManager.getDenizen().getSecret())
+  [ 52] ret
+end
+
+on getBurnedCDsInBackPack me, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 37 ............................. <"getBurnedCDsInBackPack() ">
+  [  4] getparam 1 .............................. <sScreenName>
+  [  6] joinstr ................................. <"getBurnedCDsInBackPack() " & sScreenName>
+  [  7] pusharglistnoret 2 ...................... <me, "getBurnedCDsInBackPack() " & sScreenName>
+  [  9] objcall 20 .............................. me.debug("getBurnedCDsInBackPack() " & sScreenName)
+  [ 11] getglobal 167 ........................... <gbTestMode>
+  [ 13] jmpifz [ 64] ............................ if gbTestMode then
+  [ 16] pushzero ................................ <0>
+  [ 17] setlocal 0 .............................. iError = 0
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglist 1 ........................... <me>
+  [ 23] objcall 559 ............................. <me.createTestCds()>
+  [ 26] setlocal 1 .............................. aCds = me.createTestCds()
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushcons 38 ............................. <"getBurnedCDsInBackPack() aCDs: ">
+  [ 32] getlocal 1 .............................. <aCds>
+  [ 34] joinstr ................................. <"getBurnedCDsInBackPack() aCDs: " & aCds>
+  [ 35] pusharglistnoret 2 ...................... <me, "getBurnedCDsInBackPack() aCDs: " & aCds>
+  [ 37] objcall 20 .............................. me.debug("getBurnedCDsInBackPack() aCDs: " & aCds)
+  [ 39] getglobal 153 ........................... <ElementMgr>
+  [ 41] pusharglist 1 ........................... <ElementMgr>
+  [ 43] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 45] not ..................................... <not voidp(ElementMgr)>
+  [ 46] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 49] getglobal 153 ........................... <ElementMgr>
+  [ 51] getlocal 0 .............................. <iError>
+  [ 53] getlocal 1 .............................. <aCds>
+  [ 55] pusharglistnoret 3 ...................... <ElementMgr, iError, aCds>
+  [ 57] objcall 555 ............................. ElementMgr.getBurnedCdsInBackpack_Result(iError, aCds)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getchainedprop 562 ...................... <me.foPossessionManager>
+  [ 69] getparam 1 .............................. <sScreenName>
+  [ 71] getglobal 193 ........................... <oDenizenManager>
+  [ 73] pusharglist 1 ........................... <oDenizenManager>
+  [ 75] objcall 194 ............................. <oDenizenManager.getDenizen()>
+  [ 77] pusharglist 1 ........................... <oDenizenManager.getDenizen()>
+  [ 79] objcall 195 ............................. <oDenizenManager.getDenizen().getSecret()>
+  [ 81] pusharglistnoret 3 ...................... <me.foPossessionManager, sScreenName, oDenizenManager.getDenizen().getSecret()>
+  [ 83] objcall 548 ............................. me.foPossessionManager.getBurnedCDsInBackPack(sScreenName, oDenizenManager.getDenizen().getSecret())
+  [ 86] ret
+end
+
+on destroy me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 39 ............................. <"destroy() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"destroy() " & iPosId>
+  [  7] pusharglistnoret 2 ...................... <me, "destroy() " & iPosId>
+  [  9] objcall 20 .............................. me.debug("destroy() " & iPosId)
+  [ 11] getparam 1 .............................. <iPosId>
+  [ 13] pusharglist 1 ........................... <iPosId>
+  [ 15] extcall 15 .............................. <voidp(iPosId)>
+  [ 17] jmpifz [ 24] ............................ if voidp(iPosId) then
+  [ 20] pusharglistnoret 0 ...................... <>
+  [ 22] extcall 71 .............................. return 
+  [ 24] getglobal 167 ........................... <gbTestMode>
+  [ 26] jmpifz [ 43] ............................ if gbTestMode then
+  [ 29] pushzero ................................ <0>
+  [ 30] setlocal 0 .............................. iError = 0
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushcons 39 ............................. <"destroy() ">
+  [ 36] getlocal 0 .............................. <iError>
+  [ 38] joinstr ................................. <"destroy() " & iError>
+  [ 39] pusharglistnoret 2 ...................... <me, "destroy() " & iError>
+  [ 41] objcall 20 .............................. me.debug("destroy() " & iError)
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getchainedprop 582 ...................... <me.foPossessionMananger>
+  [ 48] getparam 1 .............................. <iPosId>
+  [ 50] pusharglistnoret 2 ...................... <me.foPossessionMananger, iPosId>
+  [ 52] objcall 549 ............................. me.foPossessionMananger.destroy(iPosId)
+  [ 55] ret
+end
+
+on getPossessionsInBackpack_Result me, oCaller, oBackPack
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 40 ............................. <"getPossessionsInBackpack_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getPossessionsInBackpack_Result()">
+  [  6] objcall 20 .............................. me.debug("getPossessionsInBackpack_Result()")
+  [  8] pushzero ................................ <0>
+  [  9] setlocal 0 .............................. iError = 0
+  [ 11] getparam 2 .............................. <oBackPack>
+  [ 13] pusharglist 1 ........................... <oBackPack>
+  [ 15] objcall 584 ............................. <oBackPack.getCurrentPage()>
+  [ 18] pusharglist 1 ........................... <oBackPack.getCurrentPage()>
+  [ 20] extcall 48 .............................. <integer(oBackPack.getCurrentPage())>
+  [ 22] setlocal 1 .............................. iCurrentPage = integer(oBackPack.getCurrentPage())
+  [ 24] getparam 2 .............................. <oBackPack>
+  [ 26] pusharglist 1 ........................... <oBackPack>
+  [ 28] objcall 585 ............................. <oBackPack.getTotalPages()>
+  [ 31] pusharglist 1 ........................... <oBackPack.getTotalPages()>
+  [ 33] extcall 48 .............................. <integer(oBackPack.getTotalPages())>
+  [ 35] setlocal 2 .............................. iTotalPages = integer(oBackPack.getTotalPages())
+  [ 37] getparam 2 .............................. <oBackPack>
+  [ 39] pusharglist 1 ........................... <oBackPack>
+  [ 41] objcall 586 ............................. <oBackPack.getTotalItems()>
+  [ 44] pusharglist 1 ........................... <oBackPack.getTotalItems()>
+  [ 46] extcall 48 .............................. <integer(oBackPack.getTotalItems())>
+  [ 48] setlocal 3 .............................. iTotalItems = integer(oBackPack.getTotalItems())
+  [ 50] getparam 2 .............................. <oBackPack>
+  [ 52] pusharglist 1 ........................... <oBackPack>
+  [ 54] objcall 587 ............................. <oBackPack.getNumberOfBlankCds()>
+  [ 57] pusharglist 1 ........................... <oBackPack.getNumberOfBlankCds()>
+  [ 59] extcall 48 .............................. <integer(oBackPack.getNumberOfBlankCds())>
+  [ 61] setlocal 4 .............................. iCds = integer(oBackPack.getNumberOfBlankCds())
+  [ 63] getlocal 3 .............................. <iTotalItems>
+  [ 65] getparam 2 .............................. <oBackPack>
+  [ 67] pusharglist 1 ........................... <oBackPack>
+  [ 69] objcall 588 ............................. <oBackPack.getPageSize()>
+  [ 72] lteq .................................... <iTotalItems <= oBackPack.getPageSize()>
+  [ 73] jmpifz [ 80] ............................ if iTotalItems <= oBackPack.getPageSize() then
+  [ 76] pushint8 1 .............................. <1>
+  [ 78] setlocal 1 .............................. iCurrentPage = 1
+  [ 80] getlocal 1 .............................. <iCurrentPage>
+  [ 82] getlocal 2 .............................. <iTotalPages>
+  [ 84] gt ...................................... <iCurrentPage > iTotalPages>
+  [ 85] jmpifz [ 92] ............................ if iCurrentPage > iTotalPages then
+  [ 88] getlocal 2 .............................. <iTotalPages>
+  [ 90] setlocal 1 .............................. iCurrentPage = iTotalPages
+  [ 92] getparam 2 .............................. <oBackPack>
+  [ 94] getlocal 1 .............................. <iCurrentPage>
+  [ 96] pusharglist 2 ........................... <oBackPack, iCurrentPage>
+  [ 98] objcall 570 ............................. <oBackPack.getPossessionsByPage(iCurrentPage)>
+  [101] setlocal 5 .............................. aPossessions = oBackPack.getPossessionsByPage(iCurrentPage)
+  [103] pusharglist 0 ........................... <[]>
+  [105] pushlist ................................ <[]>
+  [106] setlocal 6 .............................. aProdList = []
+  [108] getlocal 5 .............................. <aPossessions>
+  [110] pusharglist 1 ........................... <aPossessions>
+  [112] extcall 15 .............................. <voidp(aPossessions)>
+  [114] jmpifz [121] ............................ if voidp(aPossessions) then
+  [117] pusharglistnoret 0 ...................... <>
+  [119] extcall 71 .............................. return 
+  [121] getlocal 5 .............................. <aPossessions>
+  [123] getobjprop 77 ........................... <aPossessions.length>
+  [125] setlocal 7 .............................. iLength = aPossessions.length
+  [127] pushzero ................................ <0>
+  [128] setlocal 8
+  [130] getlocal 8
+  [132] getlocal 7 .............................. <iLength>
+  [134] pushint8 1 .............................. <1>
+  [136] sub ..................................... <iLength - 1>
+  [137] lteq
+  [138] jmpifz [332] ............................ repeat with i = 0 to iLength - 1
+  [141] getlocal 5 .............................. <aPossessions>
+  [143] getlocal 8 .............................. <i>
+  [145] pusharglist 2 ........................... <aPossessions, i>
+  [147] objcall 43 .............................. <aPossessions[i]>
+  [149] setlocal 9 .............................. oItem = aPossessions[i]
+  [151] getparam 0 .............................. <me>
+  [153] pushcons 41 ............................. <"oItem: ">
+  [155] getlocal 9 .............................. <oItem>
+  [157] pusharglist 1 ........................... <oItem>
+  [159] objcall 208 ............................. <oItem.toString()>
+  [161] joinstr ................................. <"oItem: " & oItem.toString()>
+  [162] pusharglistnoret 2 ...................... <me, "oItem: " & oItem.toString()>
+  [164] objcall 20 .............................. me.debug("oItem: " & oItem.toString())
+  [166] pusharglist 0 ........................... <[:]>
+  [168] pushproplist ............................ <[:]>
+  [169] setlocal 10 ............................. aItem = [:]
+  [171] getlocal 10 ............................. <aItem>
+  [173] pushsymb 534 ............................ <#prodID>
+  [176] getlocal 9 .............................. <oItem>
+  [178] pusharglist 1 ........................... <oItem>
+  [180] objcall 589 ............................. <oItem.getCatalogItem()>
+  [183] pusharglist 1 ........................... <oItem.getCatalogItem()>
+  [185] extcall 48 .............................. <integer(oItem.getCatalogItem())>
+  [187] pusharglistnoret 3 ...................... <aItem, #prodID, integer(oItem.getCatalogItem())>
+  [189] objcall 73 .............................. aItem[#prodID] = integer(oItem.getCatalogItem())
+  [191] getparam 0 .............................. <me>
+  [193] pushcons 42 ............................. <"aItem: prodId: ">
+  [195] getlocal 10 ............................. <aItem>
+  [197] joinstr ................................. <"aItem: prodId: " & aItem>
+  [198] pusharglistnoret 2 ...................... <me, "aItem: prodId: " & aItem>
+  [200] objcall 20 .............................. me.debug("aItem: prodId: " & aItem)
+  [202] getlocal 10 ............................. <aItem>
+  [204] pushsymb 590 ............................ <#posId>
+  [207] getlocal 9 .............................. <oItem>
+  [209] pusharglist 1 ........................... <oItem>
+  [211] objcall 535 ............................. <oItem.getId()>
+  [214] pusharglist 1 ........................... <oItem.getId()>
+  [216] extcall 48 .............................. <integer(oItem.getId())>
+  [218] pusharglistnoret 3 ...................... <aItem, #posId, integer(oItem.getId())>
+  [220] objcall 73 .............................. aItem[#posId] = integer(oItem.getId())
+  [222] getparam 0 .............................. <me>
+  [224] pushcons 43 ............................. <"aItem: posId: ">
+  [226] getlocal 10 ............................. <aItem>
+  [228] joinstr ................................. <"aItem: posId: " & aItem>
+  [229] pusharglistnoret 2 ...................... <me, "aItem: posId: " & aItem>
+  [231] objcall 20 .............................. me.debug("aItem: posId: " & aItem)
+  [233] getlocal 9 .............................. <oItem>
+  [235] pusharglist 1 ........................... <oItem>
+  [237] objcall 591 ............................. <oItem.getProperties()>
+  [240] pusharglist 1 ........................... <oItem.getProperties()>
+  [242] objcall 591 ............................. <oItem.getProperties().getProperties()>
+  [245] setlocal 11 ............................. sProperties = oItem.getProperties().getProperties()
+  [247] getparam 0 .............................. <me>
+  [249] pushcons 44 ............................. <"sProperties: ">
+  [251] getlocal 11 ............................. <sProperties>
+  [253] joinstr ................................. <"sProperties: " & sProperties>
+  [254] pusharglistnoret 2 ...................... <me, "sProperties: " & sProperties>
+  [256] objcall 20 .............................. me.debug("sProperties: " & sProperties)
+  [258] getlocal 11 ............................. <sProperties>
+  [260] pusharglist 1 ........................... <sProperties>
+  [262] extcall 15 .............................. <voidp(sProperties)>
+  [264] getlocal 11 ............................. <sProperties>
+  [266] pusharglist 0 ........................... <>
+  [268] extcall 190 ............................. <VOID>
+  [270] eq ...................................... <sProperties = VOID>
+  [271] or ...................................... <voidp(sProperties) or (sProperties = VOID)>
+  [272] jmpifz [289] ............................ if voidp(sProperties) or (sProperties = VOID) then / else
+  [275] getlocal 10 ............................. <aItem>
+  [277] pushsymb 44 ............................. <#attributes>
+  [279] pusharglist 0 ........................... <[:]>
+  [281] pushproplist ............................ <[:]>
+  [282] pusharglistnoret 3 ...................... <aItem, #attributes, [:]>
+  [284] objcall 73 .............................. aItem[#attributes] = [:]
+  [286] jmp [304]
+  [289] getlocal 10 ............................. <aItem>
+  [291] pushsymb 44 ............................. <#attributes>
+  [293] getlocal 11 ............................. <sProperties>
+  [295] pusharglist 1 ........................... <sProperties>
+  [297] extcall 592 ............................. <value(sProperties)>
+  [300] pusharglistnoret 3 ...................... <aItem, #attributes, value(sProperties)>
+  [302] objcall 73 .............................. aItem[#attributes] = value(sProperties)
+  [304] getparam 0 .............................. <me>
+  [306] pushcons 45 ............................. <"aItem: attributes: ">
+  [308] getlocal 10 ............................. <aItem>
+  [310] joinstr ................................. <"aItem: attributes: " & aItem>
+  [311] pusharglistnoret 2 ...................... <me, "aItem: attributes: " & aItem>
+  [313] objcall 20 .............................. me.debug("aItem: attributes: " & aItem)
+  [315] getlocal 6 .............................. <aProdList>
+  [317] getlocal 10 ............................. <aItem>
+  [319] pusharglistnoret 2 ...................... <aProdList, aItem>
+  [321] objcall 55 .............................. aProdList.add(aItem)
+  [323] pushint8 1
+  [325] getlocal 8
+  [327] add
+  [328] setlocal 8
+  [330] endrepeat [130]
+  [332] getparam 0 .............................. <me>
+  [334] pushcons 46 ............................. <"getPossessionsInBackpack_Result() aProdList: ">
+  [336] getlocal 6 .............................. <aProdList>
+  [338] joinstr ................................. <"getPossessionsInBackpack_Result() aProdList: " & aProdList>
+  [339] pusharglistnoret 2 ...................... <me, "getPossessionsInBackpack_Result() aProdList: " & aProdList>
+  [341] objcall 20 .............................. me.debug("getPossessionsInBackpack_Result() aProdList: " & aProdList)
+  [343] getglobal 153 ........................... <ElementMgr>
+  [345] pusharglist 1 ........................... <ElementMgr>
+  [347] extcall 15 .............................. <voidp(ElementMgr)>
+  [349] not ..................................... <not voidp(ElementMgr)>
+  [350] jmpifz [372] ............................ if not voidp(ElementMgr) then
+  [353] getglobal 153 ........................... <ElementMgr>
+  [355] getlocal 0 .............................. <iError>
+  [357] getlocal 6 .............................. <aProdList>
+  [359] getlocal 1 .............................. <iCurrentPage>
+  [361] getlocal 2 .............................. <iTotalPages>
+  [363] getlocal 3 .............................. <iTotalItems>
+  [365] getlocal 4 .............................. <iCds>
+  [367] pusharglistnoret 7 ...................... <ElementMgr, iError, aProdList, iCurrentPage, iTotalPages, iTotalItems, iCds>
+  [369] objcall 550 ............................. ElementMgr.getPossessionsInBackpack_Result(iError, aProdList, iCurrentPage, iTotalPages, iTotalItems, iCds)
+  [372] ret
+end
+
+on getPossessionsInStudio_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 47 ............................. <"getPossessionsInStudio_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getPossessionsInStudio_Result()">
+  [  6] objcall 20 .............................. me.debug("getPossessionsInStudio_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 18] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 19] jmpifz [ 64] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 22] getparam 2 .............................. <oResult>
+  [ 24] pusharglist 1 ........................... <oResult>
+  [ 26] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 28] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushcons 48 ............................. <"getPossessionsInStudio_Result() ERROR ">
+  [ 34] getlocal 0 .............................. <iError>
+  [ 36] joinstr ................................. <"getPossessionsInStudio_Result() ERROR " & iError>
+  [ 37] pusharglistnoret 2 ...................... <me, "getPossessionsInStudio_Result() ERROR " & iError>
+  [ 39] objcall 20 .............................. me.debug("getPossessionsInStudio_Result() ERROR " & iError)
+  [ 41] getglobal 153 ........................... <ElementMgr>
+  [ 43] pusharglist 1 ........................... <ElementMgr>
+  [ 45] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 47] not ..................................... <not voidp(ElementMgr)>
+  [ 48] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 51] getglobal 153 ........................... <ElementMgr>
+  [ 53] getlocal 0 .............................. <iError>
+  [ 55] pusharglistnoret 2 ...................... <ElementMgr, iError>
+  [ 57] objcall 551 ............................. ElementMgr.getPossessionsInStudio_Result(iError)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] pushzero ................................ <0>
+  [ 65] setlocal 0 .............................. iError = 0
+  [ 67] pusharglist 0 ........................... <[]>
+  [ 69] pushlist ................................ <[]>
+  [ 70] setlocal 1 .............................. aProdList = []
+  [ 72] getparam 2 .............................. <oResult>
+  [ 74] getobjprop 77 ........................... <oResult.length>
+  [ 76] setlocal 2 .............................. iLength = oResult.length
+  [ 78] pushzero ................................ <0>
+  [ 79] setlocal 3
+  [ 81] getlocal 3
+  [ 83] getlocal 2 .............................. <iLength>
+  [ 85] pushint8 1 .............................. <1>
+  [ 87] sub ..................................... <iLength - 1>
+  [ 88] lteq
+  [ 89] jmpifz [303] ............................ repeat with i = 0 to iLength - 1
+  [ 92] getparam 2 .............................. <oResult>
+  [ 94] getlocal 3 .............................. <i>
+  [ 96] pusharglist 2 ........................... <oResult, i>
+  [ 98] objcall 43 .............................. <oResult[i]>
+  [100] setlocal 4 .............................. oItem = oResult[i]
+  [102] pusharglist 0 ........................... <[:]>
+  [104] pushproplist ............................ <[:]>
+  [105] setlocal 5 .............................. aItem = [:]
+  [107] getlocal 5 .............................. <aItem>
+  [109] pushsymb 534 ............................ <#prodID>
+  [112] getlocal 4 .............................. <oItem>
+  [114] pusharglist 1 ........................... <oItem>
+  [116] objcall 589 ............................. <oItem.getCatalogItem()>
+  [119] pusharglist 1 ........................... <oItem.getCatalogItem()>
+  [121] extcall 48 .............................. <integer(oItem.getCatalogItem())>
+  [123] pusharglistnoret 3 ...................... <aItem, #prodID, integer(oItem.getCatalogItem())>
+  [125] objcall 73 .............................. aItem[#prodID] = integer(oItem.getCatalogItem())
+  [127] getlocal 5 .............................. <aItem>
+  [129] pushsymb 590 ............................ <#posId>
+  [132] getlocal 4 .............................. <oItem>
+  [134] pusharglist 1 ........................... <oItem>
+  [136] objcall 535 ............................. <oItem.getId()>
+  [139] pusharglist 1 ........................... <oItem.getId()>
+  [141] extcall 48 .............................. <integer(oItem.getId())>
+  [143] pusharglistnoret 3 ...................... <aItem, #posId, integer(oItem.getId())>
+  [145] objcall 73 .............................. aItem[#posId] = integer(oItem.getId())
+  [147] getlocal 5 .............................. <aItem>
+  [149] pushsymb 599 ............................ <#dir>
+  [152] getlocal 4 .............................. <oItem>
+  [154] pusharglist 1 ........................... <oItem>
+  [156] objcall 600 ............................. <oItem.getFacingDirection()>
+  [159] pusharglist 1 ........................... <oItem.getFacingDirection()>
+  [161] extcall 48 .............................. <integer(oItem.getFacingDirection())>
+  [163] pusharglistnoret 3 ...................... <aItem, #dir, integer(oItem.getFacingDirection())>
+  [165] objcall 73 .............................. aItem[#dir] = integer(oItem.getFacingDirection())
+  [167] getlocal 5 .............................. <aItem>
+  [169] pushsymb 44 ............................. <#attributes>
+  [171] getlocal 4 .............................. <oItem>
+  [173] pusharglist 1 ........................... <oItem>
+  [175] objcall 591 ............................. <oItem.getProperties()>
+  [178] pusharglist 1 ........................... <oItem.getProperties()>
+  [180] objcall 591 ............................. <oItem.getProperties().getProperties()>
+  [183] pusharglist 1 ........................... <oItem.getProperties().getProperties()>
+  [185] extcall 592 ............................. <value(oItem.getProperties().getProperties())>
+  [188] pusharglistnoret 3 ...................... <aItem, #attributes, value(oItem.getProperties().getProperties())>
+  [190] objcall 73 .............................. aItem[#attributes] = value(oItem.getProperties().getProperties())
+  [192] getlocal 5 .............................. <aItem>
+  [194] pushsymb 601 ............................ <#state>
+  [197] getlocal 4 .............................. <oItem>
+  [199] pusharglist 1 ........................... <oItem>
+  [201] objcall 602 ............................. <oItem.getState()>
+  [204] pusharglist 1 ........................... <oItem.getState()>
+  [206] extcall 48 .............................. <integer(oItem.getState())>
+  [208] pusharglistnoret 3 ...................... <aItem, #state, integer(oItem.getState())>
+  [210] objcall 73 .............................. aItem[#state] = integer(oItem.getState())
+  [212] getlocal 5 .............................. <aItem>
+  [214] pushsymb 603 ............................ <#gridX>
+  [217] getlocal 4 .............................. <oItem>
+  [219] pusharglist 1 ........................... <oItem>
+  [221] objcall 604 ............................. <oItem.getXPos()>
+  [224] pusharglist 1 ........................... <oItem.getXPos()>
+  [226] extcall 48 .............................. <integer(oItem.getXPos())>
+  [228] pusharglistnoret 3 ...................... <aItem, #gridX, integer(oItem.getXPos())>
+  [230] objcall 73 .............................. aItem[#gridX] = integer(oItem.getXPos())
+  [232] getlocal 5 .............................. <aItem>
+  [234] pushsymb 605 ............................ <#gridY>
+  [237] getlocal 4 .............................. <oItem>
+  [239] pusharglist 1 ........................... <oItem>
+  [241] objcall 606 ............................. <oItem.getYPos()>
+  [244] pusharglist 1 ........................... <oItem.getYPos()>
+  [246] extcall 48 .............................. <integer(oItem.getYPos())>
+  [248] pusharglistnoret 3 ...................... <aItem, #gridY, integer(oItem.getYPos())>
+  [250] objcall 73 .............................. aItem[#gridY] = integer(oItem.getYPos())
+  [252] getlocal 5 .............................. <aItem>
+  [254] pushsymb 607 ............................ <#gridZ>
+  [257] getlocal 4 .............................. <oItem>
+  [259] pusharglist 1 ........................... <oItem>
+  [261] objcall 608 ............................. <oItem.getZPos()>
+  [264] pusharglist 1 ........................... <oItem.getZPos()>
+  [266] extcall 48 .............................. <integer(oItem.getZPos())>
+  [268] pusharglistnoret 3 ...................... <aItem, #gridZ, integer(oItem.getZPos())>
+  [270] objcall 73 .............................. aItem[#gridZ] = integer(oItem.getZPos())
+  [272] getlocal 5 .............................. <aItem>
+  [274] pushsymb 53 ............................. <#owner>
+  [276] getlocal 4 .............................. <oItem>
+  [278] pusharglist 1 ........................... <oItem>
+  [280] objcall 232 ............................. <oItem.getOwnerScreenName()>
+  [282] pusharglistnoret 3 ...................... <aItem, #owner, oItem.getOwnerScreenName()>
+  [284] objcall 73 .............................. aItem[#owner] = oItem.getOwnerScreenName()
+  [286] getlocal 1 .............................. <aProdList>
+  [288] getlocal 5 .............................. <aItem>
+  [290] pusharglistnoret 2 ...................... <aProdList, aItem>
+  [292] objcall 55 .............................. aProdList.add(aItem)
+  [294] pushint8 1
+  [296] getlocal 3
+  [298] add
+  [299] setlocal 3
+  [301] endrepeat [ 81]
+  [303] getparam 0 .............................. <me>
+  [305] pushcons 46 ............................. <"getPossessionsInBackpack_Result() aProdList: ">
+  [307] getlocal 1 .............................. <aProdList>
+  [309] joinstr ................................. <"getPossessionsInBackpack_Result() aProdList: " & aProdList>
+  [310] pusharglistnoret 2 ...................... <me, "getPossessionsInBackpack_Result() aProdList: " & aProdList>
+  [312] objcall 20 .............................. me.debug("getPossessionsInBackpack_Result() aProdList: " & aProdList)
+  [314] getglobal 153 ........................... <ElementMgr>
+  [316] pusharglist 1 ........................... <ElementMgr>
+  [318] extcall 15 .............................. <voidp(ElementMgr)>
+  [320] not ..................................... <not voidp(ElementMgr)>
+  [321] jmpifz [335] ............................ if not voidp(ElementMgr) then
+  [324] getglobal 153 ........................... <ElementMgr>
+  [326] getlocal 0 .............................. <iError>
+  [328] getlocal 1 .............................. <aProdList>
+  [330] pusharglistnoret 3 ...................... <ElementMgr, iError, aProdList>
+  [332] objcall 551 ............................. ElementMgr.getPossessionsInStudio_Result(iError, aProdList)
+  [335] ret
+end
+
+on purchaseItem_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 49 ............................. <"purchaseItem_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "purchaseItem_Result()">
+  [  6] objcall 20 .............................. me.debug("purchaseItem_Result()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushzero ................................ <0>
+  [ 11] setobjprop 561 .......................... me.bPendingPurchase = 0
+  [ 14] pushzero ................................ <0>
+  [ 15] setlocal 0 .............................. iError = 0
+  [ 17] getparam 2 .............................. <oResult>
+  [ 19] pusharglist 1 ........................... <oResult>
+  [ 21] extcall 15 .............................. <voidp(oResult)>
+  [ 23] getparam 2 .............................. <oResult>
+  [ 25] pusharglist 0 ........................... <>
+  [ 27] extcall 190 ............................. <VOID>
+  [ 29] eq ...................................... <oResult = VOID>
+  [ 30] or ...................................... <voidp(oResult) or (oResult = VOID)>
+  [ 31] jmpifz [ 38] ............................ if voidp(oResult) or (oResult = VOID) then
+  [ 34] pushint8 1 .............................. <1>
+  [ 36] setlocal 0 .............................. iError = 1
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushcons 50 ............................. <"purchaseItem_Result() ERROR ">
+  [ 42] getlocal 0 .............................. <iError>
+  [ 44] joinstr ................................. <"purchaseItem_Result() ERROR " & iError>
+  [ 45] pusharglistnoret 2 ...................... <me, "purchaseItem_Result() ERROR " & iError>
+  [ 47] objcall 20 .............................. me.debug("purchaseItem_Result() ERROR " & iError)
+  [ 49] getglobal 153 ........................... <ElementMgr>
+  [ 51] pusharglist 1 ........................... <ElementMgr>
+  [ 53] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 55] not ..................................... <not voidp(ElementMgr)>
+  [ 56] jmpifz [ 70] ............................ if not voidp(ElementMgr) then
+  [ 59] getglobal 153 ........................... <ElementMgr>
+  [ 61] getlocal 0 .............................. <iError>
+  [ 63] getparam 2 .............................. <oResult>
+  [ 65] pusharglistnoret 3 ...................... <ElementMgr, iError, oResult>
+  [ 67] objcall 552 ............................. ElementMgr.purchaseItem_Result(iError, oResult)
+  [ 70] ret
+end
+
+on prePurchaseItem_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 51 ............................. <"prePurchaseItem_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "prePurchaseItem_Result()">
+  [  6] objcall 20 .............................. me.debug("prePurchaseItem_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 18] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 19] jmpifz [ 64] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 22] getparam 2 .............................. <oResult>
+  [ 24] pusharglist 1 ........................... <oResult>
+  [ 26] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 28] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushcons 52 ............................. <"prePurchaseItem_Result() ERROR ">
+  [ 34] getlocal 0 .............................. <iError>
+  [ 36] joinstr ................................. <"prePurchaseItem_Result() ERROR " & iError>
+  [ 37] pusharglistnoret 2 ...................... <me, "prePurchaseItem_Result() ERROR " & iError>
+  [ 39] objcall 20 .............................. me.debug("prePurchaseItem_Result() ERROR " & iError)
+  [ 41] getglobal 153 ........................... <ElementMgr>
+  [ 43] pusharglist 1 ........................... <ElementMgr>
+  [ 45] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 47] not ..................................... <not voidp(ElementMgr)>
+  [ 48] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 51] getglobal 153 ........................... <ElementMgr>
+  [ 53] getlocal 0 .............................. <iError>
+  [ 55] pusharglistnoret 2 ...................... <ElementMgr, iError>
+  [ 57] objcall 553 ............................. ElementMgr.prePurchaseItem_Result(iError)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] pushzero ................................ <0>
+  [ 65] setlocal 0 .............................. iError = 0
+  [ 67] getparam 2 .............................. <oResult>
+  [ 69] pusharglist 1 ........................... <oResult>
+  [ 71] objcall 609 ............................. <oResult.getBalance()>
+  [ 74] pusharglist 1 ........................... <oResult.getBalance()>
+  [ 76] extcall 48 .............................. <integer(oResult.getBalance())>
+  [ 78] setlocal 1 .............................. iBalance = integer(oResult.getBalance())
+  [ 80] getparam 2 .............................. <oResult>
+  [ 82] pusharglist 1 ........................... <oResult>
+  [ 84] objcall 537 ............................. <oResult.getPrice()>
+  [ 87] pusharglist 1 ........................... <oResult.getPrice()>
+  [ 89] extcall 48 .............................. <integer(oResult.getPrice())>
+  [ 91] setlocal 2 .............................. iPrice = integer(oResult.getPrice())
+  [ 93] getparam 2 .............................. <oResult>
+  [ 95] pusharglist 1 ........................... <oResult>
+  [ 97] objcall 610 ............................. <oResult.getCatalogItemId()>
+  [100] pusharglist 1 ........................... <oResult.getCatalogItemId()>
+  [102] extcall 48 .............................. <integer(oResult.getCatalogItemId())>
+  [104] setlocal 3 .............................. iProdId = integer(oResult.getCatalogItemId())
+  [106] getparam 2 .............................. <oResult>
+  [108] pusharglist 1 ........................... <oResult>
+  [110] objcall 591 ............................. <oResult.getProperties()>
+  [113] pusharglist 1 ........................... <oResult.getProperties()>
+  [115] extcall 592 ............................. <value(oResult.getProperties())>
+  [118] setlocal 4 .............................. aAttributes = value(oResult.getProperties())
+  [120] getparam 0 .............................. <me>
+  [122] pushcons 35 ............................. <"prePurchaseItem_Result() ">
+  [124] getlocal 1 .............................. <iBalance>
+  [126] joinstr ................................. <"prePurchaseItem_Result() " & iBalance>
+  [127] getlocal 2 .............................. <iPrice>
+  [129] joinpadstr .............................. <"prePurchaseItem_Result() " & iBalance && iPrice>
+  [130] pusharglistnoret 2 ...................... <me, "prePurchaseItem_Result() " & iBalance && iPrice>
+  [132] objcall 20 .............................. me.debug("prePurchaseItem_Result() " & iBalance && iPrice)
+  [134] getglobal 153 ........................... <ElementMgr>
+  [136] pusharglist 1 ........................... <ElementMgr>
+  [138] extcall 15 .............................. <voidp(ElementMgr)>
+  [140] not ..................................... <not voidp(ElementMgr)>
+  [141] jmpifz [161] ............................ if not voidp(ElementMgr) then
+  [144] getglobal 153 ........................... <ElementMgr>
+  [146] getlocal 0 .............................. <iError>
+  [148] getlocal 1 .............................. <iBalance>
+  [150] getlocal 2 .............................. <iPrice>
+  [152] getlocal 3 .............................. <iProdId>
+  [154] getlocal 4 .............................. <aAttributes>
+  [156] pusharglistnoret 6 ...................... <ElementMgr, iError, iBalance, iPrice, iProdId, aAttributes>
+  [158] objcall 553 ............................. ElementMgr.prePurchaseItem_Result(iError, iBalance, iPrice, iProdId, aAttributes)
+  [161] ret
+end
+
+on dispenseItem_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 53 ............................. <"dispenseItem_Result() oCaller: ">
+  [  4] getparam 1 .............................. <oCaller>
+  [  6] joinstr ................................. <"dispenseItem_Result() oCaller: " & oCaller>
+  [  7] pushcons 54 ............................. <" oResult.toString(): ">
+  [  9] joinstr ................................. <"dispenseItem_Result() oCaller: " & oCaller & " oResult.toString(): ">
+  [ 10] getparam 2 .............................. <oResult>
+  [ 12] pusharglist 1 ........................... <oResult>
+  [ 14] objcall 208 ............................. <oResult.toString()>
+  [ 16] joinstr ................................. <"dispenseItem_Result() oCaller: " & oCaller & " oResult.toString(): " & oResult.toString()>
+  [ 17] pusharglistnoret 2 ...................... <me, "dispenseItem_Result() oCaller: " & oCaller & " oResult.toString(): " & oResult.toString()>
+  [ 19] objcall 20 .............................. me.debug("dispenseItem_Result() oCaller: " & oCaller & " oResult.toString(): " & oResult.toString())
+  [ 21] getparam 2 .............................. <oResult>
+  [ 23] getobjprop 77 ........................... <oResult.length>
+  [ 25] pushzero ................................ <0>
+  [ 26] gt ...................................... <oResult.length > 0>
+  [ 27] jmpifz [ 37] ............................ if oResult.length > 0 then / else
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] setlocal 0 .............................. iError = 1
+  [ 34] jmp [ 40]
+  [ 37] pushzero ................................ <0>
+  [ 38] setlocal 0 .............................. iError = 0
+  [ 40] getglobal 153 ........................... <ElementMgr>
+  [ 42] pusharglist 1 ........................... <ElementMgr>
+  [ 44] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 46] not ..................................... <not voidp(ElementMgr)>
+  [ 47] jmpifz [ 61] ............................ if not voidp(ElementMgr) then
+  [ 50] getglobal 153 ........................... <ElementMgr>
+  [ 52] getlocal 0 .............................. <iError>
+  [ 54] getparam 2 .............................. <oResult>
+  [ 56] pusharglistnoret 3 ...................... <ElementMgr, iError, oResult>
+  [ 58] objcall 554 ............................. ElementMgr.dispenseItem_Result(iError, oResult)
+  [ 61] ret
+end
+
+on getBurnedCdsInBackpack_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 55 ............................. <"getBurnedCdsInBackpack_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "getBurnedCdsInBackpack_Result()">
+  [  6] objcall 20 .............................. me.debug("getBurnedCdsInBackpack_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 18] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 19] jmpifz [ 64] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 22] getparam 2 .............................. <oResult>
+  [ 24] pusharglist 1 ........................... <oResult>
+  [ 26] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 28] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushcons 56 ............................. <"getBurnedCdsInBackpack_Result() ERROR ">
+  [ 34] getlocal 0 .............................. <iError>
+  [ 36] joinstr ................................. <"getBurnedCdsInBackpack_Result() ERROR " & iError>
+  [ 37] pusharglistnoret 2 ...................... <me, "getBurnedCdsInBackpack_Result() ERROR " & iError>
+  [ 39] objcall 20 .............................. me.debug("getBurnedCdsInBackpack_Result() ERROR " & iError)
+  [ 41] getglobal 153 ........................... <ElementMgr>
+  [ 43] pusharglist 1 ........................... <ElementMgr>
+  [ 45] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 47] not ..................................... <not voidp(ElementMgr)>
+  [ 48] jmpifz [ 60] ............................ if not voidp(ElementMgr) then
+  [ 51] getglobal 153 ........................... <ElementMgr>
+  [ 53] getlocal 0 .............................. <iError>
+  [ 55] pusharglistnoret 2 ...................... <ElementMgr, iError>
+  [ 57] objcall 555 ............................. ElementMgr.getBurnedCdsInBackpack_Result(iError)
+  [ 60] pusharglistnoret 0 ...................... <>
+  [ 62] extcall 71 .............................. return 
+  [ 64] pushzero ................................ <0>
+  [ 65] setlocal 0 .............................. iError = 0
+  [ 67] getparam 0 .............................. <me>
+  [ 69] getparam 2 .............................. <oResult>
+  [ 71] pusharglist 2 ........................... <me, oResult>
+  [ 73] objcall 560 ............................. <me.createCds(oResult)>
+  [ 76] setlocal 1 .............................. aCds = me.createCds(oResult)
+  [ 78] getparam 0 .............................. <me>
+  [ 80] pushcons 57 ............................. <"getBurnedCdsInBackpack_Result() aCDs: ">
+  [ 82] getlocal 1 .............................. <aCds>
+  [ 84] joinstr ................................. <"getBurnedCdsInBackpack_Result() aCDs: " & aCds>
+  [ 85] pusharglistnoret 2 ...................... <me, "getBurnedCdsInBackpack_Result() aCDs: " & aCds>
+  [ 87] objcall 20 .............................. me.debug("getBurnedCdsInBackpack_Result() aCDs: " & aCds)
+  [ 89] getglobal 153 ........................... <ElementMgr>
+  [ 91] pusharglist 1 ........................... <ElementMgr>
+  [ 93] extcall 15 .............................. <voidp(ElementMgr)>
+  [ 95] not ..................................... <not voidp(ElementMgr)>
+  [ 96] jmpifz [110] ............................ if not voidp(ElementMgr) then
+  [ 99] getglobal 153 ........................... <ElementMgr>
+  [101] getlocal 0 .............................. <iError>
+  [103] getlocal 1 .............................. <aCds>
+  [105] pusharglistnoret 3 ...................... <ElementMgr, iError, aCds>
+  [107] objcall 555 ............................. ElementMgr.getBurnedCdsInBackpack_Result(iError, aCds)
+  [110] ret
+end
+
+on destroy_Result me, oCaller, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 58 ............................. <"destroy_Result()">
+  [  4] pusharglistnoret 2 ...................... <me, "destroy_Result()">
+  [  6] objcall 20 .............................. me.debug("destroy_Result()")
+  [  8] getparam 2 .............................. <oResult>
+  [ 10] pusharglist 1 ........................... <oResult>
+  [ 12] objcall 201 ............................. <oResult.getTypeOf()>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 136 .......................... <me.ERROR_TYPE>
+  [ 18] eq ...................................... <oResult.getTypeOf() = me.ERROR_TYPE>
+  [ 19] jmpifz [ 45] ............................ if oResult.getTypeOf() = me.ERROR_TYPE then
+  [ 22] getparam 2 .............................. <oResult>
+  [ 24] pusharglist 1 ........................... <oResult>
+  [ 26] objcall 202 ............................. <oResult.getOrdinal()>
+  [ 28] setlocal 0 .............................. iError = oResult.getOrdinal()
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pushcons 59 ............................. <"destroy_Result() ERROR ">
+  [ 34] getlocal 0 .............................. <iError>
+  [ 36] joinstr ................................. <"destroy_Result() ERROR " & iError>
+  [ 37] pusharglistnoret 2 ...................... <me, "destroy_Result() ERROR " & iError>
+  [ 39] objcall 20 .............................. me.debug("destroy_Result() ERROR " & iError)
+  [ 41] pusharglistnoret 0 ...................... <>
+  [ 43] extcall 71 .............................. return 
+  [ 45] ret
+end
+
+on onStatus me, oCaller, oXml
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 60 ............................. <"onStatus()">
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglistnoret 3 ...................... <me, "onStatus()", 1>
+  [  8] objcall 20 .............................. me.debug("onStatus()", 1)
+  [ 10] ret
+end
+
+on getTestBackpackItems me, iStart, iEnd
+  [  0] pushint8 3 .............................. <3>
+  [  2] setlocal 0 .............................. iProdIndex = 3
+  [  4] pusharglist 0 ........................... <[]>
+  [  6] pushlist ................................ <[]>
+  [  7] setlocal 1 .............................. aProdList = []
+  [  9] pushint16 305 ........................... <305>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] pushint16 380 ........................... <380>
+  [ 19] lteq
+  [ 20] jmpifz [ 58] ............................ repeat with i = 305 to 380
+  [ 23] getlocal 1 .............................. <aProdList>
+  [ 25] pushsymb 534 ............................ <#prodID>
+  [ 28] getlocal 0 .............................. <iProdIndex>
+  [ 30] pushsymb 590 ............................ <#posId>
+  [ 33] getlocal 2 .............................. <i>
+  [ 35] pusharglist 4 ........................... <[#prodID: iProdIndex, #posId: i]>
+  [ 37] pushproplist ............................ <[#prodID: iProdIndex, #posId: i]>
+  [ 38] pusharglistnoret 2 ...................... <aProdList, [#prodID: iProdIndex, #posId: i]>
+  [ 40] objcall 55 .............................. aProdList.add([#prodID: iProdIndex, #posId: i])
+  [ 42] getlocal 0 .............................. <iProdIndex>
+  [ 44] pushint8 1 .............................. <1>
+  [ 46] add ..................................... <iProdIndex + 1>
+  [ 47] setlocal 0 .............................. iProdIndex = iProdIndex + 1
+  [ 49] pushint8 1
+  [ 51] getlocal 2
+  [ 53] add
+  [ 54] setlocal 2
+  [ 56] endrepeat [ 14]
+  [ 58] getlocal 1 .............................. <aProdList>
+  [ 60] pusharglistnoret 1 ...................... <aProdList>
+  [ 62] extcall 71 .............................. return aProdList
+  [ 64] ret
+end
+
+on getTestStudioItems me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aProdList = []
+  [  5] getlocal 0 .............................. <aProdList>
+  [  7] pushsymb 534 ............................ <#prodID>
+  [ 10] pushint8 3 .............................. <3>
+  [ 12] pushsymb 590 ............................ <#posId>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] pushsymb 599 ............................ <#dir>
+  [ 20] pushint8 2 .............................. <2>
+  [ 22] pushsymb 44 ............................. <#attributes>
+  [ 24] pusharglist 0 ........................... <[:]>
+  [ 26] pushproplist ............................ <[:]>
+  [ 27] pushsymb 601 ............................ <#state>
+  [ 30] pushzero ................................ <0>
+  [ 31] pushsymb 603 ............................ <#gridX>
+  [ 34] pushint8 10 ............................. <10>
+  [ 36] pushsymb 605 ............................ <#gridY>
+  [ 39] pushzero ................................ <0>
+  [ 40] pushsymb 607 ............................ <#gridZ>
+  [ 43] pushint8 10 ............................. <10>
+  [ 45] pushsymb 53 ............................. <#owner>
+  [ 47] pushcons 61 ............................. <"aslan">
+  [ 49] pusharglist 18 .......................... <[#prodID: 3, #posId: 1, #dir: 2, #attributes: [:], #state: 0, #gridX: 10, #gridY: 0, #gridZ: 10, #owner: "aslan"]>
+  [ 51] pushproplist ............................ <[#prodID: 3, #posId: 1, #dir: 2, #attributes: [:], #state: 0, #gridX: 10, #gridY: 0, #gridZ: 10, #owner: "aslan"]>
+  [ 52] pusharglistnoret 2 ...................... <aProdList, [#prodID: 3, #posId: 1, #dir: 2, #attributes: [:], #state: 0, #gridX: 10, #gridY: 0, #gridZ: 10, #owner: "aslan"]>
+  [ 54] objcall 55 .............................. aProdList.add([#prodID: 3, #posId: 1, #dir: 2, #attributes: [:], #state: 0, #gridX: 10, #gridY: 0, #gridZ: 10, #owner: "aslan"])
+  [ 56] getlocal 0 .............................. <aProdList>
+  [ 58] pushsymb 534 ............................ <#prodID>
+  [ 61] pushint8 4 .............................. <4>
+  [ 63] pushsymb 590 ............................ <#posId>
+  [ 66] pushint8 2 .............................. <2>
+  [ 68] pushsymb 599 ............................ <#dir>
+  [ 71] pushint8 2 .............................. <2>
+  [ 73] pushsymb 44 ............................. <#attributes>
+  [ 75] pusharglist 0 ........................... <[:]>
+  [ 77] pushproplist ............................ <[:]>
+  [ 78] pushsymb 601 ............................ <#state>
+  [ 81] pushzero ................................ <0>
+  [ 82] pushsymb 603 ............................ <#gridX>
+  [ 85] pushint8 12 ............................. <12>
+  [ 87] pushsymb 605 ............................ <#gridY>
+  [ 90] pushzero ................................ <0>
+  [ 91] pushsymb 607 ............................ <#gridZ>
+  [ 94] pushint8 12 ............................. <12>
+  [ 96] pushsymb 53 ............................. <#owner>
+  [ 98] pushcons 61 ............................. <"aslan">
+  [100] pusharglist 18 .......................... <[#prodID: 4, #posId: 2, #dir: 2, #attributes: [:], #state: 0, #gridX: 12, #gridY: 0, #gridZ: 12, #owner: "aslan"]>
+  [102] pushproplist ............................ <[#prodID: 4, #posId: 2, #dir: 2, #attributes: [:], #state: 0, #gridX: 12, #gridY: 0, #gridZ: 12, #owner: "aslan"]>
+  [103] pusharglistnoret 2 ...................... <aProdList, [#prodID: 4, #posId: 2, #dir: 2, #attributes: [:], #state: 0, #gridX: 12, #gridY: 0, #gridZ: 12, #owner: "aslan"]>
+  [105] objcall 55 .............................. aProdList.add([#prodID: 4, #posId: 2, #dir: 2, #attributes: [:], #state: 0, #gridX: 12, #gridY: 0, #gridZ: 12, #owner: "aslan"])
+  [107] getlocal 0 .............................. <aProdList>
+  [109] pusharglistnoret 1 ...................... <aProdList>
+  [111] extcall 71 .............................. return aProdList
+  [113] ret
+end
+
+on createTestCds me
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aCds = []
+  [  5] pushint16 436 ........................... <436>
+  [  8] setlocal 1
+  [ 10] getlocal 1
+  [ 12] pushint16 437 ........................... <437>
+  [ 15] lteq
+  [ 16] jmpifz [ 71] ............................ repeat with i = 436 to 437
+  [ 19] getlocal 1 .............................. <i>
+  [ 21] setlocal 2 .............................. iPosId = i
+  [ 23] pushcons 62 ............................. <"jazzyjeff,4,4,54,^4x4,97,308,countryOne_beatz00,{24,7996,{^Drum kit 2,100,403,shared_trapset00_,{8,15996,{^Delayed,100,355,popTwo_kbd00,{12,21989,{^C'mon Again,100,352,popOne_vocal00,{1,27986,{1,31984,{1,35982,{1,39980,{1,43978,{1,47976,{1,51974,{^Cop Show 2,100,402,popOne_kbd00_,{12,7998,{^Slinky 2,100,406,hipHopOne_kbd00_,{15,0,{^">
+  [ 25] setlocal 3 .............................. sSong = "jazzyjeff,4,4,54,^4x4,97,308,countryOne_beatz00,{24,7996,{^Drum kit 2,100,403,shared_trapset00_,{8,15996,{^Delayed,100,355,popTwo_kbd00,{12,21989,{^C'mon Again,100,352,popOne_vocal00,{1,27986,{1,31984,{1,35982,{1,39980,{1,43978,{1,47976,{1,51974,{^Cop Show 2,100,402,popOne_kbd00_,{12,7998,{^Slinky 2,100,406,hipHopOne_kbd00_,{15,0,{^"
+  [ 27] pushcons 63 ............................. <"Aslan">
+  [ 29] setlocal 4 .............................. sAuthor = "Aslan"
+  [ 31] pushcons 64 ............................. <"Test">
+  [ 33] setlocal 5 .............................. sSongName = "Test"
+  [ 35] getlocal 0 .............................. <aCds>
+  [ 37] pushsymb 590 ............................ <#posId>
+  [ 40] getlocal 2 .............................. <iPosId>
+  [ 42] pushsymb 614 ............................ <#author>
+  [ 45] getlocal 4 .............................. <sAuthor>
+  [ 47] pushsymb 46 ............................. <#name>
+  [ 49] getlocal 5 .............................. <sSongName>
+  [ 51] pushsymb 235 ............................ <#song>
+  [ 53] getlocal 3 .............................. <sSong>
+  [ 55] pusharglist 8 ........................... <[#posId: iPosId, #author: sAuthor, #name: sSongName, #song: sSong]>
+  [ 57] pushproplist ............................ <[#posId: iPosId, #author: sAuthor, #name: sSongName, #song: sSong]>
+  [ 58] pusharglistnoret 2 ...................... <aCds, [#posId: iPosId, #author: sAuthor, #name: sSongName, #song: sSong]>
+  [ 60] objcall 55 .............................. aCds.add([#posId: iPosId, #author: sAuthor, #name: sSongName, #song: sSong])
+  [ 62] pushint8 1
+  [ 64] getlocal 1
+  [ 66] add
+  [ 67] setlocal 1
+  [ 69] endrepeat [ 10]
+  [ 71] getlocal 0 .............................. <aCds>
+  [ 73] pusharglistnoret 1 ...................... <aCds>
+  [ 75] extcall 71 .............................. return aCds
+  [ 77] ret
+end
+
+on createCds me, oResult
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 65 ............................. <"createCDs() ">
+  [  4] getparam 1 .............................. <oResult>
+  [  6] joinstr ................................. <"createCDs() " & oResult>
+  [  7] pusharglistnoret 2 ...................... <me, "createCDs() " & oResult>
+  [  9] objcall 20 .............................. me.debug("createCDs() " & oResult)
+  [ 11] pusharglist 0 ........................... <[]>
+  [ 13] pushlist ................................ <[]>
+  [ 14] setlocal 0 .............................. aCds = []
+  [ 16] pushzero ................................ <0>
+  [ 17] setlocal 1
+  [ 19] getlocal 1
+  [ 21] getparam 1 .............................. <oResult>
+  [ 23] getobjprop 77 ........................... <oResult.length>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] sub ..................................... <oResult.length - 1>
+  [ 28] lteq
+  [ 29] jmpifz [228] ............................ repeat with i = 0 to oResult.length - 1
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushcons 66 ............................. <"1">
+  [ 36] pusharglistnoret 2 ...................... <me, "1">
+  [ 38] objcall 20 .............................. me.debug("1")
+  [ 40] getparam 0 .............................. <me>
+  [ 42] pushcons 67 ............................. <"i:">
+  [ 44] getlocal 1 .............................. <i>
+  [ 46] joinpadstr .............................. <"i:" && i>
+  [ 47] pusharglistnoret 2 ...................... <me, "i:" && i>
+  [ 49] objcall 20 .............................. me.debug("i:" && i)
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pushcons 68 ............................. <"oResult[i]:">
+  [ 55] getparam 1 .............................. <oResult>
+  [ 57] getlocal 1 .............................. <i>
+  [ 59] pusharglist 2 ........................... <oResult, i>
+  [ 61] objcall 43 .............................. <oResult[i]>
+  [ 63] joinpadstr .............................. <"oResult[i]:" && oResult[i]>
+  [ 64] pusharglistnoret 2 ...................... <me, "oResult[i]:" && oResult[i]>
+  [ 66] objcall 20 .............................. me.debug("oResult[i]:" && oResult[i])
+  [ 68] getparam 1 .............................. <oResult>
+  [ 70] getlocal 1 .............................. <i>
+  [ 72] pusharglist 2 ........................... <oResult, i>
+  [ 74] objcall 43 .............................. <oResult[i]>
+  [ 76] setlocal 2 .............................. oPossession = oResult[i]
+  [ 78] getlocal 2 .............................. <oPossession>
+  [ 80] pusharglist 1 ........................... <oPossession>
+  [ 82] objcall 535 ............................. <oPossession.getId()>
+  [ 85] setlocal 3 .............................. iPosId = oPossession.getId()
+  [ 87] getparam 0 .............................. <me>
+  [ 89] pushcons 69 ............................. <"iPosId:">
+  [ 91] getlocal 3 .............................. <iPosId>
+  [ 93] joinpadstr .............................. <"iPosId:" && iPosId>
+  [ 94] pusharglistnoret 2 ...................... <me, "iPosId:" && iPosId>
+  [ 96] objcall 20 .............................. me.debug("iPosId:" && iPosId)
+  [ 98] getlocal 2 .............................. <oPossession>
+  [100] pusharglist 1 ........................... <oPossession>
+  [102] objcall 591 ............................. <oPossession.getProperties()>
+  [105] pusharglist 1 ........................... <oPossession.getProperties()>
+  [107] objcall 591 ............................. <oPossession.getProperties().getProperties()>
+  [110] setlocal 4 .............................. sProperties = oPossession.getProperties().getProperties()
+  [112] getlocal 4 .............................. <sProperties>
+  [114] pusharglist 1 ........................... <sProperties>
+  [116] extcall 592 ............................. <value(sProperties)>
+  [119] setlocal 5 .............................. aProperties = value(sProperties)
+  [121] getparam 0 .............................. <me>
+  [123] pushcons 70 ............................. <"aProperties:">
+  [125] getlocal 5 .............................. <aProperties>
+  [127] joinpadstr .............................. <"aProperties:" && aProperties>
+  [128] pusharglistnoret 2 ...................... <me, "aProperties:" && aProperties>
+  [130] objcall 20 .............................. me.debug("aProperties:" && aProperties)
+  [132] getlocal 5 .............................. <aProperties>
+  [134] pushsymb 617 ............................ <#ownerName>
+  [137] pusharglist 2 ........................... <aProperties, #ownerName>
+  [139] objcall 43 .............................. <aProperties[#ownerName]>
+  [141] setlocal 6 .............................. sOwnerName = aProperties[#ownerName]
+  [143] getlocal 5 .............................. <aProperties>
+  [145] pushsymb 235 ............................ <#song>
+  [147] pusharglist 2 ........................... <aProperties, #song>
+  [149] objcall 43 .............................. <aProperties[#song]>
+  [151] setlocal 7 .............................. sSong = aProperties[#song]
+  [153] getlocal 5 .............................. <aProperties>
+  [155] pushsymb 618 ............................ <#songName>
+  [158] pusharglist 2 ........................... <aProperties, #songName>
+  [160] objcall 43 .............................. <aProperties[#songName]>
+  [162] setlocal 8 .............................. sSongName = aProperties[#songName]
+  [164] pusharglist 0 ........................... <[:]>
+  [166] pushproplist ............................ <[:]>
+  [167] setlocal 9 .............................. aCd = [:]
+  [169] getlocal 9 .............................. <aCd>
+  [171] pushsymb 590 ............................ <#posId>
+  [174] getlocal 3 .............................. <iPosId>
+  [176] pusharglistnoret 3 ...................... <aCd, #posId, iPosId>
+  [178] objcall 73 .............................. aCd[#posId] = iPosId
+  [180] getlocal 9 .............................. <aCd>
+  [182] pushsymb 614 ............................ <#author>
+  [185] getlocal 6 .............................. <sOwnerName>
+  [187] pusharglistnoret 3 ...................... <aCd, #author, sOwnerName>
+  [189] objcall 73 .............................. aCd[#author] = sOwnerName
+  [191] getlocal 9 .............................. <aCd>
+  [193] pushsymb 46 ............................. <#name>
+  [195] getlocal 8 .............................. <sSongName>
+  [197] pusharglistnoret 3 ...................... <aCd, #name, sSongName>
+  [199] objcall 73 .............................. aCd[#name] = sSongName
+  [201] getlocal 9 .............................. <aCd>
+  [203] pushsymb 235 ............................ <#song>
+  [205] getlocal 7 .............................. <sSong>
+  [207] pusharglistnoret 3 ...................... <aCd, #song, sSong>
+  [209] objcall 73 .............................. aCd[#song] = sSong
+  [211] getlocal 0 .............................. <aCds>
+  [213] getlocal 9 .............................. <aCd>
+  [215] pusharglistnoret 2 ...................... <aCds, aCd>
+  [217] objcall 55 .............................. aCds.add(aCd)
+  [219] pushint8 1
+  [221] getlocal 1
+  [223] add
+  [224] setlocal 1
+  [226] endrepeat [ 19]
+  [228] getlocal 0 .............................. <aCds>
+  [230] pusharglistnoret 1 ...................... <aCds>
+  [232] extcall 71 .............................. return aCds
+  [234] ret
+end
+
+on getGatewaySprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] pusharglistnoret 1 ...................... <sprite(me.spriteNum)>
+  [ 10] extcall 71 .............................. return sprite(me.spriteNum)
+  [ 12] ret
+end

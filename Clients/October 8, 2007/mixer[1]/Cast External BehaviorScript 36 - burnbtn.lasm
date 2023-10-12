@@ -1,0 +1,69 @@
+property pID
+
+on new me, id
+  [  0] getparam 1 .............................. <id>
+  [  2] setprop 84 .............................. pID = id
+  [  4] getparam 0 .............................. <me>
+  [  6] pusharglistnoret 1 ...................... <me>
+  [  8] extcall 13 .............................. return me
+  [ 10] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 77 .............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 81 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 80 .............................. <sprite(me.spriteNum)>
+  [  8] getobjprop 72 ........................... <sprite(me.spriteNum).pStatus>
+  [ 10] pushsymb 79 ............................. <#down>
+  [ 12] eq ...................................... <sprite(me.spriteNum).pStatus = #down>
+  [ 13] jmpifz [ 89] ............................ if sprite(me.spriteNum).pStatus = #down then / else
+  [ 16] getglobal 31 ............................ <ElementMgr>
+  [ 18] pusharglist 1 ........................... <ElementMgr>
+  [ 20] objcall 86 .............................. <ElementMgr.getMixer()>
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 84 ........................... <me.pID>
+  [ 26] pusharglist 2 ........................... <ElementMgr.getMixer(), me.pID>
+  [ 28] objcall 11 .............................. <ElementMgr.getMixer().burnMix(me.pID)>
+  [ 30] setlocal 0 .............................. bResult = ElementMgr.getMixer().burnMix(me.pID)
+  [ 32] getlocal 0 .............................. <bResult>
+  [ 34] not ..................................... <not bResult>
+  [ 35] jmpifz [ 56] ............................ if not bResult then
+  [ 38] pushsymb 71 ............................. <#setStatus>
+  [ 40] pushcons 0 .............................. <"BURN">
+  [ 42] pushsymb 73 ............................. <#up>
+  [ 44] pusharglistnoret 3 ...................... <#setStatus, "BURN", #up>
+  [ 46] extcall 78 .............................. sendAllSprites(#setStatus, "BURN", #up)
+  [ 48] pusharglistnoret 0 ...................... <>
+  [ 50] extcall 87 .............................. stopEvent()
+  [ 52] pusharglistnoret 0 ...................... <>
+  [ 54] extcall 13 .............................. return 
+  [ 56] pushsymb 89 ............................. <#openCD>
+  [ 58] pusharglistnoret 1 ...................... <#openCD>
+  [ 60] extcall 78 .............................. sendAllSprites(#openCD)
+  [ 62] getglobal 31 ............................ <ElementMgr>
+  [ 64] pusharglist 1 ........................... <ElementMgr>
+  [ 66] objcall 86 .............................. <ElementMgr.getMixer()>
+  [ 68] getparam 0 .............................. <me>
+  [ 70] getobjprop 84 ........................... <me.pID>
+  [ 72] pusharglist 2 ........................... <ElementMgr.getMixer(), me.pID>
+  [ 74] objcall 9 ............................... <ElementMgr.getMixer().getMixNumber(me.pID)>
+  [ 76] setlocal 1 .............................. iMixNum = ElementMgr.getMixer().getMixNumber(me.pID)
+  [ 78] pushsymb 90 ............................. <#setmixtoburn>
+  [ 80] getlocal 1 .............................. <iMixNum>
+  [ 82] pusharglistnoret 2 ...................... <#setmixtoburn, iMixNum>
+  [ 84] extcall 78 .............................. sendAllSprites(#setmixtoburn, iMixNum)
+  [ 86] jmp [ 95]
+  [ 89] pushsymb 91 ............................. <#closeCD>
+  [ 91] pusharglistnoret 1 ...................... <#closeCD>
+  [ 93] extcall 78 .............................. sendAllSprites(#closeCD)
+  [ 95] pusharglistnoret 0 ...................... <>
+  [ 97] extcall 77 .............................. dontPassEvent()
+  [ 99] ret
+end

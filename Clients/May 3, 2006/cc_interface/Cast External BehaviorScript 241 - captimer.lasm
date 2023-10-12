@@ -1,0 +1,38 @@
+property pParentWindow
+
+on new me, parentwindow
+  [  0] getparam 1 .............................. <parentwindow>
+  [  2] setprop 7 ............................... pParentWindow = parentwindow
+  [  4] pushcons 0 .............................. <"capdecibels">
+  [  6] pusharglist 1 ........................... <"capdecibels">
+  [  8] extcall 8 ............................... <timeout("capdecibels")>
+  [ 10] pushint16 7000 .......................... <7000>
+  [ 13] pushsymb 5 .............................. <#update>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglist 4 ........................... <timeout("capdecibels"), 7000, #update, me>
+  [ 19] objcall 4 ............................... <timeout("capdecibels").new(7000, #update, me)>
+  [ 21] setlocal 0 .............................. timeoutobject = timeout("capdecibels").new(7000, #update, me)
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pusharglistnoret 1 ...................... <me>
+  [ 27] extcall 9 ............................... return me
+  [ 29] ret
+end
+
+on update me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 6 ............................... me.cancelCapTimer()
+  [  6] getprop 7 ............................... <pParentWindow>
+  [  8] pusharglistnoret 1 ...................... <pParentWindow>
+  [ 10] objcall 12 .............................. pParentWindow.closeWindow()
+  [ 12] ret
+end
+
+on cancelCapTimer me
+  [  0] pushcons 0 .............................. <"capdecibels">
+  [  2] pusharglist 1 ........................... <"capdecibels">
+  [  4] extcall 8 ............................... <timeout("capdecibels")>
+  [  6] pusharglistnoret 1 ...................... <timeout("capdecibels")>
+  [  8] objcall 13 .............................. timeout("capdecibels").forget()
+  [ 10] ret
+end

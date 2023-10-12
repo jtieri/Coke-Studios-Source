@@ -1,0 +1,162 @@
+property aSprites
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 139 .......................... me.aSprites = []
+  [  7] getparam 0 .............................. <me>
+  [  9] pusharglistnoret 1 ...................... <me>
+  [ 11] extcall 52 .............................. return me
+  [ 13] ret
+end
+
+on init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 59 .............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 1 .............................. <oXml>
+  [ 15] pushcons 0 .............................. <"Item">
+  [ 17] pusharglist 2 ........................... <oXml, "Item">
+  [ 19] extcall 1144 ............................ <getNodes(oXml, "Item")>
+  [ 22] setlocal 0 .............................. aStaticItems = getNodes(oXml, "Item")
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] setlocal 1
+  [ 28] getlocal 1
+  [ 30] getlocal 0 .............................. <aStaticItems>
+  [ 32] getobjprop 155 .......................... <aStaticItems.count>
+  [ 34] lteq
+  [ 35] jmpifz [139] ............................ repeat with i = 1 to aStaticItems.count
+  [ 38] getlocal 0 .............................. <aStaticItems>
+  [ 40] getlocal 1 .............................. <i>
+  [ 42] pusharglist 2 ........................... <aStaticItems, i>
+  [ 44] objcall 72 .............................. <aStaticItems[i]>
+  [ 46] setlocal 2 .............................. oItem = aStaticItems[i]
+  [ 48] getglobal 133 ........................... <oIsoScene>
+  [ 50] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [ 52] getlocal 2 .............................. <oItem>
+  [ 54] pusharglist 2 ........................... <oIsoScene.oSpriteManager, oItem>
+  [ 56] objcall 813 ............................. <oIsoScene.oSpriteManager.buildSpriteProps(oItem)>
+  [ 59] setlocal 3 .............................. aProps = oIsoScene.oSpriteManager.buildSpriteProps(oItem)
+  [ 61] getglobal 133 ........................... <oIsoScene>
+  [ 63] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [ 65] getlocal 3 .............................. <aProps>
+  [ 67] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [ 69] objcall 135 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [ 71] setlocal 4 .............................. iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [ 73] getlocal 3 .............................. <aProps>
+  [ 75] pushsymb 839 ............................ <#Action>
+  [ 78] pusharglist 2 ........................... <aProps, #Action>
+  [ 80] objcall 72 .............................. <aProps[#Action]>
+  [ 82] setlocal 5 .............................. sAction = aProps[#Action]
+  [ 84] getlocal 5 .............................. <sAction>
+  [ 86] pusharglist 1 ........................... <sAction>
+  [ 88] extcall 59 .............................. <voidp(sAction)>
+  [ 90] not ..................................... <not voidp(sAction)>
+  [ 91] jmpifz [120] ............................ if not voidp(sAction) then
+  [ 94] getlocal 4 .............................. <iSprite>
+  [ 96] pusharglist 1 ........................... <iSprite>
+  [ 98] extcall 119 ............................. <sprite(iSprite)>
+  [100] getchainedprop 193 ...................... <sprite(iSprite).scriptInstanceList>
+  [102] getlocal 5 .............................. <sAction>
+  [104] pusharglist 1 ........................... <sAction>
+  [106] extcall 194 ............................. <script(sAction)>
+  [108] getlocal 4 .............................. <iSprite>
+  [110] getparam 0 .............................. <me>
+  [112] pusharglist 3 ........................... <script(sAction), iSprite, me>
+  [114] objcall 0 ............................... <script(sAction).new(iSprite, me)>
+  [116] pusharglistnoret 2 ...................... <sprite(iSprite).scriptInstanceList, script(sAction).new(iSprite, me)>
+  [118] objcall 140 ............................. sprite(iSprite).scriptInstanceList.add(script(sAction).new(iSprite, me))
+  [120] getparam 0 .............................. <me>
+  [122] getchainedprop 139 ...................... <me.aSprites>
+  [124] getlocal 4 .............................. <iSprite>
+  [126] pusharglistnoret 2 ...................... <me.aSprites, iSprite>
+  [128] objcall 140 ............................. me.aSprites.add(iSprite)
+  [130] pushint8 1
+  [132] getlocal 1
+  [134] add
+  [135] setlocal 1
+  [137] endrepeat [ 28]
+  [139] ret
+end
+
+on mouseDownEvent me, iSprite, oSprite, iRow, iCol, iLayer
+  [  0] ret
+end
+
+on destroy me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 139 .......................... <me.aSprites>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 155
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 44] ............................ repeat with i in me.aSprites
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 72
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pushsymb 11 ............................. <#destroy>
+  [ 34] pusharglistnoret 2 ...................... <i, #destroy>
+  [ 36] extcall 420 ............................. sendSprite(i, #destroy)
+  [ 39] pushint8 1
+  [ 41] add
+  [ 42] endrepeat [ 12]
+  [ 44] pop 3
+  [ 46] getglobal 133 ........................... <oIsoScene>
+  [ 48] getchainedprop 134 ...................... <oIsoScene.oSpriteManager>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 139 .......................... <me.aSprites>
+  [ 54] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, me.aSprites>
+  [ 56] objcall 154 ............................. oIsoScene.oSpriteManager.returnPooledSprites(me.aSprites)
+  [ 58] getparam 0 .............................. <me>
+  [ 60] pusharglist 0 ........................... <[]>
+  [ 62] pushlist ................................ <[]>
+  [ 63] setobjprop 139 .......................... me.aSprites = []
+  [ 65] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 139 .......................... <me.aSprites>
+  [  4] peek 0
+  [  6] pusharglist 1
+  [  8] extcall 155
+  [ 10] pushint8 1
+  [ 12] peek 0
+  [ 14] peek 2
+  [ 16] lteq
+  [ 17] jmpifz [ 54] ............................ repeat with i in me.aSprites
+  [ 20] peek 2
+  [ 22] peek 1
+  [ 24] pusharglist 2
+  [ 26] extcall 72
+  [ 28] setlocal 0
+  [ 30] getlocal 0 .............................. <i>
+  [ 32] pusharglist 1 ........................... <i>
+  [ 34] extcall 119 ............................. <sprite(i)>
+  [ 36] getlocal 0 .............................. <i>
+  [ 38] pusharglist 1 ........................... <i>
+  [ 40] extcall 119 ............................. <sprite(i)>
+  [ 42] getobjprop 695 .......................... <sprite(i).visible>
+  [ 45] not ..................................... <not sprite(i).visible>
+  [ 46] setobjprop 695 .......................... sprite(i).visible = not sprite(i).visible
+  [ 49] pushint8 1
+  [ 51] add
+  [ 52] endrepeat [ 12]
+  [ 54] pop 3
+  [ 56] ret
+end
+
+on generateXml me
+  [  0] ret
+end

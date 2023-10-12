@@ -1,0 +1,45 @@
+on testFilterKey sourceMember, targetMember
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getparam 0 .............................. <sourceMember>
+  [  8] getchainedprop 15 ....................... <sourceMember.text>
+  [ 10] pushsymb 65 ............................. <#char>
+  [ 12] pusharglist 2 ........................... <sourceMember.text, #char>
+  [ 14] objcall 32 .............................. <sourceMember.text.char.count>
+  [ 16] lteq
+  [ 17] jmpifz [ 73] ............................ repeat with s = 1 to sourceMember.text.char.count
+  [ 20] getparam 1 .............................. <targetMember>
+  [ 22] getobjprop 15 ........................... <targetMember.text>
+  [ 24] getparam 0 .............................. <sourceMember>
+  [ 26] getchainedprop 15 ....................... <sourceMember.text>
+  [ 28] pushsymb 65 ............................. <#char>
+  [ 30] getlocal 0 .............................. <s>
+  [ 32] pusharglist 3 ........................... <sourceMember.text, #char, s>
+  [ 34] objcall 66 .............................. <sourceMember.text.char[s]>
+  [ 36] containsstr ............................. <targetMember.text contains sourceMember.text.char[s]>
+  [ 37] pushzero ................................ <0>
+  [ 38] eq ...................................... <(targetMember.text contains sourceMember.text.char[s]) = 0>
+  [ 39] jmpifz [ 64] ............................ if (targetMember.text contains sourceMember.text.char[s]) = 0 then
+  [ 42] pushcons 0 .............................. <"Source char:">
+  [ 44] getparam 0 .............................. <sourceMember>
+  [ 46] getchainedprop 15 ....................... <sourceMember.text>
+  [ 48] pushsymb 65 ............................. <#char>
+  [ 50] getlocal 0 .............................. <s>
+  [ 52] pusharglist 3 ........................... <sourceMember.text, #char, s>
+  [ 54] objcall 66 .............................. <sourceMember.text.char[s]>
+  [ 56] joinpadstr .............................. <"Source char:" && sourceMember.text.char[s]>
+  [ 57] pushcons 1 .............................. <"is not included in target.">
+  [ 59] joinpadstr .............................. <"Source char:" && sourceMember.text.char[s] && "is not included in target.">
+  [ 60] pusharglistnoret 1 ...................... <"Source char:" && sourceMember.text.char[s] && "is not included in target.">
+  [ 62] extcall 171 ............................. alert("Source char:" && sourceMember.text.char[s] && "is not included in target.")
+  [ 64] pushint8 1
+  [ 66] getlocal 0
+  [ 68] add
+  [ 69] setlocal 0
+  [ 71] endrepeat [  4]
+  [ 73] pushcons 2 .............................. <"Done!">
+  [ 75] pusharglistnoret 1 ...................... <"Done!">
+  [ 77] extcall 38 .............................. put "Done!"
+  [ 79] ret
+end

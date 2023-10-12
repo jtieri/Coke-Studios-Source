@@ -1,0 +1,699 @@
+property traderstuff, tradeestuff
+global ElementMgr, oPossessionManager, oDenizenManager
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"sanfo_trading.window">
+  [  4] pusharglistnoret 2 ...................... <me, "sanfo_trading.window">
+  [  6] objcall 30 .............................. me.openWindow("sanfo_trading.window")
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] extcall 5 ............................... return me
+  [ 14] ret
+end
+
+on openWindow me, sID, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 27 .............................. <me.closeWindow()>
+  [  6] setlocal 0 .............................. myRect = me.closeWindow()
+  [  8] getglobal 37 ............................ <ElementMgr>
+  [ 10] getparam 1 .............................. <sID>
+  [ 12] getlocal 0 .............................. <myRect>
+  [ 14] pusharglist 3 ........................... <ElementMgr, sID, myRect>
+  [ 16] objcall 38 .............................. <ElementMgr.newwindow(sID, myRect)>
+  [ 18] setlocal 1 .............................. MyWindow = ElementMgr.newwindow(sID, myRect)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getlocal 1 .............................. <MyWindow>
+  [ 24] getparam 2 .............................. <oArg>
+  [ 26] pusharglistnoret 3 ...................... <me, MyWindow, oArg>
+  [ 28] objcall 32 .............................. me.displayWindow(MyWindow, oArg)
+  [ 30] ret
+end
+
+on closeWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 37 ............................ <ElementMgr>
+  [  8] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 58] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 37 ............................ <ElementMgr>
+  [ 20] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 1 .............................. <"trading">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "trading">
+  [ 31] jmpifz [ 49] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "trading" then
+  [ 34] getglobal 37 ............................ <ElementMgr>
+  [ 36] pushsymb 44 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 46] jmp [ 58] ............................... exit repeat
+  [ 49] pushint8 1
+  [ 51] getlocal 0
+  [ 53] add
+  [ 54] setlocal 0
+  [ 56] endrepeat [  4]
+  [ 58] getlocal 1 .............................. <MyWindow>
+  [ 60] pusharglist 1 ........................... <MyWindow>
+  [ 62] extcall 8 ............................... <voidp(MyWindow)>
+  [ 64] jmpifz [ 71] ............................ if voidp(MyWindow) then
+  [ 67] pusharglistnoret 0 ...................... <>
+  [ 69] extcall 5 ............................... return 
+  [ 71] getlocal 1 .............................. <MyWindow>
+  [ 73] pusharglist 1 ........................... <MyWindow>
+  [ 75] objcall 27 .............................. <MyWindow.closeWindow()>
+  [ 77] setlocal 2 .............................. iLastRect = MyWindow.closeWindow()
+  [ 79] getlocal 2 .............................. <iLastRect>
+  [ 81] pusharglistnoret 1 ...................... <iLastRect>
+  [ 83] extcall 5 ............................... return iLastRect
+  [ 85] ret
+end
+
+on getOpenWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 37 ............................ <ElementMgr>
+  [  8] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 64] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 37 ............................ <ElementMgr>
+  [ 20] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 1 .............................. <"trading">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "trading">
+  [ 31] jmpifz [ 55] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "trading" then
+  [ 34] getglobal 37 ............................ <ElementMgr>
+  [ 36] pushsymb 44 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 46] getlocal 1 .............................. <MyWindow>
+  [ 48] pusharglistnoret 1 ...................... <MyWindow>
+  [ 50] extcall 5 ............................... return MyWindow
+  [ 52] jmp [ 64] ............................... exit repeat
+  [ 55] pushint8 1
+  [ 57] getlocal 0
+  [ 59] add
+  [ 60] setlocal 0
+  [ 62] endrepeat [  4]
+  [ 64] ret
+end
+
+on displayWindow me, MyWindow, oArg
+  [  0] getparam 2 .............................. <oArg>
+  [  2] pusharglist 1 ........................... <oArg>
+  [  4] extcall 8 ............................... <voidp(oArg)>
+  [  6] pushzero ................................ <0>
+  [  7] eq ...................................... <voidp(oArg) = 0>
+  [  8] jmpifz [1103] ........................... if voidp(oArg) = 0 then
+  [ 11] pushsymb 133 ............................ <#getrightcheckbox>
+  [ 13] pusharglist 1 ........................... <#getrightcheckbox>
+  [ 15] extcall 47 .............................. <sendAllSprites(#getrightcheckbox)>
+  [ 17] setlocal 0 .............................. rightcheckbox = sendAllSprites(#getrightcheckbox)
+  [ 19] pushsymb 134 ............................ <#getleftcheckbox>
+  [ 21] pusharglist 1 ........................... <#getleftcheckbox>
+  [ 23] extcall 47 .............................. <sendAllSprites(#getleftcheckbox)>
+  [ 25] setlocal 1 .............................. leftcheckbox = sendAllSprites(#getleftcheckbox)
+  [ 27] getparam 2 .............................. <oArg>
+  [ 29] getobjprop 135 .......................... <oArg.trader>
+  [ 31] getglobal 54 ............................ <oDenizenManager>
+  [ 33] pusharglist 1 ........................... <oDenizenManager>
+  [ 35] objcall 136 ............................. <oDenizenManager.getScreenName()>
+  [ 37] eq ...................................... <oArg.trader = oDenizenManager.getScreenName()>
+  [ 38] jmpifz [ 80] ............................ if oArg.trader = oDenizenManager.getScreenName() then / else
+  [ 41] getparam 2 .............................. <oArg>
+  [ 43] getobjprop 137 .......................... <oArg.tradee>
+  [ 45] setlocal 2 .............................. leftego = oArg.tradee
+  [ 47] getparam 2 .............................. <oArg>
+  [ 49] getobjprop 138 .......................... <oArg.tradeeItems>
+  [ 51] setlocal 3 .............................. leftitems = oArg.tradeeItems
+  [ 53] getparam 2 .............................. <oArg>
+  [ 55] getobjprop 135 .......................... <oArg.trader>
+  [ 57] setlocal 4 .............................. rightego = oArg.trader
+  [ 59] getparam 2 .............................. <oArg>
+  [ 61] getobjprop 139 .......................... <oArg.traderItems>
+  [ 63] setlocal 5 .............................. rightitems = oArg.traderItems
+  [ 65] getparam 2 .............................. <oArg>
+  [ 67] getobjprop 140 .......................... <oArg.traderAgrees>
+  [ 69] setlocal 6 .............................. mycheckbox = oArg.traderAgrees
+  [ 71] getparam 2 .............................. <oArg>
+  [ 73] getobjprop 141 .......................... <oArg.tradeeAgrees>
+  [ 75] setlocal 7 .............................. hischeckbox = oArg.tradeeAgrees
+  [ 77] jmp [116]
+  [ 80] getparam 2 .............................. <oArg>
+  [ 82] getobjprop 135 .......................... <oArg.trader>
+  [ 84] setlocal 2 .............................. leftego = oArg.trader
+  [ 86] getparam 2 .............................. <oArg>
+  [ 88] getobjprop 139 .......................... <oArg.traderItems>
+  [ 90] setlocal 3 .............................. leftitems = oArg.traderItems
+  [ 92] getparam 2 .............................. <oArg>
+  [ 94] getobjprop 137 .......................... <oArg.tradee>
+  [ 96] setlocal 4 .............................. rightego = oArg.tradee
+  [ 98] getparam 2 .............................. <oArg>
+  [100] getobjprop 138 .......................... <oArg.tradeeItems>
+  [102] setlocal 5 .............................. rightitems = oArg.tradeeItems
+  [104] getparam 2 .............................. <oArg>
+  [106] getobjprop 141 .......................... <oArg.tradeeAgrees>
+  [108] setlocal 6 .............................. mycheckbox = oArg.tradeeAgrees
+  [110] getparam 2 .............................. <oArg>
+  [112] getobjprop 140 .......................... <oArg.traderAgrees>
+  [114] setlocal 7 .............................. hischeckbox = oArg.traderAgrees
+  [116] getglobal 11 ............................ <TextMgr>
+  [118] pushcons 2 .............................. <"TRADER_BOX_DESC">
+  [120] pusharglist 2 ........................... <TextMgr, "TRADER_BOX_DESC">
+  [122] objcall 12 .............................. <TextMgr.GetRefText("TRADER_BOX_DESC")>
+  [124] setlocal 8 .............................. myphrase = TextMgr.GetRefText("TRADER_BOX_DESC")
+  [126] pushcons 3 .............................. <"{tradername}">
+  [128] getlocal 8 .............................. <myphrase>
+  [130] pusharglist 2 ........................... <"{tradername}", myphrase>
+  [132] extcall 142 ............................. <offset("{tradername}", myphrase)>
+  [134] setlocal 9 .............................. mychar = offset("{tradername}", myphrase)
+  [136] getlocal 9 .............................. <mychar>
+  [138] getlocal 9 .............................. <mychar>
+  [140] pushcons 4 .............................. <"tradername}">
+  [142] pusharglist 1 ........................... <"tradername}">
+  [144] extcall 143 ............................. <length("tradername}")>
+  [146] add ..................................... <mychar + length("tradername}")>
+  [147] pushzero ................................ <0>
+  [148] pushzero ................................ <0>
+  [149] pushzero ................................ <0>
+  [150] pushzero ................................ <0>
+  [151] pushzero ................................ <0>
+  [152] pushzero ................................ <0>
+  [153] pushint8 8 .............................. <8>
+  [155] deletechunk 5 ........................... delete char mychar to mychar + length("tradername}") of myphrase
+  [157] getlocal 2 .............................. <leftego>
+  [159] pushcons 5 .............................. <" ">
+  [161] joinstr ................................. <leftego & " ">
+  [162] getlocal 9 .............................. <mychar>
+  [164] pushzero ................................ <0>
+  [165] pushzero ................................ <0>
+  [166] pushzero ................................ <0>
+  [167] pushzero ................................ <0>
+  [168] pushzero ................................ <0>
+  [169] pushzero ................................ <0>
+  [170] pushzero ................................ <0>
+  [171] pushint8 8 .............................. <8>
+  [173] putchunk 21 ............................. put leftego & " " into char mychar of myphrase
+  [175] pushcons 6 .............................. <"cc.tradingtext1">
+  [177] pusharglist 1 ........................... <"cc.tradingtext1">
+  [179] extcall 10 .............................. <member("cc.tradingtext1")>
+  [181] getlocal 8 .............................. <myphrase>
+  [183] setobjprop 13 ........................... member("cc.tradingtext1").text = myphrase
+  [185] getglobal 11 ............................ <TextMgr>
+  [187] pushcons 7 .............................. <"TRADER_AGREES">
+  [189] pusharglist 2 ........................... <TextMgr, "TRADER_AGREES">
+  [191] objcall 12 .............................. <TextMgr.GetRefText("TRADER_AGREES")>
+  [193] setlocal 8 .............................. myphrase = TextMgr.GetRefText("TRADER_AGREES")
+  [195] pushcons 3 .............................. <"{tradername}">
+  [197] getlocal 8 .............................. <myphrase>
+  [199] pusharglist 2 ........................... <"{tradername}", myphrase>
+  [201] extcall 142 ............................. <offset("{tradername}", myphrase)>
+  [203] setlocal 9 .............................. mychar = offset("{tradername}", myphrase)
+  [205] getlocal 9 .............................. <mychar>
+  [207] getlocal 9 .............................. <mychar>
+  [209] pushcons 4 .............................. <"tradername}">
+  [211] pusharglist 1 ........................... <"tradername}">
+  [213] extcall 143 ............................. <length("tradername}")>
+  [215] add ..................................... <mychar + length("tradername}")>
+  [216] pushzero ................................ <0>
+  [217] pushzero ................................ <0>
+  [218] pushzero ................................ <0>
+  [219] pushzero ................................ <0>
+  [220] pushzero ................................ <0>
+  [221] pushzero ................................ <0>
+  [222] pushint8 8 .............................. <8>
+  [224] deletechunk 5 ........................... delete char mychar to mychar + length("tradername}") of myphrase
+  [226] getlocal 2 .............................. <leftego>
+  [228] pushcons 5 .............................. <" ">
+  [230] joinstr ................................. <leftego & " ">
+  [231] getlocal 9 .............................. <mychar>
+  [233] pushzero ................................ <0>
+  [234] pushzero ................................ <0>
+  [235] pushzero ................................ <0>
+  [236] pushzero ................................ <0>
+  [237] pushzero ................................ <0>
+  [238] pushzero ................................ <0>
+  [239] pushzero ................................ <0>
+  [240] pushint8 8 .............................. <8>
+  [242] putchunk 21 ............................. put leftego & " " into char mychar of myphrase
+  [244] pushcons 8 .............................. <"cc.tradingtext3">
+  [246] pusharglist 1 ........................... <"cc.tradingtext3">
+  [248] extcall 10 .............................. <member("cc.tradingtext3")>
+  [250] getlocal 8 .............................. <myphrase>
+  [252] setobjprop 13 ........................... member("cc.tradingtext3").text = myphrase
+  [254] getlocal 6 .............................. <mycheckbox>
+  [256] jmpifz [276] ............................ if mycheckbox then / else
+  [259] getlocal 0 .............................. <rightcheckbox>
+  [261] pusharglist 1 ........................... <rightcheckbox>
+  [263] extcall 125 ............................. <sprite(rightcheckbox)>
+  [265] pushcons 9 .............................. <"cc.interface.checkbox.active.on">
+  [267] pusharglist 1 ........................... <"cc.interface.checkbox.active.on">
+  [269] extcall 10 .............................. <member("cc.interface.checkbox.active.on")>
+  [271] setobjprop 10 ........................... sprite(rightcheckbox).member = member("cc.interface.checkbox.active.on")
+  [273] jmp [290]
+  [276] getlocal 0 .............................. <rightcheckbox>
+  [278] pusharglist 1 ........................... <rightcheckbox>
+  [280] extcall 125 ............................. <sprite(rightcheckbox)>
+  [282] pushcons 10 ............................. <"cc.interface.checkbox.active.off">
+  [284] pusharglist 1 ........................... <"cc.interface.checkbox.active.off">
+  [286] extcall 10 .............................. <member("cc.interface.checkbox.active.off")>
+  [288] setobjprop 10 ........................... sprite(rightcheckbox).member = member("cc.interface.checkbox.active.off")
+  [290] getlocal 7 .............................. <hischeckbox>
+  [292] jmpifz [312] ............................ if hischeckbox then / else
+  [295] getlocal 1 .............................. <leftcheckbox>
+  [297] pusharglist 1 ........................... <leftcheckbox>
+  [299] extcall 125 ............................. <sprite(leftcheckbox)>
+  [301] pushcons 9 .............................. <"cc.interface.checkbox.active.on">
+  [303] pusharglist 1 ........................... <"cc.interface.checkbox.active.on">
+  [305] extcall 10 .............................. <member("cc.interface.checkbox.active.on")>
+  [307] setobjprop 10 ........................... sprite(leftcheckbox).member = member("cc.interface.checkbox.active.on")
+  [309] jmp [326]
+  [312] getlocal 1 .............................. <leftcheckbox>
+  [314] pusharglist 1 ........................... <leftcheckbox>
+  [316] extcall 125 ............................. <sprite(leftcheckbox)>
+  [318] pushcons 10 ............................. <"cc.interface.checkbox.active.off">
+  [320] pusharglist 1 ........................... <"cc.interface.checkbox.active.off">
+  [322] extcall 10 .............................. <member("cc.interface.checkbox.active.off")>
+  [324] setobjprop 10 ........................... sprite(leftcheckbox).member = member("cc.interface.checkbox.active.off")
+  [326] pushsymb 1 .............................. <#getrightslot1>
+  [328] pusharglist 1 ........................... <#getrightslot1>
+  [330] extcall 47 .............................. <sendAllSprites(#getrightslot1)>
+  [332] pushsymb 144 ............................ <#getrightslot2>
+  [334] pusharglist 1 ........................... <#getrightslot2>
+  [336] extcall 47 .............................. <sendAllSprites(#getrightslot2)>
+  [338] pushsymb 145 ............................ <#getrightslot3>
+  [340] pusharglist 1 ........................... <#getrightslot3>
+  [342] extcall 47 .............................. <sendAllSprites(#getrightslot3)>
+  [344] pushsymb 146 ............................ <#getrightslot4>
+  [346] pusharglist 1 ........................... <#getrightslot4>
+  [348] extcall 47 .............................. <sendAllSprites(#getrightslot4)>
+  [350] pushsymb 147 ............................ <#getrightslot5>
+  [352] pusharglist 1 ........................... <#getrightslot5>
+  [354] extcall 47 .............................. <sendAllSprites(#getrightslot5)>
+  [356] pushsymb 148 ............................ <#getrightslot6>
+  [358] pusharglist 1 ........................... <#getrightslot6>
+  [360] extcall 47 .............................. <sendAllSprites(#getrightslot6)>
+  [362] pusharglist 6 ........................... <[sendAllSprites(#getrightslot1), sendAllSprites(#getrightslot2), sendAllSprites(#getrightslot3), sendAllSprites(#getrightslot4), sendAllSprites(#getrightslot5), sendAllSprites(#getrightslot6)]>
+  [364] pushlist ................................ <[sendAllSprites(#getrightslot1), sendAllSprites(#getrightslot2), sendAllSprites(#getrightslot3), sendAllSprites(#getrightslot4), sendAllSprites(#getrightslot5), sendAllSprites(#getrightslot6)]>
+  [365] setlocal 10 ............................. rightslots = [sendAllSprites(#getrightslot1), sendAllSprites(#getrightslot2), sendAllSprites(#getrightslot3), sendAllSprites(#getrightslot4), sendAllSprites(#getrightslot5), sendAllSprites(#getrightslot6)]
+  [367] pusharglist 0 ........................... <[]>
+  [369] pushlist ................................ <[]>
+  [370] setlocal 11 ............................. DefList = []
+  [372] pushint8 1 .............................. <1>
+  [374] setlocal 12
+  [376] getlocal 12
+  [378] getlocal 5 .............................. <rightitems>
+  [380] pusharglist 1 ........................... <rightitems>
+  [382] extcall 43 .............................. <count(rightitems)>
+  [384] lteq
+  [385] jmpifz [417] ............................ repeat with n = 1 to count(rightitems)
+  [388] getlocal 11 ............................. <DefList>
+  [390] getglobal 149 ........................... <gCatalog>
+  [392] getlocal 5 .............................. <rightitems>
+  [394] getlocal 12 ............................. <n>
+  [396] pusharglist 2 ........................... <rightitems, n>
+  [398] objcall 82 .............................. <rightitems[n]>
+  [400] pusharglist 2 ........................... <gCatalog, rightitems[n]>
+  [402] objcall 150 ............................. <gCatalog.getItemByProdId(rightitems[n])>
+  [404] pusharglistnoret 2 ...................... <DefList, gCatalog.getItemByProdId(rightitems[n])>
+  [406] extcall 98 .............................. append(DefList, gCatalog.getItemByProdId(rightitems[n]))
+  [408] pushint8 1
+  [410] getlocal 12
+  [412] add
+  [413] setlocal 12
+  [415] endrepeat [376]
+  [417] pushint8 1 .............................. <1>
+  [419] setlocal 12
+  [421] getlocal 12
+  [423] getlocal 11 ............................. <DefList>
+  [425] pusharglist 1 ........................... <DefList>
+  [427] extcall 43 .............................. <count(DefList)>
+  [429] lteq
+  [430] jmpifz [672] ............................ repeat with n = 1 to count(DefList)
+  [433] pushcons 11 ............................. <"mybox">
+  [435] getlocal 12 ............................. <n>
+  [437] joinstr ................................. <"mybox" & n>
+  [438] pusharglist 1 ........................... <"mybox" & n>
+  [440] extcall 10 .............................. <member("mybox" & n)>
+  [442] getobjprop 97 ........................... <member("mybox" & n).memberNum>
+  [444] pushint8 1 .............................. <1>
+  [446] lt ...................................... <member("mybox" & n).memberNum < 1>
+  [447] jmpifz [475] ............................ if member("mybox" & n).memberNum < 1 then
+  [450] pushsymb 109 ............................ <#bitmap>
+  [452] pusharglist 1 ........................... <#bitmap>
+  [454] extcall 0 ............................... <new(#bitmap)>
+  [456] setlocal 13 ............................. myMember = new(#bitmap)
+  [458] getglobal 99 ............................ <gMembersToDelete>
+  [460] getlocal 13 ............................. <myMember>
+  [462] pusharglistnoret 2 ...................... <gMembersToDelete, myMember>
+  [464] extcall 98 .............................. append(gMembersToDelete, myMember)
+  [466] getlocal 13 ............................. <myMember>
+  [468] pushcons 11 ............................. <"mybox">
+  [470] getlocal 12 ............................. <n>
+  [472] joinstr ................................. <"mybox" & n>
+  [473] setobjprop 14 ........................... myMember.name = "mybox" & n
+  [475] pushcons 12 ............................. <"tradingbox">
+  [477] pusharglist 1 ........................... <"tradingbox">
+  [479] extcall 10 .............................. <member("tradingbox")>
+  [481] getchainedprop 63 ....................... <member("tradingbox").image>
+  [483] pusharglist 1 ........................... <member("tradingbox").image>
+  [485] objcall 92 .............................. <member("tradingbox").image.duplicate()>
+  [487] setlocal 14 ............................. baseimg = member("tradingbox").image.duplicate()
+  [489] getlocal 11 ............................. <DefList>
+  [491] getlocal 12 ............................. <n>
+  [493] pusharglist 2 ........................... <DefList, n>
+  [495] objcall 82 .............................. <DefList[n]>
+  [497] getobjprop 151 .......................... <DefList[n].imageBase>
+  [499] pushcons 13 ............................. <"_small">
+  [501] joinstr ................................. <DefList[n].imageBase & "_small">
+  [502] pusharglist 1 ........................... <DefList[n].imageBase & "_small">
+  [504] extcall 10 .............................. <member(DefList[n].imageBase & "_small")>
+  [506] setlocal 15 ............................. itemmember = member(DefList[n].imageBase & "_small")
+  [508] getlocal 15 ............................. <itemmember>
+  [510] getchainedprop 63 ....................... <itemmember.image>
+  [512] pusharglist 1 ........................... <itemmember.image>
+  [514] objcall 92 .............................. <itemmember.image.duplicate()>
+  [516] setlocal 16 ............................. itemimg = itemmember.image.duplicate()
+  [518] getlocal 16 ............................. <itemimg>
+  [520] getobjprop 68 ........................... <itemimg.rect>
+  [522] setlocal 17 ............................. sourceRect = itemimg.rect
+  [524] getlocal 14 ............................. <baseimg>
+  [526] getobjprop 111 .......................... <baseimg.width>
+  [528] getlocal 16 ............................. <itemimg>
+  [530] getobjprop 111 .......................... <itemimg.width>
+  [532] sub ..................................... <baseimg.width - itemimg.width>
+  [533] pushint8 2 .............................. <2>
+  [535] div ..................................... <(baseimg.width - itemimg.width) / 2>
+  [536] setlocal 18 ............................. leftpix = (baseimg.width - itemimg.width) / 2
+  [538] getlocal 14 ............................. <baseimg>
+  [540] getobjprop 84 ........................... <baseimg.height>
+  [542] getlocal 16 ............................. <itemimg>
+  [544] getobjprop 84 ........................... <itemimg.height>
+  [546] sub ..................................... <baseimg.height - itemimg.height>
+  [547] pushint8 2 .............................. <2>
+  [549] div ..................................... <(baseimg.height - itemimg.height) / 2>
+  [550] setlocal 19 ............................. toppix = (baseimg.height - itemimg.height) / 2
+  [552] getlocal 18 ............................. <leftpix>
+  [554] getlocal 19 ............................. <toppix>
+  [556] getlocal 18 ............................. <leftpix>
+  [558] getlocal 16 ............................. <itemimg>
+  [560] getobjprop 111 .......................... <itemimg.width>
+  [562] add ..................................... <leftpix + itemimg.width>
+  [563] getlocal 19 ............................. <toppix>
+  [565] getlocal 16 ............................. <itemimg>
+  [567] getobjprop 84 ........................... <itemimg.height>
+  [569] add ..................................... <toppix + itemimg.height>
+  [570] pusharglist 4 ........................... <leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height>
+  [572] extcall 68 .............................. <rect(leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height)>
+  [574] setlocal 20 ............................. destRect = rect(leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height)
+  [576] getlocal 14 ............................. <baseimg>
+  [578] getlocal 16 ............................. <itemimg>
+  [580] getlocal 20 ............................. <destRect>
+  [582] getlocal 17 ............................. <sourceRect>
+  [584] pusharglistnoret 4 ...................... <baseimg, itemimg, destRect, sourceRect>
+  [586] objcall 70 .............................. baseimg.copyPixels(itemimg, destRect, sourceRect)
+  [588] pushcons 11 ............................. <"mybox">
+  [590] getlocal 12 ............................. <n>
+  [592] joinstr ................................. <"mybox" & n>
+  [593] pusharglist 1 ........................... <"mybox" & n>
+  [595] extcall 10 .............................. <member("mybox" & n)>
+  [597] getlocal 14 ............................. <baseimg>
+  [599] setobjprop 63 ........................... member("mybox" & n).image = baseimg
+  [601] pushcons 11 ............................. <"mybox">
+  [603] getlocal 12 ............................. <n>
+  [605] joinstr ................................. <"mybox" & n>
+  [606] pusharglist 1 ........................... <"mybox" & n>
+  [608] extcall 10 .............................. <member("mybox" & n)>
+  [610] pushzero ................................ <0>
+  [611] pushzero ................................ <0>
+  [612] pusharglist 2 ........................... <0, 0>
+  [614] extcall 71 .............................. <point(0, 0)>
+  [616] setobjprop 72 ........................... member("mybox" & n).regPoint = point(0, 0)
+  [618] getlocal 10 ............................. <rightslots>
+  [620] getlocal 12 ............................. <n>
+  [622] pusharglist 2 ........................... <rightslots, n>
+  [624] objcall 82 .............................. <rightslots[n]>
+  [626] pusharglist 1 ........................... <rightslots[n]>
+  [628] extcall 125 ............................. <sprite(rightslots[n])>
+  [630] pushcons 11 ............................. <"mybox">
+  [632] getlocal 12 ............................. <n>
+  [634] joinstr ................................. <"mybox" & n>
+  [635] pusharglist 1 ........................... <"mybox" & n>
+  [637] extcall 10 .............................. <member("mybox" & n)>
+  [639] setobjprop 10 ........................... sprite(rightslots[n]).member = member("mybox" & n)
+  [641] getlocal 10 ............................. <rightslots>
+  [643] getlocal 12 ............................. <n>
+  [645] pusharglist 2 ........................... <rightslots, n>
+  [647] objcall 82 .............................. <rightslots[n]>
+  [649] pusharglist 1 ........................... <rightslots[n]>
+  [651] extcall 125 ............................. <sprite(rightslots[n])>
+  [653] getlocal 11 ............................. <DefList>
+  [655] getlocal 12 ............................. <n>
+  [657] pusharglist 2 ........................... <DefList, n>
+  [659] objcall 82 .............................. <DefList[n]>
+  [661] setobjprop 9 ............................ sprite(rightslots[n]).pContent = DefList[n]
+  [663] pushint8 1
+  [665] getlocal 12
+  [667] add
+  [668] setlocal 12
+  [670] endrepeat [421]
+  [672] pushsymb 152 ............................ <#getleftslot1>
+  [674] pusharglist 1 ........................... <#getleftslot1>
+  [676] extcall 47 .............................. <sendAllSprites(#getleftslot1)>
+  [678] pushsymb 153 ............................ <#getleftslot2>
+  [680] pusharglist 1 ........................... <#getleftslot2>
+  [682] extcall 47 .............................. <sendAllSprites(#getleftslot2)>
+  [684] pushsymb 154 ............................ <#getleftslot3>
+  [686] pusharglist 1 ........................... <#getleftslot3>
+  [688] extcall 47 .............................. <sendAllSprites(#getleftslot3)>
+  [690] pushsymb 155 ............................ <#getleftslot4>
+  [692] pusharglist 1 ........................... <#getleftslot4>
+  [694] extcall 47 .............................. <sendAllSprites(#getleftslot4)>
+  [696] pushsymb 156 ............................ <#getleftslot5>
+  [698] pusharglist 1 ........................... <#getleftslot5>
+  [700] extcall 47 .............................. <sendAllSprites(#getleftslot5)>
+  [702] pushsymb 157 ............................ <#getleftslot6>
+  [704] pusharglist 1 ........................... <#getleftslot6>
+  [706] extcall 47 .............................. <sendAllSprites(#getleftslot6)>
+  [708] pusharglist 6 ........................... <[sendAllSprites(#getleftslot1), sendAllSprites(#getleftslot2), sendAllSprites(#getleftslot3), sendAllSprites(#getleftslot4), sendAllSprites(#getleftslot5), sendAllSprites(#getleftslot6)]>
+  [710] pushlist ................................ <[sendAllSprites(#getleftslot1), sendAllSprites(#getleftslot2), sendAllSprites(#getleftslot3), sendAllSprites(#getleftslot4), sendAllSprites(#getleftslot5), sendAllSprites(#getleftslot6)]>
+  [711] setlocal 21 ............................. leftslots = [sendAllSprites(#getleftslot1), sendAllSprites(#getleftslot2), sendAllSprites(#getleftslot3), sendAllSprites(#getleftslot4), sendAllSprites(#getleftslot5), sendAllSprites(#getleftslot6)]
+  [713] pusharglist 0 ........................... <[]>
+  [715] pushlist ................................ <[]>
+  [716] setlocal 11 ............................. DefList = []
+  [718] pushint8 1 .............................. <1>
+  [720] setlocal 12
+  [722] getlocal 12
+  [724] getlocal 3 .............................. <leftitems>
+  [726] pusharglist 1 ........................... <leftitems>
+  [728] extcall 43 .............................. <count(leftitems)>
+  [730] lteq
+  [731] jmpifz [763] ............................ repeat with n = 1 to count(leftitems)
+  [734] getlocal 11 ............................. <DefList>
+  [736] getglobal 149 ........................... <gCatalog>
+  [738] getlocal 3 .............................. <leftitems>
+  [740] getlocal 12 ............................. <n>
+  [742] pusharglist 2 ........................... <leftitems, n>
+  [744] objcall 82 .............................. <leftitems[n]>
+  [746] pusharglist 2 ........................... <gCatalog, leftitems[n]>
+  [748] objcall 150 ............................. <gCatalog.getItemByProdId(leftitems[n])>
+  [750] pusharglistnoret 2 ...................... <DefList, gCatalog.getItemByProdId(leftitems[n])>
+  [752] extcall 98 .............................. append(DefList, gCatalog.getItemByProdId(leftitems[n]))
+  [754] pushint8 1
+  [756] getlocal 12
+  [758] add
+  [759] setlocal 12
+  [761] endrepeat [722]
+  [763] pushint8 1 .............................. <1>
+  [765] setlocal 12
+  [767] getlocal 12
+  [769] getlocal 11 ............................. <DefList>
+  [771] pusharglist 1 ........................... <DefList>
+  [773] extcall 43 .............................. <count(DefList)>
+  [775] lteq
+  [776] jmpifz [1103] ........................... repeat with n = 1 to count(DefList)
+  [779] pushcons 14 ............................. <"hisbox">
+  [781] getlocal 12 ............................. <n>
+  [783] joinstr ................................. <"hisbox" & n>
+  [784] pusharglist 1 ........................... <"hisbox" & n>
+  [786] extcall 10 .............................. <member("hisbox" & n)>
+  [788] getobjprop 97 ........................... <member("hisbox" & n).memberNum>
+  [790] pushint8 1 .............................. <1>
+  [792] lt ...................................... <member("hisbox" & n).memberNum < 1>
+  [793] jmpifz [821] ............................ if member("hisbox" & n).memberNum < 1 then
+  [796] pushsymb 109 ............................ <#bitmap>
+  [798] pusharglist 1 ........................... <#bitmap>
+  [800] extcall 0 ............................... <new(#bitmap)>
+  [802] setlocal 13 ............................. myMember = new(#bitmap)
+  [804] getglobal 99 ............................ <gMembersToDelete>
+  [806] getlocal 13 ............................. <myMember>
+  [808] pusharglistnoret 2 ...................... <gMembersToDelete, myMember>
+  [810] extcall 98 .............................. append(gMembersToDelete, myMember)
+  [812] getlocal 13 ............................. <myMember>
+  [814] pushcons 14 ............................. <"hisbox">
+  [816] getlocal 12 ............................. <n>
+  [818] joinstr ................................. <"hisbox" & n>
+  [819] setobjprop 14 ........................... myMember.name = "hisbox" & n
+  [821] getlocal 11 ............................. <DefList>
+  [823] getlocal 12 ............................. <n>
+  [825] pusharglist 2 ........................... <DefList, n>
+  [827] objcall 82 .............................. <DefList[n]>
+  [829] pushsymb 158 ............................ <#attributes>
+  [831] pushsymb 159 ............................ <#color_small>
+  [833] pusharglist 3 ........................... <DefList[n], #attributes, #color_small>
+  [835] objcall 46 .............................. <DefList[n].attributes[#color_small]>
+  [837] pusharglist 1 ........................... <DefList[n].attributes[#color_small]>
+  [839] extcall 8 ............................... <voidp(DefList[n].attributes[#color_small])>
+  [841] pushzero ................................ <0>
+  [842] eq ...................................... <voidp(DefList[n].attributes[#color_small]) = 0>
+  [843] jmpifz [871] ............................ if voidp(DefList[n].attributes[#color_small]) = 0 then / else
+  [846] getlocal 11 ............................. <DefList>
+  [848] getlocal 12 ............................. <n>
+  [850] pusharglist 2 ........................... <DefList, n>
+  [852] objcall 82 .............................. <DefList[n]>
+  [854] pushsymb 158 ............................ <#attributes>
+  [856] pushsymb 159 ............................ <#color_small>
+  [858] pusharglist 3 ........................... <DefList[n], #attributes, #color_small>
+  [860] objcall 46 .............................. <DefList[n].attributes[#color_small]>
+  [862] pusharglist 1 ........................... <DefList[n].attributes[#color_small]>
+  [864] extcall 102 ............................. <rgb(DefList[n].attributes[#color_small])>
+  [866] setlocal 22 ............................. myColor = rgb(DefList[n].attributes[#color_small])
+  [868] jmp [886]
+  [871] pushint16 255 ........................... <255>
+  [874] pushint16 255 ........................... <255>
+  [877] pushint16 255 ........................... <255>
+  [880] pusharglist 3 ........................... <255, 255, 255>
+  [882] extcall 102 ............................. <rgb(255, 255, 255)>
+  [884] setlocal 22 ............................. myColor = rgb(255, 255, 255)
+  [886] pushcons 12 ............................. <"tradingbox">
+  [888] pusharglist 1 ........................... <"tradingbox">
+  [890] extcall 10 .............................. <member("tradingbox")>
+  [892] getchainedprop 63 ....................... <member("tradingbox").image>
+  [894] pusharglist 1 ........................... <member("tradingbox").image>
+  [896] objcall 92 .............................. <member("tradingbox").image.duplicate()>
+  [898] setlocal 14 ............................. baseimg = member("tradingbox").image.duplicate()
+  [900] getlocal 11 ............................. <DefList>
+  [902] getlocal 12 ............................. <n>
+  [904] pusharglist 2 ........................... <DefList, n>
+  [906] objcall 82 .............................. <DefList[n]>
+  [908] getobjprop 151 .......................... <DefList[n].imageBase>
+  [910] pushcons 13 ............................. <"_small">
+  [912] joinstr ................................. <DefList[n].imageBase & "_small">
+  [913] pusharglist 1 ........................... <DefList[n].imageBase & "_small">
+  [915] extcall 10 .............................. <member(DefList[n].imageBase & "_small")>
+  [917] setlocal 15 ............................. itemmember = member(DefList[n].imageBase & "_small")
+  [919] getlocal 15 ............................. <itemmember>
+  [921] getchainedprop 63 ....................... <itemmember.image>
+  [923] pusharglist 1 ........................... <itemmember.image>
+  [925] objcall 92 .............................. <itemmember.image.duplicate()>
+  [927] setlocal 16 ............................. itemimg = itemmember.image.duplicate()
+  [929] getlocal 16 ............................. <itemimg>
+  [931] pusharglist 1 ........................... <itemimg>
+  [933] objcall 160 ............................. <itemimg.createMatte()>
+  [935] setlocal 23 ............................. mymatte = itemimg.createMatte()
+  [937] getlocal 16 ............................. <itemimg>
+  [939] getobjprop 68 ........................... <itemimg.rect>
+  [941] setlocal 17 ............................. sourceRect = itemimg.rect
+  [943] getlocal 14 ............................. <baseimg>
+  [945] getobjprop 111 .......................... <baseimg.width>
+  [947] getlocal 16 ............................. <itemimg>
+  [949] getobjprop 111 .......................... <itemimg.width>
+  [951] sub ..................................... <baseimg.width - itemimg.width>
+  [952] pushint8 2 .............................. <2>
+  [954] div ..................................... <(baseimg.width - itemimg.width) / 2>
+  [955] setlocal 18 ............................. leftpix = (baseimg.width - itemimg.width) / 2
+  [957] getlocal 14 ............................. <baseimg>
+  [959] getobjprop 84 ........................... <baseimg.height>
+  [961] getlocal 16 ............................. <itemimg>
+  [963] getobjprop 84 ........................... <itemimg.height>
+  [965] sub ..................................... <baseimg.height - itemimg.height>
+  [966] pushint8 2 .............................. <2>
+  [968] div ..................................... <(baseimg.height - itemimg.height) / 2>
+  [969] setlocal 19 ............................. toppix = (baseimg.height - itemimg.height) / 2
+  [971] getlocal 18 ............................. <leftpix>
+  [973] getlocal 19 ............................. <toppix>
+  [975] getlocal 18 ............................. <leftpix>
+  [977] getlocal 16 ............................. <itemimg>
+  [979] getobjprop 111 .......................... <itemimg.width>
+  [981] add ..................................... <leftpix + itemimg.width>
+  [982] getlocal 19 ............................. <toppix>
+  [984] getlocal 16 ............................. <itemimg>
+  [986] getobjprop 84 ........................... <itemimg.height>
+  [988] add ..................................... <toppix + itemimg.height>
+  [989] pusharglist 4 ........................... <leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height>
+  [991] extcall 68 .............................. <rect(leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height)>
+  [993] setlocal 20 ............................. destRect = rect(leftpix, toppix, leftpix + itemimg.width, toppix + itemimg.height)
+  [995] getlocal 14 ............................. <baseimg>
+  [997] getlocal 16 ............................. <itemimg>
+  [999] getlocal 20 ............................. <destRect>
+  [1001] getlocal 17 ............................ <sourceRect>
+  [1003] pushsymb 161 ........................... <#maskImage>
+  [1005] getlocal 23 ............................ <mymatte>
+  [1007] pushsymb 162 ........................... <#bgColor>
+  [1009] getlocal 22 ............................ <myColor>
+  [1011] pusharglist 4 .......................... <[#maskImage: mymatte, #bgColor: myColor]>
+  [1013] pushproplist ........................... <[#maskImage: mymatte, #bgColor: myColor]>
+  [1014] pusharglistnoret 5 ..................... <baseimg, itemimg, destRect, sourceRect, [#maskImage: mymatte, #bgColor: myColor]>
+  [1016] objcall 70 ............................. baseimg.copyPixels(itemimg, destRect, sourceRect, [#maskImage: mymatte, #bgColor: myColor])
+  [1018] pushcons 14 ............................ <"hisbox">
+  [1020] getlocal 12 ............................ <n>
+  [1022] joinstr ................................ <"hisbox" & n>
+  [1023] pusharglist 1 .......................... <"hisbox" & n>
+  [1025] extcall 10 ............................. <member("hisbox" & n)>
+  [1027] getlocal 14 ............................ <baseimg>
+  [1029] setobjprop 63 .......................... member("hisbox" & n).image = baseimg
+  [1031] pushcons 14 ............................ <"hisbox">
+  [1033] getlocal 12 ............................ <n>
+  [1035] joinstr ................................ <"hisbox" & n>
+  [1036] pusharglist 1 .......................... <"hisbox" & n>
+  [1038] extcall 10 ............................. <member("hisbox" & n)>
+  [1040] pushzero ............................... <0>
+  [1041] pushzero ............................... <0>
+  [1042] pusharglist 2 .......................... <0, 0>
+  [1044] extcall 71 ............................. <point(0, 0)>
+  [1046] setobjprop 72 .......................... member("hisbox" & n).regPoint = point(0, 0)
+  [1048] getlocal 21 ............................ <leftslots>
+  [1050] getlocal 12 ............................ <n>
+  [1052] pusharglist 2 .......................... <leftslots, n>
+  [1054] objcall 82 ............................. <leftslots[n]>
+  [1056] pusharglist 1 .......................... <leftslots[n]>
+  [1058] extcall 125 ............................ <sprite(leftslots[n])>
+  [1060] pushcons 14 ............................ <"hisbox">
+  [1062] getlocal 12 ............................ <n>
+  [1064] joinstr ................................ <"hisbox" & n>
+  [1065] pusharglist 1 .......................... <"hisbox" & n>
+  [1067] extcall 10 ............................. <member("hisbox" & n)>
+  [1069] setobjprop 10 .......................... sprite(leftslots[n]).member = member("hisbox" & n)
+  [1071] getlocal 21 ............................ <leftslots>
+  [1073] getlocal 12 ............................ <n>
+  [1075] pusharglist 2 .......................... <leftslots, n>
+  [1077] objcall 82 ............................. <leftslots[n]>
+  [1079] pusharglist 1 .......................... <leftslots[n]>
+  [1081] extcall 125 ............................ <sprite(leftslots[n])>
+  [1083] getlocal 11 ............................ <DefList>
+  [1085] getlocal 12 ............................ <n>
+  [1087] pusharglist 2 .......................... <DefList, n>
+  [1089] objcall 82 ............................. <DefList[n]>
+  [1091] setobjprop 9 ........................... sprite(leftslots[n]).pContent = DefList[n]
+  [1093] pushint8 1
+  [1095] getlocal 12
+  [1097] add
+  [1098] setlocal 12
+  [1100] endrepeat [767]
+  [1103] ret
+end

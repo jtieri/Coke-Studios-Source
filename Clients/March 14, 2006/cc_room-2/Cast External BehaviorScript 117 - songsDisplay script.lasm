@@ -1,0 +1,71 @@
+property pTarget, bDebug
+
+on new me, target
+  [  0] pushzero ................................ <0>
+  [  1] setprop 33 .............................. bDebug = 0
+  [  3] getparam 1 .............................. <target>
+  [  5] setprop 121 ............................. pTarget = target
+  [  7] getparam 0 .............................. <me>
+  [  9] pushcons 0 .............................. <"new()">
+  [ 11] pushcons 1 .............................. <"pTarget:">
+  [ 13] joinpadstr .............................. <"new()" && "pTarget:">
+  [ 14] getprop 121 ............................. <pTarget>
+  [ 16] joinpadstr .............................. <"new()" && "pTarget:" && pTarget>
+  [ 17] pusharglistnoret 2 ...................... <me, "new()" && "pTarget:" && pTarget>
+  [ 19] objcall 29 .............................. me.debug("new()" && "pTarget:" && pTarget)
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] extcall 5 ............................... return me
+  [ 27] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 2 .............................. <"songsDisplay script: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"songsDisplay script: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"songsDisplay script: " & sMessage>
+  [ 17] extcall 34 .............................. put "songsDisplay script: " & sMessage
+  [ 19] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 123 ............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 124 .......................... <the mouseV>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 7 ............................ <me.spriteNum>
+  [  8] pusharglist 1 ........................... <me.spriteNum>
+  [ 10] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 12] getobjprop 126 .......................... <sprite(me.spriteNum).top>
+  [ 14] sub ..................................... <the mouseV - sprite(me.spriteNum).top>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 7 ............................ <me.spriteNum>
+  [ 19] pusharglist 1 ........................... <me.spriteNum>
+  [ 21] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 23] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [ 25] getprop 121 ............................. <pTarget>
+  [ 27] getobjprop 96 ........................... <pTarget.pDisplayLines>
+  [ 29] div ..................................... <sprite(me.spriteNum).height / pTarget.pDisplayLines>
+  [ 30] div ..................................... <(the mouseV - sprite(me.spriteNum).top) / (sprite(me.spriteNum).height / pTarget.pDisplayLines)>
+  [ 31] getprop 121 ............................. <pTarget>
+  [ 33] getobjprop 69 ........................... <pTarget.pScrollIndex>
+  [ 35] add ..................................... <((the mouseV - sprite(me.spriteNum).top) / (sprite(me.spriteNum).height / pTarget.pDisplayLines)) + pTarget.pScrollIndex>
+  [ 36] setlocal 0 .............................. MyNum = ((the mouseV - sprite(me.spriteNum).top) / (sprite(me.spriteNum).height / pTarget.pDisplayLines)) + pTarget.pScrollIndex
+  [ 38] getprop 121 ............................. <pTarget>
+  [ 40] getlocal 0 .............................. <MyNum>
+  [ 42] pusharglistnoret 2 ...................... <pTarget, MyNum>
+  [ 44] objcall 58 .............................. pTarget.songclicked(MyNum)
+  [ 46] pusharglistnoret 0 ...................... <>
+  [ 48] extcall 123 ............................. dontPassEvent()
+  [ 50] ret
+end

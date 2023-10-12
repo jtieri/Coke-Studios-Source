@@ -1,0 +1,174 @@
+property pTarget, pCounter, pClicked, pmodel
+
+on new me, mytarget
+  [  0] getparam 1 .............................. <mytarget>
+  [  2] setprop 664 ............................. pTarget = mytarget
+  [  5] getparam 0 .............................. <me>
+  [  7] pusharglistnoret 1 ...................... <me>
+  [  9] extcall 23 .............................. return me
+  [ 11] ret
+end
+
+on mouseDown me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 231 ............................. pCounter = 0
+  [  3] pushint8 1 .............................. <1>
+  [  5] setprop 224 ............................. pClicked = 1
+  [  7] pusharglistnoret 0 ...................... <>
+  [  9] extcall 229 ............................. stopEvent()
+  [ 11] ret
+end
+
+on mouseWithin me
+  [  0] getprop 664 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 12 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [161] ............................ if voidp(pTarget) = 0 then
+  [ 12] pusharglist 0 ........................... <>
+  [ 14] thebuiltin 217 .......................... <the mouseDown>
+  [ 16] getprop 224 ............................. <pClicked>
+  [ 18] and ..................................... <the mouseDown and pClicked>
+  [ 19] jmpifz [126] ............................ if the mouseDown and pClicked then / else
+  [ 22] getprop 664 ............................. <pTarget>
+  [ 25] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [ 28] getprop 664 ............................. <pTarget>
+  [ 31] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [ 34] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 35] jmpifz [123] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getobjprop 228 .......................... <me.spriteNum>
+  [ 42] pusharglist 1 ........................... <me.spriteNum>
+  [ 44] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 46] getprop 73 .............................. <pmodel>
+  [ 48] pushcons 0 .............................. <".scroll.down.pressed">
+  [ 50] joinstr ................................. <pmodel & ".scroll.down.pressed">
+  [ 51] pusharglist 1 ........................... <pmodel & ".scroll.down.pressed">
+  [ 53] extcall 34 .............................. <member(pmodel & ".scroll.down.pressed")>
+  [ 55] setobjprop 34 ........................... sprite(me.spriteNum).member = member(pmodel & ".scroll.down.pressed")
+  [ 57] getprop 231 ............................. <pCounter>
+  [ 59] pushint8 2 .............................. <2>
+  [ 61] mod ..................................... <pCounter mod 2>
+  [ 62] pushzero ................................ <0>
+  [ 63] eq ...................................... <(pCounter mod 2) = 0>
+  [ 64] jmpifz [116] ............................ if (pCounter mod 2) = 0 then
+  [ 67] getprop 664 ............................. <pTarget>
+  [ 70] getobjprop 318 .......................... <pTarget.pScrollIndex>
+  [ 73] getprop 664 ............................. <pTarget>
+  [ 76] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [ 79] getprop 664 ............................. <pTarget>
+  [ 82] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [ 85] sub ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [ 86] pushint8 1 .............................. <1>
+  [ 88] add ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines + 1>
+  [ 89] lt ...................................... <pTarget.pScrollIndex < (pTarget.pTotalLines - pTarget.pDisplayLines + 1)>
+  [ 90] jmpifz [116] ............................ if pTarget.pScrollIndex < (pTarget.pTotalLines - pTarget.pDisplayLines + 1) then
+  [ 93] getprop 664 ............................. <pTarget>
+  [ 96] getprop 664 ............................. <pTarget>
+  [ 99] getobjprop 318 .......................... <pTarget.pScrollIndex>
+  [102] pushint8 1 .............................. <1>
+  [104] add ..................................... <pTarget.pScrollIndex + 1>
+  [105] setobjprop 318 .......................... pTarget.pScrollIndex = pTarget.pScrollIndex + 1
+  [108] getprop 664 ............................. <pTarget>
+  [111] pusharglistnoret 1 ...................... <pTarget>
+  [113] objcall 319 ............................. pTarget.updatecontent()
+  [116] getprop 231 ............................. <pCounter>
+  [118] pushint8 1 .............................. <1>
+  [120] add ..................................... <pCounter + 1>
+  [121] setprop 231 ............................. pCounter = pCounter + 1
+  [123] jmp [161]
+  [126] getprop 664 ............................. <pTarget>
+  [129] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [132] getprop 664 ............................. <pTarget>
+  [135] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [138] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [139] jmpifz [161] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then
+  [142] getparam 0 .............................. <me>
+  [144] getobjprop 228 .......................... <me.spriteNum>
+  [146] pusharglist 1 ........................... <me.spriteNum>
+  [148] extcall 36 .............................. <sprite(me.spriteNum)>
+  [150] getprop 73 .............................. <pmodel>
+  [152] pushcons 1 .............................. <".scroll.down.active">
+  [154] joinstr ................................. <pmodel & ".scroll.down.active">
+  [155] pusharglist 1 ........................... <pmodel & ".scroll.down.active">
+  [157] extcall 34 .............................. <member(pmodel & ".scroll.down.active")>
+  [159] setobjprop 34 ........................... sprite(me.spriteNum).member = member(pmodel & ".scroll.down.active")
+  [161] ret
+end
+
+on exitFrame me
+  [  0] getprop 664 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 12 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [ 70] ............................ if voidp(pTarget) = 0 then
+  [ 12] getprop 664 ............................. <pTarget>
+  [ 15] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [ 18] getprop 664 ............................. <pTarget>
+  [ 21] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [ 24] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 25] jmpifz [ 70] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getobjprop 228 .......................... <me.spriteNum>
+  [ 32] pusharglist 1 ........................... <me.spriteNum>
+  [ 34] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 36] getobjprop 34 ........................... <sprite(me.spriteNum).member>
+  [ 38] getprop 73 .............................. <pmodel>
+  [ 40] pushcons 2 .............................. <".scroll.down.passive">
+  [ 42] joinstr ................................. <pmodel & ".scroll.down.passive">
+  [ 43] pusharglist 1 ........................... <pmodel & ".scroll.down.passive">
+  [ 45] extcall 34 .............................. <member(pmodel & ".scroll.down.passive")>
+  [ 47] eq ...................................... <sprite(me.spriteNum).member = member(pmodel & ".scroll.down.passive")>
+  [ 48] jmpifz [ 70] ............................ if sprite(me.spriteNum).member = member(pmodel & ".scroll.down.passive") then
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getobjprop 228 .......................... <me.spriteNum>
+  [ 55] pusharglist 1 ........................... <me.spriteNum>
+  [ 57] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 59] getprop 73 .............................. <pmodel>
+  [ 61] pushcons 1 .............................. <".scroll.down.active">
+  [ 63] joinstr ................................. <pmodel & ".scroll.down.active">
+  [ 64] pusharglist 1 ........................... <pmodel & ".scroll.down.active">
+  [ 66] extcall 34 .............................. <member(pmodel & ".scroll.down.active")>
+  [ 68] setobjprop 34 ........................... sprite(me.spriteNum).member = member(pmodel & ".scroll.down.active")
+  [ 70] ret
+end
+
+on mouseLeave me
+  [  0] getprop 664 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 12 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [ 47] ............................ if voidp(pTarget) = 0 then
+  [ 12] getprop 664 ............................. <pTarget>
+  [ 15] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [ 18] getprop 664 ............................. <pTarget>
+  [ 21] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [ 24] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 25] jmpifz [ 47] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getobjprop 228 .......................... <me.spriteNum>
+  [ 32] pusharglist 1 ........................... <me.spriteNum>
+  [ 34] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 36] getprop 73 .............................. <pmodel>
+  [ 38] pushcons 1 .............................. <".scroll.down.active">
+  [ 40] joinstr ................................. <pmodel & ".scroll.down.active">
+  [ 41] pusharglist 1 ........................... <pmodel & ".scroll.down.active">
+  [ 43] extcall 34 .............................. <member(pmodel & ".scroll.down.active")>
+  [ 45] setobjprop 34 ........................... sprite(me.spriteNum).member = member(pmodel & ".scroll.down.active")
+  [ 47] ret
+end
+
+on mouseUp me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] ret
+end

@@ -1,0 +1,271 @@
+property enabled, pStatus, myscrollbar, pParentWindow
+global ElementMgr
+
+on new me, parentwindow
+  [  0] pushsymb 354 ............................ <#idle>
+  [  3] setprop 350 ............................. pStatus = #idle
+  [  6] getparam 1 .............................. <parentwindow>
+  [  8] setprop 20 .............................. pParentWindow = parentwindow
+  [ 10] pushzero ................................ <0>
+  [ 11] setprop 335 ............................. enabled = 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] extcall 5 ............................... return me
+  [ 20] ret
+end
+
+on enablescrollhead me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 335 ............................. enabled = 1
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 7 ............................ <me.spriteNum>
+  [  9] pusharglist 1 ........................... <me.spriteNum>
+  [ 11] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 13] pushint8 100 ............................ <100>
+  [ 15] setobjprop 128 .......................... sprite(me.spriteNum).blend = 100
+  [ 17] ret
+end
+
+on disablescrollhead me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 335 ............................. enabled = 0
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 7 ............................ <me.spriteNum>
+  [  8] pusharglist 1 ........................... <me.spriteNum>
+  [ 10] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 12] pushzero ................................ <0>
+  [ 13] setobjprop 128 .......................... sprite(me.spriteNum).blend = 0
+  [ 15] ret
+end
+
+on exitFrame me
+  [  0] getprop 20 .............................. <pParentWindow>
+  [  2] pushsymb 227 ............................ <#pScrollingLists>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglist 3 ........................... <pParentWindow, #pScrollingLists, 1>
+  [  8] objcall 46 .............................. <pParentWindow.pScrollingLists[1]>
+  [ 10] setlocal 0 .............................. myList = pParentWindow.pScrollingLists[1]
+  [ 12] getlocal 0 .............................. <myList>
+  [ 14] getobjprop 96 ........................... <myList.pDisplayLines>
+  [ 16] getlocal 0 .............................. <myList>
+  [ 18] getobjprop 313 .......................... <myList.pContentlist>
+  [ 21] pusharglist 1 ........................... <myList.pContentlist>
+  [ 23] extcall 43 .............................. <count(myList.pContentlist)>
+  [ 25] lt ...................................... <myList.pDisplayLines < count(myList.pContentlist)>
+  [ 26] jmpifz [ 38] ............................ if myList.pDisplayLines < count(myList.pContentlist) then / else
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglistnoret 1 ...................... <me>
+  [ 33] localcall 1 ............................. enablescrollhead(me)
+  [ 35] jmp [ 44]
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pusharglistnoret 1 ...................... <me>
+  [ 42] localcall 2 ............................. disablescrollhead(me)
+  [ 44] getprop 350 ............................. <pStatus>
+  [ 47] pushsymb 380 ............................ <#scroll>
+  [ 50] eq ...................................... <pStatus = #scroll>
+  [ 51] jmpifz [278] ............................ if pStatus = #scroll then
+  [ 54] pusharglist 0 ........................... <>
+  [ 56] thebuiltin 124 .......................... <the mouseV>
+  [ 58] getprop 381 ............................. <myscrollbar>
+  [ 61] pusharglist 1 ........................... <myscrollbar>
+  [ 63] extcall 125 ............................. <sprite(myscrollbar)>
+  [ 65] getobjprop 126 .......................... <sprite(myscrollbar).top>
+  [ 67] getparam 0 .............................. <me>
+  [ 69] getobjprop 7 ............................ <me.spriteNum>
+  [ 71] pusharglist 1 ........................... <me.spriteNum>
+  [ 73] extcall 125 ............................. <sprite(me.spriteNum)>
+  [ 75] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [ 77] pushint8 2 .............................. <2>
+  [ 79] div ..................................... <sprite(me.spriteNum).height / 2>
+  [ 80] add ..................................... <sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)>
+  [ 81] lt ...................................... <the mouseV < (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2))>
+  [ 82] jmpifz [ 99] ............................ if the mouseV < (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)) then / else
+  [ 85] getprop 381 ............................. <myscrollbar>
+  [ 88] pusharglist 1 ........................... <myscrollbar>
+  [ 90] extcall 125 ............................. <sprite(myscrollbar)>
+  [ 92] getobjprop 126 .......................... <sprite(myscrollbar).top>
+  [ 94] setlocal 1 .............................. myloc = sprite(myscrollbar).top
+  [ 96] jmp [177]
+  [ 99] pusharglist 0 ........................... <>
+  [101] thebuiltin 124 .......................... <the mouseV>
+  [103] getprop 381 ............................. <myscrollbar>
+  [106] pusharglist 1 ........................... <myscrollbar>
+  [108] extcall 125 ............................. <sprite(myscrollbar)>
+  [110] getobjprop 382 .......................... <sprite(myscrollbar).bottom>
+  [113] getparam 0 .............................. <me>
+  [115] getobjprop 7 ............................ <me.spriteNum>
+  [117] pusharglist 1 ........................... <me.spriteNum>
+  [119] extcall 125 ............................. <sprite(me.spriteNum)>
+  [121] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [123] pushint8 2 .............................. <2>
+  [125] div ..................................... <sprite(me.spriteNum).height / 2>
+  [126] sub ..................................... <sprite(myscrollbar).bottom - (sprite(me.spriteNum).height / 2)>
+  [127] gt ...................................... <the mouseV > (sprite(myscrollbar).bottom - (sprite(me.spriteNum).height / 2))>
+  [128] jmpifz [157] ............................ if the mouseV > (sprite(myscrollbar).bottom - (sprite(me.spriteNum).height / 2)) then / else
+  [131] getprop 381 ............................. <myscrollbar>
+  [134] pusharglist 1 ........................... <myscrollbar>
+  [136] extcall 125 ............................. <sprite(myscrollbar)>
+  [138] getobjprop 382 .......................... <sprite(myscrollbar).bottom>
+  [141] getparam 0 .............................. <me>
+  [143] getobjprop 7 ............................ <me.spriteNum>
+  [145] pusharglist 1 ........................... <me.spriteNum>
+  [147] extcall 125 ............................. <sprite(me.spriteNum)>
+  [149] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [151] sub ..................................... <sprite(myscrollbar).bottom - sprite(me.spriteNum).height>
+  [152] setlocal 1 .............................. myloc = sprite(myscrollbar).bottom - sprite(me.spriteNum).height
+  [154] jmp [177]
+  [157] pusharglist 0 ........................... <>
+  [159] thebuiltin 124 .......................... <the mouseV>
+  [161] getparam 0 .............................. <me>
+  [163] getobjprop 7 ............................ <me.spriteNum>
+  [165] pusharglist 1 ........................... <me.spriteNum>
+  [167] extcall 125 ............................. <sprite(me.spriteNum)>
+  [169] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [171] pushint8 2 .............................. <2>
+  [173] div ..................................... <sprite(me.spriteNum).height / 2>
+  [174] sub ..................................... <the mouseV - (sprite(me.spriteNum).height / 2)>
+  [175] setlocal 1 .............................. myloc = the mouseV - (sprite(me.spriteNum).height / 2)
+  [177] getlocal 0 .............................. <myList>
+  [179] getobjprop 313 .......................... <myList.pContentlist>
+  [182] pusharglist 1 ........................... <myList.pContentlist>
+  [184] extcall 43 .............................. <count(myList.pContentlist)>
+  [186] getlocal 0 .............................. <myList>
+  [188] getobjprop 96 ........................... <myList.pDisplayLines>
+  [190] sub ..................................... <count(myList.pContentlist) - myList.pDisplayLines>
+  [191] setlocal 2 .............................. totalheight = count(myList.pContentlist) - myList.pDisplayLines
+  [193] getlocal 0 .............................. <myList>
+  [195] getlocal 2 .............................. <totalheight>
+  [197] pusharglist 1 ........................... <totalheight>
+  [199] extcall 389 ............................. <float(totalheight)>
+  [202] getprop 381 ............................. <myscrollbar>
+  [205] pusharglist 1 ........................... <myscrollbar>
+  [207] extcall 125 ............................. <sprite(myscrollbar)>
+  [209] getobjprop 84 ........................... <sprite(myscrollbar).height>
+  [211] getparam 0 .............................. <me>
+  [213] getobjprop 7 ............................ <me.spriteNum>
+  [215] pusharglist 1 ........................... <me.spriteNum>
+  [217] extcall 125 ............................. <sprite(me.spriteNum)>
+  [219] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [221] sub ..................................... <sprite(myscrollbar).height - sprite(me.spriteNum).height>
+  [222] div ..................................... <float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height)>
+  [223] getlocal 1 .............................. <myloc>
+  [225] getprop 381 ............................. <myscrollbar>
+  [228] pusharglist 1 ........................... <myscrollbar>
+  [230] extcall 125 ............................. <sprite(myscrollbar)>
+  [232] getobjprop 126 .......................... <sprite(myscrollbar).top>
+  [234] getparam 0 .............................. <me>
+  [236] getobjprop 7 ............................ <me.spriteNum>
+  [238] pusharglist 1 ........................... <me.spriteNum>
+  [240] extcall 125 ............................. <sprite(me.spriteNum)>
+  [242] getobjprop 84 ........................... <sprite(me.spriteNum).height>
+  [244] pushint8 2 .............................. <2>
+  [246] div ..................................... <sprite(me.spriteNum).height / 2>
+  [247] add ..................................... <sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)>
+  [248] sub ..................................... <myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2))>
+  [249] mul ..................................... <float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height) * (myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)))>
+  [250] pusharglist 1 ........................... <float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height) * (myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)))>
+  [252] extcall 256 ............................. <integer(float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height) * (myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2))))>
+  [255] pushint8 1 .............................. <1>
+  [257] add ..................................... <integer(float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height) * (myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)))) + 1>
+  [258] setobjprop 69 ........................... myList.pScrollIndex = integer(float(totalheight) / (sprite(myscrollbar).height - sprite(me.spriteNum).height) * (myloc - (sprite(myscrollbar).top + (sprite(me.spriteNum).height / 2)))) + 1
+  [260] getlocal 0 .............................. <myList>
+  [262] pusharglistnoret 1 ...................... <myList>
+  [264] objcall 55 .............................. myList.updatecontent()
+  [266] getparam 0 .............................. <me>
+  [268] getobjprop 7 ............................ <me.spriteNum>
+  [270] pusharglist 1 ........................... <me.spriteNum>
+  [272] extcall 125 ............................. <sprite(me.spriteNum)>
+  [274] getlocal 1 .............................. <myloc>
+  [276] setobjprop 90 ........................... sprite(me.spriteNum).locV = myloc
+  [278] ret
+end
+
+on mouseDown me
+  [  0] getprop 335 ............................. <enabled>
+  [  3] jmpifz [ 90] ............................ if enabled then
+  [  6] pushsymb 380 ............................ <#scroll>
+  [  9] setprop 350 ............................. pStatus = #scroll
+  [ 12] getprop 20 .............................. <pParentWindow>
+  [ 14] getobjprop 296 .......................... <pParentWindow.pSpritelist>
+  [ 17] peek 0
+  [ 19] pusharglist 1
+  [ 21] extcall 43
+  [ 23] pushint8 1
+  [ 25] peek 0
+  [ 27] peek 2
+  [ 29] lteq
+  [ 30] jmpifz [ 88] ............................ repeat with n in pParentWindow.pSpritelist
+  [ 33] peek 2
+  [ 35] peek 1
+  [ 37] pusharglist 2
+  [ 39] extcall 82
+  [ 41] setlocal 0
+  [ 43] getlocal 0 .............................. <n>
+  [ 45] pushsymb 333 ............................ <#disableaddsong>
+  [ 48] pusharglistnoret 2 ...................... <n, #disableaddsong>
+  [ 50] extcall 386 ............................. sendSprite(n, #disableaddsong)
+  [ 53] getlocal 0 .............................. <n>
+  [ 55] pushsymb 376 ............................ <#disableremovesong>
+  [ 58] pusharglistnoret 2 ...................... <n, #disableremovesong>
+  [ 60] extcall 386 ............................. sendSprite(n, #disableremovesong)
+  [ 63] getlocal 0 .............................. <n>
+  [ 65] pushsymb 374 ............................ <#disableplaysong>
+  [ 68] pusharglistnoret 2 ...................... <n, #disableplaysong>
+  [ 70] extcall 386 ............................. sendSprite(n, #disableplaysong)
+  [ 73] getlocal 0 .............................. <n>
+  [ 75] pushsymb 370 ............................ <#disabledownloadsong>
+  [ 78] pusharglistnoret 2 ...................... <n, #disabledownloadsong>
+  [ 80] extcall 386 ............................. sendSprite(n, #disabledownloadsong)
+  [ 83] pushint8 1
+  [ 85] add
+  [ 86] endrepeat [ 25]
+  [ 88] pop 3
+  [ 90] getprop 381 ............................. <myscrollbar>
+  [ 93] pusharglist 1 ........................... <myscrollbar>
+  [ 95] extcall 8 ............................... <voidp(myscrollbar)>
+  [ 97] jmpifz [166] ............................ if voidp(myscrollbar) then
+  [100] getprop 20 .............................. <pParentWindow>
+  [102] getobjprop 296 .......................... <pParentWindow.pSpritelist>
+  [105] peek 0
+  [107] pusharglist 1
+  [109] extcall 43
+  [111] pushint8 1
+  [113] peek 0
+  [115] peek 2
+  [117] lteq
+  [118] jmpifz [164] ............................ repeat with n in pParentWindow.pSpritelist
+  [121] peek 2
+  [123] peek 1
+  [125] pusharglist 2
+  [127] extcall 82
+  [129] setlocal 0
+  [131] getlocal 0 .............................. <n>
+  [133] pushsymb 377 ............................ <#getscrollbar>
+  [136] pusharglist 2 ........................... <n, #getscrollbar>
+  [138] extcall 386 ............................. <sendSprite(n, #getscrollbar)>
+  [141] setprop 381 ............................. myscrollbar = sendSprite(n, #getscrollbar)
+  [144] getprop 381 ............................. <myscrollbar>
+  [147] pusharglist 1 ........................... <myscrollbar>
+  [149] extcall 8 ............................... <voidp(myscrollbar)>
+  [151] pushzero ................................ <0>
+  [152] eq ...................................... <voidp(myscrollbar) = 0>
+  [153] jmpifz [159] ............................ if voidp(myscrollbar) = 0 then
+  [156] jmp [164] ............................... exit repeat
+  [159] pushint8 1
+  [161] add
+  [162] endrepeat [113]
+  [164] pop 3
+  [166] ret
+end
+
+on mouseUp me
+  [  0] pushsymb 354 ............................ <#idle>
+  [  3] setprop 350 ............................. pStatus = #idle
+  [  6] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushsymb 354 ............................ <#idle>
+  [  3] setprop 350 ............................. pStatus = #idle
+  [  6] ret
+end

@@ -1,0 +1,103 @@
+property pChatLogDisplaySprite, pStudioNameEditSprite, pStudioDescEditSprite, pStudioID, pVerificationSprite, sStudioName, bDebug
+global oStudioManager, ElementMgr, aChatLogDisplaySprites, oEditStudioManager
+
+on new me, sChatLogDisplaySprite, sStudioID
+  [  0] getparam 1 .............................. <sChatLogDisplaySprite>
+  [  2] setprop 321 ............................. pChatLogDisplaySprite = sChatLogDisplaySprite
+  [  5] getparam 2 .............................. <sStudioID>
+  [  7] setprop 79 .............................. pStudioID = sStudioID
+  [  9] getparam 0 .............................. <me>
+  [ 11] pushzero ................................ <0>
+  [ 12] setobjprop 10 ........................... me.bDebug = 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] extcall 31 .............................. return me
+  [ 20] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oEditStudioManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oEditStudioManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oEditStudioManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oEditStudioManager: " & sMessage
+  [ 19] ret
+end
+
+on editStudioDetail me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"editStudioDetail:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"editStudioDetail:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "editStudioDetail:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("editStudioDetail:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getprop 457 ............................. <pStudioNameEditSprite>
+  [ 19] getchainedprop 14 ....................... <pStudioNameEditSprite.member>
+  [ 21] getobjprop 15 ........................... <pStudioNameEditSprite.member.text>
+  [ 23] setprop 56 .............................. sStudioName = pStudioNameEditSprite.member.text
+  [ 25] getprop 459 ............................. <pStudioDescEditSprite>
+  [ 28] getchainedprop 14 ....................... <pStudioDescEditSprite.member>
+  [ 30] getobjprop 15 ........................... <pStudioDescEditSprite.member.text>
+  [ 32] setlocal 0 .............................. sDescription = pStudioDescEditSprite.member.text
+  [ 34] getglobal 80 ............................ <oStudioManager>
+  [ 36] getprop 79 .............................. <pStudioID>
+  [ 38] getprop 56 .............................. <sStudioName>
+  [ 40] getlocal 0 .............................. <sDescription>
+  [ 42] pusharglistnoret 4 ...................... <oStudioManager, pStudioID, sStudioName, sDescription>
+  [ 44] objcall 481 ............................. oStudioManager.modifyStudio(pStudioID, sStudioName, sDescription)
+  [ 47] ret
+end
+
+on receiveModifyStudioResult me, iError, sStudioName, sDescription
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"receiveModifyStudioResult:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"receiveModifyStudioResult:iError:" && iError>
+  [  7] pushcons 3 .............................. <"sStudioName:">
+  [  9] joinpadstr .............................. <"receiveModifyStudioResult:iError:" && iError && "sStudioName:">
+  [ 10] getprop 56 .............................. <sStudioName>
+  [ 12] joinpadstr .............................. <"receiveModifyStudioResult:iError:" && iError && "sStudioName:" && sStudioName>
+  [ 13] pushcons 4 .............................. <"sDescription:">
+  [ 15] joinpadstr .............................. <"receiveModifyStudioResult:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:">
+  [ 16] getparam 3 .............................. <sDescription>
+  [ 18] joinpadstr .............................. <"receiveModifyStudioResult:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription>
+  [ 19] pusharglistnoret 2 ...................... <me, "receiveModifyStudioResult:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription>
+  [ 21] objcall 4 ............................... me.debug("receiveModifyStudioResult:iError:" && iError && "sStudioName:" && sStudioName && "sDescription:" && sDescription)
+  [ 23] getparam 1 .............................. <iError>
+  [ 25] not ..................................... <not iError>
+  [ 26] jmpifz [ 79] ............................ if not iError then / else
+  [ 29] getprop 480 ............................. <pVerificationSprite>
+  [ 32] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [ 39] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 46] getprop 321 ............................. <pChatLogDisplaySprite>
+  [ 49] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 52] pushint8 2 .............................. <2>
+  [ 54] pusharglist 3 ........................... <pChatLogDisplaySprite, #scriptInstanceList, 2>
+  [ 56] objcall 61 .............................. <pChatLogDisplaySprite.scriptInstanceList[2]>
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 56 ........................... <me.sStudioName>
+  [ 62] setobjprop 228 .......................... pChatLogDisplaySprite.scriptInstanceList[2].pStudioName = me.sStudioName
+  [ 64] pushsymb 331 ............................ <#displayOwner>
+  [ 67] getprop 321 ............................. <pChatLogDisplaySprite>
+  [ 70] pushcons 5 .............................. <"private">
+  [ 72] pusharglistnoret 3 ...................... <#displayOwner, pChatLogDisplaySprite, "private">
+  [ 74] extcall 139 ............................. sendAllSprites(#displayOwner, pChatLogDisplaySprite, "private")
+  [ 76] jmp [ 88]
+  [ 79] pushcons 6 .............................. <"Error:">
+  [ 81] getparam 1 .............................. <iError>
+  [ 83] joinpadstr .............................. <"Error:" && iError>
+  [ 84] pusharglistnoret 1 ...................... <"Error:" && iError>
+  [ 86] extcall 171 ............................. alert("Error:" && iError)
+  [ 88] ret
+end

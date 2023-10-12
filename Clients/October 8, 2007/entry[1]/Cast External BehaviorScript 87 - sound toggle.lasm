@@ -1,0 +1,105 @@
+property pStatus, pHighVolume
+global gSoundLevel, ElementMgr, oStudio
+
+on new me
+  [  0] pushsymb 867 ............................ <#enabled>
+  [  3] setprop 426 ............................. pStatus = #enabled
+  [  6] getparam 0 .............................. <me>
+  [  8] pushfloat32 230.0 ....................... <230.0>
+  [ 13] setobjprop 868 .......................... me.pHighVolume = 230.0
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getobjprop 868 .......................... <me.pHighVolume>
+  [ 21] setglobal 869 ........................... gSoundLevel = me.pHighVolume
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] extcall 78 .............................. return me
+  [ 30] ret
+end
+
+on mouseUp me
+  [  0] getprop 426 ............................. <pStatus>
+  [  3] pushsymb 867 ............................ <#enabled>
+  [  6] eq ...................................... <pStatus = #enabled>
+  [  7] jmpifz [ 41] ............................ if pStatus = #enabled then / else
+  [ 10] pushsymb 870 ............................ <#disabled>
+  [ 13] setprop 426 ............................. pStatus = #disabled
+  [ 16] pushfloat32 0.0 ......................... <0.0>
+  [ 21] setglobal 869 ........................... gSoundLevel = 0.0
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 429 .......................... <me.spriteNum>
+  [ 29] pusharglist 1 ........................... <me.spriteNum>
+  [ 31] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 33] pushcons 0 .............................. <"cc.bottombtn.soundoff">
+  [ 35] setobjprop 424 .......................... sprite(me.spriteNum).pBasename = "cc.bottombtn.soundoff"
+  [ 38] jmp [ 69]
+  [ 41] pushsymb 867 ............................ <#enabled>
+  [ 44] setprop 426 ............................. pStatus = #enabled
+  [ 47] getparam 0 .............................. <me>
+  [ 49] getobjprop 868 .......................... <me.pHighVolume>
+  [ 52] setglobal 869 ........................... gSoundLevel = me.pHighVolume
+  [ 55] getparam 0 .............................. <me>
+  [ 57] getobjprop 429 .......................... <me.spriteNum>
+  [ 60] pusharglist 1 ........................... <me.spriteNum>
+  [ 62] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 64] pushcons 1 .............................. <"cc.bottombtn.sound">
+  [ 66] setobjprop 424 .......................... sprite(me.spriteNum).pBasename = "cc.bottombtn.sound"
+  [ 69] getparam 0 .............................. <me>
+  [ 71] getglobal 869 ........................... <gSoundLevel>
+  [ 74] pusharglistnoret 2 ...................... <me, gSoundLevel>
+  [ 76] objcall 866 ............................. me.setSoundVolumes(gSoundLevel)
+  [ 79] ret
+end
+
+on setSoundVolumes me, theVolume
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] pushint8 8 .............................. <8>
+  [  8] lteq
+  [  9] jmpifz [ 33] ............................ repeat with i = 1 to 8
+  [ 12] getlocal 0 .............................. <i>
+  [ 14] pusharglist 1 ........................... <i>
+  [ 16] extcall 871 ............................. <sound(i)>
+  [ 19] getparam 1 .............................. <theVolume>
+  [ 21] setobjprop 872 .......................... sound(i).volume = theVolume
+  [ 24] pushint8 1
+  [ 26] getlocal 0
+  [ 28] add
+  [ 29] setlocal 0
+  [ 31] endrepeat [  4]
+  [ 33] getglobal 86 ............................ <ElementMgr>
+  [ 35] pusharglist 1 ........................... <ElementMgr>
+  [ 37] extcall 87 .............................. <voidp(ElementMgr)>
+  [ 39] not ..................................... <not voidp(ElementMgr)>
+  [ 40] jmpifz [ 58] ............................ if not voidp(ElementMgr) then
+  [ 43] getglobal 86 ............................ <ElementMgr>
+  [ 45] pusharglist 1 ........................... <ElementMgr>
+  [ 47] objcall 34 .............................. <ElementMgr.getSequencer()>
+  [ 49] setlocal 1 .............................. oSequencer = ElementMgr.getSequencer()
+  [ 51] getlocal 1 .............................. <oSequencer>
+  [ 53] pusharglistnoret 1 ...................... <oSequencer>
+  [ 55] objcall 873 ............................. oSequencer.resetVolume()
+  [ 58] pushsymb 874 ............................ <#getheadlessplayer>
+  [ 61] pusharglist 1 ........................... <#getheadlessplayer>
+  [ 63] extcall 188 ............................. <sendAllSprites(#getheadlessplayer)>
+  [ 65] setlocal 2 .............................. myheadlessplayer = sendAllSprites(#getheadlessplayer)
+  [ 67] getlocal 2 .............................. <myheadlessplayer>
+  [ 69] pusharglist 1 ........................... <myheadlessplayer>
+  [ 71] extcall 87 .............................. <voidp(myheadlessplayer)>
+  [ 73] pushzero ................................ <0>
+  [ 74] eq ...................................... <voidp(myheadlessplayer) = 0>
+  [ 75] jmpifz [104] ............................ if voidp(myheadlessplayer) = 0 then
+  [ 78] getlocal 2 .............................. <myheadlessplayer>
+  [ 80] pusharglist 1 ........................... <myheadlessplayer>
+  [ 82] extcall 177 ............................. <sprite(myheadlessplayer)>
+  [ 84] pushcons 2 .............................. <"_root">
+  [ 86] pushzero ................................ <0>
+  [ 87] pusharglist 3 ........................... <sprite(myheadlessplayer), "_root", 0>
+  [ 89] objcall 875 ............................. <sprite(myheadlessplayer).getVariable("_root", 0)>
+  [ 92] setlocal 3 .............................. myFO = sprite(myheadlessplayer).getVariable("_root", 0)
+  [ 94] getlocal 3 .............................. <myFO>
+  [ 96] getglobal 869 ........................... <gSoundLevel>
+  [ 99] pusharglistnoret 2 ...................... <myFO, gSoundLevel>
+  [101] objcall 876 ............................. myFO.setVolume(gSoundLevel)
+  [104] ret
+end

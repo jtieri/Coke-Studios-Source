@@ -1,0 +1,118 @@
+property pSprite, pAction
+global oCallAlertDisplayManager
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. mylist = [:]
+  [  5] getlocal 0 .............................. <mylist>
+  [  7] pushsymb 96 ............................. <#pAction>
+  [  9] pushsymb 88 ............................. <#comment>
+  [ 11] pushcons 0 .............................. <"Action:">
+  [ 13] pushsymb 89 ............................. <#format>
+  [ 15] pushsymb 94 ............................. <#string>
+  [ 17] pushsymb 91 ............................. <#default>
+  [ 19] pushcons 1 .............................. <"BEEP">
+  [ 21] pushsymb 97 ............................. <#range>
+  [ 23] pushcons 1 .............................. <"BEEP">
+  [ 25] pushcons 2 .............................. <"nothing">
+  [ 27] pushcons 3 .............................. <"prevCall(me)">
+  [ 29] pushcons 4 .............................. <"nextCall(me)">
+  [ 31] pusharglist 4 ........................... <["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]>
+  [ 33] pushlist ................................ <["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]>
+  [ 34] pusharglist 8 ........................... <[#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]]>
+  [ 36] pushproplist ............................ <[#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]]>
+  [ 37] pusharglistnoret 3 ...................... <mylist, #pAction, [#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]]>
+  [ 39] objcall 68 .............................. mylist[#pAction] = [#comment: "Action:", #format: #string, #default: "BEEP", #range: ["BEEP", "nothing", "prevCall(me)", "nextCall(me)"]]
+  [ 41] getlocal 0 .............................. <mylist>
+  [ 43] pusharglistnoret 1 ...................... <mylist>
+  [ 45] extcall 31 .............................. return mylist
+  [ 47] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] ret
+end
+
+on mouseDown me
+  [  0] getprop 96 .............................. <pAction>
+  [  2] pusharglistnoret 1 ...................... <pAction>
+  [  4] extcall 185 ............................. do(pAction)
+  [  6] ret
+end
+
+on mouseWithin me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 190 .......................... <the stillDown>
+  [  4] pusharglist 0 ........................... <>
+  [  6] thebuiltin 191 .......................... <the lastClick>
+  [  8] pushfloat32 0.5 ......................... <0.5>
+  [ 13] pushint8 60 ............................. <60>
+  [ 15] mul ..................................... <0.5 * 60>
+  [ 16] gt ...................................... <the lastClick > (0.5 * 60)>
+  [ 17] and ..................................... <the stillDown and (the lastClick > (0.5 * 60))>
+  [ 18] jmpifz [ 27] ............................ if the stillDown and (the lastClick > (0.5 * 60)) then
+  [ 21] getprop 96 .............................. <pAction>
+  [ 23] pusharglistnoret 1 ...................... <pAction>
+  [ 25] extcall 185 ............................. do(pAction)
+  [ 27] ret
+end
+
+on prevCall me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [  4] pushint8 1 .............................. <1>
+  [  6] sub ..................................... <oCallAlertDisplayManager.iCallAlertNum - 1>
+  [  7] pushzero ................................ <0>
+  [  8] gt ...................................... <(oCallAlertDisplayManager.iCallAlertNum - 1) > 0>
+  [  9] jmpifz [ 26] ............................ if (oCallAlertDisplayManager.iCallAlertNum - 1) > 0 then / else
+  [ 12] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 14] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 16] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] sub ..................................... <oCallAlertDisplayManager.iCallAlertNum - 1>
+  [ 21] setobjprop 23 ........................... oCallAlertDisplayManager.iCallAlertNum = oCallAlertDisplayManager.iCallAlertNum - 1
+  [ 23] jmp [ 34]
+  [ 26] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 28] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 30] getobjprop 41 ........................... <oCallAlertDisplayManager.iCallAlertTotalNum>
+  [ 32] setobjprop 23 ........................... oCallAlertDisplayManager.iCallAlertNum = oCallAlertDisplayManager.iCallAlertTotalNum
+  [ 34] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 36] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 38] getobjprop 20 ........................... <oCallAlertDisplayManager.pCallAlertList>
+  [ 40] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, oCallAlertDisplayManager.pCallAlertList>
+  [ 42] objcall 5 ............................... oCallAlertDisplayManager.displayCallAlert(oCallAlertDisplayManager.pCallAlertList)
+  [ 44] ret
+end
+
+on nextCall me
+  [  0] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  2] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [  4] pushint8 1 .............................. <1>
+  [  6] add ..................................... <oCallAlertDisplayManager.iCallAlertNum + 1>
+  [  7] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [  9] getobjprop 41 ........................... <oCallAlertDisplayManager.iCallAlertTotalNum>
+  [ 11] gt ...................................... <(oCallAlertDisplayManager.iCallAlertNum + 1) > oCallAlertDisplayManager.iCallAlertTotalNum>
+  [ 12] jmpifz [ 24] ............................ if (oCallAlertDisplayManager.iCallAlertNum + 1) > oCallAlertDisplayManager.iCallAlertTotalNum then / else
+  [ 15] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setobjprop 23 ........................... oCallAlertDisplayManager.iCallAlertNum = 1
+  [ 21] jmp [ 35]
+  [ 24] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 26] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 28] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] add ..................................... <oCallAlertDisplayManager.iCallAlertNum + 1>
+  [ 33] setobjprop 23 ........................... oCallAlertDisplayManager.iCallAlertNum = oCallAlertDisplayManager.iCallAlertNum + 1
+  [ 35] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 37] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 39] getobjprop 20 ........................... <oCallAlertDisplayManager.pCallAlertList>
+  [ 41] pusharglistnoret 2 ...................... <oCallAlertDisplayManager, oCallAlertDisplayManager.pCallAlertList>
+  [ 43] objcall 5 ............................... oCallAlertDisplayManager.displayCallAlert(oCallAlertDisplayManager.pCallAlertList)
+  [ 45] ret
+end

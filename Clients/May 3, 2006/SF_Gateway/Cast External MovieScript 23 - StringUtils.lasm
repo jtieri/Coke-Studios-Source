@@ -1,0 +1,127 @@
+on replaceChar sString, sCharToReplace, sReplacementChar
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sNewString = EMPTY
+  [  4] getparam 0 .............................. <sString>
+  [  6] pushsymb 237 ............................ <#chars>
+  [  8] pusharglist 2 ........................... <sString, #chars>
+  [ 10] objcall 42 .............................. <sString.chars.count>
+  [ 12] setlocal 1 .............................. iCharCount = sString.chars.count
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 2
+  [ 18] getlocal 2
+  [ 20] getlocal 1 .............................. <iCharCount>
+  [ 22] lteq
+  [ 23] jmpifz [ 73] ............................ repeat with i = 1 to iCharCount
+  [ 26] getparam 0 .............................. <sString>
+  [ 28] pushsymb 238 ............................ <#char>
+  [ 30] getlocal 2 .............................. <i>
+  [ 32] pusharglist 3 ........................... <sString, #char, i>
+  [ 34] objcall 75 .............................. <sString.char[i]>
+  [ 36] setlocal 3 .............................. sChar = sString.char[i]
+  [ 38] getlocal 3 .............................. <sChar>
+  [ 40] getparam 1 .............................. <sCharToReplace>
+  [ 42] eq ...................................... <sChar = sCharToReplace>
+  [ 43] jmpifz [ 53] ............................ if sChar = sCharToReplace then / else
+  [ 46] getparam 2 .............................. <sReplacementChar>
+  [ 48] setlocal 4 .............................. sNewChar = sReplacementChar
+  [ 50] jmp [ 57]
+  [ 53] getlocal 3 .............................. <sChar>
+  [ 55] setlocal 4 .............................. sNewChar = sChar
+  [ 57] getlocal 0 .............................. <sNewString>
+  [ 59] getlocal 4 .............................. <sNewChar>
+  [ 61] joinstr ................................. <sNewString & sNewChar>
+  [ 62] setlocal 0 .............................. sNewString = sNewString & sNewChar
+  [ 64] pushint8 1
+  [ 66] getlocal 2
+  [ 68] add
+  [ 69] setlocal 2
+  [ 71] endrepeat [ 18]
+  [ 73] getlocal 0 .............................. <sNewString>
+  [ 75] pusharglistnoret 1 ...................... <sNewString>
+  [ 77] extcall 71 .............................. return sNewString
+  [ 79] ret
+end
+
+on putQuotesAroundValues sString
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sNewString = EMPTY
+  [  4] getparam 0 .............................. <sString>
+  [  6] pushsymb 237 ............................ <#chars>
+  [  8] pusharglist 2 ........................... <sString, #chars>
+  [ 10] objcall 42 .............................. <sString.chars.count>
+  [ 12] setlocal 1 .............................. iCharCount = sString.chars.count
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 2
+  [ 18] getlocal 2
+  [ 20] getlocal 1 .............................. <iCharCount>
+  [ 22] lteq
+  [ 23] jmpifz [146] ............................ repeat with i = 1 to iCharCount
+  [ 26] getparam 0 .............................. <sString>
+  [ 28] pushsymb 238 ............................ <#char>
+  [ 30] getlocal 2 .............................. <i>
+  [ 32] pusharglist 3 ........................... <sString, #char, i>
+  [ 34] objcall 75 .............................. <sString.char[i]>
+  [ 36] setlocal 3 .............................. sChar = sString.char[i]
+  [ 38] getlocal 3 .............................. <sChar>
+  [ 40] pushcons 1 .............................. <":">
+  [ 42] eq ...................................... <sChar = ":">
+  [ 43] jmpifz [ 86] ............................ if sChar = ":" then
+  [ 46] getlocal 0 .............................. <sNewString>
+  [ 48] getlocal 3 .............................. <sChar>
+  [ 50] joinstr ................................. <sNewString & sChar>
+  [ 51] setlocal 0 .............................. sNewString = sNewString & sChar
+  [ 53] getparam 0 .............................. <sString>
+  [ 55] pushsymb 238 ............................ <#char>
+  [ 57] getlocal 2 .............................. <i>
+  [ 59] pushint8 1 .............................. <1>
+  [ 61] add ..................................... <i + 1>
+  [ 62] pusharglist 3 ........................... <sString, #char, i + 1>
+  [ 64] objcall 75 .............................. <sString.char[i + 1]>
+  [ 66] setlocal 4 .............................. sNextChar = sString.char[i + 1]
+  [ 68] getlocal 4 .............................. <sNextChar>
+  [ 70] pushcons 2 .............................. <QUOTE>
+  [ 72] nteq .................................... <sNextChar <> QUOTE>
+  [ 73] jmpifz [ 86] ............................ if sNextChar <> QUOTE then
+  [ 76] getlocal 0 .............................. <sNewString>
+  [ 78] pushcons 2 .............................. <QUOTE>
+  [ 80] joinstr ................................. <sNewString & QUOTE>
+  [ 81] setlocal 0 .............................. sNewString = sNewString & QUOTE
+  [ 83] jmp [137] ............................... next repeat
+  [ 86] getlocal 3 .............................. <sChar>
+  [ 88] pushcons 3 .............................. <",">
+  [ 90] eq ...................................... <sChar = ",">
+  [ 91] getlocal 2 .............................. <i>
+  [ 93] getlocal 1 .............................. <iCharCount>
+  [ 95] eq ...................................... <i = iCharCount>
+  [ 96] or ...................................... <(sChar = ",") or (i = iCharCount)>
+  [ 97] jmpifz [130] ............................ if (sChar = ",") or (i = iCharCount) then
+  [100] getparam 0 .............................. <sString>
+  [102] pushsymb 238 ............................ <#char>
+  [104] getlocal 2 .............................. <i>
+  [106] pushint8 1 .............................. <1>
+  [108] sub ..................................... <i - 1>
+  [109] pusharglist 3 ........................... <sString, #char, i - 1>
+  [111] objcall 75 .............................. <sString.char[i - 1]>
+  [113] setlocal 5 .............................. sPrevChar = sString.char[i - 1]
+  [115] getlocal 5 .............................. <sPrevChar>
+  [117] pushcons 2 .............................. <QUOTE>
+  [119] nteq .................................... <sPrevChar <> QUOTE>
+  [120] jmpifz [130] ............................ if sPrevChar <> QUOTE then
+  [123] getlocal 0 .............................. <sNewString>
+  [125] pushcons 2 .............................. <QUOTE>
+  [127] joinstr ................................. <sNewString & QUOTE>
+  [128] setlocal 0 .............................. sNewString = sNewString & QUOTE
+  [130] getlocal 0 .............................. <sNewString>
+  [132] getlocal 3 .............................. <sChar>
+  [134] joinstr ................................. <sNewString & sChar>
+  [135] setlocal 0 .............................. sNewString = sNewString & sChar
+  [137] pushint8 1
+  [139] getlocal 2
+  [141] add
+  [142] setlocal 2
+  [144] endrepeat [ 18]
+  [146] getlocal 0 .............................. <sNewString>
+  [148] pusharglistnoret 1 ...................... <sNewString>
+  [150] extcall 71 .............................. return sNewString
+  [152] ret
+end

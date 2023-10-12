@@ -1,0 +1,161 @@
+property ancestor, iLength, iStartTime
+global oPossessionStudio
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 742 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushint16 10000 ......................... <10000>
+  [ 24] setobjprop 380 .......................... me.iLength = 10000
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getmovieprop 89 ......................... <the milliSeconds>
+  [ 31] setobjprop 867 .......................... me.iStartTime = the milliSeconds
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglistnoret 1 ...................... <me>
+  [ 38] objcall 1214 ............................ me.displayState()
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 1 ...................... <me>
+  [ 45] extcall 92 .............................. return me
+  [ 47] ret
+end
+
+on mouseDownEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 742 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 9 ............................... me.ancestor.mouseDownEvent()
+  [  9] pusharglist 0 ........................... <>
+  [ 11] thebuiltin 919 .......................... <the doubleClick>
+  [ 14] jmpifz [ 24] ............................ if the doubleClick then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 1 ...................... <me>
+  [ 21] objcall 1368 ............................ me.toggleState()
+  [ 24] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 204 ...................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1119 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 18] ............................ if me.oItem.getState() = 0 then
+  [ 14] pusharglistnoret 0 ...................... <>
+  [ 16] extcall 92 .............................. return 
+  [ 18] getmovieprop 89 ......................... <the milliSeconds>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 867 .......................... <me.iStartTime>
+  [ 25] sub ..................................... <the milliSeconds - me.iStartTime>
+  [ 26] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iStartTime
+  [ 28] getlocal 0 .............................. <iElapsedTime>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 380 .......................... <me.iLength>
+  [ 35] gteq .................................... <iElapsedTime >= me.iLength>
+  [ 36] jmpifz [ 46] ............................ if iElapsedTime >= me.iLength then
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglistnoret 1 ...................... <me>
+  [ 43] objcall 1371 ............................ me.setOff()
+  [ 46] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 204 ...................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1181 ............................ me.oItem.setFrame(0)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getchainedprop 204 ...................... <me.oItem>
+  [ 14] pusharglist 1 ........................... <me.oItem>
+  [ 16] objcall 1119 ............................ <me.oItem.getState()>
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <me.oItem.getState() = 0>
+  [ 21] jmpifz [ 37] ............................ if me.oItem.getState() = 0 then / else
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 204 ...................... <me.oItem>
+  [ 28] pushzero ................................ <0>
+  [ 29] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 31] objcall 1182 ............................ me.oItem.setAnimate(0)
+  [ 34] jmp [ 48]
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 204 ...................... <me.oItem>
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 45] objcall 1182 ............................ me.oItem.setAnimate(1)
+  [ 48] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 204 ...................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1119 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 24] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1372 ............................ me.setOn()
+  [ 21] jmp [ 31]
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] objcall 1371 ............................ me.setOff()
+  [ 31] getglobal 268 ........................... <oPossessionStudio>
+  [ 34] pusharglist 1 ........................... <oPossessionStudio>
+  [ 36] extcall 105 ............................. <voidp(oPossessionStudio)>
+  [ 38] not ..................................... <not voidp(oPossessionStudio)>
+  [ 39] jmpifz [ 57] ............................ if not voidp(oPossessionStudio) then
+  [ 42] getglobal 268 ........................... <oPossessionStudio>
+  [ 45] getparam 0 .............................. <me>
+  [ 47] pusharglist 1 ........................... <me>
+  [ 49] objcall 1367 ............................ <me.getItem()>
+  [ 52] pusharglistnoret 2 ...................... <oPossessionStudio, me.getItem()>
+  [ 54] objcall 269 ............................. oPossessionStudio.sendUpdatePossession(me.getItem())
+  [ 57] ret
+end
+
+on setOff me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1381 ............................ me.stopTimer()
+  [  7] ret
+end
+
+on setOn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 1380 ............................ me.startTimer()
+  [  7] getparam 0 .............................. <me>
+  [  9] pusharglistnoret 1 ...................... <me>
+  [ 11] objcall 1214 ............................ me.displayState()
+  [ 14] ret
+end
+
+on startTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 89 ......................... <the milliSeconds>
+  [  4] setobjprop 867 .......................... me.iStartTime = the milliSeconds
+  [  7] getparam 0 .............................. <me>
+  [  9] getchainedprop 204 ...................... <me.oItem>
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 15] objcall 1118 ............................ me.oItem.setState(1)
+  [ 18] ret
+end
+
+on stopTimer me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 204 ...................... <me.oItem>
+  [  4] pushzero ................................ <0>
+  [  5] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [  7] objcall 1118 ............................ me.oItem.setState(0)
+  [ 10] ret
+end

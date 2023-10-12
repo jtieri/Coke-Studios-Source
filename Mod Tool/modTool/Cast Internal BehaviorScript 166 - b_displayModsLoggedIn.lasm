@@ -1,0 +1,98 @@
+property pSprite, sModsLoggedInPrefix, sTimerID
+global oStudioByModManager, oDenizenManager
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pushcons 0 .............................. <"Moderators logged in:">
+  [ 14] setobjprop 547 .......................... me.sModsLoggedInPrefix = "Moderators logged in:"
+  [ 17] getprop 11 .............................. <pSprite>
+  [ 19] getchainedprop 14 ....................... <pSprite.member>
+  [ 21] getparam 0 .............................. <me>
+  [ 23] getobjprop 547 .......................... <me.sModsLoggedInPrefix>
+  [ 26] setobjprop 15 ........................... pSprite.member.text = me.sModsLoggedInPrefix
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushcons 1 .............................. <"UpdateTimer">
+  [ 32] setobjprop 548 .......................... me.sTimerID = "UpdateTimer"
+  [ 35] getparam 0 .............................. <me>
+  [ 37] pusharglistnoret 1 ...................... <me>
+  [ 39] objcall 546 ............................. me.getModsLoggedIn()
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getobjprop 548 .......................... <me.sTimerID>
+  [ 47] pusharglist 1 ........................... <me.sTimerID>
+  [ 49] extcall 549 ............................. <timeout(me.sTimerID)>
+  [ 52] pushint16 30000 ......................... <30000>
+  [ 55] pushsymb 546 ............................ <#getModsLoggedIn>
+  [ 58] getparam 0 .............................. <me>
+  [ 60] pusharglistnoret 4 ...................... <timeout(me.sTimerID), 30000, #getModsLoggedIn, me>
+  [ 62] objcall 236 ............................. timeout(me.sTimerID).new(30000, #getModsLoggedIn, me)
+  [ 64] ret
+end
+
+on getModsLoggedIn me
+  [  0] getglobal 69 ............................ <oDenizenManager>
+  [  2] pusharglistnoret 1 ...................... <oDenizenManager>
+  [  4] objcall 550 ............................. oDenizenManager.getModeratorsOnline()
+  [  7] ret
+end
+
+on displayModsLoggedIn me, aMods
+  [  0] pushcons 2 .............................. <"displayModsLoggedIn() ">
+  [  2] getparam 1 .............................. <aMods>
+  [  4] joinstr ................................. <"displayModsLoggedIn() " & aMods>
+  [  5] pusharglistnoret 1 ...................... <"displayModsLoggedIn() " & aMods>
+  [  7] extcall 38 .............................. put "displayModsLoggedIn() " & aMods
+  [  9] getparam 1 .............................. <aMods>
+  [ 11] pusharglist 1 ........................... <aMods>
+  [ 13] objcall 32 .............................. <aMods.count()>
+  [ 15] setlocal 0 .............................. iLength = aMods.count()
+  [ 17] getlocal 0 .............................. <iLength>
+  [ 19] pushzero ................................ <0>
+  [ 20] eq ...................................... <iLength = 0>
+  [ 21] jmpifz [ 28] ............................ if iLength = 0 then
+  [ 24] pusharglistnoret 0 ...................... <>
+  [ 26] extcall 31 .............................. return 
+  [ 28] pushcons 3 .............................. <EMPTY>
+  [ 30] setlocal 1 .............................. sModsLoggedIn = EMPTY
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] setlocal 2
+  [ 36] getlocal 2
+  [ 38] getlocal 0 .............................. <iLength>
+  [ 40] lteq
+  [ 41] jmpifz [ 85] ............................ repeat with i = 1 to iLength
+  [ 44] getparam 1 .............................. <aMods>
+  [ 46] getlocal 2 .............................. <i>
+  [ 48] pusharglist 2 ........................... <aMods, i>
+  [ 50] objcall 33 .............................. <aMods[i]>
+  [ 52] setlocal 3 .............................. sMod = aMods[i]
+  [ 54] getlocal 1 .............................. <sModsLoggedIn>
+  [ 56] getlocal 3 .............................. <sMod>
+  [ 58] joinstr ................................. <sModsLoggedIn & sMod>
+  [ 59] setlocal 1 .............................. sModsLoggedIn = sModsLoggedIn & sMod
+  [ 61] getlocal 2 .............................. <i>
+  [ 63] getlocal 0 .............................. <iLength>
+  [ 65] nteq .................................... <i <> iLength>
+  [ 66] jmpifz [ 76] ............................ if i <> iLength then
+  [ 69] getlocal 1 .............................. <sModsLoggedIn>
+  [ 71] pushcons 4 .............................. <", ">
+  [ 73] joinstr ................................. <sModsLoggedIn & ", ">
+  [ 74] setlocal 1 .............................. sModsLoggedIn = sModsLoggedIn & ", "
+  [ 76] pushint8 1
+  [ 78] getlocal 2
+  [ 80] add
+  [ 81] setlocal 2
+  [ 83] endrepeat [ 36]
+  [ 85] getparam 0 .............................. <me>
+  [ 87] getchainedprop 11 ....................... <me.pSprite>
+  [ 89] getchainedprop 14 ....................... <me.pSprite.member>
+  [ 91] getparam 0 .............................. <me>
+  [ 93] getobjprop 547 .......................... <me.sModsLoggedInPrefix>
+  [ 96] getlocal 1 .............................. <sModsLoggedIn>
+  [ 98] joinpadstr .............................. <me.sModsLoggedInPrefix && sModsLoggedIn>
+  [ 99] setobjprop 15 ........................... me.pSprite.member.text = me.sModsLoggedInPrefix && sModsLoggedIn
+  [101] ret
+end

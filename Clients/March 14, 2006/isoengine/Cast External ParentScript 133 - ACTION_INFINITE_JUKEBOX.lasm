@@ -1,0 +1,84 @@
+property ancestor
+global oPossessionStudio, ElementMgr, oStudio, oIsoScene
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 52 .............................. return me
+  [ 25] ret
+end
+
+on mouseDownEvent me, bDoubleClick
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 950 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 295 ............................. me.ancestor.mouseDownEvent()
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getparam 1 .............................. <bDoubleClick>
+  [ 14] pusharglist 2 ........................... <me, bDoubleClick>
+  [ 16] objcall 1574 ............................ <me.select(bDoubleClick)>
+  [ 19] pusharglistnoret 1 ...................... <me.select(bDoubleClick)>
+  [ 21] extcall 52 .............................. return me.select(bDoubleClick)
+  [ 23] ret
+end
+
+on toggleState me
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglistnoret 1 ...................... <oStudio>
+  [  4] objcall 1625 ............................ oStudio.sendJukeboxRequest()
+  [  7] ret
+end
+
+on displayState me
+  [  0] pushcons 1 .............................. <"jukebox furni received displaystate">
+  [  2] pusharglistnoret 1 ...................... <"jukebox furni received displaystate">
+  [  4] extcall 168 ............................. put "jukebox furni received displaystate"
+  [  6] getparam 0 .............................. <me>
+  [  8] getchainedprop 58 ....................... <me.oItem>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getchainedprop 58 ....................... <me.oItem>
+  [ 14] pusharglist 1 ........................... <me.oItem>
+  [ 16] objcall 1336 ............................ <me.oItem.getState()>
+  [ 19] pusharglistnoret 2 ...................... <me.oItem, me.oItem.getState()>
+  [ 21] objcall 1392 ............................ me.oItem.setFrame(me.oItem.getState())
+  [ 24] ret
+end
+
+on select me, bDoubleClick
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 58 ........................... <me.oItem>
+  [  6] pusharglistnoret 2 ...................... <oIsoScene, me.oItem>
+  [  8] objcall 302 ............................. oIsoScene.moveAvatarToFrontOfItem(me.oItem)
+  [ 11] getparam 1 .............................. <bDoubleClick>
+  [ 13] jmpifz [ 23] ............................ if bDoubleClick then
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 1 ...................... <me>
+  [ 20] objcall 269 ............................. me.use()
+  [ 23] pushzero ................................ <0>
+  [ 24] pusharglistnoret 1 ...................... <0>
+  [ 26] extcall 52 .............................. return 0
+  [ 28] ret
+end
+
+on use me
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 58 ........................... <me.oItem>
+  [  6] pusharglist 2 ........................... <oIsoScene, me.oItem>
+  [  8] objcall 303 ............................. <oIsoScene.avatarIsInFrontOfItem(me.oItem)>
+  [ 11] jmpifz [ 21] ............................ if oIsoScene.avatarIsInFrontOfItem(me.oItem) then
+  [ 14] getglobal 64 ............................ <oStudio>
+  [ 16] pusharglistnoret 1 ...................... <oStudio>
+  [ 18] objcall 1625 ............................ oStudio.sendJukeboxRequest()
+  [ 21] ret
+end

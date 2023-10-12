@@ -1,0 +1,358 @@
+property bDebug, bInitialized, bReadyForuse, aStudioData
+global sLanguageSetting, oStudioManager, oPublicstudioData, sPublicStudioText
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 28 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushzero ................................ <0>
+  [  9] setobjprop 29 ........................... me.bInitialized = 0
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushzero ................................ <0>
+  [ 14] setobjprop 30 ........................... me.bReadyForuse = 0
+  [ 16] getparam 0 .............................. <me>
+  [ 18] setglobal 31 ............................ oPublicstudioData = me
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 0 ........................... <[]>
+  [ 24] pushlist ................................ <[]>
+  [ 25] setobjprop 32 ........................... me.aStudioData = []
+  [ 27] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 29 ........................... <me.bInitialized>
+  [  4] not ..................................... <not me.bInitialized>
+  [  5] jmpifz [ 26] ............................ if not me.bInitialized then
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] objcall 21 .............................. me.loadData()
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setobjprop 29 ........................... me.bInitialized = 1
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 26] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 28 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"PublicStudioData: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"PublicStudioData: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"PublicStudioData: " & sMessage>
+  [ 17] extcall 33 .............................. put "PublicStudioData: " & sMessage
+  [ 19] ret
+end
+
+on loadData me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"loadData()">
+  [  4] pusharglistnoret 2 ...................... <me, "loadData()">
+  [  6] objcall 20 .............................. me.debug("loadData()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 30 ........................... me.bReadyForuse = 1
+  [ 14] pushcons 2 .............................. <"Xml">
+  [ 16] pusharglist 1 ........................... <"Xml">
+  [ 18] extcall 36 .............................. <newObject("Xml")>
+  [ 20] setlocal 0 .............................. oXml = newObject("Xml")
+  [ 22] getlocal 0 .............................. <oXml>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] setobjprop 37 ........................... oXml.ignoreWhite = 1
+  [ 28] getlocal 0 .............................. <oXml>
+  [ 30] getglobal 38 ............................ <sPublicStudioText>
+  [ 32] pusharglistnoret 2 ...................... <oXml, sPublicStudioText>
+  [ 34] objcall 39 .............................. oXml.parseXML(sPublicStudioText)
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pusharglist 0 ........................... <[]>
+  [ 40] pushlist ................................ <[]>
+  [ 41] setobjprop 32 ........................... me.aStudioData = []
+  [ 43] getlocal 0 .............................. <oXml>
+  [ 45] getobjprop 41 ........................... <oXml.firstChild>
+  [ 47] pushcons 3 .............................. <"Studio">
+  [ 49] pusharglist 2 ........................... <oXml.firstChild, "Studio">
+  [ 51] extcall 40 .............................. <getNodes(oXml.firstChild, "Studio")>
+  [ 53] setlocal 1 .............................. aStudioNodes = getNodes(oXml.firstChild, "Studio")
+  [ 55] pushint8 1 .............................. <1>
+  [ 57] setlocal 2
+  [ 59] getlocal 2
+  [ 61] getlocal 1 .............................. <aStudioNodes>
+  [ 63] getobjprop 42 ........................... <aStudioNodes.count>
+  [ 65] lteq
+  [ 66] jmpifz [223] ............................ repeat with i = 1 to aStudioNodes.count
+  [ 69] getlocal 1 .............................. <aStudioNodes>
+  [ 71] getlocal 2 .............................. <i>
+  [ 73] pusharglist 2 ........................... <aStudioNodes, i>
+  [ 75] objcall 43 .............................. <aStudioNodes[i]>
+  [ 77] setlocal 3 .............................. oStudioNode = aStudioNodes[i]
+  [ 79] getlocal 3 .............................. <oStudioNode>
+  [ 81] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [ 83] getobjprop 45 ........................... <oStudioNode.attributes.studioId>
+  [ 85] setlocal 4 .............................. sStudioID = oStudioNode.attributes.studioId
+  [ 87] getlocal 3 .............................. <oStudioNode>
+  [ 89] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [ 91] getobjprop 46 ........................... <oStudioNode.attributes.name>
+  [ 93] setlocal 5 .............................. sName = oStudioNode.attributes.name
+  [ 95] getlocal 3 .............................. <oStudioNode>
+  [ 97] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [ 99] getobjprop 47 ........................... <oStudioNode.attributes.description>
+  [101] setlocal 6 .............................. sDescription = oStudioNode.attributes.description
+  [103] getlocal 3 .............................. <oStudioNode>
+  [105] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [107] getobjprop 49 ........................... <oStudioNode.attributes.userCount>
+  [109] pusharglist 1 ........................... <oStudioNode.attributes.userCount>
+  [111] extcall 48 .............................. <integer(oStudioNode.attributes.userCount)>
+  [113] setlocal 7 .............................. iUserCount = integer(oStudioNode.attributes.userCount)
+  [115] getlocal 3 .............................. <oStudioNode>
+  [117] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [119] getobjprop 50 ........................... <oStudioNode.attributes.capacity>
+  [121] pusharglist 1 ........................... <oStudioNode.attributes.capacity>
+  [123] extcall 48 .............................. <integer(oStudioNode.attributes.capacity)>
+  [125] setlocal 8 .............................. iCapacity = integer(oStudioNode.attributes.capacity)
+  [127] getlocal 3 .............................. <oStudioNode>
+  [129] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [131] getobjprop 51 ........................... <oStudioNode.attributes.location>
+  [133] pusharglist 1 ........................... <oStudioNode.attributes.location>
+  [135] extcall 48 .............................. <integer(oStudioNode.attributes.location)>
+  [137] setlocal 9 .............................. iLocation = integer(oStudioNode.attributes.location)
+  [139] getlocal 3 .............................. <oStudioNode>
+  [141] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [143] getobjprop 52 ........................... <oStudioNode.attributes.layout>
+  [145] pusharglist 1 ........................... <oStudioNode.attributes.layout>
+  [147] extcall 48 .............................. <integer(oStudioNode.attributes.layout)>
+  [149] setlocal 10 ............................. iLayout = integer(oStudioNode.attributes.layout)
+  [151] getlocal 3 .............................. <oStudioNode>
+  [153] getchainedprop 44 ....................... <oStudioNode.attributes>
+  [155] getobjprop 53 ........................... <oStudioNode.attributes.owner>
+  [157] setlocal 11 ............................. sOwner = oStudioNode.attributes.owner
+  [159] pushcons 4 .............................. <EMPTY>
+  [161] setlocal 12 ............................. sServer = EMPTY
+  [163] pushsymb 45 ............................. <#studioId>
+  [165] getlocal 4 .............................. <sStudioID>
+  [167] pushsymb 46 ............................. <#name>
+  [169] getlocal 5 .............................. <sName>
+  [171] pushsymb 47 ............................. <#description>
+  [173] getlocal 6 .............................. <sDescription>
+  [175] pushsymb 49 ............................. <#userCount>
+  [177] getlocal 7 .............................. <iUserCount>
+  [179] pushsymb 50 ............................. <#capacity>
+  [181] getlocal 8 .............................. <iCapacity>
+  [183] pushsymb 51 ............................. <#location>
+  [185] getlocal 9 .............................. <iLocation>
+  [187] pushsymb 52 ............................. <#layout>
+  [189] getlocal 10 ............................. <iLayout>
+  [191] pushsymb 53 ............................. <#owner>
+  [193] getlocal 11 ............................. <sOwner>
+  [195] pushsymb 54 ............................. <#server>
+  [197] getlocal 12 ............................. <sServer>
+  [199] pusharglist 18 .......................... <[#studioId: sStudioID, #name: sName, #description: sDescription, #userCount: iUserCount, #capacity: iCapacity, #location: iLocation, #layout: iLayout, #owner: sOwner, #server: sServer]>
+  [201] pushproplist ............................ <[#studioId: sStudioID, #name: sName, #description: sDescription, #userCount: iUserCount, #capacity: iCapacity, #location: iLocation, #layout: iLayout, #owner: sOwner, #server: sServer]>
+  [202] setlocal 13 ............................. aStudio = [#studioId: sStudioID, #name: sName, #description: sDescription, #userCount: iUserCount, #capacity: iCapacity, #location: iLocation, #layout: iLayout, #owner: sOwner, #server: sServer]
+  [204] getparam 0 .............................. <me>
+  [206] getchainedprop 32 ....................... <me.aStudioData>
+  [208] getlocal 13 ............................. <aStudio>
+  [210] pusharglistnoret 2 ...................... <me.aStudioData, aStudio>
+  [212] objcall 55 .............................. me.aStudioData.add(aStudio)
+  [214] pushint8 1
+  [216] getlocal 2
+  [218] add
+  [219] setlocal 2
+  [221] endrepeat [ 59]
+  [223] pusharglistnoret 0 ...................... <>
+  [225] extcall 56 .............................. nothing()
+  [227] ret
+end
+
+on getStudioData me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 32 ........................... <me.aStudioData>
+  [  4] pusharglistnoret 1 ...................... <me.aStudioData>
+  [  6] extcall 71 .............................. return me.aStudioData
+  [  8] ret
+end
+
+on updateStudio me, sStudioID, iUserCount, iCapacity, iLocation, sServer
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <sStudioID>
+  [  4] pusharglist 2 ........................... <me, sStudioID>
+  [  6] objcall 25 .............................. <me.getStudioIndex(sStudioID)>
+  [  8] setlocal 0 .............................. iIndex = me.getStudioIndex(sStudioID)
+  [ 10] getlocal 0 .............................. <iIndex>
+  [ 12] pusharglist 1 ........................... <iIndex>
+  [ 14] extcall 15 .............................. <voidp(iIndex)>
+  [ 16] not ..................................... <not voidp(iIndex)>
+  [ 17] jmpifz [ 92] ............................ if not voidp(iIndex) then
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushsymb 32 ............................. <#aStudioData>
+  [ 24] getlocal 0 .............................. <iIndex>
+  [ 26] pusharglist 3 ........................... <me, #aStudioData, iIndex>
+  [ 28] objcall 72 .............................. <me.aStudioData[iIndex]>
+  [ 30] pushsymb 49 ............................. <#userCount>
+  [ 32] getparam 2 .............................. <iUserCount>
+  [ 34] pusharglistnoret 3 ...................... <me.aStudioData[iIndex], #userCount, iUserCount>
+  [ 36] objcall 73 .............................. me.aStudioData[iIndex][#userCount] = iUserCount
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushsymb 32 ............................. <#aStudioData>
+  [ 42] getlocal 0 .............................. <iIndex>
+  [ 44] pusharglist 3 ........................... <me, #aStudioData, iIndex>
+  [ 46] objcall 72 .............................. <me.aStudioData[iIndex]>
+  [ 48] pushsymb 50 ............................. <#capacity>
+  [ 50] getparam 3 .............................. <iCapacity>
+  [ 52] pusharglistnoret 3 ...................... <me.aStudioData[iIndex], #capacity, iCapacity>
+  [ 54] objcall 73 .............................. me.aStudioData[iIndex][#capacity] = iCapacity
+  [ 56] getparam 0 .............................. <me>
+  [ 58] pushsymb 32 ............................. <#aStudioData>
+  [ 60] getlocal 0 .............................. <iIndex>
+  [ 62] pusharglist 3 ........................... <me, #aStudioData, iIndex>
+  [ 64] objcall 72 .............................. <me.aStudioData[iIndex]>
+  [ 66] pushsymb 51 ............................. <#location>
+  [ 68] getparam 4 .............................. <iLocation>
+  [ 70] pusharglistnoret 3 ...................... <me.aStudioData[iIndex], #location, iLocation>
+  [ 72] objcall 73 .............................. me.aStudioData[iIndex][#location] = iLocation
+  [ 74] getparam 0 .............................. <me>
+  [ 76] pushsymb 32 ............................. <#aStudioData>
+  [ 78] getlocal 0 .............................. <iIndex>
+  [ 80] pusharglist 3 ........................... <me, #aStudioData, iIndex>
+  [ 82] objcall 72 .............................. <me.aStudioData[iIndex]>
+  [ 84] pushsymb 54 ............................. <#server>
+  [ 86] getparam 5 .............................. <sServer>
+  [ 88] pusharglistnoret 3 ...................... <me.aStudioData[iIndex], #server, sServer>
+  [ 90] objcall 73 .............................. me.aStudioData[iIndex][#server] = sServer
+  [ 92] ret
+end
+
+on getStudio me, sStudioID
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getprop 32 .............................. <aStudioData>
+  [  8] getobjprop 42 ........................... <aStudioData.count>
+  [ 10] lteq
+  [ 11] jmpifz [ 55] ............................ repeat with i = 1 to aStudioData.count
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushsymb 32 ............................. <#aStudioData>
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 3 ........................... <me, #aStudioData, i>
+  [ 22] objcall 75 .............................. <me.aStudioData[i]>
+  [ 24] setlocal 1 .............................. oStudio = me.aStudioData[i]
+  [ 26] getlocal 1 .............................. <oStudio>
+  [ 28] pushsymb 45 ............................. <#studioId>
+  [ 30] pusharglist 2 ........................... <oStudio, #studioId>
+  [ 32] objcall 43 .............................. <oStudio[#studioId]>
+  [ 34] getparam 1 .............................. <sStudioID>
+  [ 36] eq ...................................... <oStudio[#studioId] = sStudioID>
+  [ 37] jmpifz [ 46] ............................ if oStudio[#studioId] = sStudioID then
+  [ 40] getlocal 1 .............................. <oStudio>
+  [ 42] pusharglistnoret 1 ...................... <oStudio>
+  [ 44] extcall 71 .............................. return oStudio
+  [ 46] pushint8 1
+  [ 48] getlocal 0
+  [ 50] add
+  [ 51] setlocal 0
+  [ 53] endrepeat [  4]
+  [ 55] ret
+end
+
+on getStudioIndex me, sStudioID
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getprop 32 .............................. <aStudioData>
+  [  8] getobjprop 42 ........................... <aStudioData.count>
+  [ 10] lteq
+  [ 11] jmpifz [ 55] ............................ repeat with i = 1 to aStudioData.count
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushsymb 32 ............................. <#aStudioData>
+  [ 18] getlocal 0 .............................. <i>
+  [ 20] pusharglist 3 ........................... <me, #aStudioData, i>
+  [ 22] objcall 75 .............................. <me.aStudioData[i]>
+  [ 24] setlocal 1 .............................. oStudio = me.aStudioData[i]
+  [ 26] getlocal 1 .............................. <oStudio>
+  [ 28] pushsymb 45 ............................. <#studioId>
+  [ 30] pusharglist 2 ........................... <oStudio, #studioId>
+  [ 32] objcall 43 .............................. <oStudio[#studioId]>
+  [ 34] getparam 1 .............................. <sStudioID>
+  [ 36] eq ...................................... <oStudio[#studioId] = sStudioID>
+  [ 37] jmpifz [ 46] ............................ if oStudio[#studioId] = sStudioID then
+  [ 40] getlocal 0 .............................. <i>
+  [ 42] pusharglistnoret 1 ...................... <i>
+  [ 44] extcall 71 .............................. return i
+  [ 46] pushint8 1
+  [ 48] getlocal 0
+  [ 50] add
+  [ 51] setlocal 0
+  [ 53] endrepeat [  4]
+  [ 55] ret
+end
+
+on syncWithServer me, oResult
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aSyncData = []
+  [  5] getparam 1 .............................. <oResult>
+  [  7] getobjprop 77 ........................... <oResult.length>
+  [  9] setlocal 1 .............................. iLength = oResult.length
+  [ 11] pushzero ................................ <0>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] getlocal 1 .............................. <iLength>
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] sub ..................................... <iLength - 1>
+  [ 21] lteq
+  [ 22] jmpifz [ 92] ............................ repeat with i = 0 to iLength - 1
+  [ 25] getparam 1 .............................. <oResult>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <oResult, i>
+  [ 31] objcall 43 .............................. <oResult[i]>
+  [ 33] setlocal 3 .............................. oStudio = oResult[i]
+  [ 35] getlocal 3 .............................. <oStudio>
+  [ 37] pusharglist 1 ........................... <oStudio>
+  [ 39] objcall 78 .............................. <oStudio.getStudioID()>
+  [ 41] setlocal 4 .............................. sStudioID = oStudio.getStudioID()
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getlocal 4 .............................. <sStudioID>
+  [ 47] pusharglist 2 ........................... <me, sStudioID>
+  [ 49] objcall 24 .............................. <me.getStudio(sStudioID)>
+  [ 51] setlocal 5 .............................. aStudio = me.getStudio(sStudioID)
+  [ 53] getlocal 5 .............................. <aStudio>
+  [ 55] pusharglist 1 ........................... <aStudio>
+  [ 57] extcall 15 .............................. <voidp(aStudio)>
+  [ 59] not ..................................... <not voidp(aStudio)>
+  [ 60] jmpifz [ 74] ............................ if not voidp(aStudio) then
+  [ 63] getlocal 0 .............................. <aSyncData>
+  [ 65] getlocal 5 .............................. <aStudio>
+  [ 67] pusharglistnoret 2 ...................... <aSyncData, aStudio>
+  [ 69] objcall 55 .............................. aSyncData.add(aStudio)
+  [ 71] jmp [ 83] ............................... next repeat
+  [ 74] pushcons 5 .............................. <"studio was null: ">
+  [ 76] getlocal 4 .............................. <sStudioID>
+  [ 78] joinstr ................................. <"studio was null: " & sStudioID>
+  [ 79] pusharglistnoret 1 ...................... <"studio was null: " & sStudioID>
+  [ 81] extcall 33 .............................. put "studio was null: " & sStudioID
+  [ 83] pushint8 1
+  [ 85] getlocal 2
+  [ 87] add
+  [ 88] setlocal 2
+  [ 90] endrepeat [ 14]
+  [ 92] getlocal 0 .............................. <aSyncData>
+  [ 94] pusharglistnoret 1 ...................... <aSyncData>
+  [ 96] extcall 71 .............................. return aSyncData
+  [ 98] ret
+end
+
+on getPublicStudioDataSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] pusharglistnoret 1 ...................... <sprite(me.spriteNum)>
+  [ 10] extcall 71 .............................. return sprite(me.spriteNum)
+  [ 12] ret
+end

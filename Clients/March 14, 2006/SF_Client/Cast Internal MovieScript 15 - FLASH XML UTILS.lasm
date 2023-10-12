@@ -1,0 +1,233 @@
+on getNode oXml, sNodeName
+  [  0] getparam 0 .............................. <oXml>
+  [  2] getobjprop 162 .......................... <oXml.childNodes>
+  [  4] setlocal 0 .............................. aChildren = oXml.childNodes
+  [  6] pushzero ................................ <0>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getlocal 0 .............................. <aChildren>
+  [ 13] getobjprop 163 .......................... <aChildren.length>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] sub ..................................... <aChildren.length - 1>
+  [ 18] lteq
+  [ 19] jmpifz [ 57] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 22] getlocal 0 .............................. <aChildren>
+  [ 24] getlocal 1 .............................. <i>
+  [ 26] pusharglist 2 ........................... <aChildren, i>
+  [ 28] objcall 52 .............................. <aChildren[i]>
+  [ 30] setlocal 2 .............................. oNode = aChildren[i]
+  [ 32] getlocal 2 .............................. <oNode>
+  [ 34] getobjprop 164 .......................... <oNode.nodeName>
+  [ 36] getparam 1 .............................. <sNodeName>
+  [ 38] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 39] jmpifz [ 48] ............................ if oNode.nodeName = sNodeName then
+  [ 42] getlocal 2 .............................. <oNode>
+  [ 44] pusharglistnoret 1 ...................... <oNode>
+  [ 46] extcall 59 .............................. return oNode
+  [ 48] pushint8 1
+  [ 50] getlocal 1
+  [ 52] add
+  [ 53] setlocal 1
+  [ 55] endrepeat [  9]
+  [ 57] ret
+end
+
+on getNodes oXml, sNodeName
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNodes = []
+  [  5] getparam 0 .............................. <oXml>
+  [  7] getobjprop 162 .......................... <oXml.childNodes>
+  [  9] setlocal 1 .............................. aChildren = oXml.childNodes
+  [ 11] pushzero ................................ <0>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] getlocal 1 .............................. <aChildren>
+  [ 18] getobjprop 163 .......................... <aChildren.length>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] sub ..................................... <aChildren.length - 1>
+  [ 23] lteq
+  [ 24] jmpifz [ 64] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 27] getlocal 1 .............................. <aChildren>
+  [ 29] getlocal 2 .............................. <i>
+  [ 31] pusharglist 2 ........................... <aChildren, i>
+  [ 33] objcall 52 .............................. <aChildren[i]>
+  [ 35] setlocal 3 .............................. oNode = aChildren[i]
+  [ 37] getlocal 3 .............................. <oNode>
+  [ 39] getobjprop 164 .......................... <oNode.nodeName>
+  [ 41] getparam 1 .............................. <sNodeName>
+  [ 43] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 44] jmpifz [ 55] ............................ if oNode.nodeName = sNodeName then
+  [ 47] getlocal 0 .............................. <aNodes>
+  [ 49] getlocal 3 .............................. <oNode>
+  [ 51] pusharglistnoret 2 ...................... <aNodes, oNode>
+  [ 53] objcall 92 .............................. aNodes.add(oNode)
+  [ 55] pushint8 1
+  [ 57] getlocal 2
+  [ 59] add
+  [ 60] setlocal 2
+  [ 62] endrepeat [ 14]
+  [ 64] getlocal 0 .............................. <aNodes>
+  [ 66] pusharglistnoret 1 ...................... <aNodes>
+  [ 68] extcall 59 .............................. return aNodes
+  [ 70] ret
+end
+
+on stripChars sString, aStripChars
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sNewString = EMPTY
+  [  4] getparam 0 .............................. <sString>
+  [  6] pushsymb 170 ............................ <#chars>
+  [  8] pusharglist 2 ........................... <sString, #chars>
+  [ 10] objcall 51 .............................. <sString.chars.count>
+  [ 12] setlocal 1 .............................. iLength = sString.chars.count
+  [ 14] pushint8 1 .............................. <1>
+  [ 16] setlocal 2
+  [ 18] getlocal 2
+  [ 20] getlocal 1 .............................. <iLength>
+  [ 22] lteq
+  [ 23] jmpifz [120] ............................ repeat with i = 1 to iLength
+  [ 26] getparam 0 .............................. <sString>
+  [ 28] pushsymb 171 ............................ <#char>
+  [ 30] getlocal 2 .............................. <i>
+  [ 32] pusharglist 3 ........................... <sString, #char, i>
+  [ 34] objcall 128 ............................. <sString.char[i]>
+  [ 36] setlocal 3 .............................. sTestChar = sString.char[i]
+  [ 38] getlocal 3 .............................. <sTestChar>
+  [ 40] pusharglist 1 ........................... <sTestChar>
+  [ 42] extcall 172 ............................. <charToNum(sTestChar)>
+  [ 44] setlocal 4 .............................. iTestCharNum = charToNum(sTestChar)
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] setlocal 5 .............................. bAddChar = 1
+  [ 50] getparam 1 .............................. <aStripChars>
+  [ 52] peek 0
+  [ 54] pusharglist 1
+  [ 56] extcall 51
+  [ 58] pushint8 1
+  [ 60] peek 0
+  [ 62] peek 2
+  [ 64] lteq
+  [ 65] jmpifz [ 97] ............................ repeat with iCharNum in aStripChars
+  [ 68] peek 2
+  [ 70] peek 1
+  [ 72] pusharglist 2
+  [ 74] extcall 52
+  [ 76] setlocal 6
+  [ 78] getlocal 4 .............................. <iTestCharNum>
+  [ 80] getlocal 6 .............................. <iCharNum>
+  [ 82] eq ...................................... <iTestCharNum = iCharNum>
+  [ 83] jmpifz [ 92] ............................ if iTestCharNum = iCharNum then
+  [ 86] pushzero ................................ <0>
+  [ 87] setlocal 5 .............................. bAddChar = 0
+  [ 89] jmp [ 97] ............................... exit repeat
+  [ 92] pushint8 1
+  [ 94] add
+  [ 95] endrepeat [ 60]
+  [ 97] pop 3
+  [ 99] getlocal 5 .............................. <bAddChar>
+  [101] jmpifz [111] ............................ if bAddChar then
+  [104] getlocal 0 .............................. <sNewString>
+  [106] getlocal 3 .............................. <sTestChar>
+  [108] joinstr ................................. <sNewString & sTestChar>
+  [109] setlocal 0 .............................. sNewString = sNewString & sTestChar
+  [111] pushint8 1
+  [113] getlocal 2
+  [115] add
+  [116] setlocal 2
+  [118] endrepeat [ 18]
+  [120] getlocal 0 .............................. <sNewString>
+  [122] pusharglist 1 ........................... <sNewString>
+  [124] localcall 3 ............................. <stripEdgeQuotes(sNewString)>
+  [126] setlocal 0 .............................. sNewString = stripEdgeQuotes(sNewString)
+  [128] getlocal 0 .............................. <sNewString>
+  [130] pusharglistnoret 1 ...................... <sNewString>
+  [132] extcall 59 .............................. return sNewString
+  [134] ret
+end
+
+on stripEdgeQuotes sString
+  [  0] getparam 0 .............................. <sString>
+  [  2] pushsymb 171 ............................ <#char>
+  [  4] pushint8 1 .............................. <1>
+  [  6] pusharglist 3 ........................... <sString, #char, 1>
+  [  8] objcall 128 ............................. <sString.char[1]>
+  [ 10] pushcons 1 .............................. <QUOTE>
+  [ 12] eq ...................................... <sString.char[1] = QUOTE>
+  [ 13] jmpifz [ 31] ............................ if sString.char[1] = QUOTE then
+  [ 16] pushzero ................................ <0>
+  [ 17] pushchunkvarref 4 ....................... <sString>
+  [ 19] pushsymb 171 ............................ <#char>
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] pusharglist 3 ........................... <sString, #char, 1>
+  [ 25] objcall 143 ............................. <sString.char[1]>
+  [ 27] pusharglistnoret 1 ...................... <sString.char[1]>
+  [ 29] objcall 180 ............................. delete sString.char[1]
+  [ 31] getparam 0 .............................. <sString>
+  [ 33] pushsymb 170 ............................ <#chars>
+  [ 35] pusharglist 2 ........................... <sString, #chars>
+  [ 37] objcall 51 .............................. <sString.chars.count>
+  [ 39] setlocal 0 .............................. iLength = sString.chars.count
+  [ 41] getparam 0 .............................. <sString>
+  [ 43] pushsymb 171 ............................ <#char>
+  [ 45] getlocal 0 .............................. <iLength>
+  [ 47] pusharglist 3 ........................... <sString, #char, iLength>
+  [ 49] objcall 128 ............................. <sString.char[iLength]>
+  [ 51] pushcons 1 .............................. <QUOTE>
+  [ 53] eq ...................................... <sString.char[iLength] = QUOTE>
+  [ 54] jmpifz [ 72] ............................ if sString.char[iLength] = QUOTE then
+  [ 57] pushzero ................................ <0>
+  [ 58] pushchunkvarref 4 ....................... <sString>
+  [ 60] pushsymb 171 ............................ <#char>
+  [ 62] getlocal 0 .............................. <iLength>
+  [ 64] pusharglist 3 ........................... <sString, #char, iLength>
+  [ 66] objcall 143 ............................. <sString.char[iLength]>
+  [ 68] pusharglistnoret 1 ...................... <sString.char[iLength]>
+  [ 70] objcall 180 ............................. delete sString.char[iLength]
+  [ 72] getparam 0 .............................. <sString>
+  [ 74] pusharglistnoret 1 ...................... <sString>
+  [ 76] extcall 59 .............................. return sString
+  [ 78] ret
+end
+
+on stripChar sString, iCharNum
+  [  0] pushcons 0 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sNewString = EMPTY
+  [  4] pushint8 1 .............................. <1>
+  [  6] setlocal 1
+  [  8] getlocal 1
+  [ 10] getparam 0 .............................. <sString>
+  [ 12] pushsymb 170 ............................ <#chars>
+  [ 14] pusharglist 2 ........................... <sString, #chars>
+  [ 16] objcall 51 .............................. <sString.chars.count>
+  [ 18] lteq
+  [ 19] jmpifz [ 72] ............................ repeat with i = 1 to sString.chars.count
+  [ 22] getparam 0 .............................. <sString>
+  [ 24] pushsymb 171 ............................ <#char>
+  [ 26] getlocal 1 .............................. <i>
+  [ 28] pusharglist 3 ........................... <sString, #char, i>
+  [ 30] objcall 128 ............................. <sString.char[i]>
+  [ 32] setlocal 2 .............................. sTestChar = sString.char[i]
+  [ 34] getlocal 2 .............................. <sTestChar>
+  [ 36] pusharglist 1 ........................... <sTestChar>
+  [ 38] extcall 172 ............................. <charToNum(sTestChar)>
+  [ 40] setlocal 3 .............................. iTestCharNum = charToNum(sTestChar)
+  [ 42] getlocal 3 .............................. <iTestCharNum>
+  [ 44] getparam 1 .............................. <iCharNum>
+  [ 46] eq ...................................... <iTestCharNum = iCharNum>
+  [ 47] jmpifz [ 56] ............................ if iTestCharNum = iCharNum then
+  [ 50] jmp [ 63] ............................... next repeat
+  [ 53] jmp [ 63] ............................... next repeat
+  [ 56] getlocal 0 .............................. <sNewString>
+  [ 58] getlocal 2 .............................. <sTestChar>
+  [ 60] joinstr ................................. <sNewString & sTestChar>
+  [ 61] setlocal 0 .............................. sNewString = sNewString & sTestChar
+  [ 63] pushint8 1
+  [ 65] getlocal 1
+  [ 67] add
+  [ 68] setlocal 1
+  [ 70] endrepeat [  8]
+  [ 72] getlocal 0 .............................. <sNewString>
+  [ 74] pusharglistnoret 1 ...................... <sNewString>
+  [ 76] extcall 59 .............................. return sNewString
+  [ 78] ret
+end

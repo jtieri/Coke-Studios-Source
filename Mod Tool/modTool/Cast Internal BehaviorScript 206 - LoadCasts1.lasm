@@ -1,0 +1,72 @@
+property bInit
+global bPreloadCasts
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 556 .......................... me.bInit = 0
+  [  6] ret
+end
+
+on init me
+  [  0] getglobal 557 ........................... <bPreloadCasts>
+  [  3] jmpifz [ 64] ............................ if bPreloadCasts then / else
+  [  6] pushcons 0 .............................. <"PreloadCasts">
+  [  8] pusharglist 1 ........................... <"PreloadCasts">
+  [ 10] extcall 315 ............................. <script("PreloadCasts")>
+  [ 13] pusharglist 1 ........................... <script("PreloadCasts")>
+  [ 15] objcall 236 ............................. <script("PreloadCasts").new()>
+  [ 17] setlocal 0 .............................. p = script("PreloadCasts").new()
+  [ 19] getlocal 0 .............................. <p>
+  [ 21] pushcons 1 .............................. <"Gateway">
+  [ 23] getmovieprop 558 ........................ <the moviePath>
+  [ 26] pushcons 2 .............................. <"SF_Gateway">
+  [ 28] joinstr ................................. <the moviePath & "SF_Gateway">
+  [ 29] pusharglistnoret 3 ...................... <p, "Gateway", the moviePath & "SF_Gateway">
+  [ 31] objcall 559 ............................. p.addItem("Gateway", the moviePath & "SF_Gateway")
+  [ 34] getlocal 0 .............................. <p>
+  [ 36] pushcons 3 .............................. <"Entry">
+  [ 38] getmovieprop 558 ........................ <the moviePath>
+  [ 41] pushcons 4 .............................. <"entry">
+  [ 43] joinstr ................................. <the moviePath & "entry">
+  [ 44] pusharglistnoret 3 ...................... <p, "Entry", the moviePath & "entry">
+  [ 46] objcall 559 ............................. p.addItem("Entry", the moviePath & "entry")
+  [ 49] getlocal 0 .............................. <p>
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pushsymb 555 ............................ <#finished>
+  [ 56] pusharglistnoret 3 ...................... <p, me, #finished>
+  [ 58] objcall 560 ............................. p.start(me, #finished)
+  [ 61] jmp [ 71]
+  [ 64] getparam 0 .............................. <me>
+  [ 66] pusharglistnoret 1 ...................... <me>
+  [ 68] objcall 555 ............................. me.finished()
+  [ 71] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 556 .......................... <me.bInit>
+  [  5] not ..................................... <not me.bInit>
+  [  6] jmpifz [ 23] ............................ if not me.bInit then
+  [  9] getparam 0 .............................. <me>
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setobjprop 556 .......................... me.bInit = 1
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 1 ...................... <me>
+  [ 20] objcall 554 ............................. me.init()
+  [ 23] pusharglist 0 ........................... <>
+  [ 25] thebuiltin 82 ........................... <the frame>
+  [ 27] pusharglistnoret 1 ...................... <the frame>
+  [ 29] extcall 83 .............................. go(the frame)
+  [ 31] ret
+end
+
+on finished me
+  [  0] pushcons 5 .............................. <"load casts 1 finished">
+  [  2] pusharglistnoret 1 ...................... <"load casts 1 finished">
+  [  4] extcall 38 .............................. put "load casts 1 finished"
+  [  6] pushsymb 348 ............................ <#next>
+  [  9] pusharglistnoret 1 ...................... <#next>
+  [ 11] extcall 83 .............................. go(#next)
+  [ 13] ret
+end

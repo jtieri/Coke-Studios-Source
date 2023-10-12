@@ -1,0 +1,1029 @@
+property blowfish_ok, blowfish_rounds, blowfish_P, blowfish_S1, blowfish_S2, blowfish_S3, blowfish_S4
+
+on new me, aKey
+  [  0] pushint8 16 ............................. <16>
+  [  2] setprop 15 .............................. blowfish_rounds = 16
+  [  4] pushzero ................................ <0>
+  [  5] setprop 16 .............................. blowfish_ok = 0
+  [  7] getparam 1 .............................. <aKey>
+  [  9] pusharglist 1 ........................... <aKey>
+  [ 11] extcall 17 .............................. <stringp(aKey)>
+  [ 13] jmpifz [ 24] ............................ if stringp(aKey) then
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getparam 1 .............................. <aKey>
+  [ 20] pusharglistnoret 2 ...................... <me, aKey>
+  [ 22] objcall 9 ............................... me.SetKey(aKey)
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] extcall 18 .............................. return me
+  [ 30] ret
+end
+
+on getVersion me
+  [  0] pushcons 0 .............................. <"1.11">
+  [  2] pusharglistnoret 1 ...................... <"1.11">
+  [  4] extcall 18 .............................. return "1.11"
+  [  6] ret
+end
+
+on SetKey me, aKey
+  [  0] pushzero ................................ <0>
+  [  1] setprop 16 .............................. blowfish_ok = 0
+  [  3] getparam 1 .............................. <aKey>
+  [  5] pusharglist 1 ........................... <aKey>
+  [  7] extcall 17 .............................. <stringp(aKey)>
+  [  9] not ..................................... <not stringp(aKey)>
+  [ 10] jmpifz [ 19] ............................ if not stringp(aKey) then
+  [ 13] pushsymb 21 ............................. <#error_notstring>
+  [ 15] pusharglistnoret 1 ...................... <#error_notstring>
+  [ 17] extcall 18 .............................. return #error_notstring
+  [ 19] getparam 1 .............................. <aKey>
+  [ 21] getobjprop 22 ........................... <aKey.length>
+  [ 23] pushint8 4 .............................. <4>
+  [ 25] mod ..................................... <aKey.length mod 4>
+  [ 26] pushzero ................................ <0>
+  [ 27] nteq .................................... <(aKey.length mod 4) <> 0>
+  [ 28] jmpifz [ 37] ............................ if (aKey.length mod 4) <> 0 then
+  [ 31] pushsymb 23 ............................. <#error_not32bit>
+  [ 33] pusharglistnoret 1 ...................... <#error_not32bit>
+  [ 35] extcall 18 .............................. return #error_not32bit
+  [ 37] getparam 1 .............................. <aKey>
+  [ 39] getobjprop 22 ........................... <aKey.length>
+  [ 41] pushzero ................................ <0>
+  [ 42] lteq .................................... <aKey.length <= 0>
+  [ 43] jmpifz [ 52] ............................ if aKey.length <= 0 then
+  [ 46] pushsymb 24 ............................. <#error_empty>
+  [ 48] pusharglistnoret 1 ...................... <#error_empty>
+  [ 50] extcall 18 .............................. return #error_empty
+  [ 52] getparam 1 .............................. <aKey>
+  [ 54] getobjprop 22 ........................... <aKey.length>
+  [ 56] pushint8 56 ............................. <56>
+  [ 58] gt ...................................... <aKey.length > 56>
+  [ 59] jmpifz [ 68] ............................ if aKey.length > 56 then
+  [ 62] pushsymb 25 ............................. <#error_toolong>
+  [ 64] pusharglistnoret 1 ...................... <#error_toolong>
+  [ 66] extcall 18 .............................. return #error_toolong
+  [ 68] getparam 0 .............................. <me>
+  [ 70] pusharglistnoret 1 ...................... <me>
+  [ 72] extcall 0 ............................... LingoFish_GetInitialConstants(me)
+  [ 74] pushzero ................................ <0>
+  [ 75] setlocal 0 .............................. j = 0
+  [ 77] pushint8 1 .............................. <1>
+  [ 79] setlocal 1
+  [ 81] getlocal 1
+  [ 83] getprop 15 .............................. <blowfish_rounds>
+  [ 85] pushint8 2 .............................. <2>
+  [ 87] add ..................................... <blowfish_rounds + 2>
+  [ 88] lteq
+  [ 89] jmpifz [224] ............................ repeat with i = 1 to blowfish_rounds + 2
+  [ 92] getparam 1 .............................. <aKey>
+  [ 94] pushsymb 27 ............................. <#char>
+  [ 96] getlocal 0 .............................. <j>
+  [ 98] pushint8 4 .............................. <4>
+  [100] add ..................................... <j + 4>
+  [101] pusharglist 3 ........................... <aKey, #char, j + 4>
+  [103] objcall 28 .............................. <aKey.char[j + 4]>
+  [105] pusharglist 1 ........................... <aKey.char[j + 4]>
+  [107] extcall 26 .............................. <charToNum(aKey.char[j + 4])>
+  [109] getparam 1 .............................. <aKey>
+  [111] pushsymb 27 ............................. <#char>
+  [113] getlocal 0 .............................. <j>
+  [115] pushint8 3 .............................. <3>
+  [117] add ..................................... <j + 3>
+  [118] pusharglist 3 ........................... <aKey, #char, j + 3>
+  [120] objcall 28 .............................. <aKey.char[j + 3]>
+  [122] pusharglist 1 ........................... <aKey.char[j + 3]>
+  [124] extcall 26 .............................. <charToNum(aKey.char[j + 3])>
+  [126] pushint16 256 ........................... <256>
+  [129] mul ..................................... <charToNum(aKey.char[j + 3]) * 256>
+  [130] add ..................................... <charToNum(aKey.char[j + 4]) + (charToNum(aKey.char[j + 3]) * 256)>
+  [131] getparam 1 .............................. <aKey>
+  [133] pushsymb 27 ............................. <#char>
+  [135] getlocal 0 .............................. <j>
+  [137] pushint8 2 .............................. <2>
+  [139] add ..................................... <j + 2>
+  [140] pusharglist 3 ........................... <aKey, #char, j + 2>
+  [142] objcall 28 .............................. <aKey.char[j + 2]>
+  [144] pusharglist 1 ........................... <aKey.char[j + 2]>
+  [146] extcall 26 .............................. <charToNum(aKey.char[j + 2])>
+  [148] pushint32 65536 ......................... <65536>
+  [153] mul ..................................... <charToNum(aKey.char[j + 2]) * 65536>
+  [154] add ..................................... <charToNum(aKey.char[j + 4]) + (charToNum(aKey.char[j + 3]) * 256) + (charToNum(aKey.char[j + 2]) * 65536)>
+  [155] getparam 1 .............................. <aKey>
+  [157] pushsymb 27 ............................. <#char>
+  [159] getlocal 0 .............................. <j>
+  [161] pushint8 1 .............................. <1>
+  [163] add ..................................... <j + 1>
+  [164] pusharglist 3 ........................... <aKey, #char, j + 1>
+  [166] objcall 28 .............................. <aKey.char[j + 1]>
+  [168] pusharglist 1 ........................... <aKey.char[j + 1]>
+  [170] extcall 26 .............................. <charToNum(aKey.char[j + 1])>
+  [172] pushint32 16777216 ...................... <16777216>
+  [177] mul ..................................... <charToNum(aKey.char[j + 1]) * 16777216>
+  [178] add ..................................... <charToNum(aKey.char[j + 4]) + (charToNum(aKey.char[j + 3]) * 256) + (charToNum(aKey.char[j + 2]) * 65536) + (charToNum(aKey.char[j + 1]) * 16777216)>
+  [179] setlocal 2 .............................. data = charToNum(aKey.char[j + 4]) + (charToNum(aKey.char[j + 3]) * 256) + (charToNum(aKey.char[j + 2]) * 65536) + (charToNum(aKey.char[j + 1]) * 16777216)
+  [181] getlocal 0 .............................. <j>
+  [183] pushint8 4 .............................. <4>
+  [185] add ..................................... <j + 4>
+  [186] getparam 1 .............................. <aKey>
+  [188] getobjprop 22 ........................... <aKey.length>
+  [190] mod ..................................... <(j + 4) mod aKey.length>
+  [191] setlocal 0 .............................. j = (j + 4) mod aKey.length
+  [193] getprop 1 ............................... <blowfish_P>
+  [195] getlocal 1 .............................. <i>
+  [197] getprop 1 ............................... <blowfish_P>
+  [199] getlocal 1 .............................. <i>
+  [201] pusharglist 2 ........................... <blowfish_P, i>
+  [203] objcall 30 .............................. <blowfish_P[i]>
+  [205] getlocal 2 .............................. <data>
+  [207] pusharglist 2 ........................... <blowfish_P[i], data>
+  [209] extcall 29 .............................. <bitXor(blowfish_P[i], data)>
+  [211] pusharglistnoret 3 ...................... <blowfish_P, i, bitXor(blowfish_P[i], data)>
+  [213] objcall 31 .............................. blowfish_P[i] = bitXor(blowfish_P[i], data)
+  [215] pushint8 1
+  [217] getlocal 1
+  [219] add
+  [220] setlocal 1
+  [222] endrepeat [ 81]
+  [224] pushzero ................................ <0>
+  [225] setlocal 3 .............................. dataLeft = 0
+  [227] pushzero ................................ <0>
+  [228] setlocal 4 .............................. dataRight = 0
+  [230] pushint8 1 .............................. <1>
+  [232] setlocal 1 .............................. i = 1
+  [234] getlocal 1 .............................. <i>
+  [236] getprop 15 .............................. <blowfish_rounds>
+  [238] pushint8 2 .............................. <2>
+  [240] add ..................................... <blowfish_rounds + 2>
+  [241] lt ...................................... <i < (blowfish_rounds + 2)>
+  [242] jmpifz [309] ............................ repeat while i < (blowfish_rounds + 2)
+  [245] getparam 0 .............................. <me>
+  [247] getlocal 3 .............................. <dataLeft>
+  [249] getlocal 4 .............................. <dataRight>
+  [251] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [253] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [255] setlocal 2 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [257] getlocal 2 .............................. <data>
+  [259] pushsymb 32 ............................. <#left>
+  [261] pusharglist 2 ........................... <data, #left>
+  [263] objcall 30 .............................. <data[#left]>
+  [265] setlocal 3 .............................. dataLeft = data[#left]
+  [267] getlocal 2 .............................. <data>
+  [269] pushsymb 33 ............................. <#right>
+  [271] pusharglist 2 ........................... <data, #right>
+  [273] objcall 30 .............................. <data[#right]>
+  [275] setlocal 4 .............................. dataRight = data[#right]
+  [277] getprop 1 ............................... <blowfish_P>
+  [279] getlocal 1 .............................. <i>
+  [281] getlocal 3 .............................. <dataLeft>
+  [283] pusharglistnoret 3 ...................... <blowfish_P, i, dataLeft>
+  [285] objcall 31 .............................. blowfish_P[i] = dataLeft
+  [287] getprop 1 ............................... <blowfish_P>
+  [289] getlocal 1 .............................. <i>
+  [291] pushint8 1 .............................. <1>
+  [293] add ..................................... <i + 1>
+  [294] getlocal 4 .............................. <dataRight>
+  [296] pusharglistnoret 3 ...................... <blowfish_P, i + 1, dataRight>
+  [298] objcall 31 .............................. blowfish_P[i + 1] = dataRight
+  [300] getlocal 1 .............................. <i>
+  [302] pushint8 2 .............................. <2>
+  [304] add ..................................... <i + 2>
+  [305] setlocal 1 .............................. i = i + 2
+  [307] endrepeat [234]
+  [309] pushint8 1 .............................. <1>
+  [311] setlocal 1 .............................. i = 1
+  [313] getlocal 1 .............................. <i>
+  [315] pushint16 256 ........................... <256>
+  [318] lt ...................................... <i < 256>
+  [319] jmpifz [386] ............................ repeat while i < 256
+  [322] getparam 0 .............................. <me>
+  [324] getlocal 3 .............................. <dataLeft>
+  [326] getlocal 4 .............................. <dataRight>
+  [328] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [330] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [332] setlocal 2 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [334] getlocal 2 .............................. <data>
+  [336] pushsymb 32 ............................. <#left>
+  [338] pusharglist 2 ........................... <data, #left>
+  [340] objcall 30 .............................. <data[#left]>
+  [342] setlocal 3 .............................. dataLeft = data[#left]
+  [344] getlocal 2 .............................. <data>
+  [346] pushsymb 33 ............................. <#right>
+  [348] pusharglist 2 ........................... <data, #right>
+  [350] objcall 30 .............................. <data[#right]>
+  [352] setlocal 4 .............................. dataRight = data[#right]
+  [354] getprop 2 ............................... <blowfish_S1>
+  [356] getlocal 1 .............................. <i>
+  [358] getlocal 3 .............................. <dataLeft>
+  [360] pusharglistnoret 3 ...................... <blowfish_S1, i, dataLeft>
+  [362] objcall 31 .............................. blowfish_S1[i] = dataLeft
+  [364] getprop 2 ............................... <blowfish_S1>
+  [366] getlocal 1 .............................. <i>
+  [368] pushint8 1 .............................. <1>
+  [370] add ..................................... <i + 1>
+  [371] getlocal 4 .............................. <dataRight>
+  [373] pusharglistnoret 3 ...................... <blowfish_S1, i + 1, dataRight>
+  [375] objcall 31 .............................. blowfish_S1[i + 1] = dataRight
+  [377] getlocal 1 .............................. <i>
+  [379] pushint8 2 .............................. <2>
+  [381] add ..................................... <i + 2>
+  [382] setlocal 1 .............................. i = i + 2
+  [384] endrepeat [313]
+  [386] pushint8 1 .............................. <1>
+  [388] setlocal 1 .............................. i = 1
+  [390] getlocal 1 .............................. <i>
+  [392] pushint16 256 ........................... <256>
+  [395] lt ...................................... <i < 256>
+  [396] jmpifz [463] ............................ repeat while i < 256
+  [399] getparam 0 .............................. <me>
+  [401] getlocal 3 .............................. <dataLeft>
+  [403] getlocal 4 .............................. <dataRight>
+  [405] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [407] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [409] setlocal 2 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [411] getlocal 2 .............................. <data>
+  [413] pushsymb 32 ............................. <#left>
+  [415] pusharglist 2 ........................... <data, #left>
+  [417] objcall 30 .............................. <data[#left]>
+  [419] setlocal 3 .............................. dataLeft = data[#left]
+  [421] getlocal 2 .............................. <data>
+  [423] pushsymb 33 ............................. <#right>
+  [425] pusharglist 2 ........................... <data, #right>
+  [427] objcall 30 .............................. <data[#right]>
+  [429] setlocal 4 .............................. dataRight = data[#right]
+  [431] getprop 3 ............................... <blowfish_S2>
+  [433] getlocal 1 .............................. <i>
+  [435] getlocal 3 .............................. <dataLeft>
+  [437] pusharglistnoret 3 ...................... <blowfish_S2, i, dataLeft>
+  [439] objcall 31 .............................. blowfish_S2[i] = dataLeft
+  [441] getprop 3 ............................... <blowfish_S2>
+  [443] getlocal 1 .............................. <i>
+  [445] pushint8 1 .............................. <1>
+  [447] add ..................................... <i + 1>
+  [448] getlocal 4 .............................. <dataRight>
+  [450] pusharglistnoret 3 ...................... <blowfish_S2, i + 1, dataRight>
+  [452] objcall 31 .............................. blowfish_S2[i + 1] = dataRight
+  [454] getlocal 1 .............................. <i>
+  [456] pushint8 2 .............................. <2>
+  [458] add ..................................... <i + 2>
+  [459] setlocal 1 .............................. i = i + 2
+  [461] endrepeat [390]
+  [463] pushint8 1 .............................. <1>
+  [465] setlocal 1 .............................. i = 1
+  [467] getlocal 1 .............................. <i>
+  [469] pushint16 256 ........................... <256>
+  [472] lt ...................................... <i < 256>
+  [473] jmpifz [540] ............................ repeat while i < 256
+  [476] getparam 0 .............................. <me>
+  [478] getlocal 3 .............................. <dataLeft>
+  [480] getlocal 4 .............................. <dataRight>
+  [482] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [484] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [486] setlocal 2 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [488] getlocal 2 .............................. <data>
+  [490] pushsymb 32 ............................. <#left>
+  [492] pusharglist 2 ........................... <data, #left>
+  [494] objcall 30 .............................. <data[#left]>
+  [496] setlocal 3 .............................. dataLeft = data[#left]
+  [498] getlocal 2 .............................. <data>
+  [500] pushsymb 33 ............................. <#right>
+  [502] pusharglist 2 ........................... <data, #right>
+  [504] objcall 30 .............................. <data[#right]>
+  [506] setlocal 4 .............................. dataRight = data[#right]
+  [508] getprop 4 ............................... <blowfish_S3>
+  [510] getlocal 1 .............................. <i>
+  [512] getlocal 3 .............................. <dataLeft>
+  [514] pusharglistnoret 3 ...................... <blowfish_S3, i, dataLeft>
+  [516] objcall 31 .............................. blowfish_S3[i] = dataLeft
+  [518] getprop 4 ............................... <blowfish_S3>
+  [520] getlocal 1 .............................. <i>
+  [522] pushint8 1 .............................. <1>
+  [524] add ..................................... <i + 1>
+  [525] getlocal 4 .............................. <dataRight>
+  [527] pusharglistnoret 3 ...................... <blowfish_S3, i + 1, dataRight>
+  [529] objcall 31 .............................. blowfish_S3[i + 1] = dataRight
+  [531] getlocal 1 .............................. <i>
+  [533] pushint8 2 .............................. <2>
+  [535] add ..................................... <i + 2>
+  [536] setlocal 1 .............................. i = i + 2
+  [538] endrepeat [467]
+  [540] pushint8 1 .............................. <1>
+  [542] setlocal 1 .............................. i = 1
+  [544] getlocal 1 .............................. <i>
+  [546] pushint16 256 ........................... <256>
+  [549] lt ...................................... <i < 256>
+  [550] jmpifz [617] ............................ repeat while i < 256
+  [553] getparam 0 .............................. <me>
+  [555] getlocal 3 .............................. <dataLeft>
+  [557] getlocal 4 .............................. <dataRight>
+  [559] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [561] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [563] setlocal 2 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [565] getlocal 2 .............................. <data>
+  [567] pushsymb 32 ............................. <#left>
+  [569] pusharglist 2 ........................... <data, #left>
+  [571] objcall 30 .............................. <data[#left]>
+  [573] setlocal 3 .............................. dataLeft = data[#left]
+  [575] getlocal 2 .............................. <data>
+  [577] pushsymb 33 ............................. <#right>
+  [579] pusharglist 2 ........................... <data, #right>
+  [581] objcall 30 .............................. <data[#right]>
+  [583] setlocal 4 .............................. dataRight = data[#right]
+  [585] getprop 5 ............................... <blowfish_S4>
+  [587] getlocal 1 .............................. <i>
+  [589] getlocal 3 .............................. <dataLeft>
+  [591] pusharglistnoret 3 ...................... <blowfish_S4, i, dataLeft>
+  [593] objcall 31 .............................. blowfish_S4[i] = dataLeft
+  [595] getprop 5 ............................... <blowfish_S4>
+  [597] getlocal 1 .............................. <i>
+  [599] pushint8 1 .............................. <1>
+  [601] add ..................................... <i + 1>
+  [602] getlocal 4 .............................. <dataRight>
+  [604] pusharglistnoret 3 ...................... <blowfish_S4, i + 1, dataRight>
+  [606] objcall 31 .............................. blowfish_S4[i + 1] = dataRight
+  [608] getlocal 1 .............................. <i>
+  [610] pushint8 2 .............................. <2>
+  [612] add ..................................... <i + 2>
+  [613] setlocal 1 .............................. i = i + 2
+  [615] endrepeat [544]
+  [617] pushint8 1 .............................. <1>
+  [619] setprop 16 .............................. blowfish_ok = 1
+  [621] pushzero ................................ <0>
+  [622] pusharglistnoret 1 ...................... <0>
+  [624] extcall 18 .............................. return 0
+  [626] ret
+end
+
+on Encrypt me, plainText
+  [  0] getprop 16 .............................. <blowfish_ok>
+  [  2] pushint8 1 .............................. <1>
+  [  4] nteq .................................... <blowfish_ok <> 1>
+  [  5] getparam 1 .............................. <plainText>
+  [  7] pusharglist 1 ........................... <plainText>
+  [  9] extcall 17 .............................. <stringp(plainText)>
+  [ 11] not ..................................... <not stringp(plainText)>
+  [ 12] or ...................................... <(blowfish_ok <> 1) or not stringp(plainText)>
+  [ 13] jmpifz [ 24] ............................ if (blowfish_ok <> 1) or not stringp(plainText) then
+  [ 16] pusharglist 0 ........................... <>
+  [ 18] extcall 39 .............................. <VOID>
+  [ 20] pusharglistnoret 1 ...................... <VOID>
+  [ 22] extcall 18 .............................. return VOID
+  [ 24] pushcons 1 .............................. <EMPTY>
+  [ 26] setlocal 0 .............................. cipherText = EMPTY
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] setlocal 1 .............................. i = 1
+  [ 32] getparam 1 .............................. <plainText>
+  [ 34] getobjprop 22 ........................... <plainText.length>
+  [ 36] setlocal 2 .............................. plainTextLength = plainText.length
+  [ 38] getlocal 1 .............................. <i>
+  [ 40] getlocal 2 .............................. <plainTextLength>
+  [ 42] lteq .................................... <i <= plainTextLength>
+  [ 43] jmpifz [451] ............................ repeat while i <= plainTextLength
+  [ 46] getparam 1 .............................. <plainText>
+  [ 48] pushsymb 27 ............................. <#char>
+  [ 50] getlocal 1 .............................. <i>
+  [ 52] pushint8 3 .............................. <3>
+  [ 54] add ..................................... <i + 3>
+  [ 55] pusharglist 3 ........................... <plainText, #char, i + 3>
+  [ 57] objcall 28 .............................. <plainText.char[i + 3]>
+  [ 59] pusharglist 1 ........................... <plainText.char[i + 3]>
+  [ 61] extcall 26 .............................. <charToNum(plainText.char[i + 3])>
+  [ 63] getparam 1 .............................. <plainText>
+  [ 65] pushsymb 27 ............................. <#char>
+  [ 67] getlocal 1 .............................. <i>
+  [ 69] pushint8 2 .............................. <2>
+  [ 71] add ..................................... <i + 2>
+  [ 72] pusharglist 3 ........................... <plainText, #char, i + 2>
+  [ 74] objcall 28 .............................. <plainText.char[i + 2]>
+  [ 76] pusharglist 1 ........................... <plainText.char[i + 2]>
+  [ 78] extcall 26 .............................. <charToNum(plainText.char[i + 2])>
+  [ 80] pushint16 256 ........................... <256>
+  [ 83] mul ..................................... <charToNum(plainText.char[i + 2]) * 256>
+  [ 84] add ..................................... <charToNum(plainText.char[i + 3]) + (charToNum(plainText.char[i + 2]) * 256)>
+  [ 85] getparam 1 .............................. <plainText>
+  [ 87] pushsymb 27 ............................. <#char>
+  [ 89] getlocal 1 .............................. <i>
+  [ 91] pushint8 1 .............................. <1>
+  [ 93] add ..................................... <i + 1>
+  [ 94] pusharglist 3 ........................... <plainText, #char, i + 1>
+  [ 96] objcall 28 .............................. <plainText.char[i + 1]>
+  [ 98] pusharglist 1 ........................... <plainText.char[i + 1]>
+  [100] extcall 26 .............................. <charToNum(plainText.char[i + 1])>
+  [102] pushint32 65536 ......................... <65536>
+  [107] mul ..................................... <charToNum(plainText.char[i + 1]) * 65536>
+  [108] add ..................................... <charToNum(plainText.char[i + 3]) + (charToNum(plainText.char[i + 2]) * 256) + (charToNum(plainText.char[i + 1]) * 65536)>
+  [109] getparam 1 .............................. <plainText>
+  [111] pushsymb 27 ............................. <#char>
+  [113] getlocal 1 .............................. <i>
+  [115] pusharglist 3 ........................... <plainText, #char, i>
+  [117] objcall 28 .............................. <plainText.char[i]>
+  [119] pusharglist 1 ........................... <plainText.char[i]>
+  [121] extcall 26 .............................. <charToNum(plainText.char[i])>
+  [123] pushint32 16777216 ...................... <16777216>
+  [128] mul ..................................... <charToNum(plainText.char[i]) * 16777216>
+  [129] add ..................................... <charToNum(plainText.char[i + 3]) + (charToNum(plainText.char[i + 2]) * 256) + (charToNum(plainText.char[i + 1]) * 65536) + (charToNum(plainText.char[i]) * 16777216)>
+  [130] setlocal 3 .............................. dataLeft = charToNum(plainText.char[i + 3]) + (charToNum(plainText.char[i + 2]) * 256) + (charToNum(plainText.char[i + 1]) * 65536) + (charToNum(plainText.char[i]) * 16777216)
+  [132] getparam 1 .............................. <plainText>
+  [134] pushsymb 27 ............................. <#char>
+  [136] getlocal 1 .............................. <i>
+  [138] pushint8 7 .............................. <7>
+  [140] add ..................................... <i + 7>
+  [141] pusharglist 3 ........................... <plainText, #char, i + 7>
+  [143] objcall 28 .............................. <plainText.char[i + 7]>
+  [145] pusharglist 1 ........................... <plainText.char[i + 7]>
+  [147] extcall 26 .............................. <charToNum(plainText.char[i + 7])>
+  [149] getparam 1 .............................. <plainText>
+  [151] pushsymb 27 ............................. <#char>
+  [153] getlocal 1 .............................. <i>
+  [155] pushint8 6 .............................. <6>
+  [157] add ..................................... <i + 6>
+  [158] pusharglist 3 ........................... <plainText, #char, i + 6>
+  [160] objcall 28 .............................. <plainText.char[i + 6]>
+  [162] pusharglist 1 ........................... <plainText.char[i + 6]>
+  [164] extcall 26 .............................. <charToNum(plainText.char[i + 6])>
+  [166] pushint16 256 ........................... <256>
+  [169] mul ..................................... <charToNum(plainText.char[i + 6]) * 256>
+  [170] add ..................................... <charToNum(plainText.char[i + 7]) + (charToNum(plainText.char[i + 6]) * 256)>
+  [171] getparam 1 .............................. <plainText>
+  [173] pushsymb 27 ............................. <#char>
+  [175] getlocal 1 .............................. <i>
+  [177] pushint8 5 .............................. <5>
+  [179] add ..................................... <i + 5>
+  [180] pusharglist 3 ........................... <plainText, #char, i + 5>
+  [182] objcall 28 .............................. <plainText.char[i + 5]>
+  [184] pusharglist 1 ........................... <plainText.char[i + 5]>
+  [186] extcall 26 .............................. <charToNum(plainText.char[i + 5])>
+  [188] pushint32 65536 ......................... <65536>
+  [193] mul ..................................... <charToNum(plainText.char[i + 5]) * 65536>
+  [194] add ..................................... <charToNum(plainText.char[i + 7]) + (charToNum(plainText.char[i + 6]) * 256) + (charToNum(plainText.char[i + 5]) * 65536)>
+  [195] getparam 1 .............................. <plainText>
+  [197] pushsymb 27 ............................. <#char>
+  [199] getlocal 1 .............................. <i>
+  [201] pushint8 4 .............................. <4>
+  [203] add ..................................... <i + 4>
+  [204] pusharglist 3 ........................... <plainText, #char, i + 4>
+  [206] objcall 28 .............................. <plainText.char[i + 4]>
+  [208] pusharglist 1 ........................... <plainText.char[i + 4]>
+  [210] extcall 26 .............................. <charToNum(plainText.char[i + 4])>
+  [212] pushint32 16777216 ...................... <16777216>
+  [217] mul ..................................... <charToNum(plainText.char[i + 4]) * 16777216>
+  [218] add ..................................... <charToNum(plainText.char[i + 7]) + (charToNum(plainText.char[i + 6]) * 256) + (charToNum(plainText.char[i + 5]) * 65536) + (charToNum(plainText.char[i + 4]) * 16777216)>
+  [219] setlocal 4 .............................. dataRight = charToNum(plainText.char[i + 7]) + (charToNum(plainText.char[i + 6]) * 256) + (charToNum(plainText.char[i + 5]) * 65536) + (charToNum(plainText.char[i + 4]) * 16777216)
+  [221] getparam 0 .............................. <me>
+  [223] getlocal 3 .............................. <dataLeft>
+  [225] getlocal 4 .............................. <dataRight>
+  [227] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [229] objcall 13 .............................. <me.blowfish_Encipher(dataLeft, dataRight)>
+  [231] setlocal 5 .............................. data = me.blowfish_Encipher(dataLeft, dataRight)
+  [233] getlocal 5 .............................. <data>
+  [235] pushsymb 32 ............................. <#left>
+  [237] pusharglist 2 ........................... <data, #left>
+  [239] objcall 30 .............................. <data[#left]>
+  [241] setlocal 3 .............................. dataLeft = data[#left]
+  [243] getlocal 5 .............................. <data>
+  [245] pushsymb 33 ............................. <#right>
+  [247] pusharglist 2 ........................... <data, #right>
+  [249] objcall 30 .............................. <data[#right]>
+  [251] setlocal 4 .............................. dataRight = data[#right]
+  [253] getlocal 3 .............................. <dataLeft>
+  [255] pushint32 16777216 ...................... <16777216>
+  [260] inv ..................................... <-16777216>
+  [261] pusharglist 2 ........................... <dataLeft, -16777216>
+  [263] extcall 41 .............................. <bitAnd(dataLeft, -16777216)>
+  [265] pushint32 16777216 ...................... <16777216>
+  [270] div ..................................... <bitAnd(dataLeft, -16777216) / 16777216>
+  [271] pushint16 255 ........................... <255>
+  [274] pusharglist 2 ........................... <bitAnd(dataLeft, -16777216) / 16777216, 255>
+  [276] extcall 41 .............................. <bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)>
+  [278] pusharglist 1 ........................... <bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)>
+  [280] extcall 40 .............................. <numToChar(bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255))>
+  [282] pushzero ................................ <0>
+  [283] put 37 .................................. put numToChar(bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)) after cipherText
+  [285] getlocal 3 .............................. <dataLeft>
+  [287] pushint32 16711680 ...................... <16711680>
+  [292] pusharglist 2 ........................... <dataLeft, 16711680>
+  [294] extcall 41 .............................. <bitAnd(dataLeft, 16711680)>
+  [296] pushint32 65536 ......................... <65536>
+  [301] div ..................................... <bitAnd(dataLeft, 16711680) / 65536>
+  [302] pusharglist 1 ........................... <bitAnd(dataLeft, 16711680) / 65536>
+  [304] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 16711680) / 65536)>
+  [306] pushzero ................................ <0>
+  [307] put 37 .................................. put numToChar(bitAnd(dataLeft, 16711680) / 65536) after cipherText
+  [309] getlocal 3 .............................. <dataLeft>
+  [311] pushint32 65280 ......................... <65280>
+  [316] pusharglist 2 ........................... <dataLeft, 65280>
+  [318] extcall 41 .............................. <bitAnd(dataLeft, 65280)>
+  [320] pushint16 256 ........................... <256>
+  [323] div ..................................... <bitAnd(dataLeft, 65280) / 256>
+  [324] pusharglist 1 ........................... <bitAnd(dataLeft, 65280) / 256>
+  [326] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 65280) / 256)>
+  [328] pushzero ................................ <0>
+  [329] put 37 .................................. put numToChar(bitAnd(dataLeft, 65280) / 256) after cipherText
+  [331] getlocal 3 .............................. <dataLeft>
+  [333] pushint16 255 ........................... <255>
+  [336] pusharglist 2 ........................... <dataLeft, 255>
+  [338] extcall 41 .............................. <bitAnd(dataLeft, 255)>
+  [340] pusharglist 1 ........................... <bitAnd(dataLeft, 255)>
+  [342] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 255))>
+  [344] pushzero ................................ <0>
+  [345] put 37 .................................. put numToChar(bitAnd(dataLeft, 255)) after cipherText
+  [347] getlocal 4 .............................. <dataRight>
+  [349] pushint32 16777216 ...................... <16777216>
+  [354] inv ..................................... <-16777216>
+  [355] pusharglist 2 ........................... <dataRight, -16777216>
+  [357] extcall 41 .............................. <bitAnd(dataRight, -16777216)>
+  [359] pushint32 16777216 ...................... <16777216>
+  [364] div ..................................... <bitAnd(dataRight, -16777216) / 16777216>
+  [365] pushint16 255 ........................... <255>
+  [368] pusharglist 2 ........................... <bitAnd(dataRight, -16777216) / 16777216, 255>
+  [370] extcall 41 .............................. <bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)>
+  [372] pusharglist 1 ........................... <bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)>
+  [374] extcall 40 .............................. <numToChar(bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255))>
+  [376] pushzero ................................ <0>
+  [377] put 37 .................................. put numToChar(bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)) after cipherText
+  [379] getlocal 4 .............................. <dataRight>
+  [381] pushint32 16711680 ...................... <16711680>
+  [386] pusharglist 2 ........................... <dataRight, 16711680>
+  [388] extcall 41 .............................. <bitAnd(dataRight, 16711680)>
+  [390] pushint32 65536 ......................... <65536>
+  [395] div ..................................... <bitAnd(dataRight, 16711680) / 65536>
+  [396] pusharglist 1 ........................... <bitAnd(dataRight, 16711680) / 65536>
+  [398] extcall 40 .............................. <numToChar(bitAnd(dataRight, 16711680) / 65536)>
+  [400] pushzero ................................ <0>
+  [401] put 37 .................................. put numToChar(bitAnd(dataRight, 16711680) / 65536) after cipherText
+  [403] getlocal 4 .............................. <dataRight>
+  [405] pushint32 65280 ......................... <65280>
+  [410] pusharglist 2 ........................... <dataRight, 65280>
+  [412] extcall 41 .............................. <bitAnd(dataRight, 65280)>
+  [414] pushint16 256 ........................... <256>
+  [417] div ..................................... <bitAnd(dataRight, 65280) / 256>
+  [418] pusharglist 1 ........................... <bitAnd(dataRight, 65280) / 256>
+  [420] extcall 40 .............................. <numToChar(bitAnd(dataRight, 65280) / 256)>
+  [422] pushzero ................................ <0>
+  [423] put 37 .................................. put numToChar(bitAnd(dataRight, 65280) / 256) after cipherText
+  [425] getlocal 4 .............................. <dataRight>
+  [427] pushint16 255 ........................... <255>
+  [430] pusharglist 2 ........................... <dataRight, 255>
+  [432] extcall 41 .............................. <bitAnd(dataRight, 255)>
+  [434] pusharglist 1 ........................... <bitAnd(dataRight, 255)>
+  [436] extcall 40 .............................. <numToChar(bitAnd(dataRight, 255))>
+  [438] pushzero ................................ <0>
+  [439] put 37 .................................. put numToChar(bitAnd(dataRight, 255)) after cipherText
+  [441] getlocal 1 .............................. <i>
+  [443] pushint8 8 .............................. <8>
+  [445] add ..................................... <i + 8>
+  [446] setlocal 1 .............................. i = i + 8
+  [448] endrepeat [ 38]
+  [451] getlocal 0 .............................. <cipherText>
+  [453] pusharglistnoret 1 ...................... <cipherText>
+  [455] extcall 18 .............................. return cipherText
+  [457] ret
+end
+
+on Decrypt me, cipherText
+  [  0] getprop 16 .............................. <blowfish_ok>
+  [  2] pushint8 1 .............................. <1>
+  [  4] nteq .................................... <blowfish_ok <> 1>
+  [  5] getparam 1 .............................. <cipherText>
+  [  7] pusharglist 1 ........................... <cipherText>
+  [  9] extcall 17 .............................. <stringp(cipherText)>
+  [ 11] not ..................................... <not stringp(cipherText)>
+  [ 12] or ...................................... <(blowfish_ok <> 1) or not stringp(cipherText)>
+  [ 13] jmpifz [ 24] ............................ if (blowfish_ok <> 1) or not stringp(cipherText) then
+  [ 16] pusharglist 0 ........................... <>
+  [ 18] extcall 39 .............................. <VOID>
+  [ 20] pusharglistnoret 1 ...................... <VOID>
+  [ 22] extcall 18 .............................. return VOID
+  [ 24] pushcons 1 .............................. <EMPTY>
+  [ 26] setlocal 0 .............................. plainText = EMPTY
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] setlocal 1 .............................. i = 1
+  [ 32] getparam 1 .............................. <cipherText>
+  [ 34] getobjprop 22 ........................... <cipherText.length>
+  [ 36] setlocal 2 .............................. cipherTextLength = cipherText.length
+  [ 38] getlocal 1 .............................. <i>
+  [ 40] getlocal 2 .............................. <cipherTextLength>
+  [ 42] lteq .................................... <i <= cipherTextLength>
+  [ 43] jmpifz [465] ............................ repeat while i <= cipherTextLength
+  [ 46] getparam 1 .............................. <cipherText>
+  [ 48] pushsymb 27 ............................. <#char>
+  [ 50] getlocal 1 .............................. <i>
+  [ 52] pushint8 3 .............................. <3>
+  [ 54] add ..................................... <i + 3>
+  [ 55] pusharglist 3 ........................... <cipherText, #char, i + 3>
+  [ 57] objcall 28 .............................. <cipherText.char[i + 3]>
+  [ 59] pusharglist 1 ........................... <cipherText.char[i + 3]>
+  [ 61] extcall 26 .............................. <charToNum(cipherText.char[i + 3])>
+  [ 63] getparam 1 .............................. <cipherText>
+  [ 65] pushsymb 27 ............................. <#char>
+  [ 67] getlocal 1 .............................. <i>
+  [ 69] pushint8 2 .............................. <2>
+  [ 71] add ..................................... <i + 2>
+  [ 72] pusharglist 3 ........................... <cipherText, #char, i + 2>
+  [ 74] objcall 28 .............................. <cipherText.char[i + 2]>
+  [ 76] pusharglist 1 ........................... <cipherText.char[i + 2]>
+  [ 78] extcall 26 .............................. <charToNum(cipherText.char[i + 2])>
+  [ 80] pushint16 256 ........................... <256>
+  [ 83] mul ..................................... <charToNum(cipherText.char[i + 2]) * 256>
+  [ 84] add ..................................... <charToNum(cipherText.char[i + 3]) + (charToNum(cipherText.char[i + 2]) * 256)>
+  [ 85] getparam 1 .............................. <cipherText>
+  [ 87] pushsymb 27 ............................. <#char>
+  [ 89] getlocal 1 .............................. <i>
+  [ 91] pushint8 1 .............................. <1>
+  [ 93] add ..................................... <i + 1>
+  [ 94] pusharglist 3 ........................... <cipherText, #char, i + 1>
+  [ 96] objcall 28 .............................. <cipherText.char[i + 1]>
+  [ 98] pusharglist 1 ........................... <cipherText.char[i + 1]>
+  [100] extcall 26 .............................. <charToNum(cipherText.char[i + 1])>
+  [102] pushint32 65536 ......................... <65536>
+  [107] mul ..................................... <charToNum(cipherText.char[i + 1]) * 65536>
+  [108] add ..................................... <charToNum(cipherText.char[i + 3]) + (charToNum(cipherText.char[i + 2]) * 256) + (charToNum(cipherText.char[i + 1]) * 65536)>
+  [109] getparam 1 .............................. <cipherText>
+  [111] pushsymb 27 ............................. <#char>
+  [113] getlocal 1 .............................. <i>
+  [115] pusharglist 3 ........................... <cipherText, #char, i>
+  [117] objcall 28 .............................. <cipherText.char[i]>
+  [119] pusharglist 1 ........................... <cipherText.char[i]>
+  [121] extcall 26 .............................. <charToNum(cipherText.char[i])>
+  [123] pushint32 16777216 ...................... <16777216>
+  [128] mul ..................................... <charToNum(cipherText.char[i]) * 16777216>
+  [129] pushint8 1 .............................. <1>
+  [131] inv ..................................... <-1>
+  [132] pusharglist 2 ........................... <charToNum(cipherText.char[i]) * 16777216, -1>
+  [134] extcall 41 .............................. <bitAnd(charToNum(cipherText.char[i]) * 16777216, -1)>
+  [136] add ..................................... <charToNum(cipherText.char[i + 3]) + (charToNum(cipherText.char[i + 2]) * 256) + (charToNum(cipherText.char[i + 1]) * 65536) + bitAnd(charToNum(cipherText.char[i]) * 16777216, -1)>
+  [137] setlocal 3 .............................. dataLeft = charToNum(cipherText.char[i + 3]) + (charToNum(cipherText.char[i + 2]) * 256) + (charToNum(cipherText.char[i + 1]) * 65536) + bitAnd(charToNum(cipherText.char[i]) * 16777216, -1)
+  [139] getparam 1 .............................. <cipherText>
+  [141] pushsymb 27 ............................. <#char>
+  [143] getlocal 1 .............................. <i>
+  [145] pushint8 7 .............................. <7>
+  [147] add ..................................... <i + 7>
+  [148] pusharglist 3 ........................... <cipherText, #char, i + 7>
+  [150] objcall 28 .............................. <cipherText.char[i + 7]>
+  [152] pusharglist 1 ........................... <cipherText.char[i + 7]>
+  [154] extcall 26 .............................. <charToNum(cipherText.char[i + 7])>
+  [156] getparam 1 .............................. <cipherText>
+  [158] pushsymb 27 ............................. <#char>
+  [160] getlocal 1 .............................. <i>
+  [162] pushint8 6 .............................. <6>
+  [164] add ..................................... <i + 6>
+  [165] pusharglist 3 ........................... <cipherText, #char, i + 6>
+  [167] objcall 28 .............................. <cipherText.char[i + 6]>
+  [169] pusharglist 1 ........................... <cipherText.char[i + 6]>
+  [171] extcall 26 .............................. <charToNum(cipherText.char[i + 6])>
+  [173] pushint16 256 ........................... <256>
+  [176] mul ..................................... <charToNum(cipherText.char[i + 6]) * 256>
+  [177] add ..................................... <charToNum(cipherText.char[i + 7]) + (charToNum(cipherText.char[i + 6]) * 256)>
+  [178] getparam 1 .............................. <cipherText>
+  [180] pushsymb 27 ............................. <#char>
+  [182] getlocal 1 .............................. <i>
+  [184] pushint8 5 .............................. <5>
+  [186] add ..................................... <i + 5>
+  [187] pusharglist 3 ........................... <cipherText, #char, i + 5>
+  [189] objcall 28 .............................. <cipherText.char[i + 5]>
+  [191] pusharglist 1 ........................... <cipherText.char[i + 5]>
+  [193] extcall 26 .............................. <charToNum(cipherText.char[i + 5])>
+  [195] pushint32 65536 ......................... <65536>
+  [200] mul ..................................... <charToNum(cipherText.char[i + 5]) * 65536>
+  [201] add ..................................... <charToNum(cipherText.char[i + 7]) + (charToNum(cipherText.char[i + 6]) * 256) + (charToNum(cipherText.char[i + 5]) * 65536)>
+  [202] getparam 1 .............................. <cipherText>
+  [204] pushsymb 27 ............................. <#char>
+  [206] getlocal 1 .............................. <i>
+  [208] pushint8 4 .............................. <4>
+  [210] add ..................................... <i + 4>
+  [211] pusharglist 3 ........................... <cipherText, #char, i + 4>
+  [213] objcall 28 .............................. <cipherText.char[i + 4]>
+  [215] pusharglist 1 ........................... <cipherText.char[i + 4]>
+  [217] extcall 26 .............................. <charToNum(cipherText.char[i + 4])>
+  [219] pushint32 16777216 ...................... <16777216>
+  [224] mul ..................................... <charToNum(cipherText.char[i + 4]) * 16777216>
+  [225] pushint8 1 .............................. <1>
+  [227] inv ..................................... <-1>
+  [228] pusharglist 2 ........................... <charToNum(cipherText.char[i + 4]) * 16777216, -1>
+  [230] extcall 41 .............................. <bitAnd(charToNum(cipherText.char[i + 4]) * 16777216, -1)>
+  [232] add ..................................... <charToNum(cipherText.char[i + 7]) + (charToNum(cipherText.char[i + 6]) * 256) + (charToNum(cipherText.char[i + 5]) * 65536) + bitAnd(charToNum(cipherText.char[i + 4]) * 16777216, -1)>
+  [233] setlocal 4 .............................. dataRight = charToNum(cipherText.char[i + 7]) + (charToNum(cipherText.char[i + 6]) * 256) + (charToNum(cipherText.char[i + 5]) * 65536) + bitAnd(charToNum(cipherText.char[i + 4]) * 16777216, -1)
+  [235] getparam 0 .............................. <me>
+  [237] getlocal 3 .............................. <dataLeft>
+  [239] getlocal 4 .............................. <dataRight>
+  [241] pusharglist 3 ........................... <me, dataLeft, dataRight>
+  [243] objcall 14 .............................. <me.blowfish_Decipher(dataLeft, dataRight)>
+  [245] setlocal 5 .............................. data = me.blowfish_Decipher(dataLeft, dataRight)
+  [247] getlocal 5 .............................. <data>
+  [249] pushsymb 32 ............................. <#left>
+  [251] pusharglist 2 ........................... <data, #left>
+  [253] objcall 30 .............................. <data[#left]>
+  [255] setlocal 3 .............................. dataLeft = data[#left]
+  [257] getlocal 5 .............................. <data>
+  [259] pushsymb 33 ............................. <#right>
+  [261] pusharglist 2 ........................... <data, #right>
+  [263] objcall 30 .............................. <data[#right]>
+  [265] setlocal 4 .............................. dataRight = data[#right]
+  [267] getlocal 3 .............................. <dataLeft>
+  [269] pushint32 16777216 ...................... <16777216>
+  [274] inv ..................................... <-16777216>
+  [275] pusharglist 2 ........................... <dataLeft, -16777216>
+  [277] extcall 41 .............................. <bitAnd(dataLeft, -16777216)>
+  [279] pushint32 16777216 ...................... <16777216>
+  [284] div ..................................... <bitAnd(dataLeft, -16777216) / 16777216>
+  [285] pushint16 255 ........................... <255>
+  [288] pusharglist 2 ........................... <bitAnd(dataLeft, -16777216) / 16777216, 255>
+  [290] extcall 41 .............................. <bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)>
+  [292] pusharglist 1 ........................... <bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)>
+  [294] extcall 40 .............................. <numToChar(bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255))>
+  [296] pushzero ................................ <0>
+  [297] put 37 .................................. put numToChar(bitAnd(bitAnd(dataLeft, -16777216) / 16777216, 255)) after plainText
+  [299] getlocal 3 .............................. <dataLeft>
+  [301] pushint32 16711680 ...................... <16711680>
+  [306] pusharglist 2 ........................... <dataLeft, 16711680>
+  [308] extcall 41 .............................. <bitAnd(dataLeft, 16711680)>
+  [310] pushint32 65536 ......................... <65536>
+  [315] div ..................................... <bitAnd(dataLeft, 16711680) / 65536>
+  [316] pusharglist 1 ........................... <bitAnd(dataLeft, 16711680) / 65536>
+  [318] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 16711680) / 65536)>
+  [320] pushzero ................................ <0>
+  [321] put 37 .................................. put numToChar(bitAnd(dataLeft, 16711680) / 65536) after plainText
+  [323] getlocal 3 .............................. <dataLeft>
+  [325] pushint32 65280 ......................... <65280>
+  [330] pusharglist 2 ........................... <dataLeft, 65280>
+  [332] extcall 41 .............................. <bitAnd(dataLeft, 65280)>
+  [334] pushint16 256 ........................... <256>
+  [337] div ..................................... <bitAnd(dataLeft, 65280) / 256>
+  [338] pusharglist 1 ........................... <bitAnd(dataLeft, 65280) / 256>
+  [340] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 65280) / 256)>
+  [342] pushzero ................................ <0>
+  [343] put 37 .................................. put numToChar(bitAnd(dataLeft, 65280) / 256) after plainText
+  [345] getlocal 3 .............................. <dataLeft>
+  [347] pushint16 255 ........................... <255>
+  [350] pusharglist 2 ........................... <dataLeft, 255>
+  [352] extcall 41 .............................. <bitAnd(dataLeft, 255)>
+  [354] pusharglist 1 ........................... <bitAnd(dataLeft, 255)>
+  [356] extcall 40 .............................. <numToChar(bitAnd(dataLeft, 255))>
+  [358] pushzero ................................ <0>
+  [359] put 37 .................................. put numToChar(bitAnd(dataLeft, 255)) after plainText
+  [361] getlocal 4 .............................. <dataRight>
+  [363] pushint32 16777216 ...................... <16777216>
+  [368] inv ..................................... <-16777216>
+  [369] pusharglist 2 ........................... <dataRight, -16777216>
+  [371] extcall 41 .............................. <bitAnd(dataRight, -16777216)>
+  [373] pushint32 16777216 ...................... <16777216>
+  [378] div ..................................... <bitAnd(dataRight, -16777216) / 16777216>
+  [379] pushint16 255 ........................... <255>
+  [382] pusharglist 2 ........................... <bitAnd(dataRight, -16777216) / 16777216, 255>
+  [384] extcall 41 .............................. <bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)>
+  [386] pusharglist 1 ........................... <bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)>
+  [388] extcall 40 .............................. <numToChar(bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255))>
+  [390] pushzero ................................ <0>
+  [391] put 37 .................................. put numToChar(bitAnd(bitAnd(dataRight, -16777216) / 16777216, 255)) after plainText
+  [393] getlocal 4 .............................. <dataRight>
+  [395] pushint32 16711680 ...................... <16711680>
+  [400] pusharglist 2 ........................... <dataRight, 16711680>
+  [402] extcall 41 .............................. <bitAnd(dataRight, 16711680)>
+  [404] pushint32 65536 ......................... <65536>
+  [409] div ..................................... <bitAnd(dataRight, 16711680) / 65536>
+  [410] pusharglist 1 ........................... <bitAnd(dataRight, 16711680) / 65536>
+  [412] extcall 40 .............................. <numToChar(bitAnd(dataRight, 16711680) / 65536)>
+  [414] pushzero ................................ <0>
+  [415] put 37 .................................. put numToChar(bitAnd(dataRight, 16711680) / 65536) after plainText
+  [417] getlocal 4 .............................. <dataRight>
+  [419] pushint32 65280 ......................... <65280>
+  [424] pusharglist 2 ........................... <dataRight, 65280>
+  [426] extcall 41 .............................. <bitAnd(dataRight, 65280)>
+  [428] pushint16 256 ........................... <256>
+  [431] div ..................................... <bitAnd(dataRight, 65280) / 256>
+  [432] pusharglist 1 ........................... <bitAnd(dataRight, 65280) / 256>
+  [434] extcall 40 .............................. <numToChar(bitAnd(dataRight, 65280) / 256)>
+  [436] pushzero ................................ <0>
+  [437] put 37 .................................. put numToChar(bitAnd(dataRight, 65280) / 256) after plainText
+  [439] getlocal 4 .............................. <dataRight>
+  [441] pushint16 255 ........................... <255>
+  [444] pusharglist 2 ........................... <dataRight, 255>
+  [446] extcall 41 .............................. <bitAnd(dataRight, 255)>
+  [448] pusharglist 1 ........................... <bitAnd(dataRight, 255)>
+  [450] extcall 40 .............................. <numToChar(bitAnd(dataRight, 255))>
+  [452] pushzero ................................ <0>
+  [453] put 37 .................................. put numToChar(bitAnd(dataRight, 255)) after plainText
+  [455] getlocal 1 .............................. <i>
+  [457] pushint8 8 .............................. <8>
+  [459] add ..................................... <i + 8>
+  [460] setlocal 1 .............................. i = i + 8
+  [462] endrepeat [ 38]
+  [465] getlocal 0 .............................. <plainText>
+  [467] pusharglistnoret 1 ...................... <plainText>
+  [469] extcall 18 .............................. return plainText
+  [471] ret
+end
+
+on blowfish_F me, x
+  [  0] getparam 1 .............................. <x>
+  [  2] pushint32 16777216 ...................... <16777216>
+  [  7] inv ..................................... <-16777216>
+  [  8] pusharglist 2 ........................... <x, -16777216>
+  [ 10] extcall 41 .............................. <bitAnd(x, -16777216)>
+  [ 12] pushint32 16777216 ...................... <16777216>
+  [ 17] div ..................................... <bitAnd(x, -16777216) / 16777216>
+  [ 18] pushint16 255 ........................... <255>
+  [ 21] pusharglist 2 ........................... <bitAnd(x, -16777216) / 16777216, 255>
+  [ 23] extcall 41 .............................. <bitAnd(bitAnd(x, -16777216) / 16777216, 255)>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] add ..................................... <bitAnd(bitAnd(x, -16777216) / 16777216, 255) + 1>
+  [ 28] setlocal 0 .............................. a = bitAnd(bitAnd(x, -16777216) / 16777216, 255) + 1
+  [ 30] getparam 1 .............................. <x>
+  [ 32] pushint32 16711680 ...................... <16711680>
+  [ 37] pusharglist 2 ........................... <x, 16711680>
+  [ 39] extcall 41 .............................. <bitAnd(x, 16711680)>
+  [ 41] pushint32 65536 ......................... <65536>
+  [ 46] div ..................................... <bitAnd(x, 16711680) / 65536>
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] add ..................................... <(bitAnd(x, 16711680) / 65536) + 1>
+  [ 50] setlocal 1 .............................. b = (bitAnd(x, 16711680) / 65536) + 1
+  [ 52] getparam 1 .............................. <x>
+  [ 54] pushint32 65280 ......................... <65280>
+  [ 59] pusharglist 2 ........................... <x, 65280>
+  [ 61] extcall 41 .............................. <bitAnd(x, 65280)>
+  [ 63] pushint16 256 ........................... <256>
+  [ 66] div ..................................... <bitAnd(x, 65280) / 256>
+  [ 67] pushint8 1 .............................. <1>
+  [ 69] add ..................................... <(bitAnd(x, 65280) / 256) + 1>
+  [ 70] setlocal 2 .............................. c = (bitAnd(x, 65280) / 256) + 1
+  [ 72] getparam 1 .............................. <x>
+  [ 74] pushint16 255 ........................... <255>
+  [ 77] pusharglist 2 ........................... <x, 255>
+  [ 79] extcall 41 .............................. <bitAnd(x, 255)>
+  [ 81] pushint8 1 .............................. <1>
+  [ 83] add ..................................... <bitAnd(x, 255) + 1>
+  [ 84] setlocal 3 .............................. d = bitAnd(x, 255) + 1
+  [ 86] getprop 2 ............................... <blowfish_S1>
+  [ 88] getlocal 0 .............................. <a>
+  [ 90] pusharglist 2 ........................... <blowfish_S1, a>
+  [ 92] objcall 30 .............................. <blowfish_S1[a]>
+  [ 94] getprop 3 ............................... <blowfish_S2>
+  [ 96] getlocal 1 .............................. <b>
+  [ 98] pusharglist 2 ........................... <blowfish_S2, b>
+  [100] objcall 30 .............................. <blowfish_S2[b]>
+  [102] add ..................................... <blowfish_S1[a] + blowfish_S2[b]>
+  [103] setlocal 4 .............................. f = blowfish_S1[a] + blowfish_S2[b]
+  [105] getlocal 4 .............................. <f>
+  [107] getprop 4 ............................... <blowfish_S3>
+  [109] getlocal 2 .............................. <c>
+  [111] pusharglist 2 ........................... <blowfish_S3, c>
+  [113] objcall 30 .............................. <blowfish_S3[c]>
+  [115] pusharglist 2 ........................... <f, blowfish_S3[c]>
+  [117] extcall 29 .............................. <bitXor(f, blowfish_S3[c])>
+  [119] setlocal 4 .............................. f = bitXor(f, blowfish_S3[c])
+  [121] getlocal 4 .............................. <f>
+  [123] getprop 5 ............................... <blowfish_S4>
+  [125] getlocal 3 .............................. <d>
+  [127] pusharglist 2 ........................... <blowfish_S4, d>
+  [129] objcall 30 .............................. <blowfish_S4[d]>
+  [131] add ..................................... <f + blowfish_S4[d]>
+  [132] pushint8 1 .............................. <1>
+  [134] inv ..................................... <-1>
+  [135] pusharglist 2 ........................... <f + blowfish_S4[d], -1>
+  [137] extcall 41 .............................. <bitAnd(f + blowfish_S4[d], -1)>
+  [139] setlocal 4 .............................. f = bitAnd(f + blowfish_S4[d], -1)
+  [141] getlocal 4 .............................. <f>
+  [143] pusharglistnoret 1 ...................... <f>
+  [145] extcall 18 .............................. return f
+  [147] ret
+end
+
+on blowfish_Encipher me, dataLeft, dataRight
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getprop 15 .............................. <blowfish_rounds>
+  [  8] lteq
+  [  9] jmpifz [ 65] ............................ repeat with i = 1 to blowfish_rounds
+  [ 12] getparam 1 .............................. <dataLeft>
+  [ 14] getprop 1 ............................... <blowfish_P>
+  [ 16] getlocal 0 .............................. <i>
+  [ 18] pusharglist 2 ........................... <blowfish_P, i>
+  [ 20] objcall 30 .............................. <blowfish_P[i]>
+  [ 22] pusharglist 2 ........................... <dataLeft, blowfish_P[i]>
+  [ 24] extcall 29 .............................. <bitXor(dataLeft, blowfish_P[i])>
+  [ 26] setparam 1 .............................. dataLeft = bitXor(dataLeft, blowfish_P[i])
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getparam 1 .............................. <dataLeft>
+  [ 32] pusharglist 2 ........................... <me, dataLeft>
+  [ 34] objcall 12 .............................. <me.blowfish_F(dataLeft)>
+  [ 36] getparam 2 .............................. <dataRight>
+  [ 38] pusharglist 2 ........................... <me.blowfish_F(dataLeft), dataRight>
+  [ 40] extcall 29 .............................. <bitXor(me.blowfish_F(dataLeft), dataRight)>
+  [ 42] setparam 2 .............................. dataRight = bitXor(me.blowfish_F(dataLeft), dataRight)
+  [ 44] getparam 1 .............................. <dataLeft>
+  [ 46] setlocal 1 .............................. temp = dataLeft
+  [ 48] getparam 2 .............................. <dataRight>
+  [ 50] setparam 1 .............................. dataLeft = dataRight
+  [ 52] getlocal 1 .............................. <temp>
+  [ 54] setparam 2 .............................. dataRight = temp
+  [ 56] pushint8 1
+  [ 58] getlocal 0
+  [ 60] add
+  [ 61] setlocal 0
+  [ 63] endrepeat [  4]
+  [ 65] getparam 1 .............................. <dataLeft>
+  [ 67] setlocal 1 .............................. temp = dataLeft
+  [ 69] getparam 2 .............................. <dataRight>
+  [ 71] setparam 1 .............................. dataLeft = dataRight
+  [ 73] getlocal 1 .............................. <temp>
+  [ 75] setparam 2 .............................. dataRight = temp
+  [ 77] getparam 2 .............................. <dataRight>
+  [ 79] getprop 1 ............................... <blowfish_P>
+  [ 81] getprop 15 .............................. <blowfish_rounds>
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] add ..................................... <blowfish_rounds + 1>
+  [ 86] pusharglist 2 ........................... <blowfish_P, blowfish_rounds + 1>
+  [ 88] objcall 30 .............................. <blowfish_P[blowfish_rounds + 1]>
+  [ 90] pusharglist 2 ........................... <dataRight, blowfish_P[blowfish_rounds + 1]>
+  [ 92] extcall 29 .............................. <bitXor(dataRight, blowfish_P[blowfish_rounds + 1])>
+  [ 94] setparam 2 .............................. dataRight = bitXor(dataRight, blowfish_P[blowfish_rounds + 1])
+  [ 96] getparam 1 .............................. <dataLeft>
+  [ 98] getprop 1 ............................... <blowfish_P>
+  [100] getprop 15 .............................. <blowfish_rounds>
+  [102] pushint8 2 .............................. <2>
+  [104] add ..................................... <blowfish_rounds + 2>
+  [105] pusharglist 2 ........................... <blowfish_P, blowfish_rounds + 2>
+  [107] objcall 30 .............................. <blowfish_P[blowfish_rounds + 2]>
+  [109] pusharglist 2 ........................... <dataLeft, blowfish_P[blowfish_rounds + 2]>
+  [111] extcall 29 .............................. <bitXor(dataLeft, blowfish_P[blowfish_rounds + 2])>
+  [113] setparam 1 .............................. dataLeft = bitXor(dataLeft, blowfish_P[blowfish_rounds + 2])
+  [115] pushsymb 32 ............................. <#left>
+  [117] getparam 1 .............................. <dataLeft>
+  [119] pushsymb 33 ............................. <#right>
+  [121] getparam 2 .............................. <dataRight>
+  [123] pusharglist 4 ........................... <[#left: dataLeft, #right: dataRight]>
+  [125] pushproplist ............................ <[#left: dataLeft, #right: dataRight]>
+  [126] pusharglistnoret 1 ...................... <[#left: dataLeft, #right: dataRight]>
+  [128] extcall 18 .............................. return [#left: dataLeft, #right: dataRight]
+  [130] ret
+end
+
+on blowfish_Decipher me, dataLeft, dataRight
+  [  0] getprop 15 .............................. <blowfish_rounds>
+  [  2] pushint8 2 .............................. <2>
+  [  4] add ..................................... <blowfish_rounds + 2>
+  [  5] setlocal 0
+  [  7] getlocal 0
+  [  9] pushint8 3 .............................. <3>
+  [ 11] gteq
+  [ 12] jmpifz [ 68] ............................ repeat with i = blowfish_rounds + 2 down to 3
+  [ 15] getparam 1 .............................. <dataLeft>
+  [ 17] getprop 1 ............................... <blowfish_P>
+  [ 19] getlocal 0 .............................. <i>
+  [ 21] pusharglist 2 ........................... <blowfish_P, i>
+  [ 23] objcall 30 .............................. <blowfish_P[i]>
+  [ 25] pusharglist 2 ........................... <dataLeft, blowfish_P[i]>
+  [ 27] extcall 29 .............................. <bitXor(dataLeft, blowfish_P[i])>
+  [ 29] setparam 1 .............................. dataLeft = bitXor(dataLeft, blowfish_P[i])
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getparam 1 .............................. <dataLeft>
+  [ 35] pusharglist 2 ........................... <me, dataLeft>
+  [ 37] objcall 12 .............................. <me.blowfish_F(dataLeft)>
+  [ 39] getparam 2 .............................. <dataRight>
+  [ 41] pusharglist 2 ........................... <me.blowfish_F(dataLeft), dataRight>
+  [ 43] extcall 29 .............................. <bitXor(me.blowfish_F(dataLeft), dataRight)>
+  [ 45] setparam 2 .............................. dataRight = bitXor(me.blowfish_F(dataLeft), dataRight)
+  [ 47] getparam 1 .............................. <dataLeft>
+  [ 49] setlocal 1 .............................. temp = dataLeft
+  [ 51] getparam 2 .............................. <dataRight>
+  [ 53] setparam 1 .............................. dataLeft = dataRight
+  [ 55] getlocal 1 .............................. <temp>
+  [ 57] setparam 2 .............................. dataRight = temp
+  [ 59] pushint8 -1
+  [ 61] getlocal 0
+  [ 63] add
+  [ 64] setlocal 0
+  [ 66] endrepeat [  7]
+  [ 68] getparam 1 .............................. <dataLeft>
+  [ 70] setlocal 1 .............................. temp = dataLeft
+  [ 72] getparam 2 .............................. <dataRight>
+  [ 74] setparam 1 .............................. dataLeft = dataRight
+  [ 76] getlocal 1 .............................. <temp>
+  [ 78] setparam 2 .............................. dataRight = temp
+  [ 80] getparam 2 .............................. <dataRight>
+  [ 82] getprop 1 ............................... <blowfish_P>
+  [ 84] pushint8 2 .............................. <2>
+  [ 86] pusharglist 2 ........................... <blowfish_P, 2>
+  [ 88] objcall 30 .............................. <blowfish_P[2]>
+  [ 90] pusharglist 2 ........................... <dataRight, blowfish_P[2]>
+  [ 92] extcall 29 .............................. <bitXor(dataRight, blowfish_P[2])>
+  [ 94] setparam 2 .............................. dataRight = bitXor(dataRight, blowfish_P[2])
+  [ 96] getparam 1 .............................. <dataLeft>
+  [ 98] getprop 1 ............................... <blowfish_P>
+  [100] pushint8 1 .............................. <1>
+  [102] pusharglist 2 ........................... <blowfish_P, 1>
+  [104] objcall 30 .............................. <blowfish_P[1]>
+  [106] pusharglist 2 ........................... <dataLeft, blowfish_P[1]>
+  [108] extcall 29 .............................. <bitXor(dataLeft, blowfish_P[1])>
+  [110] setparam 1 .............................. dataLeft = bitXor(dataLeft, blowfish_P[1])
+  [112] pushsymb 32 ............................. <#left>
+  [114] getparam 1 .............................. <dataLeft>
+  [116] pushsymb 33 ............................. <#right>
+  [118] getparam 2 .............................. <dataRight>
+  [120] pusharglist 4 ........................... <[#left: dataLeft, #right: dataRight]>
+  [122] pushproplist ............................ <[#left: dataLeft, #right: dataRight]>
+  [123] pusharglistnoret 1 ...................... <[#left: dataLeft, #right: dataRight]>
+  [125] extcall 18 .............................. return [#left: dataLeft, #right: dataRight]
+  [127] ret
+end

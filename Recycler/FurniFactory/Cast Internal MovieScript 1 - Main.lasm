@@ -1,0 +1,1446 @@
+on startMovie
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setmovieprop 23 ......................... the actorList = []
+  [  5] ret
+end
+
+on stopMovie
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setmovieprop 23 ......................... the actorList = []
+  [  5] pusharglistnoret 0 ...................... <>
+  [  7] extcall 24 .............................. pass()
+  [  9] ret
+end
+
+on getAvatarPreviewImage sAttributes
+  [  0] pushcons 0 .............................. <"AvatarEngine">
+  [  2] pusharglist 1 ........................... <"AvatarEngine">
+  [  4] extcall 26 .............................. <script("AvatarEngine")>
+  [  6] getparam 0 .............................. <sAttributes>
+  [  8] pusharglist 2 ........................... <script("AvatarEngine"), sAttributes>
+  [ 10] extcall 25 .............................. <new(script("AvatarEngine"), sAttributes)>
+  [ 12] setlocal 0 .............................. oNewAvatar = new(script("AvatarEngine"), sAttributes)
+  [ 14] getlocal 0 .............................. <oNewAvatar>
+  [ 16] pusharglist 1 ........................... <oNewAvatar>
+  [ 18] objcall 27 .............................. <oNewAvatar.getPreviewImage()>
+  [ 20] setlocal 1 .............................. oPreviewImage = oNewAvatar.getPreviewImage()
+  [ 22] getlocal 1 .............................. <oPreviewImage>
+  [ 24] pusharglistnoret 1 ...................... <oPreviewImage>
+  [ 26] extcall 28 .............................. return oPreviewImage
+  [ 28] ret
+end
+
+on getMemberNames
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNames = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] pushcons 1 .............................. <"people">
+  [ 13] pushint8 2 .............................. <2>
+  [ 15] get 8 ................................... <the number of castMembers of castLib "people">
+  [ 17] lteq
+  [ 18] jmpifz [ 46] ............................ repeat with i = 1 to the number of castMembers of castLib "people"
+  [ 21] getlocal 0 .............................. <aNames>
+  [ 23] getlocal 1 .............................. <i>
+  [ 25] pushcons 1 .............................. <"people">
+  [ 27] pusharglist 2 ........................... <i, "people">
+  [ 29] extcall 32 .............................. <member(i, "people")>
+  [ 31] getobjprop 33 ........................... <member(i, "people").name>
+  [ 33] pusharglistnoret 2 ...................... <aNames, member(i, "people").name>
+  [ 35] objcall 34 .............................. aNames.append(member(i, "people").name)
+  [ 37] pushint8 1
+  [ 39] getlocal 1
+  [ 41] add
+  [ 42] setlocal 1
+  [ 44] endrepeat [  9]
+  [ 46] getlocal 0 .............................. <aNames>
+  [ 48] pusharglistnoret 1 ...................... <aNames>
+  [ 50] extcall 28 .............................. return aNames
+  [ 52] ret
+end
+
+on getMemberTable
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aMemberTable = []
+  [  5] pushcons 2 .............................. <"_">
+  [  7] setmovieprop 37 ......................... the itemDelimiter = "_"
+  [  9] pusharglist 0 ........................... <>
+  [ 11] localcall 3 ............................. <getMemberNames()>
+  [ 13] setlocal 1 .............................. aNames = getMemberNames()
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 2
+  [ 19] getlocal 2
+  [ 21] getlocal 1 .............................. <aNames>
+  [ 23] getobjprop 38 ........................... <aNames.count>
+  [ 25] lteq
+  [ 26] jmpifz [219] ............................ repeat with i = 1 to aNames.count
+  [ 29] getlocal 1 .............................. <aNames>
+  [ 31] getlocal 2 .............................. <i>
+  [ 33] pusharglist 2 ........................... <aNames, i>
+  [ 35] objcall 39 .............................. <aNames[i]>
+  [ 37] setlocal 3 .............................. sMemberName = aNames[i]
+  [ 39] getlocal 3 .............................. <sMemberName>
+  [ 41] pushcons 3 .............................. <"h_">
+  [ 43] contains0str ............................ <sMemberName starts "h_">
+  [ 44] not ..................................... <not (sMemberName starts "h_")>
+  [ 45] jmpifz [ 51] ............................ if not (sMemberName starts "h_") then
+  [ 48] jmp [210] ............................... next repeat
+  [ 51] getlocal 3 .............................. <sMemberName>
+  [ 53] pusharglist 1 ........................... <sMemberName>
+  [ 55] extcall 32 .............................. <member(sMemberName)>
+  [ 57] setlocal 4 .............................. oMember = member(sMemberName)
+  [ 59] pusharglist 0 ........................... <[:]>
+  [ 61] pushproplist ............................ <[:]>
+  [ 62] setlocal 5 .............................. aTable = [:]
+  [ 64] getlocal 5 .............................. <aTable>
+  [ 66] pushsymb 40 ............................. <#memberName>
+  [ 68] getlocal 3 .............................. <sMemberName>
+  [ 70] pusharglistnoret 3 ...................... <aTable, #memberName, sMemberName>
+  [ 72] objcall 41 .............................. aTable[#memberName] = sMemberName
+  [ 74] getlocal 5 .............................. <aTable>
+  [ 76] pushsymb 42 ............................. <#id>
+  [ 78] getlocal 3 .............................. <sMemberName>
+  [ 80] pushsymb 43 ............................. <#item>
+  [ 82] pushint8 1 .............................. <1>
+  [ 84] pusharglist 3 ........................... <sMemberName, #item, 1>
+  [ 86] objcall 44 .............................. <sMemberName.item[1]>
+  [ 88] pusharglistnoret 3 ...................... <aTable, #id, sMemberName.item[1]>
+  [ 90] objcall 41 .............................. aTable[#id] = sMemberName.item[1]
+  [ 92] getlocal 5 .............................. <aTable>
+  [ 94] pushsymb 45 ............................. <#act>
+  [ 96] getlocal 3 .............................. <sMemberName>
+  [ 98] pushsymb 43 ............................. <#item>
+  [100] pushint8 2 .............................. <2>
+  [102] pusharglist 3 ........................... <sMemberName, #item, 2>
+  [104] objcall 44 .............................. <sMemberName.item[2]>
+  [106] pusharglistnoret 3 ...................... <aTable, #act, sMemberName.item[2]>
+  [108] objcall 41 .............................. aTable[#act] = sMemberName.item[2]
+  [110] getlocal 5 .............................. <aTable>
+  [112] pushsymb 46 ............................. <#prt>
+  [114] getlocal 3 .............................. <sMemberName>
+  [116] pushsymb 43 ............................. <#item>
+  [118] pushint8 3 .............................. <3>
+  [120] pusharglist 3 ........................... <sMemberName, #item, 3>
+  [122] objcall 44 .............................. <sMemberName.item[3]>
+  [124] pusharglistnoret 3 ...................... <aTable, #prt, sMemberName.item[3]>
+  [126] objcall 41 .............................. aTable[#prt] = sMemberName.item[3]
+  [128] getlocal 5 .............................. <aTable>
+  [130] pushsymb 47 ............................. <#prtCd>
+  [132] getlocal 3 .............................. <sMemberName>
+  [134] pushsymb 43 ............................. <#item>
+  [136] pushint8 4 .............................. <4>
+  [138] pusharglist 3 ........................... <sMemberName, #item, 4>
+  [140] objcall 44 .............................. <sMemberName.item[4]>
+  [142] pusharglistnoret 3 ...................... <aTable, #prtCd, sMemberName.item[4]>
+  [144] objcall 41 .............................. aTable[#prtCd] = sMemberName.item[4]
+  [146] getlocal 5 .............................. <aTable>
+  [148] pushsymb 48 ............................. <#dir>
+  [150] getlocal 3 .............................. <sMemberName>
+  [152] pushsymb 43 ............................. <#item>
+  [154] pushint8 5 .............................. <5>
+  [156] pusharglist 3 ........................... <sMemberName, #item, 5>
+  [158] objcall 44 .............................. <sMemberName.item[5]>
+  [160] pusharglist 1 ........................... <sMemberName.item[5]>
+  [162] extcall 49 .............................. <integer(sMemberName.item[5])>
+  [164] pusharglistnoret 3 ...................... <aTable, #dir, integer(sMemberName.item[5])>
+  [166] objcall 41 .............................. aTable[#dir] = integer(sMemberName.item[5])
+  [168] getlocal 5 .............................. <aTable>
+  [170] pushsymb 50 ............................. <#fr>
+  [172] getlocal 3 .............................. <sMemberName>
+  [174] pushsymb 43 ............................. <#item>
+  [176] pushint8 6 .............................. <6>
+  [178] pusharglist 3 ........................... <sMemberName, #item, 6>
+  [180] objcall 44 .............................. <sMemberName.item[6]>
+  [182] pusharglist 1 ........................... <sMemberName.item[6]>
+  [184] extcall 49 .............................. <integer(sMemberName.item[6])>
+  [186] pusharglistnoret 3 ...................... <aTable, #fr, integer(sMemberName.item[6])>
+  [188] objcall 41 .............................. aTable[#fr] = integer(sMemberName.item[6])
+  [190] getlocal 5 .............................. <aTable>
+  [192] pushsymb 51 ............................. <#paletteRef>
+  [194] getlocal 4 .............................. <oMember>
+  [196] getobjprop 51 ........................... <oMember.paletteRef>
+  [198] pusharglistnoret 3 ...................... <aTable, #paletteRef, oMember.paletteRef>
+  [200] objcall 41 .............................. aTable[#paletteRef] = oMember.paletteRef
+  [202] getlocal 0 .............................. <aMemberTable>
+  [204] getlocal 5 .............................. <aTable>
+  [206] pusharglistnoret 2 ...................... <aMemberTable, aTable>
+  [208] objcall 34 .............................. aMemberTable.append(aTable)
+  [210] pushint8 1
+  [212] getlocal 2
+  [214] add
+  [215] setlocal 2
+  [217] endrepeat [ 19]
+  [219] getlocal 0 .............................. <aMemberTable>
+  [221] pusharglistnoret 1 ...................... <aMemberTable>
+  [223] extcall 28 .............................. return aMemberTable
+  [225] ret
+end
+
+on getDirections id, act, prt, prtCd, fr
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aDirections = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [215] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getparam 0 .............................. <id>
+  [ 37] pusharglist 0 ........................... <>
+  [ 39] extcall 56 .............................. <VOID>
+  [ 41] nteq .................................... <id <> VOID>
+  [ 42] jmpifz [ 63] ............................ if id <> VOID then
+  [ 45] getlocal 3 .............................. <aTable>
+  [ 47] pushsymb 42 ............................. <#id>
+  [ 49] pusharglist 2 ........................... <aTable, #id>
+  [ 51] objcall 39 .............................. <aTable[#id]>
+  [ 53] getparam 0 .............................. <id>
+  [ 55] eq ...................................... <aTable[#id] = id>
+  [ 56] not ..................................... <not (aTable[#id] = id)>
+  [ 57] jmpifz [ 63] ............................ if not (aTable[#id] = id) then
+  [ 60] jmp [206] ............................... next repeat
+  [ 63] getparam 1 .............................. <act>
+  [ 65] pusharglist 0 ........................... <>
+  [ 67] extcall 56 .............................. <VOID>
+  [ 69] nteq .................................... <act <> VOID>
+  [ 70] jmpifz [ 91] ............................ if act <> VOID then
+  [ 73] getlocal 3 .............................. <aTable>
+  [ 75] pushsymb 45 ............................. <#act>
+  [ 77] pusharglist 2 ........................... <aTable, #act>
+  [ 79] objcall 39 .............................. <aTable[#act]>
+  [ 81] getparam 1 .............................. <act>
+  [ 83] eq ...................................... <aTable[#act] = act>
+  [ 84] not ..................................... <not (aTable[#act] = act)>
+  [ 85] jmpifz [ 91] ............................ if not (aTable[#act] = act) then
+  [ 88] jmp [206] ............................... next repeat
+  [ 91] getparam 2 .............................. <prt>
+  [ 93] pusharglist 0 ........................... <>
+  [ 95] extcall 56 .............................. <VOID>
+  [ 97] nteq .................................... <prt <> VOID>
+  [ 98] jmpifz [119] ............................ if prt <> VOID then
+  [101] getlocal 3 .............................. <aTable>
+  [103] pushsymb 46 ............................. <#prt>
+  [105] pusharglist 2 ........................... <aTable, #prt>
+  [107] objcall 39 .............................. <aTable[#prt]>
+  [109] getparam 2 .............................. <prt>
+  [111] eq ...................................... <aTable[#prt] = prt>
+  [112] not ..................................... <not (aTable[#prt] = prt)>
+  [113] jmpifz [119] ............................ if not (aTable[#prt] = prt) then
+  [116] jmp [206] ............................... next repeat
+  [119] getparam 3 .............................. <prtCd>
+  [121] pusharglist 0 ........................... <>
+  [123] extcall 56 .............................. <VOID>
+  [125] nteq .................................... <prtCd <> VOID>
+  [126] jmpifz [147] ............................ if prtCd <> VOID then
+  [129] getlocal 3 .............................. <aTable>
+  [131] pushsymb 47 ............................. <#prtCd>
+  [133] pusharglist 2 ........................... <aTable, #prtCd>
+  [135] objcall 39 .............................. <aTable[#prtCd]>
+  [137] getparam 3 .............................. <prtCd>
+  [139] eq ...................................... <aTable[#prtCd] = prtCd>
+  [140] not ..................................... <not (aTable[#prtCd] = prtCd)>
+  [141] jmpifz [147] ............................ if not (aTable[#prtCd] = prtCd) then
+  [144] jmp [206] ............................... next repeat
+  [147] getparam 4 .............................. <fr>
+  [149] pusharglist 0 ........................... <>
+  [151] extcall 56 .............................. <VOID>
+  [153] nteq .................................... <fr <> VOID>
+  [154] jmpifz [175] ............................ if fr <> VOID then
+  [157] getlocal 3 .............................. <aTable>
+  [159] pushsymb 50 ............................. <#fr>
+  [161] pusharglist 2 ........................... <aTable, #fr>
+  [163] objcall 39 .............................. <aTable[#fr]>
+  [165] getparam 4 .............................. <fr>
+  [167] eq ...................................... <aTable[#fr] = fr>
+  [168] not ..................................... <not (aTable[#fr] = fr)>
+  [169] jmpifz [175] ............................ if not (aTable[#fr] = fr) then
+  [172] jmp [206] ............................... next repeat
+  [175] getlocal 3 .............................. <aTable>
+  [177] pushsymb 48 ............................. <#dir>
+  [179] pusharglist 2 ........................... <aTable, #dir>
+  [181] objcall 39 .............................. <aTable[#dir]>
+  [183] setlocal 4 .............................. iDir = aTable[#dir]
+  [185] getlocal 0 .............................. <aDirections>
+  [187] getlocal 4 .............................. <iDir>
+  [189] pusharglist 2 ........................... <aDirections, iDir>
+  [191] objcall 57 .............................. <aDirections.getPos(iDir)>
+  [193] pushzero ................................ <0>
+  [194] eq ...................................... <aDirections.getPos(iDir) = 0>
+  [195] jmpifz [206] ............................ if aDirections.getPos(iDir) = 0 then
+  [198] getlocal 0 .............................. <aDirections>
+  [200] getlocal 4 .............................. <iDir>
+  [202] pusharglistnoret 2 ...................... <aDirections, iDir>
+  [204] objcall 34 .............................. aDirections.append(iDir)
+  [206] pushint8 1
+  [208] getlocal 2
+  [210] add
+  [211] setlocal 2
+  [213] endrepeat [ 15]
+  [215] getlocal 0 .............................. <aDirections>
+  [217] pusharglistnoret 1 ...................... <aDirections>
+  [219] objcall 58 .............................. aDirections.sort()
+  [221] getlocal 0 .............................. <aDirections>
+  [223] pusharglistnoret 1 ...................... <aDirections>
+  [225] extcall 28 .............................. return aDirections
+  [227] ret
+end
+
+on getFrames id, act, prt, prtCd, dir
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aFrames = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [215] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getparam 0 .............................. <id>
+  [ 37] pusharglist 0 ........................... <>
+  [ 39] extcall 56 .............................. <VOID>
+  [ 41] nteq .................................... <id <> VOID>
+  [ 42] jmpifz [ 63] ............................ if id <> VOID then
+  [ 45] getlocal 3 .............................. <aTable>
+  [ 47] pushsymb 42 ............................. <#id>
+  [ 49] pusharglist 2 ........................... <aTable, #id>
+  [ 51] objcall 39 .............................. <aTable[#id]>
+  [ 53] getparam 0 .............................. <id>
+  [ 55] eq ...................................... <aTable[#id] = id>
+  [ 56] not ..................................... <not (aTable[#id] = id)>
+  [ 57] jmpifz [ 63] ............................ if not (aTable[#id] = id) then
+  [ 60] jmp [206] ............................... next repeat
+  [ 63] getparam 1 .............................. <act>
+  [ 65] pusharglist 0 ........................... <>
+  [ 67] extcall 56 .............................. <VOID>
+  [ 69] nteq .................................... <act <> VOID>
+  [ 70] jmpifz [ 91] ............................ if act <> VOID then
+  [ 73] getlocal 3 .............................. <aTable>
+  [ 75] pushsymb 45 ............................. <#act>
+  [ 77] pusharglist 2 ........................... <aTable, #act>
+  [ 79] objcall 39 .............................. <aTable[#act]>
+  [ 81] getparam 1 .............................. <act>
+  [ 83] eq ...................................... <aTable[#act] = act>
+  [ 84] not ..................................... <not (aTable[#act] = act)>
+  [ 85] jmpifz [ 91] ............................ if not (aTable[#act] = act) then
+  [ 88] jmp [206] ............................... next repeat
+  [ 91] getparam 2 .............................. <prt>
+  [ 93] pusharglist 0 ........................... <>
+  [ 95] extcall 56 .............................. <VOID>
+  [ 97] nteq .................................... <prt <> VOID>
+  [ 98] jmpifz [119] ............................ if prt <> VOID then
+  [101] getlocal 3 .............................. <aTable>
+  [103] pushsymb 46 ............................. <#prt>
+  [105] pusharglist 2 ........................... <aTable, #prt>
+  [107] objcall 39 .............................. <aTable[#prt]>
+  [109] getparam 2 .............................. <prt>
+  [111] eq ...................................... <aTable[#prt] = prt>
+  [112] not ..................................... <not (aTable[#prt] = prt)>
+  [113] jmpifz [119] ............................ if not (aTable[#prt] = prt) then
+  [116] jmp [206] ............................... next repeat
+  [119] getparam 3 .............................. <prtCd>
+  [121] pusharglist 0 ........................... <>
+  [123] extcall 56 .............................. <VOID>
+  [125] nteq .................................... <prtCd <> VOID>
+  [126] jmpifz [147] ............................ if prtCd <> VOID then
+  [129] getlocal 3 .............................. <aTable>
+  [131] pushsymb 47 ............................. <#prtCd>
+  [133] pusharglist 2 ........................... <aTable, #prtCd>
+  [135] objcall 39 .............................. <aTable[#prtCd]>
+  [137] getparam 3 .............................. <prtCd>
+  [139] eq ...................................... <aTable[#prtCd] = prtCd>
+  [140] not ..................................... <not (aTable[#prtCd] = prtCd)>
+  [141] jmpifz [147] ............................ if not (aTable[#prtCd] = prtCd) then
+  [144] jmp [206] ............................... next repeat
+  [147] getparam 4 .............................. <dir>
+  [149] pusharglist 0 ........................... <>
+  [151] extcall 56 .............................. <VOID>
+  [153] nteq .................................... <dir <> VOID>
+  [154] jmpifz [175] ............................ if dir <> VOID then
+  [157] getlocal 3 .............................. <aTable>
+  [159] pushsymb 48 ............................. <#dir>
+  [161] pusharglist 2 ........................... <aTable, #dir>
+  [163] objcall 39 .............................. <aTable[#dir]>
+  [165] getparam 4 .............................. <dir>
+  [167] eq ...................................... <aTable[#dir] = dir>
+  [168] not ..................................... <not (aTable[#dir] = dir)>
+  [169] jmpifz [175] ............................ if not (aTable[#dir] = dir) then
+  [172] jmp [206] ............................... next repeat
+  [175] getlocal 3 .............................. <aTable>
+  [177] pushsymb 50 ............................. <#fr>
+  [179] pusharglist 2 ........................... <aTable, #fr>
+  [181] objcall 39 .............................. <aTable[#fr]>
+  [183] setlocal 4 .............................. fr = aTable[#fr]
+  [185] getlocal 0 .............................. <aFrames>
+  [187] getlocal 4 .............................. <fr>
+  [189] pusharglist 2 ........................... <aFrames, fr>
+  [191] objcall 57 .............................. <aFrames.getPos(fr)>
+  [193] pushzero ................................ <0>
+  [194] eq ...................................... <aFrames.getPos(fr) = 0>
+  [195] jmpifz [206] ............................ if aFrames.getPos(fr) = 0 then
+  [198] getlocal 0 .............................. <aFrames>
+  [200] getlocal 4 .............................. <fr>
+  [202] pusharglistnoret 2 ...................... <aFrames, fr>
+  [204] objcall 34 .............................. aFrames.append(fr)
+  [206] pushint8 1
+  [208] getlocal 2
+  [210] add
+  [211] setlocal 2
+  [213] endrepeat [ 15]
+  [215] getlocal 0 .............................. <aFrames>
+  [217] pusharglistnoret 1 ...................... <aFrames>
+  [219] objcall 58 .............................. aFrames.sort()
+  [221] getlocal 0 .............................. <aFrames>
+  [223] pusharglistnoret 1 ...................... <aFrames>
+  [225] extcall 28 .............................. return aFrames
+  [227] ret
+end
+
+on getPartCodesForPart prt
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aCodes = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 97] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getlocal 3 .............................. <aTable>
+  [ 37] pushsymb 46 ............................. <#prt>
+  [ 39] pusharglist 2 ........................... <aTable, #prt>
+  [ 41] objcall 39 .............................. <aTable[#prt]>
+  [ 43] setlocal 4 .............................. sPart = aTable[#prt]
+  [ 45] getlocal 4 .............................. <sPart>
+  [ 47] getparam 0 .............................. <prt>
+  [ 49] eq ...................................... <sPart = prt>
+  [ 50] not ..................................... <not (sPart = prt)>
+  [ 51] jmpifz [ 57] ............................ if not (sPart = prt) then
+  [ 54] jmp [ 88] ............................... next repeat
+  [ 57] getlocal 3 .............................. <aTable>
+  [ 59] pushsymb 47 ............................. <#prtCd>
+  [ 61] pusharglist 2 ........................... <aTable, #prtCd>
+  [ 63] objcall 39 .............................. <aTable[#prtCd]>
+  [ 65] setlocal 5 .............................. sPartCode = aTable[#prtCd]
+  [ 67] getlocal 0 .............................. <aCodes>
+  [ 69] getlocal 5 .............................. <sPartCode>
+  [ 71] pusharglist 2 ........................... <aCodes, sPartCode>
+  [ 73] objcall 57 .............................. <aCodes.getPos(sPartCode)>
+  [ 75] pushzero ................................ <0>
+  [ 76] eq ...................................... <aCodes.getPos(sPartCode) = 0>
+  [ 77] jmpifz [ 88] ............................ if aCodes.getPos(sPartCode) = 0 then
+  [ 80] getlocal 0 .............................. <aCodes>
+  [ 82] getlocal 5 .............................. <sPartCode>
+  [ 84] pusharglistnoret 2 ...................... <aCodes, sPartCode>
+  [ 86] objcall 34 .............................. aCodes.append(sPartCode)
+  [ 88] pushint8 1
+  [ 90] getlocal 2
+  [ 92] add
+  [ 93] setlocal 2
+  [ 95] endrepeat [ 15]
+  [ 97] getlocal 0 .............................. <aCodes>
+  [ 99] pusharglistnoret 1 ...................... <aCodes>
+  [101] extcall 28 .............................. return aCodes
+  [103] ret
+end
+
+on getUniquePartCodes
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aParts = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 75] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getlocal 3 .............................. <aTable>
+  [ 37] pushsymb 47 ............................. <#prtCd>
+  [ 39] pusharglist 2 ........................... <aTable, #prtCd>
+  [ 41] objcall 39 .............................. <aTable[#prtCd]>
+  [ 43] setlocal 4 .............................. sPart = aTable[#prtCd]
+  [ 45] getlocal 0 .............................. <aParts>
+  [ 47] getlocal 4 .............................. <sPart>
+  [ 49] pusharglist 2 ........................... <aParts, sPart>
+  [ 51] objcall 57 .............................. <aParts.getPos(sPart)>
+  [ 53] pushzero ................................ <0>
+  [ 54] eq ...................................... <aParts.getPos(sPart) = 0>
+  [ 55] jmpifz [ 66] ............................ if aParts.getPos(sPart) = 0 then
+  [ 58] getlocal 0 .............................. <aParts>
+  [ 60] getlocal 4 .............................. <sPart>
+  [ 62] pusharglistnoret 2 ...................... <aParts, sPart>
+  [ 64] objcall 34 .............................. aParts.append(sPart)
+  [ 66] pushint8 1
+  [ 68] getlocal 2
+  [ 70] add
+  [ 71] setlocal 2
+  [ 73] endrepeat [ 15]
+  [ 75] getlocal 0 .............................. <aParts>
+  [ 77] pusharglistnoret 1 ...................... <aParts>
+  [ 79] extcall 28 .............................. return aParts
+  [ 81] ret
+end
+
+on getUniqueActions
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aActions = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 75] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getlocal 3 .............................. <aTable>
+  [ 37] pushsymb 45 ............................. <#act>
+  [ 39] pusharglist 2 ........................... <aTable, #act>
+  [ 41] objcall 39 .............................. <aTable[#act]>
+  [ 43] setlocal 4 .............................. sAction = aTable[#act]
+  [ 45] getlocal 0 .............................. <aActions>
+  [ 47] getlocal 4 .............................. <sAction>
+  [ 49] pusharglist 2 ........................... <aActions, sAction>
+  [ 51] objcall 57 .............................. <aActions.getPos(sAction)>
+  [ 53] pushzero ................................ <0>
+  [ 54] eq ...................................... <aActions.getPos(sAction) = 0>
+  [ 55] jmpifz [ 66] ............................ if aActions.getPos(sAction) = 0 then
+  [ 58] getlocal 0 .............................. <aActions>
+  [ 60] getlocal 4 .............................. <sAction>
+  [ 62] pusharglistnoret 2 ...................... <aActions, sAction>
+  [ 64] objcall 34 .............................. aActions.append(sAction)
+  [ 66] pushint8 1
+  [ 68] getlocal 2
+  [ 70] add
+  [ 71] setlocal 2
+  [ 73] endrepeat [ 15]
+  [ 75] getlocal 0 .............................. <aActions>
+  [ 77] pusharglistnoret 1 ...................... <aActions>
+  [ 79] extcall 28 .............................. return aActions
+  [ 81] ret
+end
+
+on getActionsForPart prt
+  [  0] pusharglist 0 ........................... <>
+  [  2] localcall 9 ............................. <getUniqueActions()>
+  [  4] setlocal 0 .............................. aAllActions = getUniqueActions()
+  [  6] pusharglist 0 ........................... <[]>
+  [  8] pushlist ................................ <[]>
+  [  9] setlocal 1 .............................. aActions = []
+  [ 11] pusharglist 0 ........................... <>
+  [ 13] localcall 4 ............................. <getMemberTable()>
+  [ 15] setlocal 2 .............................. aMemberTable = getMemberTable()
+  [ 17] pushint8 1 .............................. <1>
+  [ 19] setlocal 3
+  [ 21] getlocal 3
+  [ 23] getlocal 2 .............................. <aMemberTable>
+  [ 25] getobjprop 38 ........................... <aMemberTable.count>
+  [ 27] lteq
+  [ 28] jmpifz [103] ............................ repeat with i = 1 to aMemberTable.count
+  [ 31] getlocal 2 .............................. <aMemberTable>
+  [ 33] getlocal 3 .............................. <i>
+  [ 35] pusharglist 2 ........................... <aMemberTable, i>
+  [ 37] objcall 39 .............................. <aMemberTable[i]>
+  [ 39] setlocal 4 .............................. aTable = aMemberTable[i]
+  [ 41] getlocal 4 .............................. <aTable>
+  [ 43] pushsymb 46 ............................. <#prt>
+  [ 45] pusharglist 2 ........................... <aTable, #prt>
+  [ 47] objcall 39 .............................. <aTable[#prt]>
+  [ 49] setlocal 5 .............................. sPart = aTable[#prt]
+  [ 51] getlocal 5 .............................. <sPart>
+  [ 53] getparam 0 .............................. <prt>
+  [ 55] eq ...................................... <sPart = prt>
+  [ 56] not ..................................... <not (sPart = prt)>
+  [ 57] jmpifz [ 63] ............................ if not (sPart = prt) then
+  [ 60] jmp [ 94] ............................... next repeat
+  [ 63] getlocal 4 .............................. <aTable>
+  [ 65] pushsymb 45 ............................. <#act>
+  [ 67] pusharglist 2 ........................... <aTable, #act>
+  [ 69] objcall 39 .............................. <aTable[#act]>
+  [ 71] setlocal 6 .............................. sAction = aTable[#act]
+  [ 73] getlocal 1 .............................. <aActions>
+  [ 75] getlocal 6 .............................. <sAction>
+  [ 77] pusharglist 2 ........................... <aActions, sAction>
+  [ 79] objcall 57 .............................. <aActions.getPos(sAction)>
+  [ 81] pushzero ................................ <0>
+  [ 82] eq ...................................... <aActions.getPos(sAction) = 0>
+  [ 83] jmpifz [ 94] ............................ if aActions.getPos(sAction) = 0 then
+  [ 86] getlocal 1 .............................. <aActions>
+  [ 88] getlocal 6 .............................. <sAction>
+  [ 90] pusharglistnoret 2 ...................... <aActions, sAction>
+  [ 92] objcall 34 .............................. aActions.append(sAction)
+  [ 94] pushint8 1
+  [ 96] getlocal 3
+  [ 98] add
+  [ 99] setlocal 3
+  [101] endrepeat [ 21]
+  [103] getlocal 1 .............................. <aActions>
+  [105] pusharglistnoret 1 ...................... <aActions>
+  [107] extcall 28 .............................. return aActions
+  [109] ret
+end
+
+on getUniqueParts
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aParts = []
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 4 ............................. <getMemberTable()>
+  [  9] setlocal 1 .............................. aMemberTable = getMemberTable()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aMemberTable>
+  [ 19] getobjprop 38 ........................... <aMemberTable.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 75] ............................ repeat with i = 1 to aMemberTable.count
+  [ 25] getlocal 1 .............................. <aMemberTable>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aMemberTable, i>
+  [ 31] objcall 39 .............................. <aMemberTable[i]>
+  [ 33] setlocal 3 .............................. aTable = aMemberTable[i]
+  [ 35] getlocal 3 .............................. <aTable>
+  [ 37] pushsymb 46 ............................. <#prt>
+  [ 39] pusharglist 2 ........................... <aTable, #prt>
+  [ 41] objcall 39 .............................. <aTable[#prt]>
+  [ 43] setlocal 4 .............................. sPart = aTable[#prt]
+  [ 45] getlocal 0 .............................. <aParts>
+  [ 47] getlocal 4 .............................. <sPart>
+  [ 49] pusharglist 2 ........................... <aParts, sPart>
+  [ 51] objcall 57 .............................. <aParts.getPos(sPart)>
+  [ 53] pushzero ................................ <0>
+  [ 54] eq ...................................... <aParts.getPos(sPart) = 0>
+  [ 55] jmpifz [ 66] ............................ if aParts.getPos(sPart) = 0 then
+  [ 58] getlocal 0 .............................. <aParts>
+  [ 60] getlocal 4 .............................. <sPart>
+  [ 62] pusharglistnoret 2 ...................... <aParts, sPart>
+  [ 64] objcall 34 .............................. aParts.append(sPart)
+  [ 66] pushint8 1
+  [ 68] getlocal 2
+  [ 70] add
+  [ 71] setlocal 2
+  [ 73] endrepeat [ 15]
+  [ 75] getlocal 0 .............................. <aParts>
+  [ 77] pusharglistnoret 1 ...................... <aParts>
+  [ 79] extcall 28 .............................. return aParts
+  [ 81] ret
+end
+
+on getPartActionTable
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aPartActions = [:]
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 11 ............................ <getUniqueParts()>
+  [  9] setlocal 1 .............................. aParts = getUniqueParts()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aParts>
+  [ 19] getobjprop 38 ........................... <aParts.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 62] ............................ repeat with i = 1 to aParts.count
+  [ 25] getlocal 1 .............................. <aParts>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aParts, i>
+  [ 31] objcall 39 .............................. <aParts[i]>
+  [ 33] setlocal 3 .............................. sPart = aParts[i]
+  [ 35] getlocal 3 .............................. <sPart>
+  [ 37] pusharglist 1 ........................... <sPart>
+  [ 39] localcall 10 ............................ <getActionsForPart(sPart)>
+  [ 41] setlocal 4 .............................. aActions = getActionsForPart(sPart)
+  [ 43] getlocal 0 .............................. <aPartActions>
+  [ 45] getlocal 3 .............................. <sPart>
+  [ 47] getlocal 4 .............................. <aActions>
+  [ 49] pusharglistnoret 3 ...................... <aPartActions, sPart, aActions>
+  [ 51] objcall 41 .............................. aPartActions[sPart] = aActions
+  [ 53] pushint8 1
+  [ 55] getlocal 2
+  [ 57] add
+  [ 58] setlocal 2
+  [ 60] endrepeat [ 15]
+  [ 62] getlocal 0 .............................. <aPartActions>
+  [ 64] pusharglistnoret 1 ...................... <aPartActions>
+  [ 66] extcall 28 .............................. return aPartActions
+  [ 68] ret
+end
+
+on getPartDirections
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aPartDirs = [:]
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 11 ............................ <getUniqueParts()>
+  [  9] setlocal 1 .............................. aParts = getUniqueParts()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aParts>
+  [ 19] getobjprop 38 ........................... <aParts.count>
+  [ 21] lteq
+  [ 22] jmpifz [ 82] ............................ repeat with i = 1 to aParts.count
+  [ 25] getlocal 1 .............................. <aParts>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aParts, i>
+  [ 31] objcall 39 .............................. <aParts[i]>
+  [ 33] setlocal 3 .............................. sPart = aParts[i]
+  [ 35] pusharglist 0 ........................... <>
+  [ 37] extcall 56 .............................. <VOID>
+  [ 39] pusharglist 0 ........................... <>
+  [ 41] extcall 56 .............................. <VOID>
+  [ 43] getlocal 3 .............................. <sPart>
+  [ 45] pusharglist 0 ........................... <>
+  [ 47] extcall 56 .............................. <VOID>
+  [ 49] pusharglist 0 ........................... <>
+  [ 51] extcall 56 .............................. <VOID>
+  [ 53] pusharglist 0 ........................... <>
+  [ 55] extcall 56 .............................. <VOID>
+  [ 57] pusharglist 6 ........................... <VOID, VOID, sPart, VOID, VOID, VOID>
+  [ 59] localcall 5 ............................. <getDirections(VOID, VOID, sPart, VOID, VOID, VOID)>
+  [ 61] setlocal 4 .............................. aDirections = getDirections(VOID, VOID, sPart, VOID, VOID, VOID)
+  [ 63] getlocal 0 .............................. <aPartDirs>
+  [ 65] getlocal 3 .............................. <sPart>
+  [ 67] getlocal 4 .............................. <aDirections>
+  [ 69] pusharglistnoret 3 ...................... <aPartDirs, sPart, aDirections>
+  [ 71] objcall 41 .............................. aPartDirs[sPart] = aDirections
+  [ 73] pushint8 1
+  [ 75] getlocal 2
+  [ 77] add
+  [ 78] setlocal 2
+  [ 80] endrepeat [ 15]
+  [ 82] getlocal 0 .............................. <aPartDirs>
+  [ 84] pusharglistnoret 1 ...................... <aPartDirs>
+  [ 86] extcall 28 .............................. return aPartDirs
+  [ 88] ret
+end
+
+on getDirectionMap
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aDirMap = [:]
+  [  5] pushzero ................................ <0>
+  [  6] pushint8 6 .............................. <6>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] pushint8 5 .............................. <5>
+  [ 12] pushint8 2 .............................. <2>
+  [ 14] pushint8 4 .............................. <4>
+  [ 16] pushint8 3 .............................. <3>
+  [ 18] pushint8 7 .............................. <7>
+  [ 20] pushint8 4 .............................. <4>
+  [ 22] pushint8 2 .............................. <2>
+  [ 24] pushint8 5 .............................. <5>
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] pushint8 6 .............................. <6>
+  [ 30] pushzero ................................ <0>
+  [ 31] pushint8 7 .............................. <7>
+  [ 33] pushint8 3 .............................. <3>
+  [ 35] pusharglist 16 .......................... <[0: 6, 1: 5, 2: 4, 3: 7, 4: 2, 5: 1, 6: 0, 7: 3]>
+  [ 37] pushproplist ............................ <[0: 6, 1: 5, 2: 4, 3: 7, 4: 2, 5: 1, 6: 0, 7: 3]>
+  [ 38] setlocal 1 .............................. aFakeMap = [0: 6, 1: 5, 2: 4, 3: 7, 4: 2, 5: 1, 6: 0, 7: 3]
+  [ 40] pusharglist 0 ........................... <>
+  [ 42] localcall 11 ............................ <getUniqueParts()>
+  [ 44] setlocal 2 .............................. aParts = getUniqueParts()
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] setlocal 3
+  [ 50] getlocal 3
+  [ 52] getlocal 2 .............................. <aParts>
+  [ 54] getobjprop 38 ........................... <aParts.count>
+  [ 56] lteq
+  [ 57] jmpifz [242] ............................ repeat with i = 1 to aParts.count
+  [ 60] pusharglist 0 ........................... <[:]>
+  [ 62] pushproplist ............................ <[:]>
+  [ 63] setlocal 4 .............................. aPartActions = [:]
+  [ 65] getlocal 2 .............................. <aParts>
+  [ 67] getlocal 3 .............................. <i>
+  [ 69] pusharglist 2 ........................... <aParts, i>
+  [ 71] objcall 39 .............................. <aParts[i]>
+  [ 73] setlocal 5 .............................. sPart = aParts[i]
+  [ 75] getlocal 5 .............................. <sPart>
+  [ 77] pusharglist 1 ........................... <sPart>
+  [ 79] localcall 10 ............................ <getActionsForPart(sPart)>
+  [ 81] setlocal 6 .............................. aActions = getActionsForPart(sPart)
+  [ 83] pushint8 1 .............................. <1>
+  [ 85] setlocal 7
+  [ 87] getlocal 7
+  [ 89] getlocal 6 .............................. <aActions>
+  [ 91] getobjprop 38 ........................... <aActions.count>
+  [ 93] lteq
+  [ 94] jmpifz [223] ............................ repeat with ii = 1 to aActions.count
+  [ 97] getlocal 6 .............................. <aActions>
+  [ 99] getlocal 7 .............................. <ii>
+  [101] pusharglist 2 ........................... <aActions, ii>
+  [103] objcall 39 .............................. <aActions[ii]>
+  [105] setlocal 8 .............................. sAction = aActions[ii]
+  [107] pusharglist 0 ........................... <>
+  [109] extcall 56 .............................. <VOID>
+  [111] getlocal 8 .............................. <sAction>
+  [113] getlocal 5 .............................. <sPart>
+  [115] pusharglist 0 ........................... <>
+  [117] extcall 56 .............................. <VOID>
+  [119] pusharglist 0 ........................... <>
+  [121] extcall 56 .............................. <VOID>
+  [123] pusharglist 0 ........................... <>
+  [125] extcall 56 .............................. <VOID>
+  [127] pusharglist 6 ........................... <VOID, sAction, sPart, VOID, VOID, VOID>
+  [129] localcall 5 ............................. <getDirections(VOID, sAction, sPart, VOID, VOID, VOID)>
+  [131] setlocal 9 .............................. aRealDirs = getDirections(VOID, sAction, sPart, VOID, VOID, VOID)
+  [133] pusharglist 0 ........................... <[:]>
+  [135] pushproplist ............................ <[:]>
+  [136] setlocal 10 ............................. aFakeDirs = [:]
+  [138] pushzero ................................ <0>
+  [139] setlocal 11
+  [141] getlocal 11
+  [143] pushint8 7 .............................. <7>
+  [145] lteq
+  [146] jmpifz [204] ............................ repeat with iii = 0 to 7
+  [149] getlocal 9 .............................. <aRealDirs>
+  [151] getlocal 11 ............................. <iii>
+  [153] pusharglist 2 ........................... <aRealDirs, iii>
+  [155] objcall 57 .............................. <aRealDirs.getPos(iii)>
+  [157] pushzero ................................ <0>
+  [158] gt ...................................... <aRealDirs.getPos(iii) > 0>
+  [159] setlocal 12 ............................. bRealDirExists = aRealDirs.getPos(iii) > 0
+  [161] getlocal 12 ............................. <bRealDirExists>
+  [163] jmpifz [179] ............................ if bRealDirExists then
+  [166] getlocal 10 ............................. <aFakeDirs>
+  [168] getlocal 11 ............................. <iii>
+  [170] getlocal 11 ............................. <iii>
+  [172] pusharglistnoret 3 ...................... <aFakeDirs, iii, iii>
+  [174] objcall 71 .............................. aFakeDirs.setaProp(iii, iii)
+  [176] jmp [195] ............................... next repeat
+  [179] getlocal 10 ............................. <aFakeDirs>
+  [181] getlocal 11 ............................. <iii>
+  [183] getlocal 1 .............................. <aFakeMap>
+  [185] getlocal 11 ............................. <iii>
+  [187] pusharglist 2 ........................... <aFakeMap, iii>
+  [189] objcall 44 .............................. <aFakeMap.getProp(iii)>
+  [191] pusharglistnoret 3 ...................... <aFakeDirs, iii, aFakeMap.getProp(iii)>
+  [193] objcall 71 .............................. aFakeDirs.setaProp(iii, aFakeMap.getProp(iii))
+  [195] pushint8 1
+  [197] getlocal 11
+  [199] add
+  [200] setlocal 11
+  [202] endrepeat [141]
+  [204] getlocal 4 .............................. <aPartActions>
+  [206] getlocal 8 .............................. <sAction>
+  [208] getlocal 10 ............................. <aFakeDirs>
+  [210] pusharglistnoret 3 ...................... <aPartActions, sAction, aFakeDirs>
+  [212] objcall 41 .............................. aPartActions[sAction] = aFakeDirs
+  [214] pushint8 1
+  [216] getlocal 7
+  [218] add
+  [219] setlocal 7
+  [221] endrepeat [ 87]
+  [223] getlocal 0 .............................. <aDirMap>
+  [225] getlocal 5 .............................. <sPart>
+  [227] getlocal 4 .............................. <aPartActions>
+  [229] pusharglistnoret 3 ...................... <aDirMap, sPart, aPartActions>
+  [231] objcall 41 .............................. aDirMap[sPart] = aPartActions
+  [233] pushint8 1
+  [235] getlocal 3
+  [237] add
+  [238] setlocal 3
+  [240] endrepeat [ 50]
+  [242] getlocal 0 .............................. <aDirMap>
+  [244] pusharglistnoret 1 ...................... <aDirMap>
+  [246] extcall 28 .............................. return aDirMap
+  [248] ret
+end
+
+on getConfigList
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aConfigList = [:]
+  [  5] pusharglist 0 ........................... <>
+  [  7] localcall 11 ............................ <getUniqueParts()>
+  [  9] setlocal 1 .............................. aParts = getUniqueParts()
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] setlocal 2
+  [ 15] getlocal 2
+  [ 17] getlocal 1 .............................. <aParts>
+  [ 19] getobjprop 38 ........................... <aParts.count>
+  [ 21] lteq
+  [ 22] jmpifz [163] ............................ repeat with i = 1 to aParts.count
+  [ 25] getlocal 1 .............................. <aParts>
+  [ 27] getlocal 2 .............................. <i>
+  [ 29] pusharglist 2 ........................... <aParts, i>
+  [ 31] objcall 39 .............................. <aParts[i]>
+  [ 33] setlocal 3 .............................. sPart = aParts[i]
+  [ 35] pusharglist 0 ........................... <[:]>
+  [ 37] pushproplist ............................ <[:]>
+  [ 38] setlocal 4 .............................. aActionConfig = [:]
+  [ 40] getlocal 3 .............................. <sPart>
+  [ 42] pusharglist 1 ........................... <sPart>
+  [ 44] localcall 10 ............................ <getActionsForPart(sPart)>
+  [ 46] setlocal 5 .............................. aActions = getActionsForPart(sPart)
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] setlocal 6
+  [ 52] getlocal 6
+  [ 54] getlocal 5 .............................. <aActions>
+  [ 56] getobjprop 38 ........................... <aActions.count>
+  [ 58] lteq
+  [ 59] jmpifz [144] ............................ repeat with ii = 1 to aActions.count
+  [ 62] getlocal 5 .............................. <aActions>
+  [ 64] getlocal 6 .............................. <ii>
+  [ 66] pusharglist 2 ........................... <aActions, ii>
+  [ 68] objcall 39 .............................. <aActions[ii]>
+  [ 70] setlocal 7 .............................. sAction = aActions[ii]
+  [ 72] pusharglist 0 ........................... <>
+  [ 74] extcall 56 .............................. <VOID>
+  [ 76] getlocal 7 .............................. <sAction>
+  [ 78] getlocal 3 .............................. <sPart>
+  [ 80] pusharglist 0 ........................... <>
+  [ 82] extcall 56 .............................. <VOID>
+  [ 84] pusharglist 0 ........................... <>
+  [ 86] extcall 56 .............................. <VOID>
+  [ 88] pusharglist 5 ........................... <VOID, sAction, sPart, VOID, VOID>
+  [ 90] localcall 5 ............................. <getDirections(VOID, sAction, sPart, VOID, VOID)>
+  [ 92] setlocal 8 .............................. aDirections = getDirections(VOID, sAction, sPart, VOID, VOID)
+  [ 94] pusharglist 0 ........................... <>
+  [ 96] extcall 56 .............................. <VOID>
+  [ 98] getlocal 7 .............................. <sAction>
+  [100] getlocal 3 .............................. <sPart>
+  [102] pusharglist 0 ........................... <>
+  [104] extcall 56 .............................. <VOID>
+  [106] pusharglist 0 ........................... <>
+  [108] extcall 56 .............................. <VOID>
+  [110] pusharglist 5 ........................... <VOID, sAction, sPart, VOID, VOID>
+  [112] localcall 6 ............................. <getFrames(VOID, sAction, sPart, VOID, VOID)>
+  [114] setlocal 9 .............................. aFrames = getFrames(VOID, sAction, sPart, VOID, VOID)
+  [116] getlocal 4 .............................. <aActionConfig>
+  [118] getlocal 7 .............................. <sAction>
+  [120] pushsymb 48 ............................. <#dir>
+  [122] getlocal 8 .............................. <aDirections>
+  [124] pushsymb 50 ............................. <#fr>
+  [126] getlocal 9 .............................. <aFrames>
+  [128] pusharglist 4 ........................... <[#dir: aDirections, #fr: aFrames]>
+  [130] pushproplist ............................ <[#dir: aDirections, #fr: aFrames]>
+  [131] pusharglistnoret 3 ...................... <aActionConfig, sAction, [#dir: aDirections, #fr: aFrames]>
+  [133] objcall 41 .............................. aActionConfig[sAction] = [#dir: aDirections, #fr: aFrames]
+  [135] pushint8 1
+  [137] getlocal 6
+  [139] add
+  [140] setlocal 6
+  [142] endrepeat [ 52]
+  [144] getlocal 0 .............................. <aConfigList>
+  [146] getlocal 3 .............................. <sPart>
+  [148] getlocal 4 .............................. <aActionConfig>
+  [150] pusharglistnoret 3 ...................... <aConfigList, sPart, aActionConfig>
+  [152] objcall 41 .............................. aConfigList[sPart] = aActionConfig
+  [154] pushint8 1
+  [156] getlocal 2
+  [158] add
+  [159] setlocal 2
+  [161] endrepeat [ 15]
+  [163] getlocal 0 .............................. <aConfigList>
+  [165] pusharglistnoret 1 ...................... <aConfigList>
+  [167] extcall 28 .............................. return aConfigList
+  [169] ret
+end
+
+on getUniquePartsForAction act
+  [  0] ret
+end
+
+on fillPartCodes
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aParts = [:]
+  [  5] getlocal 0 .............................. <aParts>
+  [  7] pushsymb 81 ............................. <#bd>
+  [  9] pushcons 4 .............................. <"Body Codes">
+  [ 11] pusharglistnoret 3 ...................... <aParts, #bd, "Body Codes">
+  [ 13] objcall 41 .............................. aParts[#bd] = "Body Codes"
+  [ 15] getlocal 0 .............................. <aParts>
+  [ 17] pushsymb 82 ............................. <#hd>
+  [ 19] pushcons 5 .............................. <"Head Codes">
+  [ 21] pusharglistnoret 3 ...................... <aParts, #hd, "Head Codes">
+  [ 23] objcall 41 .............................. aParts[#hd] = "Head Codes"
+  [ 25] getlocal 0 .............................. <aParts>
+  [ 27] pushsymb 83 ............................. <#fc>
+  [ 29] pushcons 6 .............................. <"Face Codes">
+  [ 31] pusharglistnoret 3 ...................... <aParts, #fc, "Face Codes">
+  [ 33] objcall 41 .............................. aParts[#fc] = "Face Codes"
+  [ 35] getlocal 0 .............................. <aParts>
+  [ 37] pushsymb 84 ............................. <#ey>
+  [ 39] pushcons 7 .............................. <"Eye Codes">
+  [ 41] pusharglistnoret 3 ...................... <aParts, #ey, "Eye Codes">
+  [ 43] objcall 41 .............................. aParts[#ey] = "Eye Codes"
+  [ 45] getlocal 0 .............................. <aParts>
+  [ 47] pushsymb 85 ............................. <#hr>
+  [ 49] pushcons 8 .............................. <"Hair Codes">
+  [ 51] pusharglistnoret 3 ...................... <aParts, #hr, "Hair Codes">
+  [ 53] objcall 41 .............................. aParts[#hr] = "Hair Codes"
+  [ 55] getlocal 0 .............................. <aParts>
+  [ 57] pushsymb 86 ............................. <#ch>
+  [ 59] pushcons 9 .............................. <"Shirt Codes">
+  [ 61] pusharglistnoret 3 ...................... <aParts, #ch, "Shirt Codes">
+  [ 63] objcall 41 .............................. aParts[#ch] = "Shirt Codes"
+  [ 65] getlocal 0 .............................. <aParts>
+  [ 67] pushsymb 87 ............................. <#lh>
+  [ 69] pushcons 10 ............................. <"Left Arm Codes">
+  [ 71] pusharglistnoret 3 ...................... <aParts, #lh, "Left Arm Codes">
+  [ 73] objcall 41 .............................. aParts[#lh] = "Left Arm Codes"
+  [ 75] getlocal 0 .............................. <aParts>
+  [ 77] pushsymb 88 ............................. <#rh>
+  [ 79] pushcons 11 ............................. <"Right Arm Codes">
+  [ 81] pusharglistnoret 3 ...................... <aParts, #rh, "Right Arm Codes">
+  [ 83] objcall 41 .............................. aParts[#rh] = "Right Arm Codes"
+  [ 85] getlocal 0 .............................. <aParts>
+  [ 87] pushsymb 89 ............................. <#ls>
+  [ 89] pushcons 12 ............................. <"Left Sleeve Codes">
+  [ 91] pusharglistnoret 3 ...................... <aParts, #ls, "Left Sleeve Codes">
+  [ 93] objcall 41 .............................. aParts[#ls] = "Left Sleeve Codes"
+  [ 95] getlocal 0 .............................. <aParts>
+  [ 97] pushsymb 90 ............................. <#rs>
+  [ 99] pushcons 13 ............................. <"Right Sleeve Codes">
+  [101] pusharglistnoret 3 ...................... <aParts, #rs, "Right Sleeve Codes">
+  [103] objcall 41 .............................. aParts[#rs] = "Right Sleeve Codes"
+  [105] getlocal 0 .............................. <aParts>
+  [107] pushsymb 91 ............................. <#lg>
+  [109] pushcons 14 ............................. <"Pants Codes">
+  [111] pusharglistnoret 3 ...................... <aParts, #lg, "Pants Codes">
+  [113] objcall 41 .............................. aParts[#lg] = "Pants Codes"
+  [115] getlocal 0 .............................. <aParts>
+  [117] pushsymb 92 ............................. <#sh>
+  [119] pushcons 15 ............................. <"Shoes Codes">
+  [121] pusharglistnoret 3 ...................... <aParts, #sh, "Shoes Codes">
+  [123] objcall 41 .............................. aParts[#sh] = "Shoes Codes"
+  [125] getlocal 0 .............................. <aParts>
+  [127] pushsymb 93 ............................. <#ri>
+  [129] pushcons 16 ............................. <"Item Codes">
+  [131] pusharglistnoret 3 ...................... <aParts, #ri, "Item Codes">
+  [133] objcall 41 .............................. aParts[#ri] = "Item Codes"
+  [135] pushint8 1 .............................. <1>
+  [137] setlocal 1
+  [139] getlocal 1
+  [141] getlocal 0 .............................. <aParts>
+  [143] getobjprop 38 ........................... <aParts.count>
+  [145] lteq
+  [146] jmpifz [269] ............................ repeat with i = 1 to aParts.count
+  [149] getlocal 0 .............................. <aParts>
+  [151] getlocal 1 .............................. <i>
+  [153] pusharglist 2 ........................... <aParts, i>
+  [155] objcall 94 .............................. <aParts.getPropAt(i)>
+  [157] setlocal 2 .............................. sPart = aParts.getPropAt(i)
+  [159] getlocal 0 .............................. <aParts>
+  [161] getlocal 2 .............................. <sPart>
+  [163] pusharglist 2 ........................... <aParts, sPart>
+  [165] objcall 39 .............................. <aParts[sPart]>
+  [167] setlocal 3 .............................. sMember = aParts[sPart]
+  [169] getlocal 3 .............................. <sMember>
+  [171] pusharglist 1 ........................... <sMember>
+  [173] extcall 32 .............................. <member(sMember)>
+  [175] setlocal 4 .............................. oMember = member(sMember)
+  [177] getlocal 4 .............................. <oMember>
+  [179] pushcons 17 ............................. <EMPTY>
+  [181] setobjprop 95 ........................... oMember.text = EMPTY
+  [183] getlocal 2 .............................. <sPart>
+  [185] pusharglist 1 ........................... <sPart>
+  [187] extcall 96 .............................. <string(sPart)>
+  [189] pusharglist 1 ........................... <string(sPart)>
+  [191] localcall 7 ............................. <getPartCodesForPart(string(sPart))>
+  [193] setlocal 5 .............................. aCodes = getPartCodesForPart(string(sPart))
+  [195] pushint8 1 .............................. <1>
+  [197] setlocal 6
+  [199] getlocal 6
+  [201] getlocal 5 .............................. <aCodes>
+  [203] getobjprop 38 ........................... <aCodes.count>
+  [205] lteq
+  [206] jmpifz [260] ............................ repeat with ii = 1 to aCodes.count
+  [209] getlocal 5 .............................. <aCodes>
+  [211] getlocal 6 .............................. <ii>
+  [213] pusharglist 2 ........................... <aCodes, ii>
+  [215] objcall 39 .............................. <aCodes[ii]>
+  [217] setlocal 7 .............................. sCode = aCodes[ii]
+  [219] getlocal 4 .............................. <oMember>
+  [221] getlocal 4 .............................. <oMember>
+  [223] getobjprop 95 ........................... <oMember.text>
+  [225] getlocal 7 .............................. <sCode>
+  [227] joinstr ................................. <oMember.text & sCode>
+  [228] setobjprop 95 ........................... oMember.text = oMember.text & sCode
+  [230] getlocal 6 .............................. <ii>
+  [232] getlocal 5 .............................. <aCodes>
+  [234] getobjprop 38 ........................... <aCodes.count>
+  [236] lt ...................................... <ii < aCodes.count>
+  [237] jmpifz [251] ............................ if ii < aCodes.count then
+  [240] getlocal 4 .............................. <oMember>
+  [242] getlocal 4 .............................. <oMember>
+  [244] getobjprop 95 ........................... <oMember.text>
+  [246] pushcons 18 ............................. <RETURN>
+  [248] joinstr ................................. <oMember.text & RETURN>
+  [249] setobjprop 95 ........................... oMember.text = oMember.text & RETURN
+  [251] pushint8 1
+  [253] getlocal 6
+  [255] add
+  [256] setlocal 6
+  [258] endrepeat [199]
+  [260] pushint8 1
+  [262] getlocal 1
+  [264] add
+  [265] setlocal 1
+  [267] endrepeat [139]
+  [269] ret
+end
+
+on fillPartActions
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aParts = [:]
+  [  5] getlocal 0 .............................. <aParts>
+  [  7] pushsymb 81 ............................. <#bd>
+  [  9] pushcons 19 ............................. <"Body Actions">
+  [ 11] pusharglistnoret 3 ...................... <aParts, #bd, "Body Actions">
+  [ 13] objcall 41 .............................. aParts[#bd] = "Body Actions"
+  [ 15] getlocal 0 .............................. <aParts>
+  [ 17] pushsymb 82 ............................. <#hd>
+  [ 19] pushcons 20 ............................. <"Head Actions">
+  [ 21] pusharglistnoret 3 ...................... <aParts, #hd, "Head Actions">
+  [ 23] objcall 41 .............................. aParts[#hd] = "Head Actions"
+  [ 25] getlocal 0 .............................. <aParts>
+  [ 27] pushsymb 83 ............................. <#fc>
+  [ 29] pushcons 21 ............................. <"Face Actions">
+  [ 31] pusharglistnoret 3 ...................... <aParts, #fc, "Face Actions">
+  [ 33] objcall 41 .............................. aParts[#fc] = "Face Actions"
+  [ 35] getlocal 0 .............................. <aParts>
+  [ 37] pushsymb 84 ............................. <#ey>
+  [ 39] pushcons 22 ............................. <"Eye Actions">
+  [ 41] pusharglistnoret 3 ...................... <aParts, #ey, "Eye Actions">
+  [ 43] objcall 41 .............................. aParts[#ey] = "Eye Actions"
+  [ 45] getlocal 0 .............................. <aParts>
+  [ 47] pushsymb 85 ............................. <#hr>
+  [ 49] pushcons 23 ............................. <"Hair Actions">
+  [ 51] pusharglistnoret 3 ...................... <aParts, #hr, "Hair Actions">
+  [ 53] objcall 41 .............................. aParts[#hr] = "Hair Actions"
+  [ 55] getlocal 0 .............................. <aParts>
+  [ 57] pushsymb 86 ............................. <#ch>
+  [ 59] pushcons 24 ............................. <"Shirt Actions">
+  [ 61] pusharglistnoret 3 ...................... <aParts, #ch, "Shirt Actions">
+  [ 63] objcall 41 .............................. aParts[#ch] = "Shirt Actions"
+  [ 65] getlocal 0 .............................. <aParts>
+  [ 67] pushsymb 87 ............................. <#lh>
+  [ 69] pushcons 25 ............................. <"Left Arm Actions">
+  [ 71] pusharglistnoret 3 ...................... <aParts, #lh, "Left Arm Actions">
+  [ 73] objcall 41 .............................. aParts[#lh] = "Left Arm Actions"
+  [ 75] getlocal 0 .............................. <aParts>
+  [ 77] pushsymb 88 ............................. <#rh>
+  [ 79] pushcons 26 ............................. <"Right Arm Actions">
+  [ 81] pusharglistnoret 3 ...................... <aParts, #rh, "Right Arm Actions">
+  [ 83] objcall 41 .............................. aParts[#rh] = "Right Arm Actions"
+  [ 85] getlocal 0 .............................. <aParts>
+  [ 87] pushsymb 89 ............................. <#ls>
+  [ 89] pushcons 27 ............................. <"Left Sleeve Actions">
+  [ 91] pusharglistnoret 3 ...................... <aParts, #ls, "Left Sleeve Actions">
+  [ 93] objcall 41 .............................. aParts[#ls] = "Left Sleeve Actions"
+  [ 95] getlocal 0 .............................. <aParts>
+  [ 97] pushsymb 90 ............................. <#rs>
+  [ 99] pushcons 28 ............................. <"Right Sleeve Actions">
+  [101] pusharglistnoret 3 ...................... <aParts, #rs, "Right Sleeve Actions">
+  [103] objcall 41 .............................. aParts[#rs] = "Right Sleeve Actions"
+  [105] getlocal 0 .............................. <aParts>
+  [107] pushsymb 91 ............................. <#lg>
+  [109] pushcons 29 ............................. <"Pants Actions">
+  [111] pusharglistnoret 3 ...................... <aParts, #lg, "Pants Actions">
+  [113] objcall 41 .............................. aParts[#lg] = "Pants Actions"
+  [115] getlocal 0 .............................. <aParts>
+  [117] pushsymb 92 ............................. <#sh>
+  [119] pushcons 30 ............................. <"Shoes Actions">
+  [121] pusharglistnoret 3 ...................... <aParts, #sh, "Shoes Actions">
+  [123] objcall 41 .............................. aParts[#sh] = "Shoes Actions"
+  [125] getlocal 0 .............................. <aParts>
+  [127] pushsymb 93 ............................. <#ri>
+  [129] pushcons 31 ............................. <"Item Actions">
+  [131] pusharglistnoret 3 ...................... <aParts, #ri, "Item Actions">
+  [133] objcall 41 .............................. aParts[#ri] = "Item Actions"
+  [135] pushint8 1 .............................. <1>
+  [137] setlocal 1
+  [139] getlocal 1
+  [141] getlocal 0 .............................. <aParts>
+  [143] getobjprop 38 ........................... <aParts.count>
+  [145] lteq
+  [146] jmpifz [269] ............................ repeat with i = 1 to aParts.count
+  [149] getlocal 0 .............................. <aParts>
+  [151] getlocal 1 .............................. <i>
+  [153] pusharglist 2 ........................... <aParts, i>
+  [155] objcall 94 .............................. <aParts.getPropAt(i)>
+  [157] setlocal 2 .............................. sPart = aParts.getPropAt(i)
+  [159] getlocal 0 .............................. <aParts>
+  [161] getlocal 2 .............................. <sPart>
+  [163] pusharglist 2 ........................... <aParts, sPart>
+  [165] objcall 39 .............................. <aParts[sPart]>
+  [167] setlocal 3 .............................. sMember = aParts[sPart]
+  [169] getlocal 3 .............................. <sMember>
+  [171] pusharglist 1 ........................... <sMember>
+  [173] extcall 32 .............................. <member(sMember)>
+  [175] setlocal 4 .............................. oMember = member(sMember)
+  [177] getlocal 4 .............................. <oMember>
+  [179] pushcons 17 ............................. <EMPTY>
+  [181] setobjprop 95 ........................... oMember.text = EMPTY
+  [183] getlocal 2 .............................. <sPart>
+  [185] pusharglist 1 ........................... <sPart>
+  [187] extcall 96 .............................. <string(sPart)>
+  [189] pusharglist 1 ........................... <string(sPart)>
+  [191] localcall 10 ............................ <getActionsForPart(string(sPart))>
+  [193] setlocal 5 .............................. aActions = getActionsForPart(string(sPart))
+  [195] pushint8 1 .............................. <1>
+  [197] setlocal 6
+  [199] getlocal 6
+  [201] getlocal 5 .............................. <aActions>
+  [203] getobjprop 38 ........................... <aActions.count>
+  [205] lteq
+  [206] jmpifz [260] ............................ repeat with ii = 1 to aActions.count
+  [209] getlocal 5 .............................. <aActions>
+  [211] getlocal 6 .............................. <ii>
+  [213] pusharglist 2 ........................... <aActions, ii>
+  [215] objcall 39 .............................. <aActions[ii]>
+  [217] setlocal 7 .............................. sAction = aActions[ii]
+  [219] getlocal 4 .............................. <oMember>
+  [221] getlocal 4 .............................. <oMember>
+  [223] getobjprop 95 ........................... <oMember.text>
+  [225] getlocal 7 .............................. <sAction>
+  [227] joinstr ................................. <oMember.text & sAction>
+  [228] setobjprop 95 ........................... oMember.text = oMember.text & sAction
+  [230] getlocal 6 .............................. <ii>
+  [232] getlocal 5 .............................. <aActions>
+  [234] getobjprop 38 ........................... <aActions.count>
+  [236] lt ...................................... <ii < aActions.count>
+  [237] jmpifz [251] ............................ if ii < aActions.count then
+  [240] getlocal 4 .............................. <oMember>
+  [242] getlocal 4 .............................. <oMember>
+  [244] getobjprop 95 ........................... <oMember.text>
+  [246] pushcons 18 ............................. <RETURN>
+  [248] joinstr ................................. <oMember.text & RETURN>
+  [249] setobjprop 95 ........................... oMember.text = oMember.text & RETURN
+  [251] pushint8 1
+  [253] getlocal 6
+  [255] add
+  [256] setlocal 6
+  [258] endrepeat [199]
+  [260] pushint8 1
+  [262] getlocal 1
+  [264] add
+  [265] setlocal 1
+  [267] endrepeat [139]
+  [269] ret
+end
+
+on fillParts
+  [  0] pushcons 17 ............................. <EMPTY>
+  [  2] setlocal 0 .............................. sParts = EMPTY
+  [  4] pusharglist 0 ........................... <>
+  [  6] localcall 11 ............................ <getUniqueParts()>
+  [  8] setlocal 1 .............................. aParts = getUniqueParts()
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] getlocal 1 .............................. <aParts>
+  [ 18] getobjprop 38 ........................... <aParts.count>
+  [ 20] lteq
+  [ 21] jmpifz [ 63] ............................ repeat with i = 1 to aParts.count
+  [ 24] getlocal 0 .............................. <sParts>
+  [ 26] getlocal 1 .............................. <aParts>
+  [ 28] getlocal 2 .............................. <i>
+  [ 30] pusharglist 2 ........................... <aParts, i>
+  [ 32] objcall 39 .............................. <aParts[i]>
+  [ 34] joinstr ................................. <sParts & aParts[i]>
+  [ 35] setlocal 0 .............................. sParts = sParts & aParts[i]
+  [ 37] getlocal 2 .............................. <i>
+  [ 39] getlocal 1 .............................. <aParts>
+  [ 41] getobjprop 38 ........................... <aParts.count>
+  [ 43] lt ...................................... <i < aParts.count>
+  [ 44] jmpifz [ 54] ............................ if i < aParts.count then
+  [ 47] getlocal 0 .............................. <sParts>
+  [ 49] pushcons 18 ............................. <RETURN>
+  [ 51] joinstr ................................. <sParts & RETURN>
+  [ 52] setlocal 0 .............................. sParts = sParts & RETURN
+  [ 54] pushint8 1
+  [ 56] getlocal 2
+  [ 58] add
+  [ 59] setlocal 2
+  [ 61] endrepeat [ 14]
+  [ 63] pushcons 32 ............................. <"Parts">
+  [ 65] pusharglist 1 ........................... <"Parts">
+  [ 67] extcall 32 .............................. <member("Parts")>
+  [ 69] getlocal 0 .............................. <sParts>
+  [ 71] setobjprop 95 ........................... member("Parts").text = sParts
+  [ 73] ret
+end
+
+on getMemberRect oMember
+  [  0] getparam 0 .............................. <oMember>
+  [  2] getobjprop 100 .......................... <oMember.regPoint>
+  [  4] setlocal 0 .............................. oRegPoint = oMember.regPoint
+  [  6] getlocal 0 .............................. <oRegPoint>
+  [  8] getobjprop 102 .......................... <oRegPoint.locH>
+  [ 10] getlocal 0 .............................. <oRegPoint>
+  [ 12] getobjprop 103 .......................... <oRegPoint.locV>
+  [ 14] pushint8 110 ............................ <110>
+  [ 16] sub ..................................... <oRegPoint.locV - 110>
+  [ 17] getlocal 0 .............................. <oRegPoint>
+  [ 19] getobjprop 102 .......................... <oRegPoint.locH>
+  [ 21] pushint8 77 ............................. <77>
+  [ 23] add ..................................... <oRegPoint.locH + 77>
+  [ 24] getlocal 0 .............................. <oRegPoint>
+  [ 26] getobjprop 103 .......................... <oRegPoint.locV>
+  [ 28] pusharglist 4 ........................... <oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV>
+  [ 30] extcall 101 ............................. <rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV)>
+  [ 32] pusharglistnoret 1 ...................... <rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV)>
+  [ 34] extcall 28 .............................. return rect(oRegPoint.locH, oRegPoint.locV - 110, oRegPoint.locH + 77, oRegPoint.locV)
+  [ 36] ret
+end
+
+on flipHSpriteRect oSprite
+  [  0] getparam 0 .............................. <oSprite>
+  [  2] getobjprop 101 .......................... <oSprite.rect>
+  [  4] setlocal 0 .............................. oOrigRect = oSprite.rect
+  [  6] getlocal 0 .............................. <oOrigRect>
+  [  8] getobjprop 105 .......................... <oOrigRect.left>
+  [ 10] setlocal 1 .............................. iLeft = oOrigRect.left
+  [ 12] getparam 0 .............................. <oSprite>
+  [ 14] getobjprop 102 .......................... <oSprite.locH>
+  [ 16] setlocal 2 .............................. iLocH = oSprite.locH
+  [ 18] getlocal 2 .............................. <iLocH>
+  [ 20] getlocal 1 .............................. <iLeft>
+  [ 22] sub ..................................... <iLocH - iLeft>
+  [ 23] pushint8 2 .............................. <2>
+  [ 25] mul ..................................... <(iLocH - iLeft) * 2>
+  [ 26] getlocal 0 .............................. <oOrigRect>
+  [ 28] getobjprop 106 .......................... <oOrigRect.width>
+  [ 30] sub ..................................... <((iLocH - iLeft) * 2) - oOrigRect.width>
+  [ 31] setlocal 3 .............................. iHDif = ((iLocH - iLeft) * 2) - oOrigRect.width
+  [ 33] getlocal 3 .............................. <iHDif>
+  [ 35] pushzero ................................ <0>
+  [ 36] getlocal 3 .............................. <iHDif>
+  [ 38] pushzero ................................ <0>
+  [ 39] pusharglist 4 ........................... <iHDif, 0, iHDif, 0>
+  [ 41] extcall 101 ............................. <rect(iHDif, 0, iHDif, 0)>
+  [ 43] setlocal 4 .............................. rDifRect = rect(iHDif, 0, iHDif, 0)
+  [ 45] getlocal 0 .............................. <oOrigRect>
+  [ 47] getlocal 4 .............................. <rDifRect>
+  [ 49] add ..................................... <oOrigRect + rDifRect>
+  [ 50] setlocal 5 .............................. oNewRect = oOrigRect + rDifRect
+  [ 52] getlocal 5 .............................. <oNewRect>
+  [ 54] pusharglistnoret 1 ...................... <oNewRect>
+  [ 56] extcall 28 .............................. return oNewRect
+  [ 58] ret
+end
+
+on fillColors
+  [  0] pushcons 17 ............................. <EMPTY>
+  [  2] setlocal 0 .............................. sR = EMPTY
+  [  4] pushcons 17 ............................. <EMPTY>
+  [  6] setlocal 1 .............................. sG = EMPTY
+  [  8] pushcons 17 ............................. <EMPTY>
+  [ 10] setlocal 2 .............................. sB = EMPTY
+  [ 12] pushzero ................................ <0>
+  [ 13] setlocal 3
+  [ 15] getlocal 3
+  [ 17] pushint16 255 ........................... <255>
+  [ 20] lteq
+  [ 21] jmpifz [102] ............................ repeat with i = 0 to 255
+  [ 24] getlocal 0 .............................. <sR>
+  [ 26] getlocal 3 .............................. <i>
+  [ 28] joinstr ................................. <sR & i>
+  [ 29] setlocal 0 .............................. sR = sR & i
+  [ 31] getlocal 3 .............................. <i>
+  [ 33] pushint16 255 ........................... <255>
+  [ 36] lt ...................................... <i < 255>
+  [ 37] jmpifz [ 47] ............................ if i < 255 then
+  [ 40] getlocal 0 .............................. <sR>
+  [ 42] pushcons 18 ............................. <RETURN>
+  [ 44] joinstr ................................. <sR & RETURN>
+  [ 45] setlocal 0 .............................. sR = sR & RETURN
+  [ 47] getlocal 1 .............................. <sG>
+  [ 49] getlocal 3 .............................. <i>
+  [ 51] joinstr ................................. <sG & i>
+  [ 52] setlocal 1 .............................. sG = sG & i
+  [ 54] getlocal 3 .............................. <i>
+  [ 56] pushint16 255 ........................... <255>
+  [ 59] lt ...................................... <i < 255>
+  [ 60] jmpifz [ 70] ............................ if i < 255 then
+  [ 63] getlocal 1 .............................. <sG>
+  [ 65] pushcons 18 ............................. <RETURN>
+  [ 67] joinstr ................................. <sG & RETURN>
+  [ 68] setlocal 1 .............................. sG = sG & RETURN
+  [ 70] getlocal 2 .............................. <sB>
+  [ 72] getlocal 3 .............................. <i>
+  [ 74] joinstr ................................. <sB & i>
+  [ 75] setlocal 2 .............................. sB = sB & i
+  [ 77] getlocal 3 .............................. <i>
+  [ 79] pushint16 255 ........................... <255>
+  [ 82] lt ...................................... <i < 255>
+  [ 83] jmpifz [ 93] ............................ if i < 255 then
+  [ 86] getlocal 2 .............................. <sB>
+  [ 88] pushcons 18 ............................. <RETURN>
+  [ 90] joinstr ................................. <sB & RETURN>
+  [ 91] setlocal 2 .............................. sB = sB & RETURN
+  [ 93] pushint8 1
+  [ 95] getlocal 3
+  [ 97] add
+  [ 98] setlocal 3
+  [100] endrepeat [ 15]
+  [102] pushcons 33 ............................. <"ColorR">
+  [104] pusharglist 1 ........................... <"ColorR">
+  [106] extcall 32 .............................. <member("ColorR")>
+  [108] getlocal 0 .............................. <sR>
+  [110] setobjprop 95 ........................... member("ColorR").text = sR
+  [112] pushcons 33 ............................. <"ColorR">
+  [114] pusharglist 1 ........................... <"ColorR">
+  [116] extcall 32 .............................. <member("ColorR")>
+  [118] getlocal 1 .............................. <sG>
+  [120] setobjprop 95 ........................... member("ColorR").text = sG
+  [122] pushcons 33 ............................. <"ColorR">
+  [124] pusharglist 1 ........................... <"ColorR">
+  [126] extcall 32 .............................. <member("ColorR")>
+  [128] getlocal 2 .............................. <sB>
+  [130] setobjprop 95 ........................... member("ColorR").text = sB
+  [132] ret
+end

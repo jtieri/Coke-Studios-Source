@@ -1,0 +1,143 @@
+global oStudioMap
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 65 .............................. return me
+  [  6] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 204 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 121 ............................. <sprite(me.spriteNum)>
+  [  8] getobjprop 105 .......................... <sprite(me.spriteNum).member>
+  [ 10] pushcons 0 .............................. <"msgavatar">
+  [ 12] pusharglist 1 ........................... <"msgavatar">
+  [ 14] extcall 105 ............................. <member("msgavatar")>
+  [ 16] nteq .................................... <sprite(me.spriteNum).member <> member("msgavatar")>
+  [ 17] jmpifz [ 26] ............................ if sprite(me.spriteNum).member <> member("msgavatar") then
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] localcall 2 ............................. update(me)
+  [ 26] ret
+end
+
+on update me
+  [  0] pushcons 0 .............................. <"msgavatar">
+  [  2] pusharglist 1 ........................... <"msgavatar">
+  [  4] extcall 105 ............................. <member("msgavatar")>
+  [  6] getobjprop 205 .......................... <member("msgavatar").memberNum>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] lt ...................................... <member("msgavatar").memberNum < 1>
+  [ 11] jmpifz [ 36] ............................ if member("msgavatar").memberNum < 1 then
+  [ 14] pushsymb 206 ............................ <#bitmap>
+  [ 16] pusharglist 1 ........................... <#bitmap>
+  [ 18] extcall 0 ............................... <new(#bitmap)>
+  [ 20] setlocal 0 .............................. myMember = new(#bitmap)
+  [ 22] getlocal 0 .............................. <myMember>
+  [ 24] pushcons 0 .............................. <"msgavatar">
+  [ 26] setobjprop 207 .......................... myMember.name = "msgavatar"
+  [ 28] getglobal 209 ........................... <gMembersToDelete>
+  [ 30] getlocal 0 .............................. <myMember>
+  [ 32] pusharglistnoret 2 ...................... <gMembersToDelete, myMember>
+  [ 34] extcall 208 ............................. append(gMembersToDelete, myMember)
+  [ 36] getglobal 69 ............................ <oDenizenManager>
+  [ 38] pusharglist 1 ........................... <oDenizenManager>
+  [ 40] objcall 210 ............................. <oDenizenManager.getAvatarImage()>
+  [ 42] setlocal 1 .............................. oAvatarImage = oDenizenManager.getAvatarImage()
+  [ 44] getlocal 1 .............................. <oAvatarImage>
+  [ 46] getobjprop 211 .......................... <oAvatarImage.height>
+  [ 48] pushint8 30 ............................. <30>
+  [ 50] sub ..................................... <oAvatarImage.height - 30>
+  [ 51] setlocal 2 .............................. iNewHeight = oAvatarImage.height - 30
+  [ 53] getlocal 1 .............................. <oAvatarImage>
+  [ 55] getobjprop 213 .......................... <oAvatarImage.width>
+  [ 57] getlocal 2 .............................. <iNewHeight>
+  [ 59] pushint8 16 ............................. <16>
+  [ 61] pusharglist 3 ........................... <oAvatarImage.width, iNewHeight, 16>
+  [ 63] extcall 212 ............................. <image(oAvatarImage.width, iNewHeight, 16)>
+  [ 65] setlocal 3 .............................. oPreviewImage = image(oAvatarImage.width, iNewHeight, 16)
+  [ 67] pushzero ................................ <0>
+  [ 68] pushzero ................................ <0>
+  [ 69] getlocal 1 .............................. <oAvatarImage>
+  [ 71] getobjprop 213 .......................... <oAvatarImage.width>
+  [ 73] getlocal 2 .............................. <iNewHeight>
+  [ 75] pusharglist 4 ........................... <0, 0, oAvatarImage.width, iNewHeight>
+  [ 77] extcall 214 ............................. <rect(0, 0, oAvatarImage.width, iNewHeight)>
+  [ 79] setlocal 4 .............................. rSourceRect = rect(0, 0, oAvatarImage.width, iNewHeight)
+  [ 81] getlocal 3 .............................. <oPreviewImage>
+  [ 83] getobjprop 214 .......................... <oPreviewImage.rect>
+  [ 85] setlocal 5 .............................. rDestRect = oPreviewImage.rect
+  [ 87] getlocal 3 .............................. <oPreviewImage>
+  [ 89] getlocal 1 .............................. <oAvatarImage>
+  [ 91] getlocal 5 .............................. <rDestRect>
+  [ 93] getlocal 4 .............................. <rSourceRect>
+  [ 95] pusharglistnoret 4 ...................... <oPreviewImage, oAvatarImage, rDestRect, rSourceRect>
+  [ 97] objcall 215 ............................. oPreviewImage.copyPixels(oAvatarImage, rDestRect, rSourceRect)
+  [ 99] pushcons 0 .............................. <"msgavatar">
+  [101] pusharglist 1 ........................... <"msgavatar">
+  [103] extcall 105 ............................. <member("msgavatar")>
+  [105] getlocal 3 .............................. <oPreviewImage>
+  [107] setobjprop 212 .......................... member("msgavatar").image = oPreviewImage
+  [109] pushcons 0 .............................. <"msgavatar">
+  [111] pusharglist 1 ........................... <"msgavatar">
+  [113] extcall 105 ............................. <member("msgavatar")>
+  [115] pushzero ................................ <0>
+  [116] pushzero ................................ <0>
+  [117] pusharglist 2 ........................... <0, 0>
+  [119] extcall 216 ............................. <point(0, 0)>
+  [121] setobjprop 217 .......................... member("msgavatar").regPoint = point(0, 0)
+  [123] getparam 0 .............................. <me>
+  [125] getobjprop 204 .......................... <me.spriteNum>
+  [127] pusharglist 1 ........................... <me.spriteNum>
+  [129] extcall 121 ............................. <sprite(me.spriteNum)>
+  [131] pushcons 0 .............................. <"msgavatar">
+  [133] pusharglist 1 ........................... <"msgavatar">
+  [135] extcall 105 ............................. <member("msgavatar")>
+  [137] setobjprop 105 .......................... sprite(me.spriteNum).member = member("msgavatar")
+  [139] getparam 0 .............................. <me>
+  [141] getobjprop 204 .......................... <me.spriteNum>
+  [143] pusharglist 1 ........................... <me.spriteNum>
+  [145] extcall 121 ............................. <sprite(me.spriteNum)>
+  [147] pushint16 255 ........................... <255>
+  [150] pushint16 255 ........................... <255>
+  [153] pushint16 255 ........................... <255>
+  [156] pusharglist 3 ........................... <255, 255, 255>
+  [158] extcall 218 ............................. <rgb(255, 255, 255)>
+  [160] setobjprop 219 .......................... sprite(me.spriteNum).bgColor = rgb(255, 255, 255)
+  [162] getparam 0 .............................. <me>
+  [164] getobjprop 204 .......................... <me.spriteNum>
+  [166] pusharglist 1 ........................... <me.spriteNum>
+  [168] extcall 121 ............................. <sprite(me.spriteNum)>
+  [170] pushint8 36 ............................. <36>
+  [172] setobjprop 220 .......................... sprite(me.spriteNum).ink = 36
+  [174] getparam 0 .............................. <me>
+  [176] getobjprop 204 .......................... <me.spriteNum>
+  [178] pusharglist 1 ........................... <me.spriteNum>
+  [180] extcall 121 ............................. <sprite(me.spriteNum)>
+  [182] getlocal 3 .............................. <oPreviewImage>
+  [184] getobjprop 213 .......................... <oPreviewImage.width>
+  [186] setobjprop 213 .......................... sprite(me.spriteNum).width = oPreviewImage.width
+  [188] getparam 0 .............................. <me>
+  [190] getobjprop 204 .......................... <me.spriteNum>
+  [192] pusharglist 1 ........................... <me.spriteNum>
+  [194] extcall 121 ............................. <sprite(me.spriteNum)>
+  [196] getlocal 3 .............................. <oPreviewImage>
+  [198] getobjprop 211 .......................... <oPreviewImage.height>
+  [200] setobjprop 211 .......................... sprite(me.spriteNum).height = oPreviewImage.height
+  [202] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 227 ............................. pass()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 227 ............................. pass()
+  [  4] ret
+end

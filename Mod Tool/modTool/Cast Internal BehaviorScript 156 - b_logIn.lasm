@@ -1,0 +1,64 @@
+property pSprite, pLogInType
+global oLogInManager
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. mylist = [:]
+  [  5] getlocal 0 .............................. <mylist>
+  [  7] pushsymb 534 ............................ <#pLogInType>
+  [ 10] pushsymb 88 ............................. <#comment>
+  [ 12] pushcons 0 .............................. <"LogInType:">
+  [ 14] pushsymb 89 ............................. <#format>
+  [ 16] pushsymb 94 ............................. <#string>
+  [ 18] pushsymb 91 ............................. <#default>
+  [ 20] pushcons 1 .............................. <"userName">
+  [ 22] pushsymb 97 ............................. <#range>
+  [ 24] pushcons 1 .............................. <"userName">
+  [ 26] pushcons 2 .............................. <"passWord">
+  [ 28] pusharglist 2 ........................... <["userName", "passWord"]>
+  [ 30] pushlist ................................ <["userName", "passWord"]>
+  [ 31] pusharglist 8 ........................... <[#comment: "LogInType:", #format: #string, #default: "userName", #range: ["userName", "passWord"]]>
+  [ 33] pushproplist ............................ <[#comment: "LogInType:", #format: #string, #default: "userName", #range: ["userName", "passWord"]]>
+  [ 34] pusharglistnoret 3 ...................... <mylist, #pLogInType, [#comment: "LogInType:", #format: #string, #default: "userName", #range: ["userName", "passWord"]]>
+  [ 36] objcall 68 .............................. mylist[#pLogInType] = [#comment: "LogInType:", #format: #string, #default: "userName", #range: ["userName", "passWord"]]
+  [ 38] getlocal 0 .............................. <mylist>
+  [ 40] pusharglistnoret 1 ...................... <mylist>
+  [ 42] extcall 31 .............................. return mylist
+  [ 44] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getprop 534 ............................. <pLogInType>
+  [ 13] pushcons 1 .............................. <"userName">
+  [ 15] eq ...................................... <pLogInType = "userName">
+  [ 16] jmpifz [ 35] ............................ if pLogInType = "userName" then
+  [ 19] pushcons 3 .............................. <"LogInManager">
+  [ 21] pusharglist 1 ........................... <"LogInManager">
+  [ 23] extcall 315 ............................. <script("LogInManager")>
+  [ 26] getprop 11 .............................. <pSprite>
+  [ 28] pusharglist 2 ........................... <script("LogInManager"), pSprite>
+  [ 30] extcall 236 ............................. <new(script("LogInManager"), pSprite)>
+  [ 32] setglobal 282 ........................... oLogInManager = new(script("LogInManager"), pSprite)
+  [ 35] ret
+end
+
+on exitFrame me
+  [  0] getprop 534 ............................. <pLogInType>
+  [  3] pushcons 2 .............................. <"passWord">
+  [  5] eq ...................................... <pLogInType = "passWord">
+  [  6] getglobal 282 ........................... <oLogInManager>
+  [  9] pusharglist 1 ........................... <oLogInManager>
+  [ 11] extcall 322 ............................. <objectp(oLogInManager)>
+  [ 14] and ..................................... <(pLogInType = "passWord") and objectp(oLogInManager)>
+  [ 15] jmpifz [ 26] ............................ if (pLogInType = "passWord") and objectp(oLogInManager) then
+  [ 18] getglobal 282 ........................... <oLogInManager>
+  [ 21] getprop 11 .............................. <pSprite>
+  [ 23] setobjprop 533 .......................... oLogInManager.pLogInPassWordEntrySprite = pSprite
+  [ 26] ret
+end

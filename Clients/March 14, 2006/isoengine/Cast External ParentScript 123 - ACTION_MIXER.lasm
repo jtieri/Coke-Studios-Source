@@ -1,0 +1,107 @@
+property ancestor
+global ElementMgr, TextMgr, oIsoScene, gFeatureSet, oStudio, oDenizenManager
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 52 .............................. return me
+  [ 25] ret
+end
+
+on mouseDownEvent me, bDoubleClick
+  [  0] getglobal 64 ............................ <oStudio>
+  [  2] pusharglist 1 ........................... <oStudio>
+  [  4] extcall 59 .............................. <voidp(oStudio)>
+  [  6] jmpifz [ 13] ............................ if voidp(oStudio) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 52 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getparam 1 .............................. <bDoubleClick>
+  [ 17] pusharglist 2 ........................... <me, bDoubleClick>
+  [ 19] objcall 1574 ............................ <me.select(bDoubleClick)>
+  [ 22] pusharglistnoret 1 ...................... <me.select(bDoubleClick)>
+  [ 24] extcall 52 .............................. return me.select(bDoubleClick)
+  [ 26] ret
+end
+
+on select me, bDoubleClick
+  [  0] getglobal 133 ........................... <oIsoScene>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 58 ........................... <me.oItem>
+  [  6] pusharglistnoret 2 ...................... <oIsoScene, me.oItem>
+  [  8] objcall 302 ............................. oIsoScene.moveAvatarToFrontOfItem(me.oItem)
+  [ 11] getparam 1 .............................. <bDoubleClick>
+  [ 13] jmpifz [ 23] ............................ if bDoubleClick then
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 1 ...................... <me>
+  [ 20] objcall 269 ............................. me.use()
+  [ 23] pushzero ................................ <0>
+  [ 24] pusharglistnoret 1 ...................... <0>
+  [ 26] extcall 52 .............................. return 0
+  [ 28] ret
+end
+
+on openmixer me
+  [  0] getglobal 233 ........................... <gFeatureSet>
+  [  2] pushsymb 1609 ........................... <#MIXER>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #MIXER>
+  [  7] objcall 235 ............................. <gFeatureSet.isEnabled(#MIXER)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#MIXER)>
+  [ 10] jmpifz [ 25] ............................ if not gFeatureSet.isEnabled(#MIXER) then
+  [ 13] getglobal 172 ........................... <ElementMgr>
+  [ 15] pushcons 1 .............................. <"FEATURE_DISABLED">
+  [ 17] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 19] objcall 236 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 52 .............................. return 
+  [ 25] getglobal 64 ............................ <oStudio>
+  [ 27] getglobal 77 ............................ <oDenizenManager>
+  [ 29] pusharglist 1 ........................... <oDenizenManager>
+  [ 31] objcall 78 .............................. <oDenizenManager.getScreenName()>
+  [ 33] pusharglist 2 ........................... <oStudio, oDenizenManager.getScreenName()>
+  [ 35] objcall 22 .............................. <oStudio.isOwner(oDenizenManager.getScreenName())>
+  [ 37] getglobal 77 ............................ <oDenizenManager>
+  [ 39] pusharglist 1 ........................... <oDenizenManager>
+  [ 41] objcall 23 .............................. <oDenizenManager.isMod()>
+  [ 43] or ...................................... <oStudio.isOwner(oDenizenManager.getScreenName()) or oDenizenManager.isMod()>
+  [ 44] jmpifz [ 57] ............................ if oStudio.isOwner(oDenizenManager.getScreenName()) or oDenizenManager.isMod() then / else
+  [ 47] getglobal 172 ........................... <ElementMgr>
+  [ 49] pusharglistnoret 1 ...................... <ElementMgr>
+  [ 51] objcall 1608 ............................ ElementMgr.openmixer()
+  [ 54] jmp [ 65]
+  [ 57] getglobal 172 ........................... <ElementMgr>
+  [ 59] pushcons 2 .............................. <"MIXER_NOT_OWNER">
+  [ 61] pusharglistnoret 2 ...................... <ElementMgr, "MIXER_NOT_OWNER">
+  [ 63] objcall 236 ............................. ElementMgr.alert("MIXER_NOT_OWNER")
+  [ 65] ret
+end
+
+on use me
+  [  0] getglobal 233 ........................... <gFeatureSet>
+  [  2] pushsymb 267 ............................ <#FURNITURE_USE>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_USE>
+  [  7] objcall 235 ............................. <gFeatureSet.isEnabled(#FURNITURE_USE)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_USE)>
+  [ 10] jmpifz [ 17] ............................ if not gFeatureSet.isEnabled(#FURNITURE_USE) then
+  [ 13] pusharglistnoret 0 ...................... <>
+  [ 15] extcall 52 .............................. return 
+  [ 17] getglobal 133 ........................... <oIsoScene>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] getobjprop 58 ........................... <me.oItem>
+  [ 23] pusharglist 2 ........................... <oIsoScene, me.oItem>
+  [ 25] objcall 303 ............................. <oIsoScene.avatarIsInFrontOfItem(me.oItem)>
+  [ 28] jmpifz [ 38] ............................ if oIsoScene.avatarIsInFrontOfItem(me.oItem) then
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pusharglistnoret 1 ...................... <me>
+  [ 35] objcall 1608 ............................ me.openmixer()
+  [ 38] ret
+end

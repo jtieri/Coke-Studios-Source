@@ -1,0 +1,198 @@
+property iMaxLength
+global oIsoScene, TextMgr
+
+on new me
+  [  0] getglobal 244 ........................... <ochat>
+  [  2] pusharglist 1 ........................... <ochat>
+  [  4] extcall 87 .............................. <voidp(ochat)>
+  [  6] jmpifz [ 39] ............................ if voidp(ochat) then / else
+  [  9] getglobal 86 ............................ <ElementMgr>
+  [ 11] pusharglist 1 ........................... <ElementMgr>
+  [ 13] objcall 9 ............................... <ElementMgr.LastUsedSprite()>
+  [ 15] setlocal 0 .............................. MyNum = ElementMgr.LastUsedSprite()
+  [ 17] pushcons 0 .............................. <"chatrenderer">
+  [ 19] pusharglist 1 ........................... <"chatrenderer">
+  [ 21] extcall 92 .............................. <script("chatrenderer")>
+  [ 23] getlocal 0 .............................. <MyNum>
+  [ 25] pushint32 1000000 ....................... <1000000>
+  [ 30] pusharglist 3 ........................... <script("chatrenderer"), MyNum, 1000000>
+  [ 32] extcall 0 ............................... <new(script("chatrenderer"), MyNum, 1000000)>
+  [ 34] setglobal 244 ........................... ochat = new(script("chatrenderer"), MyNum, 1000000)
+  [ 36] jmp [ 46]
+  [ 39] getglobal 244 ........................... <ochat>
+  [ 41] pusharglistnoret 1 ...................... <ochat>
+  [ 43] objcall 860 ............................. ochat.showChat()
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pushint8 65 ............................. <65>
+  [ 50] setobjprop 690 .......................... me.iMaxLength = 65
+  [ 53] getparam 0 .............................. <me>
+  [ 55] pusharglistnoret 1 ...................... <me>
+  [ 57] extcall 78 .............................. return me
+  [ 59] ret
+end
+
+on exitFrame me
+  [  0] ret
+end
+
+on keyDown me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 638 ............................. me.Filter()
+  [  7] ret
+end
+
+on Filter me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 429 .......................... <me.spriteNum>
+  [  5] pusharglist 1 ........................... <me.spriteNum>
+  [  7] extcall 177 ............................. <sprite(me.spriteNum)>
+  [  9] getchainedprop 101 ...................... <sprite(me.spriteNum).member>
+  [ 11] getchainedprop 129 ...................... <sprite(me.spriteNum).member.text>
+  [ 13] getobjprop 165 .......................... <sprite(me.spriteNum).member.text.length>
+  [ 15] setlocal 0 .............................. iLength = sprite(me.spriteNum).member.text.length
+  [ 17] getglobal 178 ........................... <TextMgr>
+  [ 19] pusharglist 0 ........................... <>
+  [ 21] thebuiltin 656 .......................... <the keyCode>
+  [ 24] pusharglist 2 ........................... <TextMgr, the keyCode>
+  [ 26] objcall 695 ............................. <TextMgr.isValidKeyCode(the keyCode)>
+  [ 29] setlocal 1 .............................. bIsValidKeyCode = TextMgr.isValidKeyCode(the keyCode)
+  [ 31] getglobal 178 ........................... <TextMgr>
+  [ 33] pusharglist 0 ........................... <>
+  [ 35] thebuiltin 658 .......................... <the key>
+  [ 38] pusharglist 2 ........................... <TextMgr, the key>
+  [ 40] objcall 735 ............................. <TextMgr.isValidChatKey(the key)>
+  [ 43] setlocal 2 .............................. bIsValidKey = TextMgr.isValidChatKey(the key)
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getobjprop 429 .......................... <me.spriteNum>
+  [ 50] pusharglist 1 ........................... <me.spriteNum>
+  [ 52] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 54] getchainedprop 101 ...................... <sprite(me.spriteNum).member>
+  [ 56] getlocal 0 .............................. <iLength>
+  [ 58] pusharglist 2 ........................... <sprite(me.spriteNum).member, iLength>
+  [ 60] objcall 512 ............................. <sprite(me.spriteNum).member.charPosToLoc(iLength)>
+  [ 63] setlocal 3 .............................. oLoc = sprite(me.spriteNum).member.charPosToLoc(iLength)
+  [ 65] getlocal 3 .............................. <oLoc>
+  [ 67] getobjprop 456 .......................... <oLoc.locH>
+  [ 70] pushint16 317 ........................... <317>
+  [ 73] lteq .................................... <oLoc.locH <= 317>
+  [ 74] setlocal 4 .............................. bIsValidPos = oLoc.locH <= 317
+  [ 76] pusharglist 0 ........................... <>
+  [ 78] thebuiltin 691 .......................... <the controlDown>
+  [ 81] pusharglist 0 ........................... <>
+  [ 83] thebuiltin 656 .......................... <the keyCode>
+  [ 86] pushint8 9 .............................. <9>
+  [ 88] eq ...................................... <the keyCode = 9>
+  [ 89] and ..................................... <the controlDown and (the keyCode = 9)>
+  [ 90] pusharglist 0 ........................... <>
+  [ 92] thebuiltin 692 .......................... <the commandDown>
+  [ 95] pusharglist 0 ........................... <>
+  [ 97] thebuiltin 656 .......................... <the keyCode>
+  [100] pushint8 9 .............................. <9>
+  [102] eq ...................................... <the keyCode = 9>
+  [103] and ..................................... <the commandDown and (the keyCode = 9)>
+  [104] or ...................................... <(the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9))>
+  [105] jmpifz [117] ............................ if (the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9)) then
+  [108] pusharglistnoret 0 ...................... <>
+  [110] extcall 430 ............................. stopEvent()
+  [113] pusharglistnoret 0 ...................... <>
+  [115] extcall 78 .............................. return 
+  [117] pusharglist 0 ........................... <>
+  [119] thebuiltin 658 .......................... <the key>
+  [122] pushcons 1 .............................. <RETURN>
+  [124] eq ...................................... <the key = RETURN>
+  [125] pusharglist 0 ........................... <>
+  [127] thebuiltin 658 .......................... <the key>
+  [130] pushcons 2 .............................. <ENTER>
+  [132] eq ...................................... <the key = ENTER>
+  [133] or ...................................... <(the key = RETURN) or (the key = ENTER)>
+  [134] jmpifz [166] ............................ if (the key = RETURN) or (the key = ENTER) then
+  [137] getparam 0 .............................. <me>
+  [139] getparam 0 .............................. <me>
+  [141] getobjprop 429 .......................... <me.spriteNum>
+  [144] pusharglist 1 ........................... <me.spriteNum>
+  [146] extcall 177 ............................. <sprite(me.spriteNum)>
+  [148] getchainedprop 101 ...................... <sprite(me.spriteNum).member>
+  [150] getobjprop 129 .......................... <sprite(me.spriteNum).member.text>
+  [152] pusharglistnoret 2 ...................... <me, sprite(me.spriteNum).member.text>
+  [154] objcall 859 ............................. me.sendChat(sprite(me.spriteNum).member.text)
+  [157] pusharglistnoret 0 ...................... <>
+  [159] extcall 430 ............................. stopEvent()
+  [162] pusharglistnoret 0 ...................... <>
+  [164] extcall 78 .............................. return 
+  [166] getlocal 0 .............................. <iLength>
+  [168] getparam 0 .............................. <me>
+  [170] getobjprop 690 .......................... <me.iMaxLength>
+  [173] gteq .................................... <iLength >= me.iMaxLength>
+  [174] getlocal 4 .............................. <bIsValidPos>
+  [176] not ..................................... <not bIsValidPos>
+  [177] or ...................................... <(iLength >= me.iMaxLength) or not bIsValidPos>
+  [178] jmpifz [207] ............................ if (iLength >= me.iMaxLength) or not bIsValidPos then
+  [181] getlocal 1 .............................. <bIsValidKeyCode>
+  [183] jmpifz [198] ............................ if bIsValidKeyCode then / else
+  [186] pusharglistnoret 0 ...................... <>
+  [188] extcall 657 ............................. pass()
+  [191] pusharglistnoret 0 ...................... <>
+  [193] extcall 78 .............................. return 
+  [195] jmp [207]
+  [198] pusharglistnoret 0 ...................... <>
+  [200] extcall 430 ............................. stopEvent()
+  [203] pusharglistnoret 0 ...................... <>
+  [205] extcall 78 .............................. return 
+  [207] getlocal 2 .............................. <bIsValidKey>
+  [209] getlocal 1 .............................. <bIsValidKeyCode>
+  [211] or ...................................... <bIsValidKey or bIsValidKeyCode>
+  [212] jmpifz [227] ............................ if bIsValidKey or bIsValidKeyCode then / else
+  [215] pusharglistnoret 0 ...................... <>
+  [217] extcall 657 ............................. pass()
+  [220] pusharglistnoret 0 ...................... <>
+  [222] extcall 78 .............................. return 
+  [224] jmp [236]
+  [227] pusharglistnoret 0 ...................... <>
+  [229] extcall 430 ............................. stopEvent()
+  [232] pusharglistnoret 0 ...................... <>
+  [234] extcall 78 .............................. return 
+  [236] ret
+end
+
+on sendChat me, sMessage
+  [  0] getparam 1 .............................. <sMessage>
+  [  2] pushcons 3 .............................. <EMPTY>
+  [  4] eq ...................................... <sMessage = EMPTY>
+  [  5] jmpifz [ 12] ............................ if sMessage = EMPTY then
+  [  8] pusharglistnoret 0 ...................... <>
+  [ 10] extcall 78 .............................. return 
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] pushcons 4 .............................. <" ">
+  [ 16] eq ...................................... <sMessage = " ">
+  [ 17] jmpifz [ 24] ............................ if sMessage = " " then
+  [ 20] pusharglistnoret 0 ...................... <>
+  [ 22] extcall 78 .............................. return 
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 429 .......................... <me.spriteNum>
+  [ 29] pusharglist 1 ........................... <me.spriteNum>
+  [ 31] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 33] getchainedprop 101 ...................... <sprite(me.spriteNum).member>
+  [ 35] pushcons 3 .............................. <EMPTY>
+  [ 37] setobjprop 129 .......................... sprite(me.spriteNum).member.text = EMPTY
+  [ 39] pushsymb 852 ............................ <#getSpeechMode>
+  [ 42] pusharglist 1 ........................... <#getSpeechMode>
+  [ 44] extcall 188 ............................. <sendAllSprites(#getSpeechMode)>
+  [ 46] pusharglist 1 ........................... <sendAllSprites(#getSpeechMode)>
+  [ 48] extcall 207 ............................. <string(sendAllSprites(#getSpeechMode))>
+  [ 50] setlocal 0 .............................. myspeechmode = string(sendAllSprites(#getSpeechMode))
+  [ 52] getglobal 314 ........................... <oStudio>
+  [ 55] getparam 1 .............................. <sMessage>
+  [ 57] getlocal 0 .............................. <myspeechmode>
+  [ 59] pusharglistnoret 3 ...................... <oStudio, sMessage, myspeechmode>
+  [ 61] objcall 863 ............................. oStudio.sendStudioChat(sMessage, myspeechmode)
+  [ 64] getlocal 0 .............................. <myspeechmode>
+  [ 66] pushcons 5 .............................. <"shout">
+  [ 68] eq ...................................... <myspeechmode = "shout">
+  [ 69] jmpifz [ 82] ............................ if myspeechmode = "shout" then
+  [ 72] pushsymb 853 ............................ <#setSpeechMode>
+  [ 75] pushsymb 855 ............................ <#speak>
+  [ 78] pusharglistnoret 2 ...................... <#setSpeechMode, #speak>
+  [ 80] extcall 188 ............................. sendAllSprites(#setSpeechMode, #speak)
+  [ 82] ret
+end

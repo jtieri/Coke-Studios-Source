@@ -1,0 +1,227 @@
+property pParentWindow, pDest, pClicked, bDebug
+global gFeatureSet, ElementMgr, oStudioManager
+
+on new me, whichparent, whichdestination
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 9 ............................... bDebug = 1
+  [  4] getparam 1 .............................. <whichparent>
+  [  6] setprop 590 ............................. pParentWindow = whichparent
+  [  9] getparam 2 .............................. <whichdestination>
+  [ 11] setprop 685 ............................. pDest = whichdestination
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] extcall 23 .............................. return me
+  [ 20] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 9 ............................ <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"generictab: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"generictab: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"generictab: " & sMessage>
+  [ 17] extcall 26 .............................. put "generictab: " & sMessage
+  [ 19] ret
+end
+
+on mouseUp me
+  [  0] getprop 224 ............................. <pClicked>
+  [  2] jmpifz [383] ............................ if pClicked then
+  [  5] getparam 0 .............................. <me>
+  [  7] pushcons 1 .............................. <"pParentWindow.pName:">
+  [  9] getprop 590 ............................. <pParentWindow>
+  [ 12] getobjprop 13 ........................... <pParentWindow.pname>
+  [ 14] joinpadstr .............................. <"pParentWindow.pName:" && pParentWindow.pname>
+  [ 15] pusharglistnoret 2 ...................... <me, "pParentWindow.pName:" && pParentWindow.pname>
+  [ 17] objcall 1 ............................... me.debug("pParentWindow.pName:" && pParentWindow.pname)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushcons 2 .............................. <"pDest:">
+  [ 23] getprop 685 ............................. <pDest>
+  [ 26] joinpadstr .............................. <"pDest:" && pDest>
+  [ 27] pusharglistnoret 2 ...................... <me, "pDest:" && pDest>
+  [ 29] objcall 1 ............................... me.debug("pDest:" && pDest)
+  [ 31] getprop 590 ............................. <pParentWindow>
+  [ 34] getobjprop 13 ........................... <pParentWindow.pname>
+  [ 36] pushcons 3 .............................. <"nav_public">
+  [ 38] containsstr ............................. <pParentWindow.pname contains "nav_public">
+  [ 39] jmpifz [110] ............................ if pParentWindow.pname contains "nav_public" then
+  [ 42] getprop 590 ............................. <pParentWindow>
+  [ 45] getchainedprop 10 ....................... <pParentWindow.pScrollingLists>
+  [ 47] getchainedprop 59 ....................... <pParentWindow.pScrollingLists.roomlist>
+  [ 49] getobjprop 360 .......................... <pParentWindow.pScrollingLists.roomlist.pRoomData>
+  [ 52] setlocal 0 .............................. roomdata = pParentWindow.pScrollingLists.roomlist.pRoomData
+  [ 54] getlocal 0 .............................. <roomdata>
+  [ 56] pusharglist 1 ........................... <roomdata>
+  [ 58] extcall 29 .............................. <count(roomdata)>
+  [ 60] jmpifz [110] ............................ if count(roomdata) then
+  [ 63] getprop 590 ............................. <pParentWindow>
+  [ 66] getchainedprop 10 ....................... <pParentWindow.pScrollingLists>
+  [ 68] getchainedprop 59 ....................... <pParentWindow.pScrollingLists.roomlist>
+  [ 70] getobjprop 318 .......................... <pParentWindow.pScrollingLists.roomlist.pScrollIndex>
+  [ 73] setlocal 1 .............................. scrollindex = pParentWindow.pScrollingLists.roomlist.pScrollIndex
+  [ 75] getprop 590 ............................. <pParentWindow>
+  [ 78] getchainedprop 10 ....................... <pParentWindow.pScrollingLists>
+  [ 80] getchainedprop 59 ....................... <pParentWindow.pScrollingLists.roomlist>
+  [ 82] getobjprop 321 .......................... <pParentWindow.pScrollingLists.roomlist.pLastClicked>
+  [ 85] setlocal 2 .............................. lastclicked = pParentWindow.pScrollingLists.roomlist.pLastClicked
+  [ 87] pushcons 4 .............................. <"roomdisplay">
+  [ 89] pusharglist 1 ........................... <"roomdisplay">
+  [ 91] extcall 34 .............................. <member("roomdisplay")>
+  [ 93] getlocal 0 .............................. <roomdata>
+  [ 95] pushcons 5 .............................. <RETURN>
+  [ 97] joinstr ................................. <roomdata & RETURN>
+  [ 98] getlocal 1 .............................. <scrollindex>
+  [100] joinstr ................................. <roomdata & RETURN & scrollindex>
+  [101] pushcons 5 .............................. <RETURN>
+  [103] joinstr ................................. <roomdata & RETURN & scrollindex & RETURN>
+  [104] getlocal 2 .............................. <lastclicked>
+  [106] joinstr ................................. <roomdata & RETURN & scrollindex & RETURN & lastclicked>
+  [107] setobjprop 315 .......................... member("roomdisplay").comments = roomdata & RETURN & scrollindex & RETURN & lastclicked
+  [110] getprop 685 ............................. <pDest>
+  [113] pushcons 6 .............................. <"nav_private_start.window">
+  [115] eq ...................................... <pDest = "nav_private_start.window">
+  [116] jmpifz [173] ............................ if pDest = "nav_private_start.window" then / else
+  [119] getglobal 309 ........................... <gFeatureSet>
+  [122] pushsymb 310 ............................ <#PRIVATE_STUDIOS>
+  [125] pusharglist 2 ........................... <gFeatureSet, #PRIVATE_STUDIOS>
+  [127] objcall 311 ............................. <gFeatureSet.isEnabled(#PRIVATE_STUDIOS)>
+  [130] not ..................................... <not gFeatureSet.isEnabled(#PRIVATE_STUDIOS)>
+  [131] jmpifz [146] ............................ if not gFeatureSet.isEnabled(#PRIVATE_STUDIOS) then
+  [134] getglobal 30 ............................ <ElementMgr>
+  [136] pushcons 7 .............................. <"FEATURE_DISABLED">
+  [138] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [140] objcall 245 ............................. ElementMgr.alert("FEATURE_DISABLED")
+  [142] pusharglistnoret 0 ...................... <>
+  [144] extcall 23 .............................. return 
+  [146] pushcons 8 .............................. <"userlist">
+  [148] pusharglist 1 ........................... <"userlist">
+  [150] extcall 34 .............................. <member("userlist")>
+  [152] getobjprop 61 ........................... <member("userlist").memberNum>
+  [154] pushzero ................................ <0>
+  [155] gt ...................................... <member("userlist").memberNum > 0>
+  [156] jmpifz [170] ............................ if member("userlist").memberNum > 0 then
+  [159] pushcons 8 .............................. <"userlist">
+  [161] pusharglist 1 ........................... <"userlist">
+  [163] extcall 34 .............................. <member("userlist")>
+  [165] pushcons 9 .............................. <EMPTY>
+  [167] setobjprop 315 .......................... member("userlist").comments = EMPTY
+  [170] jmp [289]
+  [173] getprop 685 ............................. <pDest>
+  [176] pushcons 10 ............................. <"nav_private_people.window">
+  [178] eq ...................................... <pDest = "nav_private_people.window">
+  [179] jmpifz [289] ............................ if pDest = "nav_private_people.window" then
+  [182] getprop 590 ............................. <pParentWindow>
+  [185] getchainedprop 10 ....................... <pParentWindow.pScrollingLists>
+  [187] getchainedprop 64 ....................... <pParentWindow.pScrollingLists.userList>
+  [189] getobjprop 317 .......................... <pParentWindow.pScrollingLists.userList.pUserData>
+  [192] setlocal 3 .............................. userData = pParentWindow.pScrollingLists.userList.pUserData
+  [194] getlocal 3 .............................. <userData>
+  [196] pusharglist 1 ........................... <userData>
+  [198] extcall 29 .............................. <count(userData)>
+  [200] jmpifz [289] ............................ if count(userData) then
+  [203] getlocal 3 .............................. <userData>
+  [205] pusharglist 1 ........................... <userData>
+  [207] extcall 161 ............................. <string(userData)>
+  [209] setlocal 3 .............................. userData = string(userData)
+  [211] getlocal 3 .............................. <userData>
+  [213] pushcons 11 ............................. <"<void>">
+  [215] containsstr ............................. <userData contains "<void>">
+  [216] jmpifz [260] ............................ repeat while userData contains "<void>"
+  [219] pushcons 11 ............................. <"<void>">
+  [221] getlocal 3 .............................. <userData>
+  [223] pusharglist 2 ........................... <"<void>", userData>
+  [225] extcall 164 ............................. <offset("<void>", userData)>
+  [227] setlocal 4 .............................. mypos = offset("<void>", userData)
+  [229] getlocal 4 .............................. <mypos>
+  [231] pushint8 5 .............................. <5>
+  [233] add ..................................... <mypos + 5>
+  [234] pushzero ................................ <0>
+  [235] pushzero ................................ <0>
+  [236] pushzero ................................ <0>
+  [237] pushzero ................................ <0>
+  [238] pushzero ................................ <0>
+  [239] pushzero ................................ <0>
+  [240] pushzero ................................ <0>
+  [241] pushint8 3 .............................. <3>
+  [243] deletechunk 5 ........................... delete char mypos + 5 of userData
+  [245] getlocal 4 .............................. <mypos>
+  [247] pushzero ................................ <0>
+  [248] pushzero ................................ <0>
+  [249] pushzero ................................ <0>
+  [250] pushzero ................................ <0>
+  [251] pushzero ................................ <0>
+  [252] pushzero ................................ <0>
+  [253] pushzero ................................ <0>
+  [254] pushint8 3 .............................. <3>
+  [256] deletechunk 5 ........................... delete char mypos of userData
+  [258] endrepeat [211]
+  [260] getprop 590 ............................. <pParentWindow>
+  [263] getchainedprop 10 ....................... <pParentWindow.pScrollingLists>
+  [265] getchainedprop 64 ....................... <pParentWindow.pScrollingLists.userList>
+  [267] getobjprop 318 .......................... <pParentWindow.pScrollingLists.userList.pScrollIndex>
+  [270] setlocal 1 .............................. scrollindex = pParentWindow.pScrollingLists.userList.pScrollIndex
+  [272] pushcons 8 .............................. <"userlist">
+  [274] pusharglist 1 ........................... <"userlist">
+  [276] extcall 34 .............................. <member("userlist")>
+  [278] getlocal 3 .............................. <userData>
+  [280] pushcons 5 .............................. <RETURN>
+  [282] joinstr ................................. <userData & RETURN>
+  [283] getlocal 1 .............................. <scrollindex>
+  [285] joinstr ................................. <userData & RETURN & scrollindex>
+  [286] setobjprop 315 .......................... member("userlist").comments = userData & RETURN & scrollindex
+  [289] pushint8 1 .............................. <1>
+  [291] setmovieprop 687 ........................ the updateLock = 1
+  [294] getprop 590 ............................. <pParentWindow>
+  [297] getobjprop 14 ........................... <pParentWindow.prect>
+  [299] setlocal 5 .............................. myRect = pParentWindow.prect
+  [301] getprop 590 ............................. <pParentWindow>
+  [304] pusharglistnoret 1 ...................... <pParentWindow>
+  [306] objcall 5 ............................... pParentWindow.closeWindow()
+  [308] getglobal 30 ............................ <ElementMgr>
+  [310] getprop 685 ............................. <pDest>
+  [313] getlocal 5 .............................. <myRect>
+  [315] pusharglistnoret 3 ...................... <ElementMgr, pDest, myRect>
+  [317] objcall 239 ............................. ElementMgr.newwindow(pDest, myRect)
+  [319] getprop 685 ............................. <pDest>
+  [322] pushcons 12 ............................. <"nav_private_info.window">
+  [324] eq ...................................... <pDest = "nav_private_info.window">
+  [325] jmpifz [346] ............................ if pDest = "nav_private_info.window" then / else
+  [328] getglobal 207 ........................... <oStudioManager>
+  [330] pushcons 13 ............................. <"userroomid">
+  [332] pusharglist 1 ........................... <"userroomid">
+  [334] extcall 34 .............................. <member("userroomid")>
+  [336] getobjprop 78 ........................... <member("userroomid").text>
+  [338] pusharglistnoret 2 ...................... <oStudioManager, member("userroomid").text>
+  [340] objcall 688 ............................. oStudioManager.getPrivateStudioDetail(member("userroomid").text)
+  [343] jmp [374]
+  [346] getprop 685 ............................. <pDest>
+  [349] pushcons 14 ............................. <"nav_public_info.window">
+  [351] eq ...................................... <pDest = "nav_public_info.window">
+  [352] jmpifz [374] ............................ if pDest = "nav_public_info.window" then
+  [355] pushcons 15 ............................. <"roomID">
+  [357] pusharglist 1 ........................... <"roomID">
+  [359] extcall 34 .............................. <member("roomID")>
+  [361] getobjprop 78 ........................... <member("roomID").text>
+  [363] setlocal 6 .............................. sRoomId = member("roomID").text
+  [365] getglobal 207 ........................... <oStudioManager>
+  [367] getlocal 6 .............................. <sRoomId>
+  [369] pusharglistnoret 2 ...................... <oStudioManager, sRoomId>
+  [371] objcall 631 ............................. oStudioManager.getPublicStudioDetail(sRoomId)
+  [374] pusharglistnoret 0 ...................... <>
+  [376] extcall 374 ............................. updateStage()
+  [379] pushzero ................................ <0>
+  [380] setmovieprop 687 ........................ the updateLock = 0
+  [383] ret
+end
+
+on mouseDown me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 224 ............................. pClicked = 1
+  [  4] pusharglistnoret 0 ...................... <>
+  [  6] extcall 229 ............................. stopEvent()
+  [  8] ret
+end

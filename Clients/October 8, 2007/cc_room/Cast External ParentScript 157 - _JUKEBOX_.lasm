@@ -1,0 +1,164 @@
+property pSelectedSong, bDebug, pLastCatalogList, pLastCatalogImg, pLastPlaylistList, pLastPlaylistImg, pCatalogLevel, isFTMmember
+global ElementMgr, oPossessionManager, oDenizenManager, oStudio
+
+on new me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 33 .............................. bDebug = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] pushcons 0 .............................. <"cc.infinite_jukebox.catalog.window">
+  [  7] pusharglistnoret 2 ...................... <me, "cc.infinite_jukebox.catalog.window">
+  [  9] objcall 30 .............................. me.openWindow("cc.infinite_jukebox.catalog.window")
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] extcall 5 ............................... return me
+  [ 17] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 1 .............................. <"_JUKEBOX_: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"_JUKEBOX_: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"_JUKEBOX_: " & sMessage>
+  [ 17] extcall 34 .............................. put "_JUKEBOX_: " & sMessage
+  [ 19] ret
+end
+
+on openWindow me, sID, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"openWindow()">
+  [  4] pushcons 3 .............................. <"sId:">
+  [  6] joinpadstr .............................. <"openWindow()" && "sId:">
+  [  7] getparam 1 .............................. <sID>
+  [  9] joinpadstr .............................. <"openWindow()" && "sId:" && sID>
+  [ 10] pushcons 4 .............................. <"oArg:">
+  [ 12] joinpadstr .............................. <"openWindow()" && "sId:" && sID && "oArg:">
+  [ 13] getparam 2 .............................. <oArg>
+  [ 15] joinpadstr .............................. <"openWindow()" && "sId:" && sID && "oArg:" && oArg>
+  [ 16] pusharglistnoret 2 ...................... <me, "openWindow()" && "sId:" && sID && "oArg:" && oArg>
+  [ 18] objcall 29 .............................. me.debug("openWindow()" && "sId:" && sID && "oArg:" && oArg)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 1 ........................... <me>
+  [ 24] objcall 27 .............................. <me.closeWindow()>
+  [ 26] setlocal 0 .............................. myRect = me.closeWindow()
+  [ 28] getglobal 37 ............................ <ElementMgr>
+  [ 30] getparam 1 .............................. <sID>
+  [ 32] getlocal 0 .............................. <myRect>
+  [ 34] pusharglist 3 ........................... <ElementMgr, sID, myRect>
+  [ 36] objcall 38 .............................. <ElementMgr.newwindow(sID, myRect)>
+  [ 38] setlocal 1 .............................. MyWindow = ElementMgr.newwindow(sID, myRect)
+  [ 40] getglobal 37 ............................ <ElementMgr>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] setobjprop 195 .......................... ElementMgr.oJukebox = me
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getlocal 1 .............................. <MyWindow>
+  [ 50] getparam 2 .............................. <oArg>
+  [ 52] pusharglistnoret 3 ...................... <me, MyWindow, oArg>
+  [ 54] objcall 32 .............................. me.displayWindow(MyWindow, oArg)
+  [ 56] ret
+end
+
+on closeWindow me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 5 .............................. <"closeWindow()">
+  [  4] pusharglistnoret 2 ...................... <me, "closeWindow()">
+  [  6] objcall 29 .............................. me.debug("closeWindow()")
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getglobal 37 ............................ <ElementMgr>
+  [ 16] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 18] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 20] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 22] lteq
+  [ 23] jmpifz [ 66] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 26] getglobal 37 ............................ <ElementMgr>
+  [ 28] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 30] getlocal 0 .............................. <n>
+  [ 32] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 34] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 36] pushcons 6 .............................. <"jukebox">
+  [ 38] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "jukebox">
+  [ 39] jmpifz [ 57] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "jukebox" then
+  [ 42] getglobal 37 ............................ <ElementMgr>
+  [ 44] pushsymb 44 ............................. <#pOpenWindows>
+  [ 46] getlocal 0 .............................. <n>
+  [ 48] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 50] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 52] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 54] jmp [ 66] ............................... exit repeat
+  [ 57] pushint8 1
+  [ 59] getlocal 0
+  [ 61] add
+  [ 62] setlocal 0
+  [ 64] endrepeat [ 12]
+  [ 66] getlocal 1 .............................. <MyWindow>
+  [ 68] pusharglist 1 ........................... <MyWindow>
+  [ 70] extcall 8 ............................... <voidp(MyWindow)>
+  [ 72] jmpifz [ 79] ............................ if voidp(MyWindow) then
+  [ 75] pusharglistnoret 0 ...................... <>
+  [ 77] extcall 5 ............................... return 
+  [ 79] getlocal 1 .............................. <MyWindow>
+  [ 81] pusharglist 1 ........................... <MyWindow>
+  [ 83] objcall 27 .............................. <MyWindow.closeWindow()>
+  [ 85] setlocal 2 .............................. iLastRect = MyWindow.closeWindow()
+  [ 87] getglobal 37 ............................ <ElementMgr>
+  [ 89] pusharglist 0 ........................... <>
+  [ 91] extcall 48 .............................. <VOID>
+  [ 93] setobjprop 195 .......................... ElementMgr.oJukebox = VOID
+  [ 95] pusharglist 0 ........................... <>
+  [ 97] extcall 48 .............................. <VOID>
+  [ 99] setparam 0 .............................. me = VOID
+  [101] getlocal 2 .............................. <iLastRect>
+  [103] pusharglistnoret 1 ...................... <iLastRect>
+  [105] extcall 5 ............................... return iLastRect
+  [107] ret
+end
+
+on getOpenWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 37 ............................ <ElementMgr>
+  [  8] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 64] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 37 ............................ <ElementMgr>
+  [ 20] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 6 .............................. <"jukebox">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "jukebox">
+  [ 31] jmpifz [ 55] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "jukebox" then
+  [ 34] getglobal 37 ............................ <ElementMgr>
+  [ 36] pushsymb 44 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 46] getlocal 1 .............................. <MyWindow>
+  [ 48] pusharglistnoret 1 ...................... <MyWindow>
+  [ 50] extcall 5 ............................... return MyWindow
+  [ 52] jmp [ 64] ............................... exit repeat
+  [ 55] pushint8 1
+  [ 57] getlocal 0
+  [ 59] add
+  [ 60] setlocal 0
+  [ 62] endrepeat [  4]
+  [ 64] ret
+end
+
+on displayWindow me, MyWindow, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 7 .............................. <"displayWindow()">
+  [  4] pusharglistnoret 2 ...................... <me, "displayWindow()">
+  [  6] objcall 29 .............................. me.debug("displayWindow()")
+  [  8] ret
+end

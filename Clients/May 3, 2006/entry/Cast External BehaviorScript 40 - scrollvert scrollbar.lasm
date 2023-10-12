@@ -1,0 +1,192 @@
+property pTarget, pCounter, pSlider, pClicked, pmodel
+
+on new me, mytarget, myslider
+  [  0] getparam 1 .............................. <mytarget>
+  [  2] setprop 664 ............................. pTarget = mytarget
+  [  5] getparam 2 .............................. <myslider>
+  [  7] setprop 676 ............................. pSlider = myslider
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pusharglistnoret 1 ...................... <me>
+  [ 14] extcall 23 .............................. return me
+  [ 16] ret
+end
+
+on exitFrame me
+  [  0] getprop 664 ............................. <pTarget>
+  [  3] pusharglist 1 ........................... <pTarget>
+  [  5] extcall 12 .............................. <voidp(pTarget)>
+  [  7] pushzero ................................ <0>
+  [  8] eq ...................................... <voidp(pTarget) = 0>
+  [  9] jmpifz [256] ............................ if voidp(pTarget) = 0 then
+  [ 12] pusharglist 0 ........................... <>
+  [ 14] thebuiltin 217 .......................... <the mouseDown>
+  [ 16] getprop 224 ............................. <pClicked>
+  [ 18] and ..................................... <the mouseDown and pClicked>
+  [ 19] jmpifz [213] ............................ if the mouseDown and pClicked then / else
+  [ 22] getprop 73 .............................. <pmodel>
+  [ 24] pushcons 0 .............................. <"mms">
+  [ 26] eq ...................................... <pmodel = "mms">
+  [ 27] jmpifz [ 49] ............................ if pmodel = "mms" then / else
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 228 .......................... <me.spriteNum>
+  [ 34] pusharglist 1 ........................... <me.spriteNum>
+  [ 36] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 38] pushcons 1 .............................. <"mms.scrollbar.pressed">
+  [ 40] pusharglist 1 ........................... <"mms.scrollbar.pressed">
+  [ 42] extcall 34 .............................. <member("mms.scrollbar.pressed")>
+  [ 44] setobjprop 34 ........................... sprite(me.spriteNum).member = member("mms.scrollbar.pressed")
+  [ 46] jmp [ 65]
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getobjprop 228 .......................... <me.spriteNum>
+  [ 53] pusharglist 1 ........................... <me.spriteNum>
+  [ 55] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 57] pushcons 2 .............................. <"scrollbar.vertical.pressed">
+  [ 59] pusharglist 1 ........................... <"scrollbar.vertical.pressed">
+  [ 61] extcall 34 .............................. <member("scrollbar.vertical.pressed")>
+  [ 63] setobjprop 34 ........................... sprite(me.spriteNum).member = member("scrollbar.vertical.pressed")
+  [ 65] getprop 664 ............................. <pTarget>
+  [ 68] getobjprop 318 .......................... <pTarget.pScrollIndex>
+  [ 71] setlocal 0 .............................. myindex = pTarget.pScrollIndex
+  [ 73] getprop 224 ............................. <pClicked>
+  [ 75] pushint8 1 .............................. <1>
+  [ 77] eq ...................................... <pClicked = 1>
+  [ 78] pusharglist 0 ........................... <>
+  [ 80] thebuiltin 576 .......................... <the clickLoc>
+  [ 83] getobjprop 56 ........................... <(the clickLoc).locV>
+  [ 85] getprop 676 ............................. <pSlider>
+  [ 88] pusharglist 1 ........................... <pSlider>
+  [ 90] extcall 36 .............................. <sprite(pSlider)>
+  [ 92] getobjprop 56 ........................... <sprite(pSlider).locV>
+  [ 94] gt ...................................... <(the clickLoc).locV > sprite(pSlider).locV>
+  [ 95] and ..................................... <(pClicked = 1) and ((the clickLoc).locV > sprite(pSlider).locV)>
+  [ 96] jmpifz [117] ............................ if (pClicked = 1) and ((the clickLoc).locV > sprite(pSlider).locV) then / else
+  [ 99] getprop 664 ............................. <pTarget>
+  [102] getobjprop 318 .......................... <pTarget.pScrollIndex>
+  [105] getprop 664 ............................. <pTarget>
+  [108] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [111] add ..................................... <pTarget.pScrollIndex + pTarget.pDisplayLines>
+  [112] setlocal 0 .............................. myindex = pTarget.pScrollIndex + pTarget.pDisplayLines
+  [114] jmp [158]
+  [117] getprop 224 ............................. <pClicked>
+  [119] pushint8 2 .............................. <2>
+  [121] eq ...................................... <pClicked = 2>
+  [122] pusharglist 0 ........................... <>
+  [124] thebuiltin 576 .......................... <the clickLoc>
+  [127] getobjprop 56 ........................... <(the clickLoc).locV>
+  [129] getprop 676 ............................. <pSlider>
+  [132] pusharglist 1 ........................... <pSlider>
+  [134] extcall 36 .............................. <sprite(pSlider)>
+  [136] getobjprop 56 ........................... <sprite(pSlider).locV>
+  [138] lt ...................................... <(the clickLoc).locV < sprite(pSlider).locV>
+  [139] and ..................................... <(pClicked = 2) and ((the clickLoc).locV < sprite(pSlider).locV)>
+  [140] jmpifz [158] ............................ if (pClicked = 2) and ((the clickLoc).locV < sprite(pSlider).locV) then
+  [143] getprop 664 ............................. <pTarget>
+  [146] getobjprop 318 .......................... <pTarget.pScrollIndex>
+  [149] getprop 664 ............................. <pTarget>
+  [152] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [155] sub ..................................... <pTarget.pScrollIndex - pTarget.pDisplayLines>
+  [156] setlocal 0 .............................. myindex = pTarget.pScrollIndex - pTarget.pDisplayLines
+  [158] getlocal 0 .............................. <myindex>
+  [160] pushint8 1 .............................. <1>
+  [162] pusharglist 2 ........................... <myindex, 1>
+  [164] extcall 672 ............................. <max(myindex, 1)>
+  [167] setlocal 0 .............................. myindex = max(myindex, 1)
+  [169] getprop 664 ............................. <pTarget>
+  [172] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [175] getprop 664 ............................. <pTarget>
+  [178] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [181] sub ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines>
+  [182] pushint8 1 .............................. <1>
+  [184] add ..................................... <pTarget.pTotalLines - pTarget.pDisplayLines + 1>
+  [185] getlocal 0 .............................. <myindex>
+  [187] pusharglist 2 ........................... <pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex>
+  [189] extcall 673 ............................. <min(pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex)>
+  [192] setlocal 0 .............................. myindex = min(pTarget.pTotalLines - pTarget.pDisplayLines + 1, myindex)
+  [194] getprop 664 ............................. <pTarget>
+  [197] getlocal 0 .............................. <myindex>
+  [199] setobjprop 318 .......................... pTarget.pScrollIndex = myindex
+  [202] getprop 664 ............................. <pTarget>
+  [205] pusharglistnoret 1 ...................... <pTarget>
+  [207] objcall 319 ............................. pTarget.updatecontent()
+  [210] jmp [256]
+  [213] getprop 73 .............................. <pmodel>
+  [215] pushcons 0 .............................. <"mms">
+  [217] eq ...................................... <pmodel = "mms">
+  [218] jmpifz [240] ............................ if pmodel = "mms" then / else
+  [221] getparam 0 .............................. <me>
+  [223] getobjprop 228 .......................... <me.spriteNum>
+  [225] pusharglist 1 ........................... <me.spriteNum>
+  [227] extcall 36 .............................. <sprite(me.spriteNum)>
+  [229] pushcons 3 .............................. <"mms.scrollbar.active">
+  [231] pusharglist 1 ........................... <"mms.scrollbar.active">
+  [233] extcall 34 .............................. <member("mms.scrollbar.active")>
+  [235] setobjprop 34 ........................... sprite(me.spriteNum).member = member("mms.scrollbar.active")
+  [237] jmp [256]
+  [240] getparam 0 .............................. <me>
+  [242] getobjprop 228 .......................... <me.spriteNum>
+  [244] pusharglist 1 ........................... <me.spriteNum>
+  [246] extcall 36 .............................. <sprite(me.spriteNum)>
+  [248] pushcons 4 .............................. <"scrollbar.vertical.active">
+  [250] pusharglist 1 ........................... <"scrollbar.vertical.active">
+  [252] extcall 34 .............................. <member("scrollbar.vertical.active")>
+  [254] setobjprop 34 ........................... sprite(me.spriteNum).member = member("scrollbar.vertical.active")
+  [256] ret
+end
+
+on mouseDown me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 231 ............................. pCounter = 0
+  [  3] getprop 664 ............................. <pTarget>
+  [  6] pusharglist 1 ........................... <pTarget>
+  [  8] extcall 12 .............................. <voidp(pTarget)>
+  [ 10] pushzero ................................ <0>
+  [ 11] eq ...................................... <voidp(pTarget) = 0>
+  [ 12] jmpifz [ 88] ............................ if voidp(pTarget) = 0 then
+  [ 15] getprop 664 ............................. <pTarget>
+  [ 18] getobjprop 595 .......................... <pTarget.pTotalLines>
+  [ 21] getprop 664 ............................. <pTarget>
+  [ 24] getobjprop 596 .......................... <pTarget.pDisplayLines>
+  [ 27] gt ...................................... <pTarget.pTotalLines > pTarget.pDisplayLines>
+  [ 28] jmpifz [ 85] ............................ if pTarget.pTotalLines > pTarget.pDisplayLines then / else
+  [ 31] pusharglist 0 ........................... <>
+  [ 33] thebuiltin 576 .......................... <the clickLoc>
+  [ 36] getobjprop 56 ........................... <(the clickLoc).locV>
+  [ 38] getprop 676 ............................. <pSlider>
+  [ 41] pusharglist 1 ........................... <pSlider>
+  [ 43] extcall 36 .............................. <sprite(pSlider)>
+  [ 45] getobjprop 56 ........................... <sprite(pSlider).locV>
+  [ 47] gt ...................................... <(the clickLoc).locV > sprite(pSlider).locV>
+  [ 48] jmpifz [ 58] ............................ if (the clickLoc).locV > sprite(pSlider).locV then / else
+  [ 51] pushint8 1 .............................. <1>
+  [ 53] setprop 224 ............................. pClicked = 1
+  [ 55] jmp [ 82]
+  [ 58] pusharglist 0 ........................... <>
+  [ 60] thebuiltin 576 .......................... <the clickLoc>
+  [ 63] getobjprop 56 ........................... <(the clickLoc).locV>
+  [ 65] getprop 676 ............................. <pSlider>
+  [ 68] pusharglist 1 ........................... <pSlider>
+  [ 70] extcall 36 .............................. <sprite(pSlider)>
+  [ 72] getobjprop 56 ........................... <sprite(pSlider).locV>
+  [ 74] lt ...................................... <(the clickLoc).locV < sprite(pSlider).locV>
+  [ 75] jmpifz [ 82] ............................ if (the clickLoc).locV < sprite(pSlider).locV then
+  [ 78] pushint8 2 .............................. <2>
+  [ 80] setprop 224 ............................. pClicked = 2
+  [ 82] jmp [ 88]
+  [ 85] pushzero ................................ <0>
+  [ 86] setprop 224 ............................. pClicked = 0
+  [ 88] pusharglistnoret 0 ...................... <>
+  [ 90] extcall 229 ............................. stopEvent()
+  [ 92] ret
+end
+
+on mouseUp me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 224 ............................. pClicked = 0
+  [  3] ret
+end

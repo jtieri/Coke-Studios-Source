@@ -1,0 +1,253 @@
+property sID
+global oStudioMap, oSession, ElementMgr, oStudio, oPossessionStudio, oIsoScene, oStudioManager, oDenizenManager, oRoom
+
+on beginSprite me
+  [  0] pushcons 0 .............................. <"--> ENTERING STUDIO **">
+  [  2] pusharglistnoret 1 ...................... <"--> ENTERING STUDIO **">
+  [  4] extcall 17 .............................. put "--> ENTERING STUDIO **"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 1 .............................. <EMPTY>
+  [ 10] setobjprop 122 .......................... me.sID = EMPTY
+  [ 12] getglobal 8 ............................. <oStudioMap>
+  [ 14] pusharglist 1 ........................... <oStudioMap>
+  [ 16] objcall 201 ............................. <oStudioMap.getEnterStudioViaTeleport()>
+  [ 18] setlocal 0 .............................. bEnterStudioViaTeleport = oStudioMap.getEnterStudioViaTeleport()
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] extcall 202 ............................. <VOID>
+  [ 24] setlocal 1 .............................. iDestinationId = VOID
+  [ 26] getlocal 0 .............................. <bEnterStudioViaTeleport>
+  [ 28] jmpifz [ 39] ............................ if bEnterStudioViaTeleport then
+  [ 31] getglobal 8 ............................. <oStudioMap>
+  [ 33] pusharglist 1 ........................... <oStudioMap>
+  [ 35] objcall 203 ............................. <oStudioMap.getDestinationId()>
+  [ 37] setlocal 1 .............................. iDestinationId = oStudioMap.getDestinationId()
+  [ 39] getlocal 0 .............................. <bEnterStudioViaTeleport>
+  [ 41] getlocal 1 .............................. <iDestinationId>
+  [ 43] pusharglist 1 ........................... <iDestinationId>
+  [ 45] extcall 42 .............................. <voidp(iDestinationId)>
+  [ 47] not ..................................... <not voidp(iDestinationId)>
+  [ 48] and ..................................... <bEnterStudioViaTeleport and not voidp(iDestinationId)>
+  [ 49] jmpifz [ 63] ............................ if bEnterStudioViaTeleport and not voidp(iDestinationId) then / else
+  [ 52] getglobal 204 ........................... <oPossessionStudio>
+  [ 54] getlocal 1 .............................. <iDestinationId>
+  [ 56] pusharglistnoret 2 ...................... <oPossessionStudio, iDestinationId>
+  [ 58] objcall 205 ............................. oPossessionStudio.sendEnterStudioViaTeleporter(iDestinationId)
+  [ 60] jmp [ 69]
+  [ 63] getglobal 27 ............................ <oStudio>
+  [ 65] pusharglistnoret 1 ...................... <oStudio>
+  [ 67] objcall 206 ............................. oStudio.sendEnterStudio()
+  [ 69] ret
+end
+
+on initStudioEntered me, sStudioID, sStudioName, iLocation, iLayout, sOwner, iSequenceRate
+  [  0] pushcons 2 .............................. <"--> STUDIO ENTERED: ">
+  [  2] getparam 1 .............................. <sStudioID>
+  [  4] joinstr ................................. <"--> STUDIO ENTERED: " & sStudioID>
+  [  5] getparam 2 .............................. <sStudioName>
+  [  7] joinpadstr .............................. <"--> STUDIO ENTERED: " & sStudioID && sStudioName>
+  [  8] getparam 3 .............................. <iLocation>
+  [ 10] joinpadstr .............................. <"--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation>
+  [ 11] getparam 4 .............................. <iLayout>
+  [ 13] joinpadstr .............................. <"--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation && iLayout>
+  [ 14] getparam 5 .............................. <sOwner>
+  [ 16] joinpadstr .............................. <"--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation && iLayout && sOwner>
+  [ 17] getparam 6 .............................. <iSequenceRate>
+  [ 19] joinpadstr .............................. <"--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation && iLayout && sOwner && iSequenceRate>
+  [ 20] pusharglistnoret 1 ...................... <"--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation && iLayout && sOwner && iSequenceRate>
+  [ 22] extcall 17 .............................. put "--> STUDIO ENTERED: " & sStudioID && sStudioName && iLocation && iLayout && sOwner && iSequenceRate
+  [ 24] pushcons 3 .............................. <"*****************">
+  [ 26] pushcons 4 .............................. <RETURN>
+  [ 28] joinstr ................................. <"*****************" & RETURN>
+  [ 29] pusharglistnoret 1 ...................... <"*****************" & RETURN>
+  [ 31] extcall 17 .............................. put "*****************" & RETURN
+  [ 33] pushcons 5 .............................. <"StudioMap">
+  [ 35] pusharglist 1 ........................... <"StudioMap">
+  [ 37] extcall 12 .............................. <script("StudioMap")>
+  [ 39] getparam 3 .............................. <iLocation>
+  [ 41] getparam 4 .............................. <iLayout>
+  [ 43] getparam 1 .............................. <sStudioID>
+  [ 45] getparam 2 .............................. <sStudioName>
+  [ 47] pusharglist 5 ........................... <script("StudioMap"), iLocation, iLayout, sStudioID, sStudioName>
+  [ 49] objcall 13 .............................. <script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)>
+  [ 51] setglobal 8 ............................. oStudioMap = script("StudioMap").new(iLocation, iLayout, sStudioID, sStudioName)
+  [ 53] getglobal 8 ............................. <oStudioMap>
+  [ 55] pusharglistnoret 1 ...................... <oStudioMap>
+  [ 57] extcall 209 ............................. initIsoScene(oStudioMap)
+  [ 59] getglobal 69 ............................ <oIsoScene>
+  [ 61] getparam 6 .............................. <iSequenceRate>
+  [ 63] pusharglistnoret 2 ...................... <oIsoScene, iSequenceRate>
+  [ 65] objcall 210 ............................. oIsoScene.setSequenceRate(iSequenceRate)
+  [ 67] ret
+end
+
+on initTestAvatar me
+  [  0] pushcons 6 .............................. <"IsoAvatar">
+  [  2] pusharglist 1 ........................... <"IsoAvatar">
+  [  4] extcall 12 .............................. <script("IsoAvatar")>
+  [  6] getglobal 43 ............................ <oDenizenManager>
+  [  8] pusharglist 1 ........................... <oDenizenManager>
+  [ 10] objcall 44 .............................. <oDenizenManager.getScreenName()>
+  [ 12] getglobal 8 ............................. <oStudioMap>
+  [ 14] pusharglist 1 ........................... <oStudioMap>
+  [ 16] objcall 213 ............................. <oStudioMap.getAvatarScale()>
+  [ 18] pusharglist 3 ........................... <script("IsoAvatar"), oDenizenManager.getScreenName(), oStudioMap.getAvatarScale()>
+  [ 20] extcall 13 .............................. <new(script("IsoAvatar"), oDenizenManager.getScreenName(), oStudioMap.getAvatarScale())>
+  [ 22] setlocal 0 .............................. oAvatar = new(script("IsoAvatar"), oDenizenManager.getScreenName(), oStudioMap.getAvatarScale())
+  [ 24] getlocal 0 .............................. <oAvatar>
+  [ 26] pushint8 3 .............................. <3>
+  [ 28] setobjprop 214 .......................... oAvatar.iLayer = 3
+  [ 30] getglobal 69 ............................ <oIsoScene>
+  [ 32] pusharglist 1 ........................... <oIsoScene>
+  [ 34] objcall 215 ............................. <oIsoScene.getEntryXml()>
+  [ 36] setlocal 1 .............................. oEntryXml = oIsoScene.getEntryXml()
+  [ 38] getlocal 1 .............................. <oEntryXml>
+  [ 40] getobjprop 216 .......................... <oEntryXml.firstChild>
+  [ 42] pushcons 7 .............................. <"AV">
+  [ 44] pusharglist 2 ........................... <oEntryXml.firstChild, "AV">
+  [ 46] extcall 157 ............................. <getNode(oEntryXml.firstChild, "AV")>
+  [ 48] setlocal 2 .............................. oUpdateNode = getNode(oEntryXml.firstChild, "AV")
+  [ 50] getlocal 2 .............................. <oUpdateNode>
+  [ 52] pusharglist 1 ........................... <oUpdateNode>
+  [ 54] extcall 42 .............................. <voidp(oUpdateNode)>
+  [ 56] not ..................................... <not voidp(oUpdateNode)>
+  [ 57] jmpifz [134] ............................ if not voidp(oUpdateNode) then
+  [ 60] getlocal 2 .............................. <oUpdateNode>
+  [ 62] getchainedprop 217 ...................... <oUpdateNode.attributes>
+  [ 64] getobjprop 218 .......................... <oUpdateNode.attributes.x>
+  [ 66] pusharglist 1 ........................... <oUpdateNode.attributes.x>
+  [ 68] extcall 111 ............................. <integer(oUpdateNode.attributes.x)>
+  [ 70] setlocal 3 .............................. iXPos = integer(oUpdateNode.attributes.x)
+  [ 72] getlocal 2 .............................. <oUpdateNode>
+  [ 74] getchainedprop 217 ...................... <oUpdateNode.attributes>
+  [ 76] getobjprop 219 .......................... <oUpdateNode.attributes.y>
+  [ 78] pusharglist 1 ........................... <oUpdateNode.attributes.y>
+  [ 80] extcall 111 ............................. <integer(oUpdateNode.attributes.y)>
+  [ 82] setlocal 4 .............................. iYPos = integer(oUpdateNode.attributes.y)
+  [ 84] getlocal 2 .............................. <oUpdateNode>
+  [ 86] getchainedprop 217 ...................... <oUpdateNode.attributes>
+  [ 88] getobjprop 220 .......................... <oUpdateNode.attributes.z>
+  [ 90] pusharglist 1 ........................... <oUpdateNode.attributes.z>
+  [ 92] extcall 111 ............................. <integer(oUpdateNode.attributes.z)>
+  [ 94] setlocal 5 .............................. iZPos = integer(oUpdateNode.attributes.z)
+  [ 96] getlocal 2 .............................. <oUpdateNode>
+  [ 98] getchainedprop 217 ...................... <oUpdateNode.attributes>
+  [100] getobjprop 221 .......................... <oUpdateNode.attributes.d>
+  [102] pusharglist 1 ........................... <oUpdateNode.attributes.d>
+  [104] extcall 111 ............................. <integer(oUpdateNode.attributes.d)>
+  [106] setlocal 6 .............................. iDir = integer(oUpdateNode.attributes.d)
+  [108] getlocal 2 .............................. <oUpdateNode>
+  [110] getchainedprop 217 ...................... <oUpdateNode.attributes>
+  [112] getobjprop 222 .......................... <oUpdateNode.attributes.act>
+  [114] setlocal 7 .............................. sAction = oUpdateNode.attributes.act
+  [116] getlocal 0 .............................. <oAvatar>
+  [118] getlocal 3 .............................. <iXPos>
+  [120] getlocal 5 .............................. <iZPos>
+  [122] pusharglistnoret 3 ...................... <oAvatar, iXPos, iZPos>
+  [124] objcall 223 ............................. oAvatar.moveToRowCol(iXPos, iZPos)
+  [126] getlocal 0 .............................. <oAvatar>
+  [128] getlocal 6 .............................. <iDir>
+  [130] pusharglistnoret 2 ...................... <oAvatar, iDir>
+  [132] objcall 224 ............................. oAvatar.faceDirection(iDir)
+  [134] getlocal 1 .............................. <oEntryXml>
+  [136] getobjprop 216 .......................... <oEntryXml.firstChild>
+  [138] pushcons 8 .............................. <"AV_MV">
+  [140] pusharglist 2 ........................... <oEntryXml.firstChild, "AV_MV">
+  [142] extcall 157 ............................. <getNode(oEntryXml.firstChild, "AV_MV")>
+  [144] setlocal 8 .............................. oMoveNode = getNode(oEntryXml.firstChild, "AV_MV")
+  [146] getlocal 8 .............................. <oMoveNode>
+  [148] pusharglist 1 ........................... <oMoveNode>
+  [150] extcall 42 .............................. <voidp(oMoveNode)>
+  [152] not ..................................... <not voidp(oMoveNode)>
+  [153] jmpifz [214] ............................ if not voidp(oMoveNode) then
+  [156] getlocal 8 .............................. <oMoveNode>
+  [158] getchainedprop 217 ...................... <oMoveNode.attributes>
+  [160] getobjprop 218 .......................... <oMoveNode.attributes.x>
+  [162] pusharglist 1 ........................... <oMoveNode.attributes.x>
+  [164] extcall 111 ............................. <integer(oMoveNode.attributes.x)>
+  [166] setlocal 3 .............................. iXPos = integer(oMoveNode.attributes.x)
+  [168] getlocal 8 .............................. <oMoveNode>
+  [170] getchainedprop 217 ...................... <oMoveNode.attributes>
+  [172] getobjprop 219 .......................... <oMoveNode.attributes.y>
+  [174] pusharglist 1 ........................... <oMoveNode.attributes.y>
+  [176] extcall 111 ............................. <integer(oMoveNode.attributes.y)>
+  [178] setlocal 4 .............................. iYPos = integer(oMoveNode.attributes.y)
+  [180] getlocal 8 .............................. <oMoveNode>
+  [182] getchainedprop 217 ...................... <oMoveNode.attributes>
+  [184] getobjprop 220 .......................... <oMoveNode.attributes.z>
+  [186] pusharglist 1 ........................... <oMoveNode.attributes.z>
+  [188] extcall 111 ............................. <integer(oMoveNode.attributes.z)>
+  [190] setlocal 5 .............................. iZPos = integer(oMoveNode.attributes.z)
+  [192] getglobal 69 ............................ <oIsoScene>
+  [194] getchainedprop 225 ...................... <oIsoScene.oGrid>
+  [196] getlocal 3 .............................. <iXPos>
+  [198] getlocal 5 .............................. <iZPos>
+  [200] pusharglist 3 ........................... <oIsoScene.oGrid, iXPos, iZPos>
+  [202] objcall 226 ............................. <oIsoScene.oGrid.getSquareByRowCol(iXPos, iZPos)>
+  [204] setlocal 9 .............................. oSquare = oIsoScene.oGrid.getSquareByRowCol(iXPos, iZPos)
+  [206] getlocal 0 .............................. <oAvatar>
+  [208] getlocal 9 .............................. <oSquare>
+  [210] pusharglistnoret 2 ...................... <oAvatar, oSquare>
+  [212] objcall 227 ............................. oAvatar.findPath(oSquare)
+  [214] ret
+end
+
+on exitFrame me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 20 ........................... <the frame>
+  [  4] pusharglistnoret 1 ...................... <the frame>
+  [  6] extcall 21 .............................. go(the frame)
+  [  8] ret
+end
+
+on initLoggedIn me
+  [  0] ret
+end
+
+on initExitRoom me
+  [  0] pushcons 9 .............................. <"--> EXITING ROOM">
+  [  2] pusharglistnoret 1 ...................... <"--> EXITING ROOM">
+  [  4] extcall 17 .............................. put "--> EXITING ROOM"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 10 ............................. <"Exiting Studio">
+  [ 10] setobjprop 122 .......................... me.sID = "Exiting Studio"
+  [ 12] getglobal 26 ............................ <oRoom>
+  [ 14] pusharglistnoret 1 ...................... <oRoom>
+  [ 16] objcall 238 ............................. oRoom.sendExitRoom()
+  [ 18] ret
+end
+
+on initRoomExited me, sStudioID
+  [  0] pushcons 11 ............................. <"--> room EXITED">
+  [  2] pusharglistnoret 1 ...................... <"--> room EXITED">
+  [  4] extcall 17 .............................. put "--> room EXITED"
+  [  6] getglobal 46 ............................ <oSession>
+  [  8] pusharglist 1 ........................... <oSession>
+  [ 10] objcall 47 .............................. <oSession.getConnected()>
+  [ 12] jmpifz [ 21] ............................ if oSession.getConnected() then
+  [ 15] getparam 0 .............................. <me>
+  [ 17] pusharglistnoret 1 ...................... <me>
+  [ 19] objcall 199 ............................. me.initDisconnect()
+  [ 21] ret
+end
+
+on initDisconnect me
+  [  0] pushcons 12 ............................. <"--> DISCONNECTING">
+  [  2] pusharglistnoret 1 ...................... <"--> DISCONNECTING">
+  [  4] extcall 17 .............................. put "--> DISCONNECTING"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 13 ............................. <"Disconnecting">
+  [ 10] setobjprop 122 .......................... me.sID = "Disconnecting"
+  [ 12] getglobal 46 ............................ <oSession>
+  [ 14] pusharglistnoret 1 ...................... <oSession>
+  [ 16] objcall 48 .............................. oSession.disconnect()
+  [ 18] ret
+end
+
+on initLoggedOut me
+  [  0] pushcons 14 ............................. <"--> LOGGED OUT">
+  [  2] pusharglistnoret 1 ...................... <"--> LOGGED OUT">
+  [  4] extcall 17 .............................. put "--> LOGGED OUT"
+  [  6] pusharglistnoret 0 ...................... <>
+  [  8] extcall 35 .............................. gotoEntry()
+  [ 10] ret
+end

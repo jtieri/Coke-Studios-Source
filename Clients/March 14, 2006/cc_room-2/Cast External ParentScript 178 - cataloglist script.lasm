@@ -1,0 +1,1047 @@
+property pCatalogLevel, pwidth, pheight, pLineSpace, pDisplayLines, pLineDef, pDoubleLines, pScrollIndex, pContentlist, listmember, pPreviousData, pScrollImg, bDebug, pSelectedSong, pSelectedAlbum, pSelectedArtist, pSelectedgenre
+global ElementMgr, TextMgr, gMembersToDelete, oDenizenManager
+
+on new me, numwidth, numheight, whichparent
+  [  0] getparam 1 .............................. <numwidth>
+  [  2] setprop 59 .............................. pwidth = numwidth
+  [  4] getparam 2 .............................. <numheight>
+  [  6] setprop 60 .............................. pheight = numheight
+  [  8] pushint8 14 ............................. <14>
+  [ 10] setprop 61 .............................. pLineSpace = 14
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] setprop 69 .............................. pScrollIndex = 1
+  [ 16] getprop 60 .............................. <pheight>
+  [ 18] getprop 61 .............................. <pLineSpace>
+  [ 20] div ..................................... <pheight / pLineSpace>
+  [ 21] setprop 96 .............................. pDisplayLines = pheight / pLineSpace
+  [ 23] pushsymb 247 ............................ <#Genres>
+  [ 25] setprop 246 ............................. pCatalogLevel = #Genres
+  [ 27] pushcons 0 .............................. <"cataloglist">
+  [ 29] pusharglist 1 ........................... <"cataloglist">
+  [ 31] extcall 10 .............................. <member("cataloglist")>
+  [ 33] getobjprop 97 ........................... <member("cataloglist").memberNum>
+  [ 35] pushint8 1 .............................. <1>
+  [ 37] lt ...................................... <member("cataloglist").memberNum < 1>
+  [ 38] jmpifz [ 66] ............................ if member("cataloglist").memberNum < 1 then / else
+  [ 41] pushsymb 13 ............................. <#text>
+  [ 43] pusharglist 1 ........................... <#text>
+  [ 45] extcall 0 ............................... <new(#text)>
+  [ 47] setprop 75 .............................. listmember = new(#text)
+  [ 49] getprop 75 .............................. <listmember>
+  [ 51] pushcons 0 .............................. <"cataloglist">
+  [ 53] setobjprop 14 ........................... listmember.name = "cataloglist"
+  [ 55] getglobal 99 ............................ <gMembersToDelete>
+  [ 57] getprop 75 .............................. <listmember>
+  [ 59] pusharglistnoret 2 ...................... <gMembersToDelete, listmember>
+  [ 61] extcall 98 .............................. append(gMembersToDelete, listmember)
+  [ 63] jmp [ 74]
+  [ 66] pushcons 0 .............................. <"cataloglist">
+  [ 68] pusharglist 1 ........................... <"cataloglist">
+  [ 70] extcall 10 .............................. <member("cataloglist")>
+  [ 72] setprop 75 .............................. listmember = member("cataloglist")
+  [ 74] getparam 0 .............................. <me>
+  [ 76] pusharglistnoret 1 ...................... <me>
+  [ 78] localcall 2 ............................. displayloading(me)
+  [ 80] getparam 0 .............................. <me>
+  [ 82] pusharglistnoret 1 ...................... <me>
+  [ 84] extcall 5 ............................... return me
+  [ 86] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 1 .............................. <"cataloglist script: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"cataloglist script: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"cataloglist script: " & sMessage>
+  [ 17] extcall 34 .............................. put "cataloglist script: " & sMessage
+  [ 19] ret
+end
+
+on displayloading me
+  [  0] pushint8 13 ............................. <13>
+  [  2] setlocal 0 .............................. displayLines = 13
+  [  4] getprop 75 .............................. <listmember>
+  [  6] pushsymb 100 ............................ <#fixed>
+  [  8] setobjprop 101 .......................... listmember.boxType = #fixed
+  [ 10] getprop 75 .............................. <listmember>
+  [ 12] pushcons 2 .............................. <"#3B3B3B">
+  [ 14] pusharglist 1 ........................... <"#3B3B3B">
+  [ 16] extcall 102 ............................. <rgb("#3B3B3B")>
+  [ 18] setobjprop 103 .......................... listmember.color = rgb("#3B3B3B")
+  [ 20] getprop 75 .............................. <listmember>
+  [ 22] pushint8 10 ............................. <10>
+  [ 24] setobjprop 104 .......................... listmember.fontSize = 10
+  [ 26] getprop 75 .............................. <listmember>
+  [ 28] pushsymb 105 ............................ <#bold>
+  [ 30] pusharglist 1 ........................... <[#bold]>
+  [ 32] pushlist ................................ <[#bold]>
+  [ 33] setobjprop 106 .......................... listmember.fontStyle = [#bold]
+  [ 35] getprop 75 .............................. <listmember>
+  [ 37] pushzero ................................ <0>
+  [ 38] pushzero ................................ <0>
+  [ 39] getprop 59 .............................. <pwidth>
+  [ 41] getprop 61 .............................. <pLineSpace>
+  [ 43] getlocal 0 .............................. <displayLines>
+  [ 45] mul ..................................... <pLineSpace * displayLines>
+  [ 46] pusharglist 4 ........................... <0, 0, pwidth, pLineSpace * displayLines>
+  [ 48] extcall 68 .............................. <rect(0, 0, pwidth, pLineSpace * displayLines)>
+  [ 50] setobjprop 68 ........................... listmember.rect = rect(0, 0, pwidth, pLineSpace * displayLines)
+  [ 52] getprop 75 .............................. <listmember>
+  [ 54] pushcons 3 .............................. <"Verdana">
+  [ 56] setobjprop 107 .......................... listmember.font = "Verdana"
+  [ 58] getprop 75 .............................. <listmember>
+  [ 60] pushsymb 108 ............................ <#center>
+  [ 62] setobjprop 81 ........................... listmember.alignment = #center
+  [ 64] pushcons 4 .............................. <EMPTY>
+  [ 66] setlocal 1 .............................. mytext = EMPTY
+  [ 68] pushint8 1 .............................. <1>
+  [ 70] setlocal 2
+  [ 72] getlocal 2
+  [ 74] getlocal 0 .............................. <displayLines>
+  [ 76] pushint8 2 .............................. <2>
+  [ 78] div ..................................... <displayLines / 2>
+  [ 79] lteq
+  [ 80] jmpifz [ 99] ............................ repeat with n = 1 to displayLines / 2
+  [ 83] getlocal 1 .............................. <mytext>
+  [ 85] pushcons 5 .............................. <RETURN>
+  [ 87] joinstr ................................. <mytext & RETURN>
+  [ 88] setlocal 1 .............................. mytext = mytext & RETURN
+  [ 90] pushint8 1
+  [ 92] getlocal 2
+  [ 94] add
+  [ 95] setlocal 2
+  [ 97] endrepeat [ 72]
+  [ 99] getlocal 1 .............................. <mytext>
+  [101] getglobal 11 ............................ <TextMgr>
+  [103] pushcons 6 .............................. <"LOADING">
+  [105] pusharglist 2 ........................... <TextMgr, "LOADING">
+  [107] objcall 12 .............................. <TextMgr.GetRefText("LOADING")>
+  [109] joinstr ................................. <mytext & TextMgr.GetRefText("LOADING")>
+  [110] setlocal 1 .............................. mytext = mytext & TextMgr.GetRefText("LOADING")
+  [112] pushint8 1 .............................. <1>
+  [114] setlocal 2
+  [116] getlocal 2
+  [118] getlocal 0 .............................. <displayLines>
+  [120] pushint8 2 .............................. <2>
+  [122] div ..................................... <displayLines / 2>
+  [123] lteq
+  [124] jmpifz [143] ............................ repeat with n = 1 to displayLines / 2
+  [127] getlocal 1 .............................. <mytext>
+  [129] pushcons 5 .............................. <RETURN>
+  [131] joinstr ................................. <mytext & RETURN>
+  [132] setlocal 1 .............................. mytext = mytext & RETURN
+  [134] pushint8 1
+  [136] getlocal 2
+  [138] add
+  [139] setlocal 2
+  [141] endrepeat [116]
+  [143] getprop 75 .............................. <listmember>
+  [145] getlocal 1 .............................. <mytext>
+  [147] setobjprop 13 ........................... listmember.text = mytext
+  [149] getprop 59 .............................. <pwidth>
+  [151] getprop 61 .............................. <pLineSpace>
+  [153] getlocal 0 .............................. <displayLines>
+  [155] mul ..................................... <pLineSpace * displayLines>
+  [156] pushint8 6 .............................. <6>
+  [158] get 7 ................................... <the colorDepth>
+  [160] pusharglist 3 ........................... <pwidth, pLineSpace * displayLines, the colorDepth>
+  [162] extcall 63 .............................. <image(pwidth, pLineSpace * displayLines, the colorDepth)>
+  [164] setlocal 3 .............................. destimg = image(pwidth, pLineSpace * displayLines, the colorDepth)
+  [166] getlocal 3 .............................. <destimg>
+  [168] getprop 75 .............................. <listmember>
+  [170] getobjprop 63 ........................... <listmember.image>
+  [172] getlocal 3 .............................. <destimg>
+  [174] getobjprop 68 ........................... <destimg.rect>
+  [176] getlocal 3 .............................. <destimg>
+  [178] getobjprop 68 ........................... <destimg.rect>
+  [180] pusharglistnoret 4 ...................... <destimg, listmember.image, destimg.rect, destimg.rect>
+  [182] objcall 70 .............................. destimg.copyPixels(listmember.image, destimg.rect, destimg.rect)
+  [184] pushcons 7 .............................. <"catalogdisplay">
+  [186] pusharglist 1 ........................... <"catalogdisplay">
+  [188] extcall 10 .............................. <member("catalogdisplay")>
+  [190] getobjprop 97 ........................... <member("catalogdisplay").memberNum>
+  [192] pushint8 1 .............................. <1>
+  [194] lt ...................................... <member("catalogdisplay").memberNum < 1>
+  [195] jmpifz [220] ............................ if member("catalogdisplay").memberNum < 1 then
+  [198] pushsymb 109 ............................ <#bitmap>
+  [200] pusharglist 1 ........................... <#bitmap>
+  [202] extcall 0 ............................... <new(#bitmap)>
+  [204] setlocal 4 .............................. catalogdisplay = new(#bitmap)
+  [206] getlocal 4 .............................. <catalogdisplay>
+  [208] pushcons 7 .............................. <"catalogdisplay">
+  [210] setobjprop 14 ........................... catalogdisplay.name = "catalogdisplay"
+  [212] getglobal 99 ............................ <gMembersToDelete>
+  [214] getlocal 4 .............................. <catalogdisplay>
+  [216] pusharglistnoret 2 ...................... <gMembersToDelete, catalogdisplay>
+  [218] extcall 98 .............................. append(gMembersToDelete, catalogdisplay)
+  [220] pushcons 8 .............................. <"catalogDisplay">
+  [222] pusharglist 1 ........................... <"catalogDisplay">
+  [224] extcall 10 .............................. <member("catalogDisplay")>
+  [226] getlocal 3 .............................. <destimg>
+  [228] setobjprop 63 ........................... member("catalogDisplay").image = destimg
+  [230] pushcons 8 .............................. <"catalogDisplay">
+  [232] pusharglist 1 ........................... <"catalogDisplay">
+  [234] extcall 10 .............................. <member("catalogDisplay")>
+  [236] pushzero ................................ <0>
+  [237] pushzero ................................ <0>
+  [238] pusharglist 2 ........................... <0, 0>
+  [240] extcall 71 .............................. <point(0, 0)>
+  [242] setobjprop 72 ........................... member("catalogDisplay").regPoint = point(0, 0)
+  [244] ret
+end
+
+on updatecontent me
+  [  0] getmovieprop 186 ........................ <the runMode>
+  [  2] pushcons 9 .............................. <"author">
+  [  4] eq ...................................... <the runMode = "author">
+  [  5] jmpifz [121] ............................ if the runMode = "author" then
+  [  8] pushsymb 247 ............................ <#Genres>
+  [ 10] pushcons 10 ............................. <"Hip-hop">
+  [ 12] pushcons 11 ............................. <"Alternative">
+  [ 14] pushcons 12 ............................. <"Country">
+  [ 16] pushcons 13 ............................. <"Pop">
+  [ 18] pushcons 14 ............................. <"Rythm n Blues">
+  [ 20] pushcons 15 ............................. <"Blues">
+  [ 22] pusharglist 6 ........................... <["Hip-hop", "Alternative", "Country", "Pop", "Rythm n Blues", "Blues"]>
+  [ 24] pushlist ................................ <["Hip-hop", "Alternative", "Country", "Pop", "Rythm n Blues", "Blues"]>
+  [ 25] pushsymb 249 ............................ <#Artists>
+  [ 27] pushcons 16 ............................. <"artist name band">
+  [ 29] pushcons 16 ............................. <"artist name band">
+  [ 31] pushcons 16 ............................. <"artist name band">
+  [ 33] pushcons 16 ............................. <"artist name band">
+  [ 35] pushcons 16 ............................. <"artist name band">
+  [ 37] pushcons 16 ............................. <"artist name band">
+  [ 39] pusharglist 6 ........................... <["artist name band", "artist name band", "artist name band", "artist name band", "artist name band", "artist name band"]>
+  [ 41] pushlist ................................ <["artist name band", "artist name band", "artist name band", "artist name band", "artist name band", "artist name band"]>
+  [ 42] pushsymb 323 ............................ <#Albums>
+  [ 45] pushcons 17 ............................. <"album">
+  [ 47] pushcons 17 ............................. <"album">
+  [ 49] pushcons 17 ............................. <"album">
+  [ 51] pushcons 17 ............................. <"album">
+  [ 53] pushcons 17 ............................. <"album">
+  [ 55] pushcons 17 ............................. <"album">
+  [ 57] pusharglist 6 ........................... <["album", "album", "album", "album", "album", "album"]>
+  [ 59] pushlist ................................ <["album", "album", "album", "album", "album", "album"]>
+  [ 60] pushsymb 250 ............................ <#songs>
+  [ 62] pushcons 18 ............................. <"song 1">
+  [ 64] pushcons 19 ............................. <"song 2">
+  [ 66] pushcons 20 ............................. <"song 3">
+  [ 68] pushcons 21 ............................. <"this is a very very long song name, isn't it?">
+  [ 70] pushcons 22 ............................. <"song 5">
+  [ 72] pushcons 23 ............................. <"song 6">
+  [ 74] pushcons 24 ............................. <"song 7">
+  [ 76] pushcons 25 ............................. <"song 8">
+  [ 78] pushcons 26 ............................. <"song 9">
+  [ 80] pushcons 27 ............................. <"song 10">
+  [ 82] pushcons 28 ............................. <"song 11">
+  [ 84] pushcons 29 ............................. <"song 12">
+  [ 86] pushcons 30 ............................. <"this is another very very long song name, isn't it?">
+  [ 88] pushcons 31 ............................. <"song 14">
+  [ 90] pushcons 32 ............................. <"song 15">
+  [ 92] pushcons 33 ............................. <"song 16">
+  [ 94] pushcons 34 ............................. <"song 17">
+  [ 96] pushcons 35 ............................. <"song 18">
+  [ 98] pushcons 36 ............................. <"song 19">
+  [100] pushcons 37 ............................. <"song 20">
+  [102] pusharglist 20 .......................... <["song 1", "song 2", "song 3", "this is a very very long song name, isn't it?", "song 5", "song 6", "song 7", "song 8", "song 9", "song 10", "song 11", "song 12", "this is another very very long song name, isn't it?", "song 14", "song 15", "song 16", "song 17", "song 18", "song 19", "song 20"]>
+  [104] pushlist ................................ <["song 1", "song 2", "song 3", "this is a very very long song name, isn't it?", "song 5", "song 6", "song 7", "song 8", "song 9", "song 10", "song 11", "song 12", "this is another very very long song name, isn't it?", "song 14", "song 15", "song 16", "song 17", "song 18", "song 19", "song 20"]>
+  [105] pusharglist 8 ........................... <[#Genres: ["Hip-hop", "Alternative", "Country", "Pop", "Rythm n Blues", "Blues"], #Artists: ["artist name band", "artist name band", "artist name band", "artist name band", "artist name band", "artist name band"], #Albums: ["album", "album", "album", "album", "album", "album"], #songs: ["song 1", "song 2", "song 3", "this is a very very long song name, isn't it?", "song 5", "song 6", "song 7", "song 8", "song 9", "song 10", "song 11", "song 12", "this is another very very long song name, isn't it?", "song 14", "song 15", "song 16", "song 17", "song 18", "song 19", "song 20"]]>
+  [107] pushproplist ............................ <[#Genres: ["Hip-hop", "Alternative", "Country", "Pop", "Rythm n Blues", "Blues"], #Artists: ["artist name band", "artist name band", "artist name band", "artist name band", "artist name band", "artist name band"], #Albums: ["album", "album", "album", "album", "album", "album"], #songs: ["song 1", "song 2", "song 3", "this is a very very long song name, isn't it?", "song 5", "song 6", "song 7", "song 8", "song 9", "song 10", "song 11", "song 12", "this is another very very long song name, isn't it?", "song 14", "song 15", "song 16", "song 17", "song 18", "song 19", "song 20"]]>
+  [108] setlocal 0 .............................. myList = [#Genres: ["Hip-hop", "Alternative", "Country", "Pop", "Rythm n Blues", "Blues"], #Artists: ["artist name band", "artist name band", "artist name band", "artist name band", "artist name band", "artist name band"], #Albums: ["album", "album", "album", "album", "album", "album"], #songs: ["song 1", "song 2", "song 3", "this is a very very long song name, isn't it?", "song 5", "song 6", "song 7", "song 8", "song 9", "song 10", "song 11", "song 12", "this is another very very long song name, isn't it?", "song 14", "song 15", "song 16", "song 17", "song 18", "song 19", "song 20"]]
+  [110] getlocal 0 .............................. <myList>
+  [112] getprop 246 ............................. <pCatalogLevel>
+  [114] pusharglist 2 ........................... <myList, pCatalogLevel>
+  [116] objcall 82 .............................. <myList[pCatalogLevel]>
+  [118] setprop 313 ............................. pContentlist = myList[pCatalogLevel]
+  [121] getprop 66 .............................. <pPreviousData>
+  [123] getprop 313 ............................. <pContentlist>
+  [126] nteq .................................... <pPreviousData <> pContentlist>
+  [127] jmpifz [140] ............................ if pPreviousData <> pContentlist then
+  [130] getparam 0 .............................. <me>
+  [132] pusharglistnoret 1 ...................... <me>
+  [134] localcall 4 ............................. createimg(me)
+  [136] pushint8 1 .............................. <1>
+  [138] setprop 69 .............................. pScrollIndex = 1
+  [140] pushcons 0 .............................. <"cataloglist">
+  [142] pusharglist 1 ........................... <"cataloglist">
+  [144] extcall 10 .............................. <member("cataloglist")>
+  [146] setprop 75 .............................. listmember = member("cataloglist")
+  [148] getprop 59 .............................. <pwidth>
+  [150] getprop 60 .............................. <pheight>
+  [152] pushint8 6 .............................. <6>
+  [154] get 7 ................................... <the colorDepth>
+  [156] pusharglist 3 ........................... <pwidth, pheight, the colorDepth>
+  [158] extcall 63 .............................. <image(pwidth, pheight, the colorDepth)>
+  [160] setlocal 1 .............................. destimg = image(pwidth, pheight, the colorDepth)
+  [162] pushzero ................................ <0>
+  [163] getprop 69 .............................. <pScrollIndex>
+  [165] pushint8 1 .............................. <1>
+  [167] sub ..................................... <pScrollIndex - 1>
+  [168] getprop 61 .............................. <pLineSpace>
+  [170] mul ..................................... <(pScrollIndex - 1) * pLineSpace>
+  [171] getprop 59 .............................. <pwidth>
+  [173] getprop 69 .............................. <pScrollIndex>
+  [175] pushint8 1 .............................. <1>
+  [177] sub ..................................... <pScrollIndex - 1>
+  [178] getprop 61 .............................. <pLineSpace>
+  [180] mul ..................................... <(pScrollIndex - 1) * pLineSpace>
+  [181] getprop 60 .............................. <pheight>
+  [183] add ..................................... <((pScrollIndex - 1) * pLineSpace) + pheight>
+  [184] pusharglist 4 ........................... <0, (pScrollIndex - 1) * pLineSpace, pwidth, ((pScrollIndex - 1) * pLineSpace) + pheight>
+  [186] extcall 68 .............................. <rect(0, (pScrollIndex - 1) * pLineSpace, pwidth, ((pScrollIndex - 1) * pLineSpace) + pheight)>
+  [188] setlocal 2 .............................. sourceRect = rect(0, (pScrollIndex - 1) * pLineSpace, pwidth, ((pScrollIndex - 1) * pLineSpace) + pheight)
+  [190] getlocal 1 .............................. <destimg>
+  [192] getobjprop 68 ........................... <destimg.rect>
+  [194] setlocal 3 .............................. destRect = destimg.rect
+  [196] getlocal 1 .............................. <destimg>
+  [198] getprop 62 .............................. <pScrollImg>
+  [200] getlocal 3 .............................. <destRect>
+  [202] getlocal 2 .............................. <sourceRect>
+  [204] pusharglistnoret 4 ...................... <destimg, pScrollImg, destRect, sourceRect>
+  [206] objcall 70 .............................. destimg.copyPixels(pScrollImg, destRect, sourceRect)
+  [208] pushcons 8 .............................. <"catalogDisplay">
+  [210] pusharglist 1 ........................... <"catalogDisplay">
+  [212] extcall 10 .............................. <member("catalogDisplay")>
+  [214] getlocal 1 .............................. <destimg>
+  [216] setobjprop 63 ........................... member("catalogDisplay").image = destimg
+  [218] pushcons 8 .............................. <"catalogDisplay">
+  [220] pusharglist 1 ........................... <"catalogDisplay">
+  [222] extcall 10 .............................. <member("catalogDisplay")>
+  [224] pushzero ................................ <0>
+  [225] pushzero ................................ <0>
+  [226] pusharglist 2 ........................... <0, 0>
+  [228] extcall 71 .............................. <point(0, 0)>
+  [230] setobjprop 72 ........................... member("catalogDisplay").regPoint = point(0, 0)
+  [232] ret
+end
+
+on createimg me
+  [  0] getprop 313 ............................. <pContentlist>
+  [  3] pusharglist 1 ........................... <pContentlist>
+  [  5] objcall 43 .............................. <pContentlist.count()>
+  [  7] setlocal 0 .............................. pTotalLines = pContentlist.count()
+  [  9] getparam 0 .............................. <me>
+  [ 11] pushcons 38 ............................. <"createimg: pContentlist: ">
+  [ 13] getprop 313 ............................. <pContentlist>
+  [ 16] joinpadstr .............................. <"createimg: pContentlist: " && pContentlist>
+  [ 17] pusharglistnoret 2 ...................... <me, "createimg: pContentlist: " && pContentlist>
+  [ 19] objcall 29 .............................. me.debug("createimg: pContentlist: " && pContentlist)
+  [ 21] pushcons 0 .............................. <"cataloglist">
+  [ 23] pusharglist 1 ........................... <"cataloglist">
+  [ 25] extcall 10 .............................. <member("cataloglist")>
+  [ 27] setprop 75 .............................. listmember = member("cataloglist")
+  [ 29] getprop 75 .............................. <listmember>
+  [ 31] pushcons 4 .............................. <EMPTY>
+  [ 33] setobjprop 13 ........................... listmember.text = EMPTY
+  [ 35] getprop 75 .............................. <listmember>
+  [ 37] pushzero ................................ <0>
+  [ 38] setobjprop 78 ........................... listmember.charSpacing = 0
+  [ 40] getprop 75 .............................. <listmember>
+  [ 42] getprop 61 .............................. <pLineSpace>
+  [ 44] setobjprop 79 ........................... listmember.fixedLineSpace = pLineSpace
+  [ 46] getprop 75 .............................. <listmember>
+  [ 48] pushcons 3 .............................. <"Verdana">
+  [ 50] setobjprop 107 .......................... listmember.font = "Verdana"
+  [ 52] getprop 75 .............................. <listmember>
+  [ 54] pushint8 10 ............................. <10>
+  [ 56] setobjprop 104 .......................... listmember.fontSize = 10
+  [ 58] getprop 75 .............................. <listmember>
+  [ 60] pushsymb 80 ............................. <#left>
+  [ 62] setobjprop 81 ........................... listmember.alignment = #left
+  [ 64] getprop 75 .............................. <listmember>
+  [ 66] pushzero ................................ <0>
+  [ 67] setobjprop 399 .......................... listmember.antialias = 0
+  [ 70] getprop 75 .............................. <listmember>
+  [ 72] pushsymb 204 ............................ <#type>
+  [ 74] pushsymb 206 ............................ <#right>
+  [ 76] pushsymb 205 ............................ <#position>
+  [ 78] pushint16 171 ........................... <171>
+  [ 81] pusharglist 4 ........................... <[#type: #right, #position: 171]>
+  [ 83] pushproplist ............................ <[#type: #right, #position: 171]>
+  [ 84] pusharglist 1 ........................... <[[#type: #right, #position: 171]]>
+  [ 86] pushlist ................................ <[[#type: #right, #position: 171]]>
+  [ 87] setobjprop 207 .......................... listmember.tabs = [[#type: #right, #position: 171]]
+  [ 89] pushzero ................................ <0>
+  [ 90] setlocal 1 .............................. addline = 0
+  [ 92] pushint8 1 .............................. <1>
+  [ 94] setlocal 2 .............................. counter = 1
+  [ 96] pusharglist 0 ........................... <[]>
+  [ 98] pushlist ................................ <[]>
+  [ 99] setprop 409 ............................. pLineDef = []
+  [102] pusharglist 0 ........................... <[]>
+  [104] pushlist ................................ <[]>
+  [105] setprop 410 ............................. pDoubleLines = []
+  [108] pushint8 1 .............................. <1>
+  [110] setlocal 3
+  [112] getlocal 3
+  [114] getlocal 0 .............................. <pTotalLines>
+  [116] lteq
+  [117] jmpifz [316] ............................ repeat with n = 1 to pTotalLines
+  [120] getprop 246 ............................. <pCatalogLevel>
+  [122] pushsymb 250 ............................ <#songs>
+  [124] eq ...................................... <pCatalogLevel = #songs>
+  [125] getmovieprop 186 ........................ <the runMode>
+  [127] pushcons 9 .............................. <"author">
+  [129] nteq .................................... <the runMode <> "author">
+  [130] and ..................................... <(pCatalogLevel = #songs) and (the runMode <> "author")>
+  [131] jmpifz [156] ............................ if (pCatalogLevel = #songs) and (the runMode <> "author") then / else
+  [134] getprop 313 ............................. <pContentlist>
+  [137] getlocal 3 .............................. <n>
+  [139] pusharglist 2 ........................... <pContentlist, n>
+  [141] objcall 82 .............................. <pContentlist[n]>
+  [143] getobjprop 93 ........................... <pContentlist[n].songName>
+  [145] pushcons 39 ............................. <TAB>
+  [147] joinstr ................................. <pContentlist[n].songName & TAB>
+  [148] pushcons 40 ............................. <"mp3">
+  [150] joinstr ................................. <pContentlist[n].songName & TAB & "mp3">
+  [151] setlocal 4 .............................. myitem = pContentlist[n].songName & TAB & "mp3"
+  [153] jmp [167]
+  [156] getprop 313 ............................. <pContentlist>
+  [159] getlocal 3 .............................. <n>
+  [161] pusharglist 2 ........................... <pContentlist, n>
+  [163] objcall 82 .............................. <pContentlist[n]>
+  [165] setlocal 4 .............................. myitem = pContentlist[n]
+  [167] getprop 246 ............................. <pCatalogLevel>
+  [169] pushsymb 250 ............................ <#songs>
+  [171] eq ...................................... <pCatalogLevel = #songs>
+  [172] jmpifz [192] ............................ if pCatalogLevel = #songs then / else
+  [175] getprop 75 .............................. <listmember>
+  [177] getprop 75 .............................. <listmember>
+  [179] getobjprop 13 ........................... <listmember.text>
+  [181] getlocal 4 .............................. <myitem>
+  [183] joinstr ................................. <listmember.text & myitem>
+  [184] pushcons 5 .............................. <RETURN>
+  [186] joinstr ................................. <listmember.text & myitem & RETURN>
+  [187] setobjprop 13 ........................... listmember.text = listmember.text & myitem & RETURN
+  [189] jmp [209]
+  [192] getprop 75 .............................. <listmember>
+  [194] getprop 75 .............................. <listmember>
+  [196] getobjprop 13 ........................... <listmember.text>
+  [198] getlocal 4 .............................. <myitem>
+  [200] joinstr ................................. <listmember.text & myitem>
+  [201] pushcons 41 ............................. <">">
+  [203] joinpadstr .............................. <listmember.text & myitem && ">">
+  [204] pushcons 5 .............................. <RETURN>
+  [206] joinstr ................................. <listmember.text & myitem && ">" & RETURN>
+  [207] setobjprop 13 ........................... listmember.text = listmember.text & myitem && ">" & RETURN
+  [209] getprop 409 ............................. <pLineDef>
+  [212] getlocal 2 .............................. <counter>
+  [214] pusharglistnoret 2 ...................... <pLineDef, counter>
+  [216] extcall 98 .............................. append(pLineDef, counter)
+  [218] getprop 75 .............................. <listmember>
+  [220] getchainedprop 68 ....................... <listmember.rect>
+  [222] getobjprop 84 ........................... <listmember.rect.height>
+  [224] getprop 75 .............................. <listmember>
+  [226] getchainedprop 13 ....................... <listmember.text>
+  [228] pushsymb 83 ............................. <#line>
+  [230] pusharglist 2 ........................... <listmember.text, #line>
+  [232] objcall 43 .............................. <listmember.text.line.count>
+  [234] getlocal 1 .............................. <addline>
+  [236] add ..................................... <listmember.text.line.count + addline>
+  [237] getprop 61 .............................. <pLineSpace>
+  [239] mul ..................................... <(listmember.text.line.count + addline) * pLineSpace>
+  [240] gt ...................................... <listmember.rect.height > ((listmember.text.line.count + addline) * pLineSpace)>
+  [241] jmpifz [300] ............................ if listmember.rect.height > ((listmember.text.line.count + addline) * pLineSpace) then
+  [244] getprop 410 ............................. <pDoubleLines>
+  [247] getprop 75 .............................. <listmember>
+  [249] getchainedprop 68 ....................... <listmember.rect>
+  [251] getobjprop 84 ........................... <listmember.rect.height>
+  [253] getprop 61 .............................. <pLineSpace>
+  [255] div ..................................... <listmember.rect.height / pLineSpace>
+  [256] pushint8 2 .............................. <2>
+  [258] sub ..................................... <(listmember.rect.height / pLineSpace) - 2>
+  [259] pusharglistnoret 2 ...................... <pDoubleLines, (listmember.rect.height / pLineSpace) - 2>
+  [261] extcall 98 .............................. append(pDoubleLines, (listmember.rect.height / pLineSpace) - 2)
+  [263] getprop 409 ............................. <pLineDef>
+  [266] getlocal 2 .............................. <counter>
+  [268] pusharglistnoret 2 ...................... <pLineDef, counter>
+  [270] extcall 98 .............................. append(pLineDef, counter)
+  [272] getlocal 1 .............................. <addline>
+  [274] getprop 75 .............................. <listmember>
+  [276] getchainedprop 68 ....................... <listmember.rect>
+  [278] getobjprop 84 ........................... <listmember.rect.height>
+  [280] getprop 75 .............................. <listmember>
+  [282] getchainedprop 13 ....................... <listmember.text>
+  [284] pushsymb 83 ............................. <#line>
+  [286] pusharglist 2 ........................... <listmember.text, #line>
+  [288] objcall 43 .............................. <listmember.text.line.count>
+  [290] getlocal 1 .............................. <addline>
+  [292] add ..................................... <listmember.text.line.count + addline>
+  [293] getprop 61 .............................. <pLineSpace>
+  [295] mul ..................................... <(listmember.text.line.count + addline) * pLineSpace>
+  [296] div ..................................... <listmember.rect.height / ((listmember.text.line.count + addline) * pLineSpace)>
+  [297] add ..................................... <addline + (listmember.rect.height / ((listmember.text.line.count + addline) * pLineSpace))>
+  [298] setlocal 1 .............................. addline = addline + (listmember.rect.height / ((listmember.text.line.count + addline) * pLineSpace))
+  [300] getlocal 2 .............................. <counter>
+  [302] pushint8 1 .............................. <1>
+  [304] add ..................................... <counter + 1>
+  [305] setlocal 2 .............................. counter = counter + 1
+  [307] pushint8 1
+  [309] getlocal 3
+  [311] add
+  [312] setlocal 3
+  [314] endrepeat [112]
+  [316] getprop 75 .............................. <listmember>
+  [318] getprop 75 .............................. <listmember>
+  [320] getchainedprop 13 ....................... <listmember.text>
+  [322] pushsymb 83 ............................. <#line>
+  [324] pushint8 1 .............................. <1>
+  [326] getprop 75 .............................. <listmember>
+  [328] getchainedprop 13 ....................... <listmember.text>
+  [330] pushsymb 83 ............................. <#line>
+  [332] pusharglist 2 ........................... <listmember.text, #line>
+  [334] objcall 43 .............................. <listmember.text.line.count>
+  [336] pushint8 1 .............................. <1>
+  [338] sub ..................................... <listmember.text.line.count - 1>
+  [339] pusharglist 4 ........................... <listmember.text, #line, 1, listmember.text.line.count - 1>
+  [341] objcall 46 .............................. <listmember.text.line[1..listmember.text.line.count - 1]>
+  [343] setobjprop 13 ........................... listmember.text = listmember.text.line[1..listmember.text.line.count - 1]
+  [345] pushint8 1 .............................. <1>
+  [347] setlocal 3
+  [349] getlocal 3
+  [351] getlocal 0 .............................. <pTotalLines>
+  [353] lteq
+  [354] jmpifz [642] ............................ repeat with n = 1 to pTotalLines
+  [357] pushcons 39 ............................. <TAB>
+  [359] setmovieprop 85 ......................... the itemDelimiter = TAB
+  [361] getmovieprop 186 ........................ <the runMode>
+  [363] pushcons 9 .............................. <"author">
+  [365] nteq .................................... <the runMode <> "author">
+  [366] jmpifz [567] ............................ if the runMode <> "author" then
+  [369] getprop 246 ............................. <pCatalogLevel>
+  [371] pushsymb 250 ............................ <#songs>
+  [373] eq ...................................... <pCatalogLevel = #songs>
+  [374] jmpifz [564] ............................ if pCatalogLevel = #songs then
+  [377] getglobal 54 ............................ <oDenizenManager>
+  [379] getobjprop 361 .......................... <oDenizenManager.bisFTMmember>
+  [382] pushzero ................................ <0>
+  [383] eq ...................................... <oDenizenManager.bisFTMmember = 0>
+  [384] jmpifz [545] ............................ if oDenizenManager.bisFTMmember = 0 then / else
+  [387] getprop 313 ............................. <pContentlist>
+  [390] getlocal 3 .............................. <n>
+  [392] pusharglist 2 ........................... <pContentlist, n>
+  [394] objcall 82 .............................. <pContentlist[n]>
+  [396] pusharglist 1 ........................... <pContentlist[n]>
+  [398] objcall 345 ............................. <pContentlist[n].isFreeUse()>
+  [401] pushzero ................................ <0>
+  [402] eq ...................................... <pContentlist[n].isFreeUse() = 0>
+  [403] jmpifz [434] ............................ if pContentlist[n].isFreeUse() = 0 then / else
+  [406] getprop 75 .............................. <listmember>
+  [408] pushsymb 83 ............................. <#line>
+  [410] getlocal 3 .............................. <n>
+  [412] pusharglist 3 ........................... <listmember, #line, n>
+  [414] objcall 86 .............................. <listmember.line[n]>
+  [416] pushint16 128 ........................... <128>
+  [419] pushint16 128 ........................... <128>
+  [422] pushint16 128 ........................... <128>
+  [425] pusharglist 3 ........................... <128, 128, 128>
+  [427] extcall 102 ............................. <rgb(128, 128, 128)>
+  [429] setobjprop 103 .......................... listmember.line[n].color = rgb(128, 128, 128)
+  [431] jmp [542]
+  [434] getprop 75 .............................. <listmember>
+  [436] pushsymb 83 ............................. <#line>
+  [438] getlocal 3 .............................. <n>
+  [440] pusharglist 3 ........................... <listmember, #line, n>
+  [442] objcall 86 .............................. <listmember.line[n]>
+  [444] pushsymb 91 ............................. <#item>
+  [446] pushint8 1 .............................. <1>
+  [448] pusharglist 3 ........................... <listmember.line[n], #item, 1>
+  [450] objcall 86 .............................. <listmember.line[n].item[1]>
+  [452] pushzero ................................ <0>
+  [453] pushzero ................................ <0>
+  [454] pushzero ................................ <0>
+  [455] pusharglist 3 ........................... <0, 0, 0>
+  [457] extcall 102 ............................. <rgb(0, 0, 0)>
+  [459] setobjprop 103 .......................... listmember.line[n].item[1].color = rgb(0, 0, 0)
+  [461] getprop 313 ............................. <pContentlist>
+  [464] getlocal 3 .............................. <n>
+  [466] pusharglist 2 ........................... <pContentlist, n>
+  [468] objcall 82 .............................. <pContentlist[n]>
+  [470] getobjprop 368 .......................... <pContentlist[n].downloadStatus>
+  [473] pushcons 42 ............................. <"all">
+  [475] eq ...................................... <pContentlist[n].downloadStatus = "all">
+  [476] jmpifz [509] ............................ if pContentlist[n].downloadStatus = "all" then / else
+  [479] getprop 75 .............................. <listmember>
+  [481] pushsymb 83 ............................. <#line>
+  [483] getlocal 3 .............................. <n>
+  [485] pusharglist 3 ........................... <listmember, #line, n>
+  [487] objcall 86 .............................. <listmember.line[n]>
+  [489] pushsymb 91 ............................. <#item>
+  [491] pushint8 2 .............................. <2>
+  [493] pusharglist 3 ........................... <listmember.line[n], #item, 2>
+  [495] objcall 86 .............................. <listmember.line[n].item[2]>
+  [497] pushzero ................................ <0>
+  [498] pushzero ................................ <0>
+  [499] pushzero ................................ <0>
+  [500] pusharglist 3 ........................... <0, 0, 0>
+  [502] extcall 102 ............................. <rgb(0, 0, 0)>
+  [504] setobjprop 103 .......................... listmember.line[n].item[2].color = rgb(0, 0, 0)
+  [506] jmp [542]
+  [509] getprop 75 .............................. <listmember>
+  [511] pushsymb 83 ............................. <#line>
+  [513] getlocal 3 .............................. <n>
+  [515] pusharglist 3 ........................... <listmember, #line, n>
+  [517] objcall 86 .............................. <listmember.line[n]>
+  [519] pushsymb 91 ............................. <#item>
+  [521] pushint8 2 .............................. <2>
+  [523] pusharglist 3 ........................... <listmember.line[n], #item, 2>
+  [525] objcall 86 .............................. <listmember.line[n].item[2]>
+  [527] pushint16 128 ........................... <128>
+  [530] pushint16 128 ........................... <128>
+  [533] pushint16 128 ........................... <128>
+  [536] pusharglist 3 ........................... <128, 128, 128>
+  [538] extcall 102 ............................. <rgb(128, 128, 128)>
+  [540] setobjprop 103 .......................... listmember.line[n].item[2].color = rgb(128, 128, 128)
+  [542] jmp [564]
+  [545] getprop 75 .............................. <listmember>
+  [547] pushsymb 83 ............................. <#line>
+  [549] getlocal 3 .............................. <n>
+  [551] pusharglist 3 ........................... <listmember, #line, n>
+  [553] objcall 86 .............................. <listmember.line[n]>
+  [555] pushzero ................................ <0>
+  [556] pushzero ................................ <0>
+  [557] pushzero ................................ <0>
+  [558] pusharglist 3 ........................... <0, 0, 0>
+  [560] extcall 102 ............................. <rgb(0, 0, 0)>
+  [562] setobjprop 103 .......................... listmember.line[n].color = rgb(0, 0, 0)
+  [564] jmp [632] ............................... next repeat
+  [567] getprop 246 ............................. <pCatalogLevel>
+  [569] pushsymb 250 ............................ <#songs>
+  [571] eq ...................................... <pCatalogLevel = #songs>
+  [572] jmpifz [632] ............................ if pCatalogLevel = #songs then
+  [575] getlocal 3 .............................. <n>
+  [577] pushint8 2 .............................. <2>
+  [579] mod ..................................... <n mod 2>
+  [580] pushzero ................................ <0>
+  [581] eq ...................................... <(n mod 2) = 0>
+  [582] jmpifz [613] ............................ if (n mod 2) = 0 then
+  [585] getprop 75 .............................. <listmember>
+  [587] pushsymb 83 ............................. <#line>
+  [589] getlocal 3 .............................. <n>
+  [591] pusharglist 3 ........................... <listmember, #line, n>
+  [593] objcall 86 .............................. <listmember.line[n]>
+  [595] pushint16 128 ........................... <128>
+  [598] pushint16 128 ........................... <128>
+  [601] pushint16 128 ........................... <128>
+  [604] pusharglist 3 ........................... <128, 128, 128>
+  [606] extcall 102 ............................. <rgb(128, 128, 128)>
+  [608] setobjprop 103 .......................... listmember.line[n].color = rgb(128, 128, 128)
+  [610] jmp [632] ............................... next repeat
+  [613] getprop 75 .............................. <listmember>
+  [615] pushsymb 83 ............................. <#line>
+  [617] getlocal 3 .............................. <n>
+  [619] pusharglist 3 ........................... <listmember, #line, n>
+  [621] objcall 86 .............................. <listmember.line[n]>
+  [623] pushzero ................................ <0>
+  [624] pushzero ................................ <0>
+  [625] pushzero ................................ <0>
+  [626] pusharglist 3 ........................... <0, 0, 0>
+  [628] extcall 102 ............................. <rgb(0, 0, 0)>
+  [630] setobjprop 103 .......................... listmember.line[n].color = rgb(0, 0, 0)
+  [632] pushint8 1
+  [634] getlocal 3
+  [636] add
+  [637] setlocal 3
+  [639] endrepeat [349]
+  [642] pushcons 43 ............................. <",">
+  [644] setmovieprop 85 ......................... the itemDelimiter = ","
+  [646] getprop 75 .............................. <listmember>
+  [648] pushsymb 202 ............................ <#adjust>
+  [650] setobjprop 101 .......................... listmember.boxType = #adjust
+  [652] getprop 75 .............................. <listmember>
+  [654] getchainedprop 63 ....................... <listmember.image>
+  [656] pusharglist 1 ........................... <listmember.image>
+  [658] objcall 92 .............................. <listmember.image.duplicate()>
+  [660] setlocal 5 .............................. listimg = listmember.image.duplicate()
+  [662] getprop 59 .............................. <pwidth>
+  [664] getlocal 0 .............................. <pTotalLines>
+  [666] getprop 61 .............................. <pLineSpace>
+  [668] mul ..................................... <pTotalLines * pLineSpace>
+  [669] pushint8 6 .............................. <6>
+  [671] get 7 ................................... <the colorDepth>
+  [673] pusharglist 3 ........................... <pwidth, pTotalLines * pLineSpace, the colorDepth>
+  [675] extcall 63 .............................. <image(pwidth, pTotalLines * pLineSpace, the colorDepth)>
+  [677] setprop 62 .............................. pScrollImg = image(pwidth, pTotalLines * pLineSpace, the colorDepth)
+  [679] getprop 62 .............................. <pScrollImg>
+  [681] getlocal 5 .............................. <listimg>
+  [683] getlocal 5 .............................. <listimg>
+  [685] getobjprop 68 ........................... <listimg.rect>
+  [687] getlocal 5 .............................. <listimg>
+  [689] getobjprop 68 ........................... <listimg.rect>
+  [691] pusharglistnoret 4 ...................... <pScrollImg, listimg, listimg.rect, listimg.rect>
+  [693] objcall 70 .............................. pScrollImg.copyPixels(listimg, listimg.rect, listimg.rect)
+  [695] getprop 246 ............................. <pCatalogLevel>
+  [697] peek 0 .................................. case pCatalogLevel of
+  [699] pushsymb 247 ............................ <#Genres>
+  [701] eq
+  [702] jmpifz [712] ............................ (case) #Genres:
+  [705] pushcons 4 .............................. <EMPTY>
+  [707] setlocal 6 .............................. mytext = EMPTY
+  [709] jmp [753]
+  [712] peek 0
+  [714] pushsymb 249 ............................ <#Artists>
+  [716] eq
+  [717] jmpifz [734] ............................ (case) #Artists:
+  [720] pushcons 44 ............................. <"< BACK TO GENRE">
+  [722] pushcons 5 .............................. <RETURN>
+  [724] joinstr ................................. <"< BACK TO GENRE" & RETURN>
+  [725] getprop 391 ............................. <pSelectedgenre>
+  [728] joinstr ................................. <"< BACK TO GENRE" & RETURN & pSelectedgenre>
+  [729] setlocal 6 .............................. mytext = "< BACK TO GENRE" & RETURN & pSelectedgenre
+  [731] jmp [753]
+  [734] peek 0
+  [736] pushsymb 250 ............................ <#songs>
+  [738] eq
+  [739] jmpifz [753] ............................ (case) #songs:
+  [742] pushcons 45 ............................. <"< BACK TO ARTIST">
+  [744] pushcons 5 .............................. <RETURN>
+  [746] joinstr ................................. <"< BACK TO ARTIST" & RETURN>
+  [747] getprop 392 ............................. <pSelectedArtist>
+  [750] joinstr ................................. <"< BACK TO ARTIST" & RETURN & pSelectedArtist>
+  [751] setlocal 6 .............................. mytext = "< BACK TO ARTIST" & RETURN & pSelectedArtist
+  [753] pop 1 ................................... end case
+  [755] getlocal 6 .............................. <mytext>
+  [757] pushcons 4 .............................. <EMPTY>
+  [759] nteq .................................... <mytext <> EMPTY>
+  [760] jmpifz [854] ............................ if mytext <> EMPTY then / else
+  [763] getprop 75 .............................. <listmember>
+  [765] getlocal 6 .............................. <mytext>
+  [767] setobjprop 13 ........................... listmember.text = mytext
+  [769] getprop 75 .............................. <listmember>
+  [771] pushint8 8 .............................. <8>
+  [773] setobjprop 104 .......................... listmember.fontSize = 8
+  [775] getprop 75 .............................. <listmember>
+  [777] pushint8 8 .............................. <8>
+  [779] setobjprop 79 ........................... listmember.fixedLineSpace = 8
+  [781] getprop 75 .............................. <listmember>
+  [783] pushint8 1 .............................. <1>
+  [785] setobjprop 399 .......................... listmember.antialias = 1
+  [788] getprop 75 .............................. <listmember>
+  [790] pushzero ................................ <0>
+  [791] setobjprop 400 .......................... listmember.antiAliasThreshold = 0
+  [794] getprop 75 .............................. <listmember>
+  [796] pushsymb 83 ............................. <#line>
+  [798] pushint8 1 .............................. <1>
+  [800] pusharglist 3 ........................... <listmember, #line, 1>
+  [802] objcall 86 .............................. <listmember.line[1]>
+  [804] pushint16 255 ........................... <255>
+  [807] pushint16 255 ........................... <255>
+  [810] pushint16 255 ........................... <255>
+  [813] pusharglist 3 ........................... <255, 255, 255>
+  [815] extcall 102 ............................. <rgb(255, 255, 255)>
+  [817] setobjprop 103 .......................... listmember.line[1].color = rgb(255, 255, 255)
+  [819] getprop 75 .............................. <listmember>
+  [821] pushsymb 83 ............................. <#line>
+  [823] pushint8 2 .............................. <2>
+  [825] pusharglist 3 ........................... <listmember, #line, 2>
+  [827] objcall 86 .............................. <listmember.line[2]>
+  [829] pushint8 71 ............................. <71>
+  [831] pushint8 82 ............................. <82>
+  [833] pushint8 82 ............................. <82>
+  [835] pusharglist 3 ........................... <71, 82, 82>
+  [837] extcall 102 ............................. <rgb(71, 82, 82)>
+  [839] setobjprop 103 .......................... listmember.line[2].color = rgb(71, 82, 82)
+  [841] getprop 75 .............................. <listmember>
+  [843] getchainedprop 63 ....................... <listmember.image>
+  [845] pusharglist 1 ........................... <listmember.image>
+  [847] objcall 92 .............................. <listmember.image.duplicate()>
+  [849] setlocal 7 .............................. backimage = listmember.image.duplicate()
+  [851] jmp [864]
+  [854] pushzero ................................ <0>
+  [855] pushzero ................................ <0>
+  [856] pushint8 1 .............................. <1>
+  [858] pusharglist 3 ........................... <0, 0, 1>
+  [860] extcall 63 .............................. <image(0, 0, 1)>
+  [862] setlocal 7 .............................. backimage = image(0, 0, 1)
+  [864] pushcons 46 ............................. <"cc.jukebox.backbutton">
+  [866] pusharglist 1 ........................... <"cc.jukebox.backbutton">
+  [868] extcall 10 .............................. <member("cc.jukebox.backbutton")>
+  [870] getlocal 7 .............................. <backimage>
+  [872] setobjprop 63 ........................... member("cc.jukebox.backbutton").image = backimage
+  [874] pushcons 46 ............................. <"cc.jukebox.backbutton">
+  [876] pusharglist 1 ........................... <"cc.jukebox.backbutton">
+  [878] extcall 10 .............................. <member("cc.jukebox.backbutton")>
+  [880] pushzero ................................ <0>
+  [881] pushzero ................................ <0>
+  [882] pusharglist 2 ........................... <0, 0>
+  [884] extcall 71 .............................. <point(0, 0)>
+  [886] setobjprop 72 ........................... member("cc.jukebox.backbutton").regPoint = point(0, 0)
+  [888] pushsymb 395 ............................ <#getIJbackbutton>
+  [891] pusharglist 1 ........................... <#getIJbackbutton>
+  [893] extcall 47 .............................. <sendAllSprites(#getIJbackbutton)>
+  [895] pusharglist 1 ........................... <sendAllSprites(#getIJbackbutton)>
+  [897] extcall 125 ............................. <sprite(sendAllSprites(#getIJbackbutton))>
+  [899] getlocal 7 .............................. <backimage>
+  [901] getobjprop 111 .......................... <backimage.width>
+  [903] setobjprop 111 .......................... sprite(sendAllSprites(#getIJbackbutton)).width = backimage.width
+  [905] pushsymb 395 ............................ <#getIJbackbutton>
+  [908] pusharglist 1 ........................... <#getIJbackbutton>
+  [910] extcall 47 .............................. <sendAllSprites(#getIJbackbutton)>
+  [912] pusharglist 1 ........................... <sendAllSprites(#getIJbackbutton)>
+  [914] extcall 125 ............................. <sprite(sendAllSprites(#getIJbackbutton))>
+  [916] getlocal 7 .............................. <backimage>
+  [918] getobjprop 84 ........................... <backimage.height>
+  [920] setobjprop 84 ........................... sprite(sendAllSprites(#getIJbackbutton)).height = backimage.height
+  [922] getprop 313 ............................. <pContentlist>
+  [925] pusharglist 1 ........................... <pContentlist>
+  [927] objcall 92 .............................. <pContentlist.duplicate()>
+  [929] setprop 66 .............................. pPreviousData = pContentlist.duplicate()
+  [931] getprop 75 .............................. <listmember>
+  [933] pushsymb 100 ............................ <#fixed>
+  [935] setobjprop 101 .......................... listmember.boxType = #fixed
+  [937] ret
+end
+
+on lineclicked me, linenum
+  [  0] getprop 313 ............................. <pContentlist>
+  [  3] getparam 1 .............................. <linenum>
+  [  5] pusharglist 2 ........................... <pContentlist, linenum>
+  [  7] objcall 82 .............................. <pContentlist[linenum]>
+  [  9] setlocal 0 .............................. myLine = pContentlist[linenum]
+  [ 11] getprop 246 ............................. <pCatalogLevel>
+  [ 13] peek 0 .................................. case pCatalogLevel of
+  [ 15] pushsymb 247 ............................ <#Genres>
+  [ 17] eq
+  [ 18] jmpifz [ 65] ............................ (case) #Genres:
+  [ 21] getlocal 0 .............................. <myLine>
+  [ 23] setprop 391 ............................. pSelectedgenre = myLine
+  [ 26] pushsymb 249 ............................ <#Artists>
+  [ 28] setprop 246 ............................. pCatalogLevel = #Artists
+  [ 30] getparam 0 .............................. <me>
+  [ 32] pusharglistnoret 1 ...................... <me>
+  [ 34] objcall 57 .............................. me.displayloading()
+  [ 36] getmovieprop 186 ........................ <the runMode>
+  [ 38] pushcons 47 ............................. <"Author">
+  [ 40] eq ...................................... <the runMode = "Author">
+  [ 41] jmpifz [ 53] ............................ if the runMode = "Author" then / else
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pusharglistnoret 1 ...................... <me>
+  [ 48] objcall 55 .............................. me.updatecontent()
+  [ 50] jmp [ 62]
+  [ 53] getglobal 54 ............................ <oDenizenManager>
+  [ 55] getlocal 0 .............................. <myLine>
+  [ 57] pusharglistnoret 2 ...................... <oDenizenManager, myLine>
+  [ 59] objcall 322 ............................. oDenizenManager.getArtistsByGenre(myLine)
+  [ 62] jmp [114]
+  [ 65] peek 0
+  [ 67] pushsymb 249 ............................ <#Artists>
+  [ 69] eq
+  [ 70] jmpifz [114] ............................ (case) #Artists:
+  [ 73] getlocal 0 .............................. <myLine>
+  [ 75] setprop 392 ............................. pSelectedArtist = myLine
+  [ 78] pushsymb 250 ............................ <#songs>
+  [ 80] setprop 246 ............................. pCatalogLevel = #songs
+  [ 82] getparam 0 .............................. <me>
+  [ 84] pusharglistnoret 1 ...................... <me>
+  [ 86] objcall 57 .............................. me.displayloading()
+  [ 88] getmovieprop 186 ........................ <the runMode>
+  [ 90] pushcons 47 ............................. <"Author">
+  [ 92] eq ...................................... <the runMode = "Author">
+  [ 93] jmpifz [105] ............................ if the runMode = "Author" then / else
+  [ 96] getparam 0 .............................. <me>
+  [ 98] pusharglistnoret 1 ...................... <me>
+  [100] objcall 55 .............................. me.updatecontent()
+  [102] jmp [114]
+  [105] getglobal 54 ............................ <oDenizenManager>
+  [107] getlocal 0 .............................. <myLine>
+  [109] pusharglistnoret 2 ...................... <oDenizenManager, myLine>
+  [111] objcall 415 ............................. oDenizenManager.getSongsByArtist(myLine)
+  [114] pop 1 ................................... end case
+  [116] ret
+end
+
+on hiliteline me, linenum
+  [  0] getparam 1 .............................. <linenum>
+  [  2] getprop 409 ............................. <pLineDef>
+  [  5] pusharglist 1 ........................... <pLineDef>
+  [  7] extcall 43 .............................. <count(pLineDef)>
+  [  9] gt ...................................... <linenum > count(pLineDef)>
+  [ 10] jmpifz [ 17] ............................ if linenum > count(pLineDef) then
+  [ 13] pusharglistnoret 0 ...................... <>
+  [ 15] extcall 5 ............................... return 
+  [ 17] getprop 409 ............................. <pLineDef>
+  [ 20] getparam 1 .............................. <linenum>
+  [ 22] pusharglist 2 ........................... <pLineDef, linenum>
+  [ 24] objcall 82 .............................. <pLineDef[linenum]>
+  [ 26] setlocal 0 .............................. checklinenum = pLineDef[linenum]
+  [ 28] getlocal 0 .............................. <checklinenum>
+  [ 30] getprop 313 ............................. <pContentlist>
+  [ 33] pusharglist 1 ........................... <pContentlist>
+  [ 35] extcall 43 .............................. <count(pContentlist)>
+  [ 37] lteq .................................... <checklinenum <= count(pContentlist)>
+  [ 38] jmpifz [399] ............................ if checklinenum <= count(pContentlist) then
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 1 ...................... <me>
+  [ 45] objcall 55 .............................. me.updatecontent()
+  [ 47] getprop 410 ............................. <pDoubleLines>
+  [ 50] getparam 1 .............................. <linenum>
+  [ 52] pusharglist 2 ........................... <pDoubleLines, linenum>
+  [ 54] extcall 411 ............................. <getPos(pDoubleLines, linenum)>
+  [ 57] jmpifz [ 80] ............................ if getPos(pDoubleLines, linenum) then / else
+  [ 60] getprop 59 .............................. <pwidth>
+  [ 62] getprop 61 .............................. <pLineSpace>
+  [ 64] pushint8 2 .............................. <2>
+  [ 66] mul ..................................... <pLineSpace * 2>
+  [ 67] pushint8 6 .............................. <6>
+  [ 69] get 7 ................................... <the colorDepth>
+  [ 71] pusharglist 3 ........................... <pwidth, pLineSpace * 2, the colorDepth>
+  [ 73] extcall 63 .............................. <image(pwidth, pLineSpace * 2, the colorDepth)>
+  [ 75] setlocal 1 .............................. myhilite = image(pwidth, pLineSpace * 2, the colorDepth)
+  [ 77] jmp [137]
+  [ 80] getprop 410 ............................. <pDoubleLines>
+  [ 83] getparam 1 .............................. <linenum>
+  [ 85] pushint8 1 .............................. <1>
+  [ 87] sub ..................................... <linenum - 1>
+  [ 88] pusharglist 2 ........................... <pDoubleLines, linenum - 1>
+  [ 90] extcall 411 ............................. <getPos(pDoubleLines, linenum - 1)>
+  [ 93] jmpifz [123] ............................ if getPos(pDoubleLines, linenum - 1) then / else
+  [ 96] getparam 1 .............................. <linenum>
+  [ 98] pushint8 1 .............................. <1>
+  [100] sub ..................................... <linenum - 1>
+  [101] setparam 1 .............................. linenum = linenum - 1
+  [103] getprop 59 .............................. <pwidth>
+  [105] getprop 61 .............................. <pLineSpace>
+  [107] pushint8 2 .............................. <2>
+  [109] mul ..................................... <pLineSpace * 2>
+  [110] pushint8 6 .............................. <6>
+  [112] get 7 ................................... <the colorDepth>
+  [114] pusharglist 3 ........................... <pwidth, pLineSpace * 2, the colorDepth>
+  [116] extcall 63 .............................. <image(pwidth, pLineSpace * 2, the colorDepth)>
+  [118] setlocal 1 .............................. myhilite = image(pwidth, pLineSpace * 2, the colorDepth)
+  [120] jmp [137]
+  [123] getprop 59 .............................. <pwidth>
+  [125] getprop 61 .............................. <pLineSpace>
+  [127] pushint8 6 .............................. <6>
+  [129] get 7 ................................... <the colorDepth>
+  [131] pusharglist 3 ........................... <pwidth, pLineSpace, the colorDepth>
+  [133] extcall 63 .............................. <image(pwidth, pLineSpace, the colorDepth)>
+  [135] setlocal 1 .............................. myhilite = image(pwidth, pLineSpace, the colorDepth)
+  [137] getparam 1 .............................. <linenum>
+  [139] getprop 69 .............................. <pScrollIndex>
+  [141] sub ..................................... <linenum - pScrollIndex>
+  [142] getprop 61 .............................. <pLineSpace>
+  [144] mul ..................................... <(linenum - pScrollIndex) * pLineSpace>
+  [145] setlocal 2 .............................. mytop = (linenum - pScrollIndex) * pLineSpace
+  [147] getlocal 1 .............................. <myhilite>
+  [149] getlocal 1 .............................. <myhilite>
+  [151] getobjprop 68 ........................... <myhilite.rect>
+  [153] pushzero ................................ <0>
+  [154] pushzero ................................ <0>
+  [155] pushzero ................................ <0>
+  [156] pusharglist 3 ........................... <0, 0, 0>
+  [158] extcall 102 ............................. <rgb(0, 0, 0)>
+  [160] pusharglistnoret 3 ...................... <myhilite, myhilite.rect, rgb(0, 0, 0)>
+  [162] objcall 329 ............................. myhilite.fill(myhilite.rect, rgb(0, 0, 0))
+  [165] pushcons 7 .............................. <"catalogdisplay">
+  [167] pusharglist 1 ........................... <"catalogdisplay">
+  [169] extcall 10 .............................. <member("catalogdisplay")>
+  [171] getobjprop 63 ........................... <member("catalogdisplay").image>
+  [173] setlocal 3 .............................. destimage = member("catalogdisplay").image
+  [175] pushzero ................................ <0>
+  [176] getlocal 2 .............................. <mytop>
+  [178] getprop 59 .............................. <pwidth>
+  [180] getlocal 2 .............................. <mytop>
+  [182] getlocal 1 .............................. <myhilite>
+  [184] getobjprop 84 ........................... <myhilite.height>
+  [186] add ..................................... <mytop + myhilite.height>
+  [187] pusharglist 4 ........................... <0, mytop, pwidth, mytop + myhilite.height>
+  [189] extcall 68 .............................. <rect(0, mytop, pwidth, mytop + myhilite.height)>
+  [191] setlocal 4 .............................. destRect = rect(0, mytop, pwidth, mytop + myhilite.height)
+  [193] getlocal 3 .............................. <destimage>
+  [195] getlocal 1 .............................. <myhilite>
+  [197] getlocal 4 .............................. <destRect>
+  [199] getlocal 1 .............................. <myhilite>
+  [201] getobjprop 68 ........................... <myhilite.rect>
+  [203] pushsymb 214 ............................ <#ink>
+  [205] pushint8 2 .............................. <2>
+  [207] pusharglist 2 ........................... <[#ink: 2]>
+  [209] pushproplist ............................ <[#ink: 2]>
+  [210] pusharglistnoret 5 ...................... <destimage, myhilite, destRect, myhilite.rect, [#ink: 2]>
+  [212] objcall 70 .............................. destimage.copyPixels(myhilite, destRect, myhilite.rect, [#ink: 2])
+  [214] getprop 246 ............................. <pCatalogLevel>
+  [216] pushsymb 250 ............................ <#songs>
+  [218] eq ...................................... <pCatalogLevel = #songs>
+  [219] jmpifz [378] ............................ if pCatalogLevel = #songs then / else
+  [222] getprop 313 ............................. <pContentlist>
+  [225] getlocal 0 .............................. <checklinenum>
+  [227] pusharglist 2 ........................... <pContentlist, checklinenum>
+  [229] objcall 82 .............................. <pContentlist[checklinenum]>
+  [231] setprop 52 .............................. pSelectedSong = pContentlist[checklinenum]
+  [233] getmovieprop 186 ........................ <the runMode>
+  [235] pushcons 9 .............................. <"author">
+  [237] eq ...................................... <the runMode = "author">
+  [238] jmpifz [265] ............................ if the runMode = "author" then / else
+  [241] pushsymb 369 ............................ <#enabledownloadsong>
+  [244] pusharglistnoret 1 ...................... <#enabledownloadsong>
+  [246] extcall 47 .............................. sendAllSprites(#enabledownloadsong)
+  [248] pushsymb 332 ............................ <#enableaddsong>
+  [251] pusharglistnoret 1 ...................... <#enableaddsong>
+  [253] extcall 47 .............................. sendAllSprites(#enableaddsong)
+  [255] pushsymb 373 ............................ <#enableplaysong>
+  [258] pusharglistnoret 1 ...................... <#enableplaysong>
+  [260] extcall 47 .............................. sendAllSprites(#enableplaysong)
+  [262] jmp [375]
+  [265] getglobal 54 ............................ <oDenizenManager>
+  [267] getobjprop 361 .......................... <oDenizenManager.bisFTMmember>
+  [270] pushzero ................................ <0>
+  [271] eq ...................................... <oDenizenManager.bisFTMmember = 0>
+  [272] jmpifz [354] ............................ if oDenizenManager.bisFTMmember = 0 then / else
+  [275] getprop 52 .............................. <pSelectedSong>
+  [277] getobjprop 368 .......................... <pSelectedSong.downloadStatus>
+  [280] pushcons 42 ............................. <"all">
+  [282] eq ...................................... <pSelectedSong.downloadStatus = "all">
+  [283] jmpifz [296] ............................ if pSelectedSong.downloadStatus = "all" then / else
+  [286] pushsymb 369 ............................ <#enabledownloadsong>
+  [289] pusharglistnoret 1 ...................... <#enabledownloadsong>
+  [291] extcall 47 .............................. sendAllSprites(#enabledownloadsong)
+  [293] jmp [310]
+  [296] pushsymb 370 ............................ <#disabledownloadsong>
+  [299] pusharglistnoret 1 ...................... <#disabledownloadsong>
+  [301] extcall 47 .............................. sendAllSprites(#disabledownloadsong)
+  [303] pushsymb 347 ............................ <#opendrawer>
+  [306] pusharglistnoret 1 ...................... <#opendrawer>
+  [308] extcall 47 .............................. sendAllSprites(#opendrawer)
+  [310] getprop 52 .............................. <pSelectedSong>
+  [312] pusharglist 1 ........................... <pSelectedSong>
+  [314] objcall 345 ............................. <pSelectedSong.isFreeUse()>
+  [317] jmpifz [337] ............................ if pSelectedSong.isFreeUse() then / else
+  [320] pushsymb 332 ............................ <#enableaddsong>
+  [323] pusharglistnoret 1 ...................... <#enableaddsong>
+  [325] extcall 47 .............................. sendAllSprites(#enableaddsong)
+  [327] pushsymb 373 ............................ <#enableplaysong>
+  [330] pusharglistnoret 1 ...................... <#enableplaysong>
+  [332] extcall 47 .............................. sendAllSprites(#enableplaysong)
+  [334] jmp [351]
+  [337] pushsymb 333 ............................ <#disableaddsong>
+  [340] pusharglistnoret 1 ...................... <#disableaddsong>
+  [342] extcall 47 .............................. sendAllSprites(#disableaddsong)
+  [344] pushsymb 374 ............................ <#disableplaysong>
+  [347] pusharglistnoret 1 ...................... <#disableplaysong>
+  [349] extcall 47 .............................. sendAllSprites(#disableplaysong)
+  [351] jmp [375]
+  [354] pushsymb 369 ............................ <#enabledownloadsong>
+  [357] pusharglistnoret 1 ...................... <#enabledownloadsong>
+  [359] extcall 47 .............................. sendAllSprites(#enabledownloadsong)
+  [361] pushsymb 332 ............................ <#enableaddsong>
+  [364] pusharglistnoret 1 ...................... <#enableaddsong>
+  [366] extcall 47 .............................. sendAllSprites(#enableaddsong)
+  [368] pushsymb 373 ............................ <#enableplaysong>
+  [371] pusharglistnoret 1 ...................... <#enableplaysong>
+  [373] extcall 47 .............................. sendAllSprites(#enableplaysong)
+  [375] jmp [399]
+  [378] pushsymb 370 ............................ <#disabledownloadsong>
+  [381] pusharglistnoret 1 ...................... <#disabledownloadsong>
+  [383] extcall 47 .............................. sendAllSprites(#disabledownloadsong)
+  [385] pushsymb 333 ............................ <#disableaddsong>
+  [388] pusharglistnoret 1 ...................... <#disableaddsong>
+  [390] extcall 47 .............................. sendAllSprites(#disableaddsong)
+  [392] pushsymb 374 ............................ <#disableplaysong>
+  [395] pusharglistnoret 1 ...................... <#disableplaysong>
+  [397] extcall 47 .............................. sendAllSprites(#disableplaysong)
+  [399] ret
+end

@@ -1,0 +1,61 @@
+property ancestor
+global oDenizenManager, ElementMgr
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 57 .............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 779 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 93 .............................. return me
+  [ 25] ret
+end
+
+on mouseDownEvent me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 977 .......................... <the doubleClick>
+  [  5] jmpifz [ 93] ............................ if the doubleClick then
+  [  8] pusharglist 0 ........................... <>
+  [ 10] thebuiltin 1693 ......................... <the clickLoc>
+  [ 13] getobjprop 328 .......................... <(the clickLoc).locH>
+  [ 16] getparam 0 .............................. <me>
+  [ 18] getchainedprop 225 ...................... <me.oItem>
+  [ 20] getobjprop 636 .......................... <me.oItem.iSprite>
+  [ 23] pusharglist 1 ........................... <me.oItem.iSprite>
+  [ 25] extcall 481 ............................. <sprite(me.oItem.iSprite)>
+  [ 28] getobjprop 328 .......................... <sprite(me.oItem.iSprite).locH>
+  [ 31] gt ...................................... <(the clickLoc).locH > sprite(me.oItem.iSprite).locH>
+  [ 32] jmpifz [ 45] ............................ if (the clickLoc).locH > sprite(me.oItem.iSprite).locH then / else
+  [ 35] getglobal 198 ........................... <oDenizenManager>
+  [ 37] pusharglistnoret 1 ...................... <oDenizenManager>
+  [ 39] objcall 1694 ............................ oDenizenManager.getCokeBulletinURL()
+  [ 42] jmp [ 93]
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getchainedprop 225 ...................... <me.oItem>
+  [ 49] getobjprop 289 .......................... <me.oItem.aAttributes>
+  [ 52] pushsymb 1600 ........................... <#urlLink>
+  [ 55] pusharglist 2 ........................... <me.oItem.aAttributes, #urlLink>
+  [ 57] extcall 1334 ............................ <getaProp(me.oItem.aAttributes, #urlLink)>
+  [ 60] pusharglist 1 ........................... <getaProp(me.oItem.aAttributes, #urlLink)>
+  [ 62] extcall 106 ............................. <voidp(getaProp(me.oItem.aAttributes, #urlLink))>
+  [ 64] pushzero ................................ <0>
+  [ 65] eq ...................................... <voidp(getaProp(me.oItem.aAttributes, #urlLink)) = 0>
+  [ 66] jmpifz [ 93] ............................ if voidp(getaProp(me.oItem.aAttributes, #urlLink)) = 0 then
+  [ 69] getglobal 174 ........................... <ElementMgr>
+  [ 71] pushcons 1 .............................. <"ALERT_EXTERNAL_URL">
+  [ 73] getparam 0 .............................. <me>
+  [ 75] getchainedprop 225 ...................... <me.oItem>
+  [ 77] pushsymb 289 ............................ <#aAttributes>
+  [ 80] pushsymb 1600 ........................... <#urlLink>
+  [ 83] pusharglist 3 ........................... <me.oItem, #aAttributes, #urlLink>
+  [ 85] objcall 611 ............................. <me.oItem.aAttributes[#urlLink]>
+  [ 88] pusharglistnoret 3 ...................... <ElementMgr, "ALERT_EXTERNAL_URL", me.oItem.aAttributes[#urlLink]>
+  [ 90] objcall 1692 ............................ ElementMgr.URLdialog("ALERT_EXTERNAL_URL", me.oItem.aAttributes[#urlLink])
+  [ 93] ret
+end

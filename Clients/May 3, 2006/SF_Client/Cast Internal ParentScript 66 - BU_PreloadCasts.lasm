@@ -1,0 +1,231 @@
+property aLoadList, oCallbackObject, mCallbackMethod, bLoading, sID
+
+on new me, _sId
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_sId>
+  [  4] setobjprop 122 .......................... me.sID = _sId
+  [  6] getparam 0 .............................. <me>
+  [  8] pushzero ................................ <0>
+  [  9] setobjprop 83 ........................... me.bLoading = 0
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglist 0 ........................... <[]>
+  [ 15] pushlist ................................ <[]>
+  [ 16] setobjprop 123 .......................... me.aLoadList = []
+  [ 18] getmovieprop 37 ......................... <the actorList>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 24] objcall 92 .............................. (the actorList).add(me)
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pusharglistnoret 1 ...................... <me>
+  [ 30] extcall 59 .............................. return me
+  [ 32] ret
+end
+
+on addItem me, sCast, sFile
+  [  0] pushcons 0 .............................. <"PreloadCast">
+  [  2] pusharglist 1 ........................... <"PreloadCast">
+  [  4] extcall 12 .............................. <script("PreloadCast")>
+  [  6] getparam 2 .............................. <sFile>
+  [  8] getparam 1 .............................. <sCast>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pushsymb 116 ............................ <#castLoaded>
+  [ 14] pusharglist 5 ........................... <script("PreloadCast"), sFile, sCast, me, #castLoaded>
+  [ 16] objcall 13 .............................. <script("PreloadCast").new(sFile, sCast, me, #castLoaded)>
+  [ 18] setlocal 0 .............................. oPreloader = script("PreloadCast").new(sFile, sCast, me, #castLoaded)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getchainedprop 123 ...................... <me.aLoadList>
+  [ 24] getlocal 0 .............................. <oPreloader>
+  [ 26] pusharglistnoret 2 ...................... <me.aLoadList, oPreloader>
+  [ 28] objcall 92 .............................. me.aLoadList.add(oPreloader)
+  [ 30] ret
+end
+
+on setLoadList me, aList
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <aList>
+  [  4] setobjprop 123 .......................... me.aLoadList = aList
+  [  6] ret
+end
+
+on start me, _oCallbackObject, _mCallbackMethod
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_oCallbackObject>
+  [  4] setobjprop 90 ........................... me.oCallbackObject = _oCallbackObject
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 2 .............................. <_mCallbackMethod>
+  [ 10] setobjprop 91 ........................... me.mCallbackMethod = _mCallbackMethod
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] objcall 118 ............................. me.openLoader()
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 123 .......................... <me.aLoadList>
+  [ 22] peek 0
+  [ 24] pusharglist 1
+  [ 26] extcall 51
+  [ 28] pushint8 1
+  [ 30] peek 0
+  [ 32] peek 2
+  [ 34] lteq
+  [ 35] jmpifz [ 59] ............................ repeat with oPreloader in me.aLoadList
+  [ 38] peek 2
+  [ 40] peek 1
+  [ 42] pusharglist 2
+  [ 44] extcall 52
+  [ 46] setlocal 0
+  [ 48] getlocal 0 .............................. <oPreloader>
+  [ 50] pusharglistnoret 1 ...................... <oPreloader>
+  [ 52] objcall 79 .............................. oPreloader.preloadCast()
+  [ 54] pushint8 1
+  [ 56] add
+  [ 57] endrepeat [ 30]
+  [ 59] pop 3
+  [ 61] getparam 0 .............................. <me>
+  [ 63] pushint8 1 .............................. <1>
+  [ 65] setobjprop 83 ........................... me.bLoading = 1
+  [ 67] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 83 ........................... <me.bLoading>
+  [  4] not ..................................... <not me.bLoading>
+  [  5] jmpifz [ 12] ............................ if not me.bLoading then
+  [  8] pusharglistnoret 0 ...................... <>
+  [ 10] extcall 59 .............................. return 
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushsymb 123 ............................ <#aLoadList>
+  [ 16] pusharglist 2 ........................... <me, #aLoadList>
+  [ 18] objcall 51 .............................. <me.aLoadList.count>
+  [ 20] setlocal 0 .............................. iTotal = me.aLoadList.count
+  [ 22] pushzero ................................ <0>
+  [ 23] setlocal 1 .............................. iTotalDone = 0
+  [ 25] pushzero ................................ <0>
+  [ 26] setlocal 2 .............................. iTotalBytesSoFar = 0
+  [ 28] pushzero ................................ <0>
+  [ 29] setlocal 3 .............................. iTotalBytesTotal = 0
+  [ 31] pushint8 1 .............................. <1>
+  [ 33] setlocal 4
+  [ 35] getlocal 4
+  [ 37] getlocal 0 .............................. <iTotal>
+  [ 39] lteq
+  [ 40] jmpifz [104] ............................ repeat with i = 1 to iTotal
+  [ 43] getparam 0 .............................. <me>
+  [ 45] pushsymb 123 ............................ <#aLoadList>
+  [ 47] getlocal 4 .............................. <i>
+  [ 49] pusharglist 3 ........................... <me, #aLoadList, i>
+  [ 51] objcall 128 ............................. <me.aLoadList[i]>
+  [ 53] setlocal 5 .............................. oPreloader = me.aLoadList[i]
+  [ 55] getlocal 5 .............................. <oPreloader>
+  [ 57] getobjprop 84 ........................... <oPreloader.bDone>
+  [ 59] jmpifz [ 69] ............................ if oPreloader.bDone then
+  [ 62] getlocal 1 .............................. <iTotalDone>
+  [ 64] pushint8 1 .............................. <1>
+  [ 66] add ..................................... <iTotalDone + 1>
+  [ 67] setlocal 1 .............................. iTotalDone = iTotalDone + 1
+  [ 69] getlocal 2 .............................. <iTotalBytesSoFar>
+  [ 71] getlocal 5 .............................. <oPreloader>
+  [ 73] getobjprop 85 ........................... <oPreloader.iBytesSoFar>
+  [ 75] add ..................................... <iTotalBytesSoFar + oPreloader.iBytesSoFar>
+  [ 76] pusharglist 1 ........................... <iTotalBytesSoFar + oPreloader.iBytesSoFar>
+  [ 78] extcall 108 ............................. <float(iTotalBytesSoFar + oPreloader.iBytesSoFar)>
+  [ 80] setlocal 2 .............................. iTotalBytesSoFar = float(iTotalBytesSoFar + oPreloader.iBytesSoFar)
+  [ 82] getlocal 3 .............................. <iTotalBytesTotal>
+  [ 84] getlocal 5 .............................. <oPreloader>
+  [ 86] getobjprop 86 ........................... <oPreloader.iBytesTotal>
+  [ 88] add ..................................... <iTotalBytesTotal + oPreloader.iBytesTotal>
+  [ 89] pusharglist 1 ........................... <iTotalBytesTotal + oPreloader.iBytesTotal>
+  [ 91] extcall 108 ............................. <float(iTotalBytesTotal + oPreloader.iBytesTotal)>
+  [ 93] setlocal 3 .............................. iTotalBytesTotal = float(iTotalBytesTotal + oPreloader.iBytesTotal)
+  [ 95] pushint8 1
+  [ 97] getlocal 4
+  [ 99] add
+  [100] setlocal 4
+  [102] endrepeat [ 35]
+  [104] getlocal 3 .............................. <iTotalBytesTotal>
+  [106] pushzero ................................ <0>
+  [107] eq ...................................... <iTotalBytesTotal = 0>
+  [108] jmpifz [118] ............................ if iTotalBytesTotal = 0 then / else
+  [111] pushint8 100 ............................ <100>
+  [113] setlocal 6 .............................. iPercentage = 100
+  [115] jmp [135]
+  [118] getlocal 2 .............................. <iTotalBytesSoFar>
+  [120] getlocal 3 .............................. <iTotalBytesTotal>
+  [122] div ..................................... <iTotalBytesSoFar / iTotalBytesTotal>
+  [123] pushfloat32 100.0 ....................... <100.0>
+  [128] mul ..................................... <iTotalBytesSoFar / iTotalBytesTotal * 100.0>
+  [129] pusharglist 1 ........................... <iTotalBytesSoFar / iTotalBytesTotal * 100.0>
+  [131] extcall 111 ............................. <integer(iTotalBytesSoFar / iTotalBytesTotal * 100.0)>
+  [133] setlocal 6 .............................. iPercentage = integer(iTotalBytesSoFar / iTotalBytesTotal * 100.0)
+  [135] getparam 0 .............................. <me>
+  [137] getlocal 6 .............................. <iPercentage>
+  [139] pusharglistnoret 2 ...................... <me, iPercentage>
+  [141] objcall 120 ............................. me.updateLoader(iPercentage)
+  [143] getlocal 1 .............................. <iTotalDone>
+  [145] getlocal 0 .............................. <iTotal>
+  [147] eq ...................................... <iTotalDone = iTotal>
+  [148] jmpifz [157] ............................ if iTotalDone = iTotal then
+  [151] getparam 0 .............................. <me>
+  [153] pusharglistnoret 1 ...................... <me>
+  [155] objcall 117 ............................. me.finish()
+  [157] ret
+end
+
+on castLoaded me, oPreloader, bSuccess
+  [  0] getparam 2 .............................. <bSuccess>
+  [  2] not ..................................... <not bSuccess>
+  [  3] jmpifz [ 17] ............................ if not bSuccess then
+  [  6] pushcons 1 .............................. <"Cast load failed: ">
+  [  8] getparam 1 .............................. <oPreloader>
+  [ 10] getobjprop 89 ........................... <oPreloader.sCastLib>
+  [ 12] joinstr ................................. <"Cast load failed: " & oPreloader.sCastLib>
+  [ 13] pusharglistnoret 1 ...................... <"Cast load failed: " & oPreloader.sCastLib>
+  [ 15] extcall 107 ............................. alert("Cast load failed: " & oPreloader.sCastLib)
+  [ 17] ret
+end
+
+on finish me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 83 ........................... me.bLoading = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 91 ........................... <me.mCallbackMethod>
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 90 ........................... <me.oCallbackObject>
+  [ 13] pusharglistnoret 2 ...................... <me.mCallbackMethod, me.oCallbackObject>
+  [ 15] extcall 103 ............................. call(me.mCallbackMethod, me.oCallbackObject)
+  [ 17] getmovieprop 37 ......................... <the actorList>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 23] objcall 114 ............................. (the actorList).deleteOne(me)
+  [ 25] ret
+end
+
+on openLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 130 ............................. getLoader().openWindow()
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] objcall 120 ............................. me.updateLoader()
+  [ 14] ret
+end
+
+on closeLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 77 .............................. getLoader().closeWindow()
+  [  8] ret
+end
+
+on updateLoader me, iPercentage
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 122 .......................... <me.sID>
+  [  8] getparam 1 .............................. <iPercentage>
+  [ 10] pusharglistnoret 3 ...................... <getLoader(), me.sID, iPercentage>
+  [ 12] objcall 131 ............................. getLoader().displayStatus(me.sID, iPercentage)
+  [ 14] ret
+end

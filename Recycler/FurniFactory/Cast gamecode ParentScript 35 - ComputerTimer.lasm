@@ -1,0 +1,190 @@
+property bDebug, iTimeDefaultDuration, iTime, bCountdown, iMilliseconds, bPaused
+global oComputer, oDisplay, oAvatar
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 48 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oComputer.oTimer:">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinpadstr .............................. <"oComputer.oTimer:" && sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oComputer.oTimer:" && sMessage>
+  [ 17] extcall 49 .............................. put "oComputer.oTimer:" && sMessage
+  [ 19] ret
+end
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 2 ............................. init(me)
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 1 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 0 ............................... me.debug("new()")
+  [ 14] getmovieprop 60 ......................... <the actorList>
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 20] objcall 81 .............................. (the actorList).add(me)
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pusharglistnoret 1 ...................... <me>
+  [ 26] extcall 63 .............................. return me
+  [ 28] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 48 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setobjprop 296 .......................... me.bPaused = 1
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushfloat32 60.0 ........................ <60.0>
+  [ 20] setobjprop 90 ........................... me.iTimeDefaultDuration = 60.0
+  [ 22] getparam 0 .............................. <me>
+  [ 24] pushfloat32 60.0 ........................ <60.0>
+  [ 29] pusharglistnoret 2 ...................... <me, 60.0>
+  [ 31] objcall 713 ............................. me.setTime(60.0)
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getmovieprop 281 ........................ <the milliSeconds>
+  [ 39] setobjprop 158 .......................... me.iMilliseconds = the milliSeconds
+  [ 41] getglobal 83 ............................ <oDisplay>
+  [ 43] pushcons 2 .............................. <"Computer">
+  [ 45] getparam 0 .............................. <me>
+  [ 47] pusharglist 1 ........................... <me>
+  [ 49] objcall 136 ............................. <me.getTime()>
+  [ 51] pusharglistnoret 3 ...................... <oDisplay, "Computer", me.getTime()>
+  [ 53] objcall 84 .............................. oDisplay.sendDisplay("Computer", me.getTime())
+  [ 55] ret
+end
+
+on reset me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 99 .............................. me.stopTiming()
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 3 ............................... me.init()
+  [ 12] ret
+end
+
+on startTiming me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 281 ........................ <the milliSeconds>
+  [  5] setobjprop 158 .......................... me.iMilliseconds = the milliSeconds
+  [  7] getparam 0 .............................. <me>
+  [  9] pushzero ................................ <0>
+  [ 10] setobjprop 296 .......................... me.bPaused = 0
+  [ 13] ret
+end
+
+on stopTiming me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 296 .......................... me.bPaused = 1
+  [  7] ret
+end
+
+on getTime me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 159 .......................... <me.iTime>
+  [  4] pusharglistnoret 1 ...................... <me.iTime>
+  [  6] extcall 63 .............................. return me.iTime
+  [  8] ret
+end
+
+on setTime me, iNewTime
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <iNewTime>
+  [  4] setobjprop 159 .......................... me.iTime = iNewTime
+  [  6] ret
+end
+
+on destroy me
+  [  0] getmovieprop 60 ......................... <the actorList>
+  [  2] getparam 0 .............................. <me>
+  [  4] pusharglistnoret 2 ...................... <the actorList, me>
+  [  6] objcall 62 .............................. (the actorList).deleteOne(me)
+  [  8] getmovieprop 60 ......................... <the actorList>
+  [ 10] getobjprop 88 ........................... <(the actorList).count>
+  [ 12] setlocal 0
+  [ 14] getlocal 0
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] gteq
+  [ 19] jmpifz [ 53] ............................ repeat with i = (the actorList).count down to 1
+  [ 22] getmovieprop 60 ......................... <the actorList>
+  [ 24] getlocal 0 .............................. <i>
+  [ 26] pusharglist 2 ........................... <the actorList, i>
+  [ 28] objcall 86 .............................. <(the actorList)[i]>
+  [ 30] getparam 0 .............................. <me>
+  [ 32] eq ...................................... <(the actorList)[i] = me>
+  [ 33] jmpifz [ 44] ............................ if (the actorList)[i] = me then
+  [ 36] getmovieprop 60 ......................... <the actorList>
+  [ 38] getlocal 0 .............................. <i>
+  [ 40] pusharglistnoret 2 ...................... <the actorList, i>
+  [ 42] objcall 56 .............................. (the actorList).deleteAt(i)
+  [ 44] pushint8 -1
+  [ 46] getlocal 0
+  [ 48] add
+  [ 49] setlocal 0
+  [ 51] endrepeat [ 14]
+  [ 53] pusharglist 0 ........................... <>
+  [ 55] extcall 59 .............................. <VOID>
+  [ 57] setparam 0 .............................. me = VOID
+  [ 59] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 296 .......................... <me.bPaused>
+  [  5] not ..................................... <not me.bPaused>
+  [  6] jmpifz [105] ............................ if not me.bPaused then
+  [  9] getparam 0 .............................. <me>
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getobjprop 159 .......................... <me.iTime>
+  [ 15] getmovieprop 281 ........................ <the milliSeconds>
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 158 .......................... <me.iMilliseconds>
+  [ 22] sub ..................................... <the milliSeconds - me.iMilliseconds>
+  [ 23] pushfloat32 1000.0 ...................... <1000.0>
+  [ 28] div ..................................... <(the milliSeconds - me.iMilliseconds) / 1000.0>
+  [ 29] sub ..................................... <me.iTime - ((the milliSeconds - me.iMilliseconds) / 1000.0)>
+  [ 30] setobjprop 159 .......................... me.iTime = me.iTime - ((the milliSeconds - me.iMilliseconds) / 1000.0)
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getmovieprop 281 ........................ <the milliSeconds>
+  [ 37] setobjprop 158 .......................... me.iMilliseconds = the milliSeconds
+  [ 39] getparam 0 .............................. <me>
+  [ 41] pusharglist 1 ........................... <me>
+  [ 43] objcall 136 ............................. <me.getTime()>
+  [ 45] pushzero ................................ <0>
+  [ 46] lteq .................................... <me.getTime() <= 0>
+  [ 47] jmpifz [ 91] ............................ if me.getTime() <= 0 then / else
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pushfloat32 0.0 ......................... <0.0>
+  [ 57] pusharglistnoret 2 ...................... <me, 0.0>
+  [ 59] objcall 713 ............................. me.setTime(0.0)
+  [ 62] getglobal 83 ............................ <oDisplay>
+  [ 64] pushcons 2 .............................. <"Computer">
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pusharglist 1 ........................... <me>
+  [ 70] objcall 136 ............................. <me.getTime()>
+  [ 72] pusharglistnoret 3 ...................... <oDisplay, "Computer", me.getTime()>
+  [ 74] objcall 84 .............................. oDisplay.sendDisplay("Computer", me.getTime())
+  [ 76] getparam 0 .............................. <me>
+  [ 78] pusharglistnoret 1 ...................... <me>
+  [ 80] objcall 99 .............................. me.stopTiming()
+  [ 82] getglobal 58 ............................ <oComputer>
+  [ 84] pusharglistnoret 1 ...................... <oComputer>
+  [ 86] objcall 16 .............................. oComputer.gameTimerZeroed()
+  [ 88] jmp [105]
+  [ 91] getglobal 83 ............................ <oDisplay>
+  [ 93] pushcons 2 .............................. <"Computer">
+  [ 95] getparam 0 .............................. <me>
+  [ 97] pusharglist 1 ........................... <me>
+  [ 99] objcall 136 ............................. <me.getTime()>
+  [101] pusharglistnoret 3 ...................... <oDisplay, "Computer", me.getTime()>
+  [103] objcall 84 .............................. oDisplay.sendDisplay("Computer", me.getTime())
+  [105] ret
+end

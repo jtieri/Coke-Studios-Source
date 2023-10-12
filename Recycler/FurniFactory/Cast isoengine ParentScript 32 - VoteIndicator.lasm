@@ -1,0 +1,202 @@
+property iStartTime, iTimeLength, iSpriteToFollow, bActive, iVOffset, iSprite, bState
+global oIsoScene
+
+on new me, _bState, _iSpriteToFollow
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_bState>
+  [  4] setobjprop 141 .......................... me.bState = _bState
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 2 .............................. <_iSpriteToFollow>
+  [ 10] setobjprop 1100 ......................... me.iSpriteToFollow = _iSpriteToFollow
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getmovieprop 89 ......................... <the milliSeconds>
+  [ 17] setobjprop 867 .......................... me.iStartTime = the milliSeconds
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushint16 10000 ......................... <10000>
+  [ 25] setobjprop 1112 ......................... me.iTimeLength = 10000
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushint8 1 .............................. <1>
+  [ 32] setobjprop 1101 ......................... me.bActive = 1
+  [ 35] getparam 0 .............................. <me>
+  [ 37] pushzero ................................ <0>
+  [ 38] setobjprop 1102 ......................... me.iVOffset = 0
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pusharglistnoret 1 ...................... <me>
+  [ 45] objcall 410 ............................. me.createSprite()
+  [ 48] getmovieprop 132 ........................ <the actorList>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 54] objcall 133 ............................. (the actorList).add(me)
+  [ 56] getglobal 88 ............................ <oIsoScene>
+  [ 58] getchainedprop 129 ...................... <oIsoScene.oVoteItems>
+  [ 60] getparam 0 .............................. <me>
+  [ 62] pusharglistnoret 2 ...................... <oIsoScene.oVoteItems, me>
+  [ 64] objcall 751 ............................. oIsoScene.oVoteItems.addItem(me)
+  [ 67] getparam 0 .............................. <me>
+  [ 69] pusharglistnoret 1 ...................... <me>
+  [ 71] extcall 92 .............................. return me
+  [ 73] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1101 ......................... <me.bActive>
+  [  5] not ..................................... <not me.bActive>
+  [  6] jmpifz [ 13] ............................ if not me.bActive then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] getmovieprop 89 ......................... <the milliSeconds>
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 867 .......................... <me.iStartTime>
+  [ 20] sub ..................................... <the milliSeconds - me.iStartTime>
+  [ 21] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iStartTime
+  [ 23] getlocal 0 .............................. <iElapsedTime>
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 1112 ......................... <me.iTimeLength>
+  [ 30] gteq .................................... <iElapsedTime >= me.iTimeLength>
+  [ 31] jmpifz [ 55] ............................ if iElapsedTime >= me.iTimeLength then
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushzero ................................ <0>
+  [ 37] setobjprop 1101 ......................... me.bActive = 0
+  [ 40] getglobal 88 ............................ <oIsoScene>
+  [ 42] getchainedprop 129 ...................... <oIsoScene.oVoteItems>
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pusharglistnoret 2 ...................... <oIsoScene.oVoteItems, me>
+  [ 48] objcall 767 ............................. oIsoScene.oVoteItems.removeItem(me)
+  [ 51] pusharglistnoret 0 ...................... <>
+  [ 53] extcall 92 .............................. return 
+  [ 55] getparam 0 .............................. <me>
+  [ 57] pusharglistnoret 1 ...................... <me>
+  [ 59] objcall 238 ............................. me.display()
+  [ 61] ret
+end
+
+on display me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 1099 ............................ <me.getDisplayPoint()>
+  [  7] setlocal 0 .............................. oLoc = me.getDisplayPoint()
+  [  9] getparam 0 .............................. <me>
+  [ 11] getobjprop 603 .......................... <me.iSprite>
+  [ 14] pusharglist 1 ........................... <me.iSprite>
+  [ 16] extcall 451 ............................. <sprite(me.iSprite)>
+  [ 19] getlocal 0 .............................. <oLoc>
+  [ 21] getobjprop 299 .......................... <oLoc.locH>
+  [ 24] setobjprop 299 .......................... sprite(me.iSprite).locH = oLoc.locH
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getobjprop 603 .......................... <me.iSprite>
+  [ 32] pusharglist 1 ........................... <me.iSprite>
+  [ 34] extcall 451 ............................. <sprite(me.iSprite)>
+  [ 37] getlocal 0 .............................. <oLoc>
+  [ 39] getobjprop 300 .......................... <oLoc.locV>
+  [ 42] setobjprop 300 .......................... sprite(me.iSprite).locV = oLoc.locV
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getobjprop 603 .......................... <me.iSprite>
+  [ 50] pusharglist 1 ........................... <me.iSprite>
+  [ 52] extcall 451 ............................. <sprite(me.iSprite)>
+  [ 55] getparam 0 .............................. <me>
+  [ 57] getobjprop 1100 ......................... <me.iSpriteToFollow>
+  [ 60] pusharglist 1 ........................... <me.iSpriteToFollow>
+  [ 62] extcall 451 ............................. <sprite(me.iSpriteToFollow)>
+  [ 65] getobjprop 482 .......................... <sprite(me.iSpriteToFollow).locZ>
+  [ 68] setobjprop 482 .......................... sprite(me.iSprite).locZ = sprite(me.iSpriteToFollow).locZ
+  [ 71] ret
+end
+
+on createSprite me
+  [  0] pushcons 0 .............................. <"cc.thumbicon.up">
+  [  2] setlocal 0 .............................. sMember = "cc.thumbicon.up"
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 141 .......................... <me.bState>
+  [  8] not ..................................... <not me.bState>
+  [  9] jmpifz [ 16] ............................ if not me.bState then
+  [ 12] pushcons 1 .............................. <"cc.thumbicon.down">
+  [ 14] setlocal 0 .............................. sMember = "cc.thumbicon.down"
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pusharglist 1 ........................... <me>
+  [ 20] objcall 1099 ............................ <me.getDisplayPoint()>
+  [ 23] setlocal 1 .............................. oLoc = me.getDisplayPoint()
+  [ 25] pushsymb 454 ............................ <#member>
+  [ 28] getlocal 0 .............................. <sMember>
+  [ 30] pushsymb 144 ............................ <#x>
+  [ 32] getlocal 1 .............................. <oLoc>
+  [ 34] getobjprop 299 .......................... <oLoc.locH>
+  [ 37] pushsymb 315 ............................ <#y>
+  [ 40] getlocal 1 .............................. <oLoc>
+  [ 42] getobjprop 300 .......................... <oLoc.locV>
+  [ 45] pushsymb 462 ............................ <#ink>
+  [ 48] pushint8 8 .............................. <8>
+  [ 50] pusharglist 8 ........................... <[#member: sMember, #x: oLoc.locH, #y: oLoc.locV, #ink: 8]>
+  [ 52] pushproplist ............................ <[#member: sMember, #x: oLoc.locH, #y: oLoc.locV, #ink: 8]>
+  [ 53] setlocal 2 .............................. aProps = [#member: sMember, #x: oLoc.locH, #y: oLoc.locV, #ink: 8]
+  [ 55] getparam 0 .............................. <me>
+  [ 57] getglobal 88 ............................ <oIsoScene>
+  [ 59] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [ 61] getlocal 2 .............................. <aProps>
+  [ 63] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [ 65] objcall 588 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [ 68] setobjprop 603 .......................... me.iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [ 71] ret
+end
+
+on getDisplayPoint me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 1100 ......................... <me.iSpriteToFollow>
+  [  5] pusharglist 1 ........................... <me.iSpriteToFollow>
+  [  7] extcall 451 ............................. <sprite(me.iSpriteToFollow)>
+  [ 10] getobjprop 664 .......................... <sprite(me.iSpriteToFollow).right>
+  [ 13] setlocal 0 .............................. iRight = sprite(me.iSpriteToFollow).right
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 1100 ......................... <me.iSpriteToFollow>
+  [ 20] pusharglist 1 ........................... <me.iSpriteToFollow>
+  [ 22] extcall 451 ............................. <sprite(me.iSpriteToFollow)>
+  [ 25] getobjprop 668 .......................... <sprite(me.iSpriteToFollow).left>
+  [ 28] setlocal 1 .............................. iLeft = sprite(me.iSpriteToFollow).left
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getobjprop 1100 ......................... <me.iSpriteToFollow>
+  [ 35] pusharglist 1 ........................... <me.iSpriteToFollow>
+  [ 37] extcall 451 ............................. <sprite(me.iSpriteToFollow)>
+  [ 40] getobjprop 480 .......................... <sprite(me.iSpriteToFollow).top>
+  [ 43] setlocal 2 .............................. iTop = sprite(me.iSpriteToFollow).top
+  [ 45] getlocal 1 .............................. <iLeft>
+  [ 47] getlocal 0 .............................. <iRight>
+  [ 49] getlocal 1 .............................. <iLeft>
+  [ 51] sub ..................................... <iRight - iLeft>
+  [ 52] pushint8 2 .............................. <2>
+  [ 54] div ..................................... <(iRight - iLeft) / 2>
+  [ 55] add ..................................... <iLeft + ((iRight - iLeft) / 2)>
+  [ 56] setlocal 3 .............................. iLocH = iLeft + ((iRight - iLeft) / 2)
+  [ 58] getlocal 2 .............................. <iTop>
+  [ 60] getparam 0 .............................. <me>
+  [ 62] getobjprop 1102 ......................... <me.iVOffset>
+  [ 65] add ..................................... <iTop + me.iVOffset>
+  [ 66] setlocal 4 .............................. iLocV = iTop + me.iVOffset
+  [ 68] getlocal 3 .............................. <iLocH>
+  [ 70] getlocal 4 .............................. <iLocV>
+  [ 72] pusharglist 2 ........................... <iLocH, iLocV>
+  [ 74] extcall 295 ............................. <point(iLocH, iLocV)>
+  [ 77] setlocal 5 .............................. oLoc = point(iLocH, iLocV)
+  [ 79] getlocal 5 .............................. <oLoc>
+  [ 81] pusharglistnoret 1 ...................... <oLoc>
+  [ 83] extcall 92 .............................. return oLoc
+  [ 85] ret
+end
+
+on destroy me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 603 .......................... <me.iSprite>
+  [  9] pusharglist 1 ........................... <[me.iSprite]>
+  [ 11] pushlist ................................ <[me.iSprite]>
+  [ 12] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, [me.iSprite]>
+  [ 14] objcall 586 ............................. oIsoScene.oSpriteManager.returnPooledSprites([me.iSprite])
+  [ 17] getmovieprop 132 ........................ <the actorList>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 2 ...................... <the actorList, me>
+  [ 23] objcall 330 ............................. (the actorList).deleteOne(me)
+  [ 26] pusharglist 0 ........................... <>
+  [ 28] extcall 130 ............................. <VOID>
+  [ 30] setparam 0 .............................. me = VOID
+  [ 32] ret
+end

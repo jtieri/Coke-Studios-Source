@@ -1,0 +1,89 @@
+global ElementMgr, TextMgr, gFeatureSet
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 78 .............................. return me
+  [  6] ret
+end
+
+on mouseUp me
+  [  0] getglobal 83 ............................ <gFeatureSet>
+  [  2] pushsymb 951 ............................ <#CATALOG>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #CATALOG>
+  [  7] objcall 85 .............................. <gFeatureSet.isEnabled(#CATALOG)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#CATALOG)>
+  [ 10] jmpifz [ 25] ............................ if not gFeatureSet.isEnabled(#CATALOG) then
+  [ 13] getglobal 86 ............................ <ElementMgr>
+  [ 15] pushcons 0 .............................. <"FEATURE_DISABLED">
+  [ 17] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 19] objcall 10 .............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 78 .............................. return 
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setlocal 0
+  [ 29] getlocal 0
+  [ 31] getglobal 86 ............................ <ElementMgr>
+  [ 33] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 35] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 37] extcall 104 ............................. <count(ElementMgr.pOpenWindows)>
+  [ 39] lteq
+  [ 40] jmpifz [155] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 43] getglobal 86 ............................ <ElementMgr>
+  [ 45] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 47] getlocal 0 .............................. <n>
+  [ 49] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 51] extcall 249 ............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 53] pushcons 1 .............................. <"catalogue">
+  [ 55] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "catalogue">
+  [ 56] jmpifz [ 80] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "catalogue" then
+  [ 59] getglobal 86 ............................ <ElementMgr>
+  [ 61] pushsymb 76 ............................. <#pOpenWindows>
+  [ 63] getlocal 0 .............................. <n>
+  [ 65] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 67] objcall 265 ............................. <ElementMgr.pOpenWindows[n]>
+  [ 70] pusharglistnoret 1 ...................... <ElementMgr.pOpenWindows[n]>
+  [ 72] objcall 180 ............................. ElementMgr.pOpenWindows[n].closeWindow()
+  [ 74] jmp [155] ............................... exit repeat
+  [ 77] jmp [146] ............................... next repeat
+  [ 80] getlocal 0 .............................. <n>
+  [ 82] getglobal 86 ............................ <ElementMgr>
+  [ 84] getobjprop 76 ........................... <ElementMgr.pOpenWindows>
+  [ 86] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 88] extcall 104 ............................. <count(ElementMgr.pOpenWindows)>
+  [ 90] eq ...................................... <n = count(ElementMgr.pOpenWindows)>
+  [ 91] jmpifz [146] ............................ if n = count(ElementMgr.pOpenWindows) then
+  [ 94] getglobal 86 ............................ <ElementMgr>
+  [ 96] pushcons 2 .............................. <"catalogue.page1.window">
+  [ 98] pusharglistnoret 2 ...................... <ElementMgr, "catalogue.page1.window">
+  [100] objcall 2 ............................... ElementMgr.newwindow("catalogue.page1.window")
+  [102] pusharglistnoret 0 ...................... <>
+  [104] extcall 187 ............................. updateStage()
+  [106] getglobal 86 ............................ <ElementMgr>
+  [108] pusharglist 1 ........................... <ElementMgr>
+  [110] objcall 29 .............................. <ElementMgr.cataloguepages()>
+  [112] pusharglist 1 ........................... <ElementMgr.cataloguepages()>
+  [114] objcall 104 ............................. <ElementMgr.cataloguepages().count()>
+  [116] pushint8 1 .............................. <1>
+  [118] sub ..................................... <ElementMgr.cataloguepages().count() - 1>
+  [119] setlocal 1 .............................. totalPages = ElementMgr.cataloguepages().count() - 1
+  [121] pushcons 3 .............................. <"cc.catalogue.text.pagenum">
+  [123] pusharglist 1 ........................... <"cc.catalogue.text.pagenum">
+  [125] extcall 101 ............................. <member("cc.catalogue.text.pagenum")>
+  [127] getglobal 178 ........................... <TextMgr>
+  [129] pushcons 4 .............................. <"CAT_PAGE">
+  [131] pusharglist 2 ........................... <TextMgr, "CAT_PAGE">
+  [133] objcall 179 ............................. <TextMgr.GetRefText("CAT_PAGE")>
+  [135] pushcons 5 .............................. <": 1/">
+  [137] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ": 1/">
+  [138] getlocal 1 .............................. <totalPages>
+  [140] joinstr ................................. <TextMgr.GetRefText("CAT_PAGE") & ": 1/" & totalPages>
+  [141] setobjprop 129 .......................... member("cc.catalogue.text.pagenum").text = TextMgr.GetRefText("CAT_PAGE") & ": 1/" & totalPages
+  [143] jmp [155] ............................... exit repeat
+  [146] pushint8 1
+  [148] getlocal 0
+  [150] add
+  [151] setlocal 0
+  [153] endrepeat [ 29]
+  [155] ret
+end

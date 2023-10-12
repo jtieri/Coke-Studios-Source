@@ -1,0 +1,103 @@
+property iIndex, iState, iTimer, iTimeLength, iTimeLengthMax, iSprite, bDebug
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 584 .......................... <me.spriteNum>
+  [  7] setobjprop 813 .......................... me.iSprite = me.spriteNum
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pusharglistnoret 1 ...................... <me>
+  [ 14] objcall 3 ............................... me.init()
+  [ 16] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 813 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 365 ............................. <voidp(me.iSprite)>
+  [ 10] jmpifz [ 17] ............................ if voidp(me.iSprite) then
+  [ 13] pusharglistnoret 0 ...................... <>
+  [ 15] extcall 63 .............................. return 
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushint8 1 .............................. <1>
+  [ 21] setobjprop 129 .......................... me.iIndex = 1
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setobjprop 819 .......................... me.iState = 1
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getmovieprop 281 ........................ <the milliSeconds>
+  [ 35] setobjprop 820 .......................... me.iTimer = the milliSeconds
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pushint16 200 ........................... <200>
+  [ 43] setobjprop 821 .......................... me.iTimeLengthMax = 200
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 821 .......................... <me.iTimeLengthMax>
+  [ 53] pusharglist 1 ........................... <me.iTimeLengthMax>
+  [ 55] extcall 55 .............................. <random(me.iTimeLengthMax)>
+  [ 57] setobjprop 822 .......................... me.iTimeLength = random(me.iTimeLengthMax)
+  [ 60] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 819 .......................... <me.iState>
+  [  5] pushint8 1 .............................. <1>
+  [  7] eq ...................................... <me.iState = 1>
+  [  8] jmpifz [ 62] ............................ if me.iState = 1 then
+  [ 11] getmovieprop 281 ........................ <the milliSeconds>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 820 .......................... <me.iTimer>
+  [ 19] sub ..................................... <the milliSeconds - me.iTimer>
+  [ 20] setlocal 0 .............................. iElapsedTime = the milliSeconds - me.iTimer
+  [ 22] getlocal 0 .............................. <iElapsedTime>
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 822 .......................... <me.iTimeLength>
+  [ 29] gteq .................................... <iElapsedTime >= me.iTimeLength>
+  [ 30] jmpifz [ 62] ............................ if iElapsedTime >= me.iTimeLength then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 810 ............................. me.nextFrame()
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getmovieprop 281 ........................ <the milliSeconds>
+  [ 45] setobjprop 820 .......................... me.iTimer = the milliSeconds
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getobjprop 821 .......................... <me.iTimeLengthMax>
+  [ 55] pusharglist 1 ........................... <me.iTimeLengthMax>
+  [ 57] extcall 55 .............................. <random(me.iTimeLengthMax)>
+  [ 59] setobjprop 822 .......................... me.iTimeLength = random(me.iTimeLengthMax)
+  [ 62] ret
+end
+
+on startAnim me
+  [  0] getparam 0 .............................. <me>
+  [  2] getmovieprop 281 ........................ <the milliSeconds>
+  [  5] setobjprop 820 .......................... me.iTimer = the milliSeconds
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 819 .......................... me.iState = 1
+  [ 15] ret
+end
+
+on stopAnim me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 819 .......................... me.iState = 0
+  [  6] ret
+end
+
+on nextFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 813 .......................... <me.iSprite>
+  [  5] pusharglist 1 ........................... <me.iSprite>
+  [  7] extcall 79 .............................. <sprite(me.iSprite)>
+  [  9] pushint8 15 ............................. <15>
+  [ 11] pusharglist 1 ........................... <15>
+  [ 13] extcall 55 .............................. <random(15)>
+  [ 15] pushint8 85 ............................. <85>
+  [ 17] add ..................................... <random(15) + 85>
+  [ 18] setobjprop 484 .......................... sprite(me.iSprite).blend = random(15) + 85
+  [ 21] ret
+end

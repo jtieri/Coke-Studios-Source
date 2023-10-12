@@ -1,0 +1,73 @@
+property pSafetyTips, pIndex, pLastUpdate
+
+on new me
+  [  0] getglobal 91 ............................ <TextMgr>
+  [  2] pusharglist 1 ........................... <TextMgr>
+  [  4] objcall 803 ............................. <TextMgr.getsafetytips()>
+  [  7] setprop 802 ............................. pSafetyTips = TextMgr.getsafetytips()
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setprop 425 ............................. pIndex = 1
+  [ 15] pushzero ................................ <0>
+  [ 16] setprop 804 ............................. pLastUpdate = 0
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 23 .............................. return me
+  [ 25] ret
+end
+
+on exitFrame me
+  [  0] getmovieprop 805 ........................ <the milliSeconds>
+  [  3] getprop 804 ............................. <pLastUpdate>
+  [  6] sub ..................................... <the milliSeconds - pLastUpdate>
+  [  7] pushint16 5000 .......................... <5000>
+  [ 10] gt ...................................... <(the milliSeconds - pLastUpdate) > 5000>
+  [ 11] jmpifz [ 28] ............................ if (the milliSeconds - pLastUpdate) > 5000 then
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 228 .......................... <me.spriteNum>
+  [ 18] pusharglist 1 ........................... <me.spriteNum>
+  [ 20] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 22] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 24] pushcons 0 .............................. <EMPTY>
+  [ 26] setobjprop 78 ........................... sprite(me.spriteNum).member.text = EMPTY
+  [ 28] getmovieprop 805 ........................ <the milliSeconds>
+  [ 31] getprop 804 ............................. <pLastUpdate>
+  [ 34] sub ..................................... <the milliSeconds - pLastUpdate>
+  [ 35] pushint16 5100 .......................... <5100>
+  [ 38] gt ...................................... <(the milliSeconds - pLastUpdate) > 5100>
+  [ 39] jmpifz [ 48] ............................ if (the milliSeconds - pLastUpdate) > 5100 then
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 1 ...................... <me>
+  [ 46] localcall 2 ............................. shownewtip(me)
+  [ 48] ret
+end
+
+on shownewtip me
+  [  0] getmovieprop 805 ........................ <the milliSeconds>
+  [  3] setprop 804 ............................. pLastUpdate = the milliSeconds
+  [  6] getprop 802 ............................. <pSafetyTips>
+  [  9] getprop 425 ............................. <pIndex>
+  [ 12] pusharglist 2 ........................... <pSafetyTips, pIndex>
+  [ 14] objcall 44 .............................. <pSafetyTips[pIndex]>
+  [ 16] setlocal 0 .............................. mytip = pSafetyTips[pIndex]
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getobjprop 228 .......................... <me.spriteNum>
+  [ 22] pusharglist 1 ........................... <me.spriteNum>
+  [ 24] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 26] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 28] getlocal 0 .............................. <mytip>
+  [ 30] setobjprop 78 ........................... sprite(me.spriteNum).member.text = mytip
+  [ 32] getprop 425 ............................. <pIndex>
+  [ 35] getprop 802 ............................. <pSafetyTips>
+  [ 38] pusharglist 1 ........................... <pSafetyTips>
+  [ 40] extcall 29 .............................. <count(pSafetyTips)>
+  [ 42] lt ...................................... <pIndex < count(pSafetyTips)>
+  [ 43] jmpifz [ 58] ............................ if pIndex < count(pSafetyTips) then / else
+  [ 46] getprop 425 ............................. <pIndex>
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] add ..................................... <pIndex + 1>
+  [ 52] setprop 425 ............................. pIndex = pIndex + 1
+  [ 55] jmp [ 63]
+  [ 58] pushint8 1 .............................. <1>
+  [ 60] setprop 425 ............................. pIndex = 1
+  [ 63] ret
+end

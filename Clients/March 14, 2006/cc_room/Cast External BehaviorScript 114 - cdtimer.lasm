@@ -1,0 +1,72 @@
+property pSeconds, pParentWindow
+global TextMgr, oStudio
+
+on new me, parentwindow
+  [  0] getparam 1 .............................. <parentwindow>
+  [  2] setprop 20 .............................. pParentWindow = parentwindow
+  [  4] pushint8 30 ............................. <30>
+  [  6] setprop 21 .............................. pSeconds = 30
+  [  8] pushcons 0 .............................. <"cdplayer_time">
+  [ 10] pusharglist 1 ........................... <"cdplayer_time">
+  [ 12] extcall 10 .............................. <member("cdplayer_time")>
+  [ 14] getprop 21 .............................. <pSeconds>
+  [ 16] getglobal 11 ............................ <TextMgr>
+  [ 18] pushcons 1 .............................. <"CHOOSE_SONG_SECS">
+  [ 20] pusharglist 2 ........................... <TextMgr, "CHOOSE_SONG_SECS">
+  [ 22] objcall 12 .............................. <TextMgr.GetRefText("CHOOSE_SONG_SECS")>
+  [ 24] joinpadstr .............................. <pSeconds && TextMgr.GetRefText("CHOOSE_SONG_SECS")>
+  [ 25] setobjprop 13 ........................... member("cdplayer_time").text = pSeconds && TextMgr.GetRefText("CHOOSE_SONG_SECS")
+  [ 27] pushcons 2 .............................. <"cdplayer">
+  [ 29] pusharglist 1 ........................... <"cdplayer">
+  [ 31] extcall 22 .............................. <timeout("cdplayer")>
+  [ 33] pushint16 1000 .......................... <1000>
+  [ 36] pushsymb 18 ............................. <#update>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] pusharglist 4 ........................... <timeout("cdplayer"), 1000, #update, me>
+  [ 42] objcall 0 ............................... <timeout("cdplayer").new(1000, #update, me)>
+  [ 44] setlocal 0 .............................. timeoutobject = timeout("cdplayer").new(1000, #update, me)
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglistnoret 1 ...................... <me>
+  [ 50] extcall 5 ............................... return me
+  [ 52] ret
+end
+
+on update me
+  [  0] getprop 21 .............................. <pSeconds>
+  [  2] pushint8 1 .............................. <1>
+  [  4] sub ..................................... <pSeconds - 1>
+  [  5] setprop 21 .............................. pSeconds = pSeconds - 1
+  [  7] pushcons 0 .............................. <"cdplayer_time">
+  [  9] pusharglist 1 ........................... <"cdplayer_time">
+  [ 11] extcall 10 .............................. <member("cdplayer_time")>
+  [ 13] getprop 21 .............................. <pSeconds>
+  [ 15] getglobal 11 ............................ <TextMgr>
+  [ 17] pushcons 1 .............................. <"CHOOSE_SONG_SECS">
+  [ 19] pusharglist 2 ........................... <TextMgr, "CHOOSE_SONG_SECS">
+  [ 21] objcall 12 .............................. <TextMgr.GetRefText("CHOOSE_SONG_SECS")>
+  [ 23] joinpadstr .............................. <pSeconds && TextMgr.GetRefText("CHOOSE_SONG_SECS")>
+  [ 24] setobjprop 13 ........................... member("cdplayer_time").text = pSeconds && TextMgr.GetRefText("CHOOSE_SONG_SECS")
+  [ 26] getprop 21 .............................. <pSeconds>
+  [ 28] pushzero ................................ <0>
+  [ 29] lteq .................................... <pSeconds <= 0>
+  [ 30] jmpifz [ 51] ............................ if pSeconds <= 0 then
+  [ 33] getparam 0 .............................. <me>
+  [ 35] pusharglistnoret 1 ...................... <me>
+  [ 37] objcall 19 .............................. me.cancelCdTimer()
+  [ 39] getglobal 25 ............................ <oStudio>
+  [ 41] pusharglistnoret 1 ...................... <oStudio>
+  [ 43] objcall 26 .............................. oStudio.sendCdStop()
+  [ 45] getprop 20 .............................. <pParentWindow>
+  [ 47] pusharglistnoret 1 ...................... <pParentWindow>
+  [ 49] objcall 27 .............................. pParentWindow.closeWindow()
+  [ 51] ret
+end
+
+on cancelCdTimer me
+  [  0] pushcons 3 .............................. <"CDplayer">
+  [  2] pusharglist 1 ........................... <"CDplayer">
+  [  4] extcall 22 .............................. <timeout("CDplayer")>
+  [  6] pusharglistnoret 1 ...................... <timeout("CDplayer")>
+  [  8] objcall 28 .............................. timeout("CDplayer").forget()
+  [ 10] ret
+end

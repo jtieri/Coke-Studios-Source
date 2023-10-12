@@ -1,0 +1,205 @@
+property aStudioByModList, bDebug
+global sModScreenName
+
+on new me, sModName
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setprop 366 ............................. aStudioByModList = [:]
+  [  6] getparam 1 .............................. <sModName>
+  [  8] pusharglist 1 ........................... <sModName>
+  [ 10] extcall 169 ............................. <symbol(sModName)>
+  [ 12] setlocal 0 .............................. symbolScreenName = symbol(sModName)
+  [ 14] getprop 366 ............................. <aStudioByModList>
+  [ 17] getlocal 0 .............................. <symbolScreenName>
+  [ 19] pusharglist 0 ........................... <[]>
+  [ 21] pushlist ................................ <[]>
+  [ 22] pusharglistnoret 3 ...................... <aStudioByModList, symbolScreenName, []>
+  [ 24] objcall 68 .............................. aStudioByModList[symbolScreenName] = []
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pushzero ................................ <0>
+  [ 29] setobjprop 10 ........................... me.bDebug = 0
+  [ 31] getparam 0 .............................. <me>
+  [ 33] pusharglistnoret 1 ...................... <me>
+  [ 35] extcall 31 .............................. return me
+  [ 37] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oStudioByModManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oStudioByModManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oStudioByModManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oStudioByModManager: " & sMessage
+  [ 19] ret
+end
+
+on checkForOpenStudio me, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"checkForOpenStudio:sStudioID:">
+  [  4] getparam 1 .............................. <sStudioID>
+  [  6] joinpadstr .............................. <"checkForOpenStudio:sStudioID:" && sStudioID>
+  [  7] pusharglistnoret 2 ...................... <me, "checkForOpenStudio:sStudioID:" && sStudioID>
+  [  9] objcall 4 ............................... me.debug("checkForOpenStudio:sStudioID:" && sStudioID)
+  [ 11] getglobal 235 ........................... <sModScreenName>
+  [ 13] pusharglist 1 ........................... <sModScreenName>
+  [ 15] extcall 169 ............................. <symbol(sModScreenName)>
+  [ 17] setlocal 0 .............................. symbolScreenName = symbol(sModScreenName)
+  [ 19] getprop 366 ............................. <aStudioByModList>
+  [ 22] getlocal 0 .............................. <symbolScreenName>
+  [ 24] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 26] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 28] pusharglist 0 ........................... <>
+  [ 30] extcall 263 ............................. <VOID>
+  [ 33] eq ...................................... <aStudioByModList[symbolScreenName] = VOID>
+  [ 34] jmpifz [ 49] ............................ if aStudioByModList[symbolScreenName] = VOID then
+  [ 37] getprop 366 ............................. <aStudioByModList>
+  [ 40] getlocal 0 .............................. <symbolScreenName>
+  [ 42] pusharglist 0 ........................... <[]>
+  [ 44] pushlist ................................ <[]>
+  [ 45] pusharglistnoret 3 ...................... <aStudioByModList, symbolScreenName, []>
+  [ 47] objcall 68 .............................. aStudioByModList[symbolScreenName] = []
+  [ 49] pushint8 1 .............................. <1>
+  [ 51] setlocal 1
+  [ 53] getlocal 1
+  [ 55] getprop 366 ............................. <aStudioByModList>
+  [ 58] getlocal 0 .............................. <symbolScreenName>
+  [ 60] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 62] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 64] getobjprop 32 ........................... <aStudioByModList[symbolScreenName].count>
+  [ 66] lteq
+  [ 67] jmpifz [121] ............................ repeat with i = 1 to aStudioByModList[symbolScreenName].count
+  [ 70] getprop 366 ............................. <aStudioByModList>
+  [ 73] getlocal 0 .............................. <symbolScreenName>
+  [ 75] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 77] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 79] getlocal 1 .............................. <i>
+  [ 81] pusharglist 2 ........................... <aStudioByModList[symbolScreenName], i>
+  [ 83] objcall 33 .............................. <aStudioByModList[symbolScreenName][i]>
+  [ 85] getparam 1 .............................. <sStudioID>
+  [ 87] eq ...................................... <aStudioByModList[symbolScreenName][i] = sStudioID>
+  [ 88] getprop 366 ............................. <aStudioByModList>
+  [ 91] getlocal 0 .............................. <symbolScreenName>
+  [ 93] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 95] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 97] getobjprop 32 ........................... <aStudioByModList[symbolScreenName].count>
+  [ 99] pushint8 4 .............................. <4>
+  [101] eq ...................................... <aStudioByModList[symbolScreenName].count = 4>
+  [102] or ...................................... <(aStudioByModList[symbolScreenName][i] = sStudioID) or (aStudioByModList[symbolScreenName].count = 4)>
+  [103] jmpifz [112] ............................ if (aStudioByModList[symbolScreenName][i] = sStudioID) or (aStudioByModList[symbolScreenName].count = 4) then
+  [106] pushint8 1 .............................. <1>
+  [108] pusharglistnoret 1 ...................... <1>
+  [110] extcall 31 .............................. return 1
+  [112] pushint8 1
+  [114] getlocal 1
+  [116] add
+  [117] setlocal 1
+  [119] endrepeat [ 53]
+  [121] pushzero ................................ <0>
+  [122] pusharglistnoret 1 ...................... <0>
+  [124] extcall 31 .............................. return 0
+  [126] ret
+end
+
+on addStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"addStudio:sModName:">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinpadstr .............................. <"addStudio:sModName:" && sModName>
+  [  7] pushcons 3 .............................. <"sStudioID:">
+  [  9] joinpadstr .............................. <"addStudio:sModName:" && sModName && "sStudioID:">
+  [ 10] getparam 2 .............................. <sStudioID>
+  [ 12] joinpadstr .............................. <"addStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 13] pusharglistnoret 2 ...................... <me, "addStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 15] objcall 4 ............................... me.debug("addStudio:sModName:" && sModName && "sStudioID:" && sStudioID)
+  [ 17] getparam 1 .............................. <sModName>
+  [ 19] pusharglist 1 ........................... <sModName>
+  [ 21] extcall 169 ............................. <symbol(sModName)>
+  [ 23] setlocal 0 .............................. symbolScreenName = symbol(sModName)
+  [ 25] getprop 366 ............................. <aStudioByModList>
+  [ 28] getlocal 0 .............................. <symbolScreenName>
+  [ 30] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 32] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 34] pusharglist 0 ........................... <>
+  [ 36] extcall 263 ............................. <VOID>
+  [ 39] eq ...................................... <aStudioByModList[symbolScreenName] = VOID>
+  [ 40] jmpifz [ 55] ............................ if aStudioByModList[symbolScreenName] = VOID then
+  [ 43] getprop 366 ............................. <aStudioByModList>
+  [ 46] getlocal 0 .............................. <symbolScreenName>
+  [ 48] pusharglist 0 ........................... <[]>
+  [ 50] pushlist ................................ <[]>
+  [ 51] pusharglistnoret 3 ...................... <aStudioByModList, symbolScreenName, []>
+  [ 53] objcall 152 ............................. aStudioByModList.addProp(symbolScreenName, [])
+  [ 55] pushint8 1 .............................. <1>
+  [ 57] setlocal 1
+  [ 59] getlocal 1
+  [ 61] getprop 366 ............................. <aStudioByModList>
+  [ 64] getlocal 0 .............................. <symbolScreenName>
+  [ 66] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 68] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 70] getobjprop 32 ........................... <aStudioByModList[symbolScreenName].count>
+  [ 72] lteq
+  [ 73] jmpifz [107] ............................ repeat with i = 1 to aStudioByModList[symbolScreenName].count
+  [ 76] getprop 366 ............................. <aStudioByModList>
+  [ 79] getlocal 0 .............................. <symbolScreenName>
+  [ 81] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 83] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 85] getlocal 1 .............................. <i>
+  [ 87] pusharglist 2 ........................... <aStudioByModList[symbolScreenName], i>
+  [ 89] objcall 33 .............................. <aStudioByModList[symbolScreenName][i]>
+  [ 91] getparam 2 .............................. <sStudioID>
+  [ 93] eq ...................................... <aStudioByModList[symbolScreenName][i] = sStudioID>
+  [ 94] jmpifz [ 98] ............................ if aStudioByModList[symbolScreenName][i] = sStudioID then
+  [ 97] ret ..................................... exit
+  [ 98] pushint8 1
+  [100] getlocal 1
+  [102] add
+  [103] setlocal 1
+  [105] endrepeat [ 59]
+  [107] getprop 366 ............................. <aStudioByModList>
+  [110] getlocal 0 .............................. <symbolScreenName>
+  [112] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [114] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [116] getparam 2 .............................. <sStudioID>
+  [118] pusharglistnoret 2 ...................... <aStudioByModList[symbolScreenName], sStudioID>
+  [120] objcall 30 .............................. aStudioByModList[symbolScreenName].add(sStudioID)
+  [122] ret
+end
+
+on deleteStudio me, sModName, sStudioID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 4 .............................. <"deleteStudio:sModName:">
+  [  4] getparam 1 .............................. <sModName>
+  [  6] joinpadstr .............................. <"deleteStudio:sModName:" && sModName>
+  [  7] pushcons 3 .............................. <"sStudioID:">
+  [  9] joinpadstr .............................. <"deleteStudio:sModName:" && sModName && "sStudioID:">
+  [ 10] getparam 2 .............................. <sStudioID>
+  [ 12] joinpadstr .............................. <"deleteStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 13] pusharglistnoret 2 ...................... <me, "deleteStudio:sModName:" && sModName && "sStudioID:" && sStudioID>
+  [ 15] objcall 4 ............................... me.debug("deleteStudio:sModName:" && sModName && "sStudioID:" && sStudioID)
+  [ 17] getparam 1 .............................. <sModName>
+  [ 19] pusharglist 1 ........................... <sModName>
+  [ 21] extcall 169 ............................. <symbol(sModName)>
+  [ 23] setlocal 0 .............................. symbolScreenName = symbol(sModName)
+  [ 25] getprop 366 ............................. <aStudioByModList>
+  [ 28] getlocal 0 .............................. <symbolScreenName>
+  [ 30] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 32] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 34] pusharglist 0 ........................... <>
+  [ 36] extcall 263 ............................. <VOID>
+  [ 39] eq ...................................... <aStudioByModList[symbolScreenName] = VOID>
+  [ 40] jmpifz [ 44] ............................ if aStudioByModList[symbolScreenName] = VOID then
+  [ 43] ret ..................................... exit
+  [ 44] getprop 366 ............................. <aStudioByModList>
+  [ 47] getlocal 0 .............................. <symbolScreenName>
+  [ 49] pusharglist 2 ........................... <aStudioByModList, symbolScreenName>
+  [ 51] objcall 33 .............................. <aStudioByModList[symbolScreenName]>
+  [ 53] getparam 2 .............................. <sStudioID>
+  [ 55] pusharglistnoret 2 ...................... <aStudioByModList[symbolScreenName], sStudioID>
+  [ 57] objcall 129 ............................. aStudioByModList[symbolScreenName].deleteOne(sStudioID)
+  [ 59] ret
+end

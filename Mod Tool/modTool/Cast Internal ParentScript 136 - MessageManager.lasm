@@ -1,0 +1,182 @@
+property pDenizenName, pStudioName, pAnswerUserEntrySprite, pMessageUserEntrySprite, pCommentToDbEntrySprite, pHoursBannedEntrySprite, pVerificationSprite, pCallID, bDebug
+global oMessageManager, oModControllerManager, sModScreenName
+
+on new me, sDenizenName, sStudioName, iCallID
+  [  0] getparam 1 .............................. <sDenizenName>
+  [  2] setprop 355 ............................. pDenizenName = sDenizenName
+  [  5] getparam 2 .............................. <sStudioName>
+  [  7] setprop 228 ............................. pStudioName = sStudioName
+  [  9] getparam 3 .............................. <iCallID>
+  [ 11] setprop 498 ............................. pCallID = iCallID
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushint8 1 .............................. <1>
+  [ 18] setobjprop 10 ........................... me.bDebug = 1
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglistnoret 1 ...................... <me>
+  [ 24] extcall 31 .............................. return me
+  [ 26] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oLogInManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oLogInManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oLogInManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oLogInManager: " & sMessage
+  [ 19] ret
+end
+
+on submitAnswer me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"submitAnswer:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"submitAnswer:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "submitAnswer:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("submitAnswer:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getprop 499 ............................. <pAnswerUserEntrySprite>
+  [ 19] getchainedprop 14 ....................... <pAnswerUserEntrySprite.member>
+  [ 21] getobjprop 15 ........................... <pAnswerUserEntrySprite.member.text>
+  [ 23] setlocal 0 .............................. sMessage = pAnswerUserEntrySprite.member.text
+  [ 25] getglobal 199 ........................... <oModControllerManager>
+  [ 27] pusharglist 1 ........................... <oModControllerManager>
+  [ 29] objcall 200 ............................. <oModControllerManager.getCFHController()>
+  [ 31] getprop 498 ............................. <pCallID>
+  [ 34] pushzero ................................ <0>
+  [ 35] getlocal 0 .............................. <sMessage>
+  [ 37] pusharglistnoret 4 ...................... <oModControllerManager.getCFHController(), pCallID, 0, sMessage>
+  [ 39] objcall 500 ............................. oModControllerManager.getCFHController().sendRespondToCallForHelp(pCallID, 0, sMessage)
+  [ 42] getprop 480 ............................. <pVerificationSprite>
+  [ 45] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 48] pushint8 1 .............................. <1>
+  [ 50] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [ 52] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [ 54] pushint8 1 .............................. <1>
+  [ 56] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 59] ret
+end
+
+on submitMessage me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"submitMessage:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"submitMessage:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "submitMessage:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("submitMessage:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getprop 501 ............................. <pMessageUserEntrySprite>
+  [ 19] getchainedprop 14 ....................... <pMessageUserEntrySprite.member>
+  [ 21] getobjprop 15 ........................... <pMessageUserEntrySprite.member.text>
+  [ 23] setlocal 0 .............................. sMessage = pMessageUserEntrySprite.member.text
+  [ 25] getglobal 199 ........................... <oModControllerManager>
+  [ 27] pusharglist 1 ........................... <oModControllerManager>
+  [ 29] objcall 200 ............................. <oModControllerManager.getCFHController()>
+  [ 31] getprop 355 ............................. <pDenizenName>
+  [ 34] getlocal 0 .............................. <sMessage>
+  [ 36] pusharglistnoret 3 ...................... <oModControllerManager.getCFHController(), pDenizenName, sMessage>
+  [ 38] objcall 502 ............................. oModControllerManager.getCFHController().sendModMessage(pDenizenName, sMessage)
+  [ 41] getprop 480 ............................. <pVerificationSprite>
+  [ 44] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [ 51] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 58] ret
+end
+
+on submitWarn me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 3 .............................. <"submitWarn:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"submitWarn:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "submitWarn:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("submitWarn:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getprop 501 ............................. <pMessageUserEntrySprite>
+  [ 19] getchainedprop 14 ....................... <pMessageUserEntrySprite.member>
+  [ 21] getobjprop 15 ........................... <pMessageUserEntrySprite.member.text>
+  [ 23] setlocal 0 .............................. sMessage = pMessageUserEntrySprite.member.text
+  [ 25] getprop 503 ............................. <pCommentToDbEntrySprite>
+  [ 28] getchainedprop 14 ....................... <pCommentToDbEntrySprite.member>
+  [ 30] getobjprop 15 ........................... <pCommentToDbEntrySprite.member.text>
+  [ 32] setlocal 1 .............................. sComment = pCommentToDbEntrySprite.member.text
+  [ 34] getglobal 199 ........................... <oModControllerManager>
+  [ 36] pusharglist 1 ........................... <oModControllerManager>
+  [ 38] objcall 200 ............................. <oModControllerManager.getCFHController()>
+  [ 40] getprop 355 ............................. <pDenizenName>
+  [ 43] getlocal 0 .............................. <sMessage>
+  [ 45] getlocal 1 .............................. <sComment>
+  [ 47] pusharglistnoret 4 ...................... <oModControllerManager.getCFHController(), pDenizenName, sMessage, sComment>
+  [ 49] objcall 504 ............................. oModControllerManager.getCFHController().sendWarnUser(pDenizenName, sMessage, sComment)
+  [ 52] getprop 480 ............................. <pVerificationSprite>
+  [ 55] pushsymb 324 ............................ <#scriptInstanceList>
+  [ 58] pushint8 1 .............................. <1>
+  [ 60] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [ 62] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [ 64] pushint8 1 .............................. <1>
+  [ 66] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [ 69] ret
+end
+
+on submitBan me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 4 .............................. <"submitBan:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"submitBan:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "submitBan:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("submitBan:sVerificationSprite:" && sVerificationSprite)
+  [ 11] getparam 1 .............................. <sVerificationSprite>
+  [ 13] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 16] getprop 501 ............................. <pMessageUserEntrySprite>
+  [ 19] getchainedprop 14 ....................... <pMessageUserEntrySprite.member>
+  [ 21] getobjprop 15 ........................... <pMessageUserEntrySprite.member.text>
+  [ 23] setlocal 0 .............................. sMessage = pMessageUserEntrySprite.member.text
+  [ 25] getprop 503 ............................. <pCommentToDbEntrySprite>
+  [ 28] getchainedprop 14 ....................... <pCommentToDbEntrySprite.member>
+  [ 30] getobjprop 15 ........................... <pCommentToDbEntrySprite.member.text>
+  [ 32] setlocal 1 .............................. sComment = pCommentToDbEntrySprite.member.text
+  [ 34] getprop 506 ............................. <pHoursBannedEntrySprite>
+  [ 37] getchainedprop 14 ....................... <pHoursBannedEntrySprite.member>
+  [ 39] getobjprop 15 ........................... <pHoursBannedEntrySprite.member.text>
+  [ 41] pushcons 5 .............................. <EMPTY>
+  [ 43] eq ...................................... <pHoursBannedEntrySprite.member.text = EMPTY>
+  [ 44] jmpifz [ 56] ............................ if pHoursBannedEntrySprite.member.text = EMPTY then / else
+  [ 47] pushcons 6 .............................. <"Please enter number of hours banned.">
+  [ 49] pusharglistnoret 1 ...................... <"Please enter number of hours banned.">
+  [ 51] extcall 171 ............................. alert("Please enter number of hours banned.")
+  [ 53] jmp [ 76]
+  [ 56] getprop 506 ............................. <pHoursBannedEntrySprite>
+  [ 59] getchainedprop 14 ....................... <pHoursBannedEntrySprite.member>
+  [ 61] getobjprop 15 ........................... <pHoursBannedEntrySprite.member.text>
+  [ 63] pusharglist 1 ........................... <pHoursBannedEntrySprite.member.text>
+  [ 65] extcall 507 ............................. <float(pHoursBannedEntrySprite.member.text)>
+  [ 68] pushfloat32 1.0 ......................... <1.0>
+  [ 73] mul ..................................... <float(pHoursBannedEntrySprite.member.text) * 1.0>
+  [ 74] setlocal 2 .............................. iHours = float(pHoursBannedEntrySprite.member.text) * 1.0
+  [ 76] getglobal 199 ........................... <oModControllerManager>
+  [ 78] pusharglist 1 ........................... <oModControllerManager>
+  [ 80] objcall 200 ............................. <oModControllerManager.getCFHController()>
+  [ 82] getprop 355 ............................. <pDenizenName>
+  [ 85] getlocal 2 .............................. <iHours>
+  [ 87] getlocal 0 .............................. <sMessage>
+  [ 89] getlocal 1 .............................. <sComment>
+  [ 91] pusharglistnoret 5 ...................... <oModControllerManager.getCFHController(), pDenizenName, iHours, sMessage, sComment>
+  [ 93] objcall 508 ............................. oModControllerManager.getCFHController().sendBanUser(pDenizenName, iHours, sMessage, sComment)
+  [ 96] getprop 480 ............................. <pVerificationSprite>
+  [ 99] pushsymb 324 ............................ <#scriptInstanceList>
+  [102] pushint8 1 .............................. <1>
+  [104] pusharglist 3 ........................... <pVerificationSprite, #scriptInstanceList, 1>
+  [106] objcall 61 .............................. <pVerificationSprite.scriptInstanceList[1]>
+  [108] pushint8 1 .............................. <1>
+  [110] setobjprop 468 .......................... pVerificationSprite.scriptInstanceList[1].bGoFrame = 1
+  [113] ret
+end

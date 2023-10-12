@@ -1,0 +1,95 @@
+property pLogInUserNameEntrySprite, pLogInPassWordEntrySprite, pVerificationSprite, bDebug
+global oLogInManager, oDenizenManager, oModControllerManager, sModScreenName, oStudioManager
+
+on new me, sLogInUserNameEntrySprite
+  [  0] getparam 1 .............................. <sLogInUserNameEntrySprite>
+  [  2] setprop 530 ............................. pLogInUserNameEntrySprite = sLogInUserNameEntrySprite
+  [  5] getparam 0 .............................. <me>
+  [  7] pushint8 1 .............................. <1>
+  [  9] setobjprop 10 ........................... me.bDebug = 1
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] extcall 31 .............................. return me
+  [ 17] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"oLogInManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oLogInManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oLogInManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oLogInManager: " & sMessage
+  [ 19] ret
+end
+
+on submitLogIn me, sVerificationSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"submitLogIn:sVerificationSprite:">
+  [  4] getparam 1 .............................. <sVerificationSprite>
+  [  6] joinpadstr .............................. <"submitLogIn:sVerificationSprite:" && sVerificationSprite>
+  [  7] pusharglistnoret 2 ...................... <me, "submitLogIn:sVerificationSprite:" && sVerificationSprite>
+  [  9] objcall 4 ............................... me.debug("submitLogIn:sVerificationSprite:" && sVerificationSprite)
+  [ 11] pushcons 2 .............................. <"userNameLogIn">
+  [ 13] pusharglist 1 ........................... <"userNameLogIn">
+  [ 15] extcall 14 .............................. <member("userNameLogIn")>
+  [ 17] getobjprop 15 ........................... <member("userNameLogIn").text>
+  [ 19] setlocal 0 .............................. sScreenName = member("userNameLogIn").text
+  [ 21] pushsymb 514 ............................ <#getPassword>
+  [ 24] pusharglist 1 ........................... <#getPassword>
+  [ 26] extcall 139 ............................. <sendAllSprites(#getPassword)>
+  [ 28] setlocal 1 .............................. sPassword = sendAllSprites(#getPassword)
+  [ 30] getlocal 0 .............................. <sScreenName>
+  [ 32] pushcons 3 .............................. <EMPTY>
+  [ 34] eq ...................................... <sScreenName = EMPTY>
+  [ 35] getlocal 1 .............................. <sPassword>
+  [ 37] pushcons 3 .............................. <EMPTY>
+  [ 39] eq ...................................... <sPassword = EMPTY>
+  [ 40] or ...................................... <(sScreenName = EMPTY) or (sPassword = EMPTY)>
+  [ 41] jmpifz [ 54] ............................ if (sScreenName = EMPTY) or (sPassword = EMPTY) then
+  [ 44] pushcons 4 .............................. <"Must supply a screen name and password">
+  [ 46] pusharglistnoret 1 ...................... <"Must supply a screen name and password">
+  [ 48] extcall 171 ............................. alert("Must supply a screen name and password")
+  [ 50] pusharglistnoret 0 ...................... <>
+  [ 52] extcall 31 .............................. return 
+  [ 54] getparam 1 .............................. <sVerificationSprite>
+  [ 56] setprop 480 ............................. pVerificationSprite = sVerificationSprite
+  [ 59] getglobal 69 ............................ <oDenizenManager>
+  [ 61] getlocal 0 .............................. <sScreenName>
+  [ 63] getlocal 1 .............................. <sPassword>
+  [ 65] pusharglistnoret 3 ...................... <oDenizenManager, sScreenName, sPassword>
+  [ 67] objcall 532 ............................. oDenizenManager.loginModerator(sScreenName, sPassword)
+  [ 70] ret
+end
+
+on confirmLogIn me, iError, sScreenName
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 5 .............................. <"confirmLogIn:iError:">
+  [  4] getparam 1 .............................. <iError>
+  [  6] joinpadstr .............................. <"confirmLogIn:iError:" && iError>
+  [  7] pushcons 6 .............................. <"sScreenName:">
+  [  9] joinpadstr .............................. <"confirmLogIn:iError:" && iError && "sScreenName:">
+  [ 10] getparam 2 .............................. <sScreenName>
+  [ 12] joinpadstr .............................. <"confirmLogIn:iError:" && iError && "sScreenName:" && sScreenName>
+  [ 13] pusharglistnoret 2 ...................... <me, "confirmLogIn:iError:" && iError && "sScreenName:" && sScreenName>
+  [ 15] objcall 4 ............................... me.debug("confirmLogIn:iError:" && iError && "sScreenName:" && sScreenName)
+  [ 17] getparam 1 .............................. <iError>
+  [ 19] not ..................................... <not iError>
+  [ 20] jmpifz [ 39] ............................ if not iError then / else
+  [ 23] getparam 2 .............................. <sScreenName>
+  [ 25] setglobal 235 ........................... sModScreenName = sScreenName
+  [ 27] getglobal 80 ............................ <oStudioManager>
+  [ 29] pushcons 7 .............................. <"$LOBBY$">
+  [ 31] pusharglistnoret 2 ...................... <oStudioManager, "$LOBBY$">
+  [ 33] objcall 422 ............................. oStudioManager.getGameServerByStudioID("$LOBBY$")
+  [ 36] jmp [ 46]
+  [ 39] pushcons 8 .............................. <"ScreenName or Password not valid">
+  [ 41] pusharglistnoret 1 ...................... <"ScreenName or Password not valid">
+  [ 43] extcall 171 ............................. alert("ScreenName or Password not valid")
+  [ 45] ret ..................................... exit
+  [ 46] ret
+end

@@ -1,0 +1,53 @@
+property bDebug
+global ElementMgr
+
+on new me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 33 .............................. bDebug = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] pusharglistnoret 1 ...................... <me>
+  [  7] extcall 5 ............................... return me
+  [  9] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 27] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 0 .............................. <"closeCD">
+  [ 12] pushcons 1 .............................. <"member:">
+  [ 14] joinpadstr .............................. <"closeCD" && "member:">
+  [ 15] getparam 0 .............................. <me>
+  [ 17] getobjprop 97 ........................... <me.memberNum>
+  [ 19] joinpadstr .............................. <"closeCD" && "member:" && me.memberNum>
+  [ 20] getparam 1 .............................. <sMessage>
+  [ 22] joinpadstr .............................. <"closeCD" && "member:" && me.memberNum && sMessage>
+  [ 23] pusharglistnoret 1 ...................... <"closeCD" && "member:" && me.memberNum && sMessage>
+  [ 25] extcall 34 .............................. put "closeCD" && "member:" && me.memberNum && sMessage
+  [ 27] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 123 ............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"mouseUp">
+  [  4] pusharglistnoret 2 ...................... <me, "mouseUp">
+  [  6] objcall 29 .............................. me.debug("mouseUp")
+  [  8] getglobal 37 ............................ <ElementMgr>
+  [ 10] pusharglist 1 ........................... <ElementMgr>
+  [ 12] objcall 117 ............................. <ElementMgr.getcdplayer()>
+  [ 14] setlocal 0 .............................. CDPLAYER = ElementMgr.getcdplayer()
+  [ 16] getlocal 0 .............................. <CDPLAYER>
+  [ 18] pusharglistnoret 1 ...................... <CDPLAYER>
+  [ 20] objcall 27 .............................. CDPLAYER.closeWindow()
+  [ 22] pusharglistnoret 0 ...................... <>
+  [ 24] extcall 123 ............................. dontPassEvent()
+  [ 26] ret
+end

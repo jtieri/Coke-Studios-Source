@@ -1,0 +1,47 @@
+property pWindowObject
+global oStudio
+
+on new me, windowobject
+  [  0] getparam 1 .............................. <windowobject>
+  [  2] setprop 434 ............................. pWindowObject = windowobject
+  [  5] getparam 0 .............................. <me>
+  [  7] pusharglistnoret 1 ...................... <me>
+  [  9] extcall 78 .............................. return me
+  [ 11] ret
+end
+
+on mouseUp me
+  [  0] getglobal 83 ............................ <gFeatureSet>
+  [  2] pushsymb 946 ............................ <#CALL_FOR_HELP>
+  [  5] pusharglist 2 ........................... <gFeatureSet, #CALL_FOR_HELP>
+  [  7] objcall 85 .............................. <gFeatureSet.isEnabled(#CALL_FOR_HELP)>
+  [  9] not ..................................... <not gFeatureSet.isEnabled(#CALL_FOR_HELP)>
+  [ 10] jmpifz [ 25] ............................ if not gFeatureSet.isEnabled(#CALL_FOR_HELP) then
+  [ 13] getglobal 86 ............................ <ElementMgr>
+  [ 15] pushcons 0 .............................. <"FEATURE_DISABLED">
+  [ 17] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 19] objcall 10 .............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 21] pusharglistnoret 0 ...................... <>
+  [ 23] extcall 78 .............................. return 
+  [ 25] pushcons 1 .............................. <"cc_callfield">
+  [ 27] pusharglist 1 ........................... <"cc_callfield">
+  [ 29] extcall 101 ............................. <member("cc_callfield")>
+  [ 31] getobjprop 129 .......................... <member("cc_callfield").text>
+  [ 33] setlocal 0 .............................. mytext = member("cc_callfield").text
+  [ 35] getglobal 314 ........................... <oStudio>
+  [ 38] getlocal 0 .............................. <mytext>
+  [ 40] pusharglistnoret 2 ...................... <oStudio, mytext>
+  [ 42] objcall 950 ............................. oStudio.sendCallForHelp(mytext)
+  [ 45] getlocal 0 .............................. <mytext>
+  [ 47] pushcons 2 .............................. <EMPTY>
+  [ 49] nteq .................................... <mytext <> EMPTY>
+  [ 50] jmpifz [ 68] ............................ if mytext <> EMPTY then
+  [ 53] getprop 434 ............................. <pWindowObject>
+  [ 56] pusharglistnoret 1 ...................... <pWindowObject>
+  [ 58] objcall 180 ............................. pWindowObject.closeWindow()
+  [ 60] getglobal 86 ............................ <ElementMgr>
+  [ 62] pushcons 3 .............................. <"cc_callsent.window">
+  [ 64] pusharglistnoret 2 ...................... <ElementMgr, "cc_callsent.window">
+  [ 66] objcall 2 ............................... ElementMgr.newwindow("cc_callsent.window")
+  [ 68] ret
+end

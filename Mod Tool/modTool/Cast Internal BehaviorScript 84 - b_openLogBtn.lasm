@@ -1,0 +1,526 @@
+property pActive, pDataType, pStudioID, pStudioName, pStudioOwner, bDebug
+global oUserDisplayManager, oCallAlertDisplayManager, aModRoomList, sModScreenName, ElementMgr, aChatLogDisplaySprites, oPublicDisplayManager, oPrivateDisplayManager, oModControllerManager, oStudioByModManager
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. mylist = [:]
+  [  5] getlocal 0 .............................. <mylist>
+  [  7] pushsymb 344 ............................ <#pDataType>
+  [ 10] pushsymb 88 ............................. <#comment>
+  [ 12] pushcons 0 .............................. <"ChatLogDisplay data type:">
+  [ 14] pushsymb 89 ............................. <#format>
+  [ 16] pushsymb 94 ............................. <#string>
+  [ 18] pushsymb 91 ............................. <#default>
+  [ 20] pushcons 1 .............................. <"public">
+  [ 22] pushsymb 97 ............................. <#range>
+  [ 24] pushcons 2 .............................. <"callAlert">
+  [ 26] pushcons 3 .............................. <"user">
+  [ 28] pushcons 1 .............................. <"public">
+  [ 30] pushcons 4 .............................. <"private">
+  [ 32] pusharglist 4 ........................... <["callAlert", "user", "public", "private"]>
+  [ 34] pushlist ................................ <["callAlert", "user", "public", "private"]>
+  [ 35] pusharglist 8 ........................... <[#comment: "ChatLogDisplay data type:", #format: #string, #default: "public", #range: ["callAlert", "user", "public", "private"]]>
+  [ 37] pushproplist ............................ <[#comment: "ChatLogDisplay data type:", #format: #string, #default: "public", #range: ["callAlert", "user", "public", "private"]]>
+  [ 38] pusharglistnoret 3 ...................... <mylist, #pDataType, [#comment: "ChatLogDisplay data type:", #format: #string, #default: "public", #range: ["callAlert", "user", "public", "private"]]>
+  [ 40] objcall 68 .............................. mylist[#pDataType] = [#comment: "ChatLogDisplay data type:", #format: #string, #default: "public", #range: ["callAlert", "user", "public", "private"]]
+  [ 42] getlocal 0 .............................. <mylist>
+  [ 44] pusharglistnoret 1 ...................... <mylist>
+  [ 46] extcall 31 .............................. return mylist
+  [ 48] ret
+end
+
+on beginSprite me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 10 .............................. bDebug = 0
+  [  3] pusharglist 0 ........................... <[:]>
+  [  5] pushproplist ............................ <[:]>
+  [  6] setglobal 327 ........................... aModRoomList = [:]
+  [  9] pushzero ................................ <0>
+  [ 10] setprop 330 ............................. pActive = 0
+  [ 13] pushcons 5 .............................. <EMPTY>
+  [ 15] setprop 79 .............................. pStudioID = EMPTY
+  [ 17] ret
+end
+
+on mouseUp me
+  [  0] getglobal 323 ........................... <oStudioByModManager>
+  [  3] pusharglist 1 ........................... <oStudioByModManager>
+  [  5] extcall 322 ............................. <objectp(oStudioByModManager)>
+  [  8] not ..................................... <not objectp(oStudioByModManager)>
+  [  9] jmpifz [ 28] ............................ if not objectp(oStudioByModManager) then
+  [ 12] pushcons 6 .............................. <"StudioByModManager">
+  [ 14] pusharglist 1 ........................... <"StudioByModManager">
+  [ 16] extcall 315 ............................. <script("StudioByModManager")>
+  [ 19] getglobal 235 ........................... <sModScreenName>
+  [ 21] pusharglist 2 ........................... <script("StudioByModManager"), sModScreenName>
+  [ 23] extcall 236 ............................. <new(script("StudioByModManager"), sModScreenName)>
+  [ 25] setglobal 323 ........................... oStudioByModManager = new(script("StudioByModManager"), sModScreenName)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] pushcons 7 .............................. <"mouseUp:oStudioByModManager.aStudioByModList:">
+  [ 32] getglobal 323 ........................... <oStudioByModManager>
+  [ 35] getobjprop 366 .......................... <oStudioByModManager.aStudioByModList>
+  [ 38] joinpadstr .............................. <"mouseUp:oStudioByModManager.aStudioByModList:" && oStudioByModManager.aStudioByModList>
+  [ 39] pusharglistnoret 2 ...................... <me, "mouseUp:oStudioByModManager.aStudioByModList:" && oStudioByModManager.aStudioByModList>
+  [ 41] objcall 4 ............................... me.debug("mouseUp:oStudioByModManager.aStudioByModList:" && oStudioByModManager.aStudioByModList)
+  [ 43] getprop 344 ............................. <pDataType>
+  [ 46] peek 0 .................................. case pDataType of
+  [ 48] pushcons 2 .............................. <"callAlert">
+  [ 50] eq
+  [ 51] jmpifz [253] ............................ (case) "callAlert":
+  [ 54] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 56] pushsymb 20 ............................. <#pCallAlertList>
+  [ 58] pusharglist 2 ........................... <oCallAlertDisplayManager, #pCallAlertList>
+  [ 60] objcall 32 .............................. <oCallAlertDisplayManager.pCallAlertList.count>
+  [ 62] pushzero ................................ <0>
+  [ 63] eq ...................................... <oCallAlertDisplayManager.pCallAlertList.count = 0>
+  [ 64] jmpifz [ 75] ............................ if oCallAlertDisplayManager.pCallAlertList.count = 0 then / else
+  [ 67] pusharglistnoret 0 ...................... <>
+  [ 69] extcall 71 .............................. beep()
+  [ 71] ret ..................................... exit
+  [ 72] jmp [102]
+  [ 75] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 77] pushsymb 20 ............................. <#pCallAlertList>
+  [ 79] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [ 81] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [ 83] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [ 85] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [ 87] getobjprop 67 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioId>
+  [ 89] setlocal 0 .............................. sStudioID = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioId
+  [ 91] getparam 0 .............................. <me>
+  [ 93] pushcons 8 .............................. <"mouseUp:callAlert:studioID">
+  [ 95] getlocal 0 .............................. <sStudioID>
+  [ 97] joinpadstr .............................. <"mouseUp:callAlert:studioID" && sStudioID>
+  [ 98] pusharglistnoret 2 ...................... <me, "mouseUp:callAlert:studioID" && sStudioID>
+  [100] objcall 4 ............................... me.debug("mouseUp:callAlert:studioID" && sStudioID)
+  [102] getlocal 0 .............................. <sStudioID>
+  [104] pushcons 5 .............................. <EMPTY>
+  [106] eq ...................................... <sStudioID = EMPTY>
+  [107] jmpifz [118] ............................ if sStudioID = EMPTY then / else
+  [110] pusharglistnoret 0 ...................... <>
+  [112] extcall 71 .............................. beep()
+  [114] ret ..................................... exit
+  [115] jmp [155]
+  [118] getglobal 323 ........................... <oStudioByModManager>
+  [121] getlocal 0 .............................. <sStudioID>
+  [123] pusharglist 2 ........................... <oStudioByModManager, sStudioID>
+  [125] objcall 325 ............................. <oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [128] jmpifz [139] ............................ if oStudioByModManager.checkForOpenStudio(sStudioID) then / else
+  [131] pusharglistnoret 0 ...................... <>
+  [133] extcall 71 .............................. beep()
+  [135] ret ..................................... exit
+  [136] jmp [155]
+  [139] getlocal 0 .............................. <sStudioID>
+  [141] setprop 79 .............................. pStudioID = sStudioID
+  [143] getglobal 323 ........................... <oStudioByModManager>
+  [146] getglobal 235 ........................... <sModScreenName>
+  [148] getlocal 0 .............................. <sStudioID>
+  [150] pusharglistnoret 3 ...................... <oStudioByModManager, sModScreenName, sStudioID>
+  [152] objcall 367 ............................. oStudioByModManager.addStudio(sModScreenName, sStudioID)
+  [155] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [157] pushsymb 20 ............................. <#pCallAlertList>
+  [159] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [161] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [163] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [165] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [167] getobjprop 47 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName>
+  [169] setprop 228 ............................. pStudioName = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioName
+  [171] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [173] pushsymb 20 ............................. <#pCallAlertList>
+  [175] getglobal 16 ............................ <oCallAlertDisplayManager>
+  [177] getobjprop 23 ........................... <oCallAlertDisplayManager.iCallAlertNum>
+  [179] pusharglist 3 ........................... <oCallAlertDisplayManager, #pCallAlertList, oCallAlertDisplayManager.iCallAlertNum>
+  [181] objcall 61 .............................. <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum]>
+  [183] getobjprop 48 ........................... <oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioOwner>
+  [185] setprop 229 ............................. pStudioOwner = oCallAlertDisplayManager.pCallAlertList[oCallAlertDisplayManager.iCallAlertNum].studioOwner
+  [187] getprop 79 .............................. <pStudioID>
+  [189] pushsymb 65 ............................. <#char>
+  [191] pushint8 1 .............................. <1>
+  [193] pusharglist 3 ........................... <pStudioID, #char, 1>
+  [195] objcall 66 .............................. <pStudioID.char[1]>
+  [197] pushcons 9 .............................. <"$">
+  [199] eq ...................................... <pStudioID.char[1] = "$">
+  [200] jmpifz [228] ............................ if pStudioID.char[1] = "$" then / else
+  [203] pushcons 1 .............................. <"public">
+  [205] setlocal 1 .............................. sStudioType = "public"
+  [207] getglobal 206 ........................... <oPublicDisplayManager>
+  [209] getprop 79 .............................. <pStudioID>
+  [211] setobjprop 79 ........................... oPublicDisplayManager.pStudioID = pStudioID
+  [213] getglobal 206 ........................... <oPublicDisplayManager>
+  [215] getprop 228 ............................. <pStudioName>
+  [217] setobjprop 228 .......................... oPublicDisplayManager.pStudioName = pStudioName
+  [219] getglobal 206 ........................... <oPublicDisplayManager>
+  [221] getprop 229 ............................. <pStudioOwner>
+  [223] setobjprop 229 .......................... oPublicDisplayManager.pStudioOwner = pStudioOwner
+  [225] jmp [250]
+  [228] pushcons 4 .............................. <"private">
+  [230] setlocal 1 .............................. sStudioType = "private"
+  [232] getglobal 194 ........................... <oPrivateDisplayManager>
+  [234] getprop 79 .............................. <pStudioID>
+  [236] setobjprop 79 ........................... oPrivateDisplayManager.pStudioID = pStudioID
+  [238] getglobal 194 ........................... <oPrivateDisplayManager>
+  [240] getprop 228 ............................. <pStudioName>
+  [242] setobjprop 228 .......................... oPrivateDisplayManager.pStudioName = pStudioName
+  [244] getglobal 194 ........................... <oPrivateDisplayManager>
+  [246] getprop 229 ............................. <pStudioOwner>
+  [248] setobjprop 229 .......................... oPrivateDisplayManager.pStudioOwner = pStudioOwner
+  [250] jmp [661]
+  [253] peek 0
+  [255] pushcons 3 .............................. <"user">
+  [257] eq
+  [258] jmpifz [484] ............................ (case) "user":
+  [261] getglobal 52 ............................ <oUserDisplayManager>
+  [263] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [266] pusharglist 0 ........................... <[]>
+  [268] pushlist ................................ <[]>
+  [269] eq ...................................... <oUserDisplayManager.pUserData = []>
+  [270] jmpifz [281] ............................ if oUserDisplayManager.pUserData = [] then / else
+  [273] pusharglistnoret 0 ...................... <>
+  [275] extcall 71 .............................. beep()
+  [277] ret ..................................... exit
+  [278] jmp [386]
+  [281] getglobal 52 ............................ <oUserDisplayManager>
+  [283] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [286] getobjprop 67 ........................... <oUserDisplayManager.pUserData.studioId>
+  [288] pusharglist 0 ........................... <>
+  [290] extcall 263 ............................. <VOID>
+  [293] eq ...................................... <oUserDisplayManager.pUserData.studioId = VOID>
+  [294] getglobal 52 ............................ <oUserDisplayManager>
+  [296] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [299] getobjprop 67 ........................... <oUserDisplayManager.pUserData.studioId>
+  [301] pushcons 5 .............................. <EMPTY>
+  [303] eq ...................................... <oUserDisplayManager.pUserData.studioId = EMPTY>
+  [304] or ...................................... <(oUserDisplayManager.pUserData.studioId = VOID) or (oUserDisplayManager.pUserData.studioId = EMPTY)>
+  [305] getglobal 52 ............................ <oUserDisplayManager>
+  [307] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [310] getobjprop 67 ........................... <oUserDisplayManager.pUserData.studioId>
+  [312] pushcons 9 .............................. <"$">
+  [314] containsstr ............................. <oUserDisplayManager.pUserData.studioId contains "$">
+  [315] pushzero ................................ <0>
+  [316] eq ...................................... <(oUserDisplayManager.pUserData.studioId contains "$") = 0>
+  [317] or ...................................... <(oUserDisplayManager.pUserData.studioId = VOID) or (oUserDisplayManager.pUserData.studioId = EMPTY) or ((oUserDisplayManager.pUserData.studioId contains "$") = 0)>
+  [318] jmpifz [329] ............................ if (oUserDisplayManager.pUserData.studioId = VOID) or (oUserDisplayManager.pUserData.studioId = EMPTY) or ((oUserDisplayManager.pUserData.studioId contains "$") = 0) then / else
+  [321] pusharglistnoret 0 ...................... <>
+  [323] extcall 71 .............................. beep()
+  [325] ret ..................................... exit
+  [326] jmp [386]
+  [329] getglobal 52 ............................ <oUserDisplayManager>
+  [331] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [334] getobjprop 67 ........................... <oUserDisplayManager.pUserData.studioId>
+  [336] setlocal 0 .............................. sStudioID = oUserDisplayManager.pUserData.studioId
+  [338] getglobal 323 ........................... <oStudioByModManager>
+  [341] getlocal 0 .............................. <sStudioID>
+  [343] pusharglist 2 ........................... <oStudioByModManager, sStudioID>
+  [345] objcall 325 ............................. <oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [348] jmpifz [359] ............................ if oStudioByModManager.checkForOpenStudio(sStudioID) then / else
+  [351] pusharglistnoret 0 ...................... <>
+  [353] extcall 71 .............................. beep()
+  [355] ret ..................................... exit
+  [356] jmp [386]
+  [359] getlocal 0 .............................. <sStudioID>
+  [361] setprop 79 .............................. pStudioID = sStudioID
+  [363] getglobal 323 ........................... <oStudioByModManager>
+  [366] getglobal 235 ........................... <sModScreenName>
+  [368] getlocal 0 .............................. <sStudioID>
+  [370] pusharglistnoret 3 ...................... <oStudioByModManager, sModScreenName, sStudioID>
+  [372] objcall 367 ............................. oStudioByModManager.addStudio(sModScreenName, sStudioID)
+  [375] getparam 0 .............................. <me>
+  [377] pushcons 10 ............................. <"mouseUp:user:studioID">
+  [379] getlocal 0 .............................. <sStudioID>
+  [381] joinpadstr .............................. <"mouseUp:user:studioID" && sStudioID>
+  [382] pusharglistnoret 2 ...................... <me, "mouseUp:user:studioID" && sStudioID>
+  [384] objcall 4 ............................... me.debug("mouseUp:user:studioID" && sStudioID)
+  [386] getparam 0 .............................. <me>
+  [388] pushcons 11 ............................. <"mouseUp:oUserDisplayManager.pUserData">
+  [390] getglobal 52 ............................ <oUserDisplayManager>
+  [392] getobjprop 356 .......................... <oUserDisplayManager.pUserData>
+  [395] joinpadstr .............................. <"mouseUp:oUserDisplayManager.pUserData" && oUserDisplayManager.pUserData>
+  [396] pusharglistnoret 2 ...................... <me, "mouseUp:oUserDisplayManager.pUserData" && oUserDisplayManager.pUserData>
+  [398] objcall 4 ............................... me.debug("mouseUp:oUserDisplayManager.pUserData" && oUserDisplayManager.pUserData)
+  [400] getglobal 52 ............................ <oUserDisplayManager>
+  [402] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [405] getobjprop 47 ........................... <oUserDisplayManager.pUserData.studioName>
+  [407] setprop 228 ............................. pStudioName = oUserDisplayManager.pUserData.studioName
+  [409] getglobal 52 ............................ <oUserDisplayManager>
+  [411] getchainedprop 356 ...................... <oUserDisplayManager.pUserData>
+  [414] getobjprop 230 .......................... <oUserDisplayManager.pUserData.owner>
+  [416] setprop 229 ............................. pStudioOwner = oUserDisplayManager.pUserData.owner
+  [418] getprop 79 .............................. <pStudioID>
+  [420] pushsymb 65 ............................. <#char>
+  [422] pushint8 1 .............................. <1>
+  [424] pusharglist 3 ........................... <pStudioID, #char, 1>
+  [426] objcall 66 .............................. <pStudioID.char[1]>
+  [428] pushcons 9 .............................. <"$">
+  [430] eq ...................................... <pStudioID.char[1] = "$">
+  [431] jmpifz [459] ............................ if pStudioID.char[1] = "$" then / else
+  [434] pushcons 1 .............................. <"public">
+  [436] setlocal 1 .............................. sStudioType = "public"
+  [438] getglobal 206 ........................... <oPublicDisplayManager>
+  [440] getprop 79 .............................. <pStudioID>
+  [442] setobjprop 79 ........................... oPublicDisplayManager.pStudioID = pStudioID
+  [444] getglobal 206 ........................... <oPublicDisplayManager>
+  [446] getprop 228 ............................. <pStudioName>
+  [448] setobjprop 228 .......................... oPublicDisplayManager.pStudioName = pStudioName
+  [450] getglobal 206 ........................... <oPublicDisplayManager>
+  [452] getprop 229 ............................. <pStudioOwner>
+  [454] setobjprop 229 .......................... oPublicDisplayManager.pStudioOwner = pStudioOwner
+  [456] jmp [481]
+  [459] pushcons 4 .............................. <"private">
+  [461] setlocal 1 .............................. sStudioType = "private"
+  [463] getglobal 194 ........................... <oPrivateDisplayManager>
+  [465] getprop 79 .............................. <pStudioID>
+  [467] setobjprop 79 ........................... oPrivateDisplayManager.pStudioID = pStudioID
+  [469] getglobal 194 ........................... <oPrivateDisplayManager>
+  [471] getprop 228 ............................. <pStudioName>
+  [473] setobjprop 228 .......................... oPrivateDisplayManager.pStudioName = pStudioName
+  [475] getglobal 194 ........................... <oPrivateDisplayManager>
+  [477] getprop 229 ............................. <pStudioOwner>
+  [479] setobjprop 229 .......................... oPrivateDisplayManager.pStudioOwner = pStudioOwner
+  [481] jmp [661]
+  [484] peek 0
+  [486] pushcons 1 .............................. <"public">
+  [488] eq
+  [489] jmpifz [574] ............................ (case) "public":
+  [492] getglobal 206 ........................... <oPublicDisplayManager>
+  [494] getobjprop 79 ........................... <oPublicDisplayManager.pStudioID>
+  [496] setlocal 0 .............................. sStudioID = oPublicDisplayManager.pStudioID
+  [498] getparam 0 .............................. <me>
+  [500] pushcons 12 ............................. <"mouseUp:public:studioID">
+  [502] getlocal 0 .............................. <sStudioID>
+  [504] joinpadstr .............................. <"mouseUp:public:studioID" && sStudioID>
+  [505] pusharglistnoret 2 ...................... <me, "mouseUp:public:studioID" && sStudioID>
+  [507] objcall 4 ............................... me.debug("mouseUp:public:studioID" && sStudioID)
+  [509] getglobal 206 ........................... <oPublicDisplayManager>
+  [511] getobjprop 207 .......................... <oPublicDisplayManager.pSelected>
+  [513] pushzero ................................ <0>
+  [514] eq ...................................... <oPublicDisplayManager.pSelected = 0>
+  [515] getglobal 323 ........................... <oStudioByModManager>
+  [518] getlocal 0 .............................. <sStudioID>
+  [520] pusharglist 2 ........................... <oStudioByModManager, sStudioID>
+  [522] objcall 325 ............................. <oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [525] or ...................................... <(oPublicDisplayManager.pSelected = 0) or oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [526] jmpifz [537] ............................ if (oPublicDisplayManager.pSelected = 0) or oStudioByModManager.checkForOpenStudio(sStudioID) then / else
+  [529] pusharglistnoret 0 ...................... <>
+  [531] extcall 71 .............................. beep()
+  [533] ret ..................................... exit
+  [534] jmp [553]
+  [537] getlocal 0 .............................. <sStudioID>
+  [539] setprop 79 .............................. pStudioID = sStudioID
+  [541] getglobal 323 ........................... <oStudioByModManager>
+  [544] getglobal 235 ........................... <sModScreenName>
+  [546] getlocal 0 .............................. <sStudioID>
+  [548] pusharglistnoret 3 ...................... <oStudioByModManager, sModScreenName, sStudioID>
+  [550] objcall 367 ............................. oStudioByModManager.addStudio(sModScreenName, sStudioID)
+  [553] getglobal 206 ........................... <oPublicDisplayManager>
+  [555] getobjprop 228 .......................... <oPublicDisplayManager.pStudioName>
+  [557] setprop 228 ............................. pStudioName = oPublicDisplayManager.pStudioName
+  [559] getglobal 206 ........................... <oPublicDisplayManager>
+  [561] getobjprop 229 .......................... <oPublicDisplayManager.pStudioOwner>
+  [563] setprop 229 ............................. pStudioOwner = oPublicDisplayManager.pStudioOwner
+  [565] getglobal 206 ........................... <oPublicDisplayManager>
+  [567] pusharglistnoret 1 ...................... <oPublicDisplayManager>
+  [569] objcall 205 ............................. oPublicDisplayManager.deSelectLines()
+  [571] jmp [661]
+  [574] peek 0
+  [576] pushcons 4 .............................. <"private">
+  [578] eq
+  [579] jmpifz [661] ............................ (case) "private":
+  [582] getglobal 194 ........................... <oPrivateDisplayManager>
+  [584] getobjprop 79 ........................... <oPrivateDisplayManager.pStudioID>
+  [586] setlocal 0 .............................. sStudioID = oPrivateDisplayManager.pStudioID
+  [588] getparam 0 .............................. <me>
+  [590] pushcons 13 ............................. <"mouseUp:private:studioID">
+  [592] getlocal 0 .............................. <sStudioID>
+  [594] joinpadstr .............................. <"mouseUp:private:studioID" && sStudioID>
+  [595] pusharglistnoret 2 ...................... <me, "mouseUp:private:studioID" && sStudioID>
+  [597] objcall 4 ............................... me.debug("mouseUp:private:studioID" && sStudioID)
+  [599] getglobal 194 ........................... <oPrivateDisplayManager>
+  [601] getobjprop 207 .......................... <oPrivateDisplayManager.pSelected>
+  [603] pushzero ................................ <0>
+  [604] eq ...................................... <oPrivateDisplayManager.pSelected = 0>
+  [605] getglobal 323 ........................... <oStudioByModManager>
+  [608] getlocal 0 .............................. <sStudioID>
+  [610] pusharglist 2 ........................... <oStudioByModManager, sStudioID>
+  [612] objcall 325 ............................. <oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [615] or ...................................... <(oPrivateDisplayManager.pSelected = 0) or oStudioByModManager.checkForOpenStudio(sStudioID)>
+  [616] jmpifz [627] ............................ if (oPrivateDisplayManager.pSelected = 0) or oStudioByModManager.checkForOpenStudio(sStudioID) then / else
+  [619] pusharglistnoret 0 ...................... <>
+  [621] extcall 71 .............................. beep()
+  [623] ret ..................................... exit
+  [624] jmp [643]
+  [627] getlocal 0 .............................. <sStudioID>
+  [629] setprop 79 .............................. pStudioID = sStudioID
+  [631] getglobal 323 ........................... <oStudioByModManager>
+  [634] getglobal 235 ........................... <sModScreenName>
+  [636] getlocal 0 .............................. <sStudioID>
+  [638] pusharglistnoret 3 ...................... <oStudioByModManager, sModScreenName, sStudioID>
+  [640] objcall 367 ............................. oStudioByModManager.addStudio(sModScreenName, sStudioID)
+  [643] getglobal 194 ........................... <oPrivateDisplayManager>
+  [645] getobjprop 228 .......................... <oPrivateDisplayManager.pStudioName>
+  [647] setprop 228 ............................. pStudioName = oPrivateDisplayManager.pStudioName
+  [649] getglobal 194 ........................... <oPrivateDisplayManager>
+  [651] getobjprop 229 .......................... <oPrivateDisplayManager.pStudioOwner>
+  [653] setprop 229 ............................. pStudioOwner = oPrivateDisplayManager.pStudioOwner
+  [655] getglobal 194 ........................... <oPrivateDisplayManager>
+  [657] pusharglistnoret 1 ...................... <oPrivateDisplayManager>
+  [659] objcall 205 ............................. oPrivateDisplayManager.deSelectLines()
+  [661] pop 1 ................................... end case
+  [663] pushint8 1 .............................. <1>
+  [665] setlocal 2
+  [667] getlocal 2
+  [669] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [672] getobjprop 32 ........................... <aChatLogDisplaySprites.count>
+  [674] lteq
+  [675] jmpifz [979] ............................ repeat with i = 1 to aChatLogDisplaySprites.count
+  [678] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [681] getlocal 2 .............................. <i>
+  [683] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [685] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [687] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [689] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [691] pushsymb 324 ............................ <#scriptInstanceList>
+  [694] pushint8 2 .............................. <2>
+  [696] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [698] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [700] getobjprop 330 .......................... <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pActive>
+  [703] setprop 330 ............................. pActive = sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pActive
+  [706] getprop 330 ............................. <pActive>
+  [709] not ..................................... <not pActive>
+  [710] jmpifz [964] ............................ if not pActive then
+  [713] getglobal 199 ........................... <oModControllerManager>
+  [715] getlocal 2 .............................. <i>
+  [717] pusharglist 2 ........................... <oModControllerManager, i>
+  [719] objcall 368 ............................. <oModControllerManager.getControllerBySlot(i)>
+  [722] setlocal 3 .............................. oModRoom = oModControllerManager.getControllerBySlot(i)
+  [724] getglobal 327 ........................... <aModRoomList>
+  [727] getlocal 2 .............................. <i>
+  [729] getlocal 3 .............................. <oModRoom>
+  [731] pusharglistnoret 3 ...................... <aModRoomList, i, oModRoom>
+  [733] objcall 152 ............................. aModRoomList.addProp(i, oModRoom)
+  [735] getglobal 327 ........................... <aModRoomList>
+  [738] pusharglistnoret 1 ...................... <aModRoomList>
+  [740] objcall 369 ............................. aModRoomList.sort()
+  [743] getlocal 3 .............................. <oModRoom>
+  [745] getglobal 235 ........................... <sModScreenName>
+  [747] getprop 79 .............................. <pStudioID>
+  [749] getglobal 327 ........................... <aModRoomList>
+  [752] pusharglistnoret 4 ...................... <oModRoom, sModScreenName, pStudioID, aModRoomList>
+  [754] objcall 370 ............................. oModRoom.openLog(sModScreenName, pStudioID, aModRoomList)
+  [757] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [760] getlocal 2 .............................. <i>
+  [762] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [764] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [766] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [768] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [770] pushsymb 324 ............................ <#scriptInstanceList>
+  [773] pushint8 2 .............................. <2>
+  [775] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [777] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [779] pushint8 1 .............................. <1>
+  [781] setobjprop 330 .......................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pActive = 1
+  [784] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [787] getlocal 2 .............................. <i>
+  [789] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [791] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [793] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [795] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [797] pushsymb 324 ............................ <#scriptInstanceList>
+  [800] pushint8 2 .............................. <2>
+  [802] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [804] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [806] pushint8 1 .............................. <1>
+  [808] setobjprop 371 .......................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pStartChatLog = 1
+  [811] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [814] getlocal 2 .............................. <i>
+  [816] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [818] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [820] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [822] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [824] pushsymb 324 ............................ <#scriptInstanceList>
+  [827] pushint8 2 .............................. <2>
+  [829] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [831] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [833] getprop 79 .............................. <pStudioID>
+  [835] setobjprop 79 ........................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pStudioID = pStudioID
+  [837] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [840] getlocal 2 .............................. <i>
+  [842] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [844] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [846] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [848] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [850] pushsymb 324 ............................ <#scriptInstanceList>
+  [853] pushint8 2 .............................. <2>
+  [855] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [857] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [859] getprop 228 ............................. <pStudioName>
+  [861] setobjprop 228 .......................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pStudioName = pStudioName
+  [863] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [866] getlocal 2 .............................. <i>
+  [868] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [870] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [872] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [874] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [876] pushsymb 324 ............................ <#scriptInstanceList>
+  [879] pushint8 2 .............................. <2>
+  [881] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [883] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [885] getprop 229 ............................. <pStudioOwner>
+  [887] setobjprop 229 .......................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pStudioOwner = pStudioOwner
+  [889] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [892] getlocal 2 .............................. <i>
+  [894] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [896] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [898] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [900] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [902] pushsymb 324 ............................ <#scriptInstanceList>
+  [905] pushint8 2 .............................. <2>
+  [907] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[i]), #scriptInstanceList, 2>
+  [909] objcall 61 .............................. <sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2]>
+  [911] getprop 344 ............................. <pDataType>
+  [914] setobjprop 344 .......................... sprite(aChatLogDisplaySprites[i]).scriptInstanceList[2].pDataType = pDataType
+  [917] getprop 344 ............................. <pDataType>
+  [920] pushcons 2 .............................. <"callAlert">
+  [922] eq ...................................... <pDataType = "callAlert">
+  [923] jmpifz [933] ............................ if pDataType = "callAlert" then / else
+  [926] getlocal 1 .............................. <sStudioType>
+  [928] setlocal 4 .............................. sDataType = sStudioType
+  [930] jmp [938]
+  [933] getprop 344 ............................. <pDataType>
+  [936] setlocal 4 .............................. sDataType = pDataType
+  [938] pushsymb 331 ............................ <#displayOwner>
+  [941] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [944] getlocal 2 .............................. <i>
+  [946] pusharglist 2 ........................... <aChatLogDisplaySprites, i>
+  [948] objcall 33 .............................. <aChatLogDisplaySprites[i]>
+  [950] pusharglist 1 ........................... <aChatLogDisplaySprites[i]>
+  [952] extcall 12 .............................. <sprite(aChatLogDisplaySprites[i])>
+  [954] getlocal 4 .............................. <sDataType>
+  [956] pusharglistnoret 3 ...................... <#displayOwner, sprite(aChatLogDisplaySprites[i]), sDataType>
+  [958] extcall 139 ............................. sendAllSprites(#displayOwner, sprite(aChatLogDisplaySprites[i]), sDataType)
+  [960] ret ..................................... exit
+  [961] jmp [969] ............................... next repeat
+  [964] pusharglistnoret 0 ...................... <>
+  [966] extcall 271 ............................. nothing()
+  [969] pushint8 1
+  [971] getlocal 2
+  [973] add
+  [974] setlocal 2
+  [976] endrepeat [667]
+  [979] pusharglistnoret 0 ...................... <>
+  [981] extcall 71 .............................. beep()
+  [983] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 14 ............................. <"b_openLogBtn: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"b_openLogBtn: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"b_openLogBtn: " & sMessage>
+  [ 17] extcall 38 .............................. put "b_openLogBtn: " & sMessage
+  [ 19] ret
+end

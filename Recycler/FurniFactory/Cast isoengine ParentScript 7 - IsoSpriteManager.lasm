@@ -1,0 +1,1013 @@
+property bDebug, aSprites, aSpritePool, iSpriteCounter
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 56 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] getglobal 88 ............................ <oIsoScene>
+  [ 10] getchainedprop 58 ....................... <oIsoScene.oIsoConstants>
+  [ 12] getobjprop 360 .......................... <oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER>
+  [ 15] setobjprop 591 .......................... me.iSpriteCounter = oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglist 0 ........................... <[]>
+  [ 22] pushlist ................................ <[]>
+  [ 23] setobjprop 592 .......................... me.aSpritePool = []
+  [ 26] getparam 0 .............................. <me>
+  [ 28] pusharglist 0 ........................... <[]>
+  [ 30] pushlist ................................ <[]>
+  [ 31] setobjprop 593 .......................... me.aSprites = []
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pusharglistnoret 1 ...................... <me>
+  [ 38] extcall 92 .............................. return me
+  [ 40] ret
+end
+
+on addSprite me, oSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"addSprite()">
+  [  4] pusharglistnoret 2 ...................... <me, "addSprite()">
+  [  6] objcall 50 .............................. me.debug("addSprite()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 593 ...................... <me.aSprites>
+  [ 13] getparam 1 .............................. <oSprite>
+  [ 15] pusharglistnoret 2 ...................... <me.aSprites, oSprite>
+  [ 17] objcall 133 ............................. me.aSprites.add(oSprite)
+  [ 19] ret
+end
+
+on getSprite me, sID
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"getSprite()">
+  [  4] pusharglistnoret 2 ...................... <me, "getSprite()">
+  [  6] objcall 50 .............................. me.debug("getSprite()")
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushsymb 593 ............................ <#aSprites>
+  [ 19] pusharglist 2 ........................... <me, #aSprites>
+  [ 21] objcall 169 ............................. <me.aSprites.count>
+  [ 23] lteq
+  [ 24] jmpifz [ 69] ............................ repeat with i = 1 to me.aSprites.count
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pushsymb 593 ............................ <#aSprites>
+  [ 32] getlocal 0 .............................. <i>
+  [ 34] pusharglist 3 ........................... <me, #aSprites, i>
+  [ 36] objcall 577 ............................. <me.aSprites[i]>
+  [ 39] setlocal 1 .............................. oSprite = me.aSprites[i]
+  [ 41] getlocal 1 .............................. <oSprite>
+  [ 43] pusharglist 1 ........................... <oSprite>
+  [ 45] objcall 594 ............................. <oSprite.getId()>
+  [ 48] getparam 1 .............................. <sID>
+  [ 50] eq ...................................... <oSprite.getId() = sID>
+  [ 51] jmpifz [ 60] ............................ if oSprite.getId() = sID then
+  [ 54] getlocal 1 .............................. <oSprite>
+  [ 56] pusharglistnoret 1 ...................... <oSprite>
+  [ 58] extcall 92 .............................. return oSprite
+  [ 60] pushint8 1
+  [ 62] getlocal 0
+  [ 64] add
+  [ 65] setlocal 0
+  [ 67] endrepeat [ 12]
+  [ 69] ret
+end
+
+on getSpritesAtSquare me, oSquare
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aSpritesAtSquare = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pushsymb 593 ............................ <#aSprites>
+  [ 16] pusharglist 2 ........................... <me, #aSprites>
+  [ 18] objcall 169 ............................. <me.aSprites.count>
+  [ 20] lteq
+  [ 21] jmpifz [ 67] ............................ repeat with i = 1 to me.aSprites.count
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pushsymb 593 ............................ <#aSprites>
+  [ 29] getlocal 1 .............................. <i>
+  [ 31] pusharglist 3 ........................... <me, #aSprites, i>
+  [ 33] objcall 577 ............................. <me.aSprites[i]>
+  [ 36] setlocal 2 .............................. oSprite = me.aSprites[i]
+  [ 38] getlocal 2 .............................. <oSprite>
+  [ 40] getparam 1 .............................. <oSquare>
+  [ 42] pusharglist 2 ........................... <oSprite, oSquare>
+  [ 44] objcall 596 ............................. <oSprite.existsAtSquare(oSquare)>
+  [ 47] jmpifz [ 58] ............................ if oSprite.existsAtSquare(oSquare) then
+  [ 50] getlocal 0 .............................. <aSpritesAtSquare>
+  [ 52] getlocal 2 .............................. <oSprite>
+  [ 54] pusharglistnoret 2 ...................... <aSpritesAtSquare, oSprite>
+  [ 56] objcall 133 ............................. aSpritesAtSquare.add(oSprite)
+  [ 58] pushint8 1
+  [ 60] getlocal 1
+  [ 62] add
+  [ 63] setlocal 1
+  [ 65] endrepeat [  9]
+  [ 67] getlocal 0 .............................. <aSpritesAtSquare>
+  [ 69] pusharglistnoret 1 ...................... <aSpritesAtSquare>
+  [ 71] extcall 92 .............................. return aSpritesAtSquare
+  [ 73] ret
+end
+
+on removeSprite me, _oSprite
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"removeSprite()">
+  [  4] pusharglistnoret 2 ...................... <me, "removeSprite()">
+  [  6] objcall 50 .............................. me.debug("removeSprite()")
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushsymb 593 ............................ <#aSprites>
+  [ 19] pusharglist 2 ........................... <me, #aSprites>
+  [ 21] objcall 169 ............................. <me.aSprites.count>
+  [ 23] lteq
+  [ 24] jmpifz [ 91] ............................ repeat with i = 1 to me.aSprites.count
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pushsymb 593 ............................ <#aSprites>
+  [ 32] getlocal 0 .............................. <i>
+  [ 34] pusharglist 3 ........................... <me, #aSprites, i>
+  [ 36] objcall 577 ............................. <me.aSprites[i]>
+  [ 39] setlocal 1 .............................. oSprite = me.aSprites[i]
+  [ 41] getlocal 1 .............................. <oSprite>
+  [ 43] pusharglist 1 ........................... <oSprite>
+  [ 45] objcall 594 ............................. <oSprite.getId()>
+  [ 48] getparam 1 .............................. <_oSprite>
+  [ 50] pusharglist 1 ........................... <_oSprite>
+  [ 52] objcall 594 ............................. <_oSprite.getId()>
+  [ 55] eq ...................................... <oSprite.getId() = _oSprite.getId()>
+  [ 56] jmpifz [ 82] ............................ if oSprite.getId() = _oSprite.getId() then
+  [ 59] getlocal 1 .............................. <oSprite>
+  [ 61] pusharglistnoret 1 ...................... <oSprite>
+  [ 63] objcall 331 ............................. oSprite.destroy()
+  [ 66] getparam 0 .............................. <me>
+  [ 68] getchainedprop 593 ...................... <me.aSprites>
+  [ 71] getlocal 0 .............................. <i>
+  [ 73] pusharglistnoret 2 ...................... <me.aSprites, i>
+  [ 75] objcall 598 ............................. me.aSprites.deleteAt(i)
+  [ 78] pusharglistnoret 0 ...................... <>
+  [ 80] extcall 92 .............................. return 
+  [ 82] pushint8 1
+  [ 84] getlocal 0
+  [ 86] add
+  [ 87] setlocal 0
+  [ 89] endrepeat [ 12]
+  [ 91] ret
+end
+
+on toggleBackground me
+  [  0] ret
+end
+
+on getPooledSprite me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 130 ............................. <VOID>
+  [  4] setlocal 0 .............................. iSprite = VOID
+  [  6] getglobal 88 ............................ <oIsoScene>
+  [  8] getchainedprop 58 ....................... <oIsoScene.oIsoConstants>
+  [ 10] getobjprop 360 .......................... <oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER>
+  [ 13] setlocal 1
+  [ 15] getlocal 1
+  [ 17] getglobal 88 ............................ <oIsoScene>
+  [ 19] getchainedprop 58 ....................... <oIsoScene.oIsoConstants>
+  [ 21] getobjprop 361 .......................... <oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER_MAX>
+  [ 24] lteq
+  [ 25] jmpifz [ 94] ............................ repeat with i = oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER to oIsoScene.oIsoConstants.DEFAULT_SPRITE_COUNTER_MAX
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 33] getlocal 1 .............................. <i>
+  [ 35] pusharglist 2 ........................... <me.aSpritePool, i>
+  [ 37] objcall 600 ............................. <me.aSpritePool.getOne(i)>
+  [ 40] pushzero ................................ <0>
+  [ 41] eq ...................................... <me.aSpritePool.getOne(i) = 0>
+  [ 42] jmpifz [ 85] ............................ if me.aSpritePool.getOne(i) = 0 then
+  [ 45] getlocal 1 .............................. <i>
+  [ 47] setlocal 0 .............................. iSprite = i
+  [ 49] getparam 0 .............................. <me>
+  [ 51] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 54] getlocal 1 .............................. <i>
+  [ 56] pusharglistnoret 2 ...................... <me.aSpritePool, i>
+  [ 58] objcall 133 ............................. me.aSpritePool.add(i)
+  [ 60] getlocal 0 .............................. <iSprite>
+  [ 62] pushint8 1 .............................. <1>
+  [ 64] pusharglistnoret 2 ...................... <iSprite, 1>
+  [ 66] extcall 601 ............................. puppetSprite(iSprite, 1)
+  [ 69] getlocal 0 .............................. <iSprite>
+  [ 71] pusharglist 1 ........................... <iSprite>
+  [ 73] extcall 451 ............................. <sprite(iSprite)>
+  [ 76] pusharglist 0 ........................... <[]>
+  [ 78] pushlist ................................ <[]>
+  [ 79] setobjprop 602 .......................... sprite(iSprite).scriptInstanceList = []
+  [ 82] jmp [ 94] ............................... exit repeat
+  [ 85] pushint8 1
+  [ 87] getlocal 1
+  [ 89] add
+  [ 90] setlocal 1
+  [ 92] endrepeat [ 15]
+  [ 94] getlocal 0 .............................. <iSprite>
+  [ 96] pusharglist 1 ........................... <iSprite>
+  [ 98] extcall 105 ............................. <voidp(iSprite)>
+  [100] jmpifz [116] ............................ if voidp(iSprite) then
+  [103] pushcons 3 .............................. <"**** OUT OF SPRITES *****">
+  [105] pusharglistnoret 1 ...................... <"**** OUT OF SPRITES *****">
+  [107] extcall 332 ............................. put "**** OUT OF SPRITES *****"
+  [110] pushcons 4 .............................. <"I'm all out of sprites. :(">
+  [112] pusharglistnoret 1 ...................... <"I'm all out of sprites. :(">
+  [114] extcall 174 ............................. alert("I'm all out of sprites. :(")
+  [116] getlocal 0 .............................. <iSprite>
+  [118] pusharglistnoret 1 ...................... <iSprite>
+  [120] extcall 92 .............................. return iSprite
+  [122] ret
+end
+
+on getPooledSprites me, iNum
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. _aSprites = []
+  [  5] pushint8 1 .............................. <1>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getparam 1 .............................. <iNum>
+  [ 13] lteq
+  [ 14] jmpifz [ 39] ............................ repeat with i = 1 to iNum
+  [ 17] getlocal 0 .............................. <_aSprites>
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglist 1 ........................... <me>
+  [ 23] objcall 452 ............................. <me.getPooledSprite()>
+  [ 26] pusharglistnoret 2 ...................... <_aSprites, me.getPooledSprite()>
+  [ 28] objcall 133 ............................. _aSprites.add(me.getPooledSprite())
+  [ 30] pushint8 1
+  [ 32] getlocal 1
+  [ 34] add
+  [ 35] setlocal 1
+  [ 37] endrepeat [  9]
+  [ 39] getlocal 0 .............................. <_aSprites>
+  [ 41] pusharglistnoret 1 ...................... <_aSprites>
+  [ 43] extcall 92 .............................. return _aSprites
+  [ 45] ret
+end
+
+on returnPooledSprites me, _aSprites
+  [  0] getparam 1 .............................. <_aSprites>
+  [  2] pusharglist 1 ........................... <_aSprites>
+  [  4] extcall 105 ............................. <voidp(_aSprites)>
+  [  6] jmpifz [ 13] ............................ if voidp(_aSprites) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] pushint8 1 .............................. <1>
+  [ 15] setlocal 0
+  [ 17] getlocal 0
+  [ 19] getparam 1 .............................. <_aSprites>
+  [ 21] getobjprop 169 .......................... <_aSprites.count>
+  [ 23] lteq
+  [ 24] jmpifz [ 51] ............................ repeat with i = 1 to _aSprites.count
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getparam 1 .............................. <_aSprites>
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pusharglist 2 ........................... <_aSprites, i>
+  [ 35] objcall 196 ............................. <_aSprites[i]>
+  [ 37] pusharglistnoret 2 ...................... <me, _aSprites[i]>
+  [ 39] objcall 506 ............................. me.returnPooledSprite(_aSprites[i])
+  [ 42] pushint8 1
+  [ 44] getlocal 0
+  [ 46] add
+  [ 47] setlocal 0
+  [ 49] endrepeat [ 17]
+  [ 51] ret
+end
+
+on returnPooledSprite me, iSprite
+  [  0] getparam 1 .............................. <iSprite>
+  [  2] pusharglist 1 ........................... <iSprite>
+  [  4] extcall 105 ............................. <voidp(iSprite)>
+  [  6] jmpifz [ 13] ............................ if voidp(iSprite) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getchainedprop 592 ...................... <me.aSpritePool>
+  [ 18] getparam 1 .............................. <iSprite>
+  [ 20] pusharglistnoret 2 ...................... <me.aSpritePool, iSprite>
+  [ 22] objcall 330 ............................. me.aSpritePool.deleteOne(iSprite)
+  [ 25] getparam 1 .............................. <iSprite>
+  [ 27] pusharglist 1 ........................... <iSprite>
+  [ 29] extcall 451 ............................. <sprite(iSprite)>
+  [ 32] pusharglist 0 ........................... <[]>
+  [ 34] pushlist ................................ <[]>
+  [ 35] setobjprop 602 .......................... sprite(iSprite).scriptInstanceList = []
+  [ 38] getparam 1 .............................. <iSprite>
+  [ 40] pushzero ................................ <0>
+  [ 41] pusharglistnoret 2 ...................... <iSprite, 0>
+  [ 43] extcall 601 ............................. puppetSprite(iSprite, 0)
+  [ 46] getparam 1 .............................. <iSprite>
+  [ 48] pusharglist 1 ........................... <iSprite>
+  [ 50] extcall 451 ............................. <sprite(iSprite)>
+  [ 53] pushzero ................................ <0>
+  [ 54] setobjprop 464 .......................... sprite(iSprite).visible = 0
+  [ 57] ret
+end
+
+on clearSpritePool me
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 0 .............................. <me>
+  [  4] getobjprop 592 .......................... <me.aSpritePool>
+  [  7] pusharglistnoret 2 ...................... <me, me.aSpritePool>
+  [  9] objcall 586 ............................. me.returnPooledSprites(me.aSpritePool)
+  [ 12] ret
+end
+
+on drawStaticSceneSprite me, aProps
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 452 ............................. <me.getPooledSprite()>
+  [  7] setlocal 0 .............................. iSprite = me.getPooledSprite()
+  [  9] getparam 1 .............................. <aProps>
+  [ 11] pushsymb 454 ............................ <#member>
+  [ 14] pusharglist 2 ........................... <aProps, #member>
+  [ 16] objcall 196 ............................. <aProps[#member]>
+  [ 18] pusharglist 1 ........................... <aProps[#member]>
+  [ 20] extcall 105 ............................. <voidp(aProps[#member])>
+  [ 22] jmpifz [ 41] ............................ if voidp(aProps[#member]) then / else
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getlocal 0 .............................. <iSprite>
+  [ 29] pusharglistnoret 2 ...................... <me, iSprite>
+  [ 31] objcall 506 ............................. me.returnPooledSprite(iSprite)
+  [ 34] pusharglistnoret 0 ...................... <>
+  [ 36] extcall 92 .............................. return 
+  [ 38] jmp [ 96]
+  [ 41] getparam 1 .............................. <aProps>
+  [ 43] getobjprop 454 .......................... <aProps.member>
+  [ 46] pusharglist 1 ........................... <aProps.member>
+  [ 48] extcall 454 ............................. <member(aProps.member)>
+  [ 51] setlocal 1 .............................. oMember = member(aProps.member)
+  [ 53] getlocal 1 .............................. <oMember>
+  [ 55] getobjprop 606 .......................... <oMember.memberNum>
+  [ 58] pushint8 1 .............................. <1>
+  [ 60] inv ..................................... <-1>
+  [ 61] eq ...................................... <oMember.memberNum = -1>
+  [ 62] jmpifz [ 81] ............................ if oMember.memberNum = -1 then / else
+  [ 65] getparam 0 .............................. <me>
+  [ 67] getlocal 0 .............................. <iSprite>
+  [ 69] pusharglistnoret 2 ...................... <me, iSprite>
+  [ 71] objcall 506 ............................. me.returnPooledSprite(iSprite)
+  [ 74] pusharglistnoret 0 ...................... <>
+  [ 76] extcall 92 .............................. return 
+  [ 78] jmp [ 96]
+  [ 81] getlocal 0 .............................. <iSprite>
+  [ 83] pusharglist 1 ........................... <iSprite>
+  [ 85] extcall 451 ............................. <sprite(iSprite)>
+  [ 88] getparam 1 .............................. <aProps>
+  [ 90] getobjprop 454 .......................... <aProps.member>
+  [ 93] setobjprop 454 .......................... sprite(iSprite).member = aProps.member
+  [ 96] getparam 1 .............................. <aProps>
+  [ 98] pushsymb 144 ............................ <#x>
+  [100] pusharglist 2 ........................... <aProps, #x>
+  [102] objcall 196 ............................. <aProps[#x]>
+  [104] pusharglist 1 ........................... <aProps[#x]>
+  [106] extcall 105 ............................. <voidp(aProps[#x])>
+  [108] jmpifz [125] ............................ if voidp(aProps[#x]) then / else
+  [111] getlocal 0 .............................. <iSprite>
+  [113] pusharglist 1 ........................... <iSprite>
+  [115] extcall 451 ............................. <sprite(iSprite)>
+  [118] pushzero ................................ <0>
+  [119] setobjprop 299 .......................... sprite(iSprite).locH = 0
+  [122] jmp [139]
+  [125] getlocal 0 .............................. <iSprite>
+  [127] pusharglist 1 ........................... <iSprite>
+  [129] extcall 451 ............................. <sprite(iSprite)>
+  [132] getparam 1 .............................. <aProps>
+  [134] getobjprop 144 .......................... <aProps.x>
+  [136] setobjprop 299 .......................... sprite(iSprite).locH = aProps.x
+  [139] getparam 1 .............................. <aProps>
+  [141] pushsymb 315 ............................ <#y>
+  [144] pusharglist 2 ........................... <aProps, #y>
+  [146] objcall 196 ............................. <aProps[#y]>
+  [148] pusharglist 1 ........................... <aProps[#y]>
+  [150] extcall 105 ............................. <voidp(aProps[#y])>
+  [152] jmpifz [169] ............................ if voidp(aProps[#y]) then / else
+  [155] getlocal 0 .............................. <iSprite>
+  [157] pusharglist 1 ........................... <iSprite>
+  [159] extcall 451 ............................. <sprite(iSprite)>
+  [162] pushzero ................................ <0>
+  [163] setobjprop 300 .......................... sprite(iSprite).locV = 0
+  [166] jmp [184]
+  [169] getlocal 0 .............................. <iSprite>
+  [171] pusharglist 1 ........................... <iSprite>
+  [173] extcall 451 ............................. <sprite(iSprite)>
+  [176] getparam 1 .............................. <aProps>
+  [178] getobjprop 315 .......................... <aProps.y>
+  [181] setobjprop 300 .......................... sprite(iSprite).locV = aProps.y
+  [184] getparam 1 .............................. <aProps>
+  [186] pushsymb 462 ............................ <#ink>
+  [189] pusharglist 2 ........................... <aProps, #ink>
+  [191] objcall 196 ............................. <aProps[#ink]>
+  [193] pusharglist 1 ........................... <aProps[#ink]>
+  [195] extcall 105 ............................. <voidp(aProps[#ink])>
+  [197] jmpifz [214] ............................ if voidp(aProps[#ink]) then / else
+  [200] getlocal 0 .............................. <iSprite>
+  [202] pusharglist 1 ........................... <iSprite>
+  [204] extcall 451 ............................. <sprite(iSprite)>
+  [207] pushzero ................................ <0>
+  [208] setobjprop 462 .......................... sprite(iSprite).ink = 0
+  [211] jmp [229]
+  [214] getlocal 0 .............................. <iSprite>
+  [216] pusharglist 1 ........................... <iSprite>
+  [218] extcall 451 ............................. <sprite(iSprite)>
+  [221] getparam 1 .............................. <aProps>
+  [223] getobjprop 462 .......................... <aProps.ink>
+  [226] setobjprop 462 .......................... sprite(iSprite).ink = aProps.ink
+  [229] getparam 1 .............................. <aProps>
+  [231] pushsymb 463 ............................ <#blend>
+  [234] pusharglist 2 ........................... <aProps, #blend>
+  [236] objcall 196 ............................. <aProps[#blend]>
+  [238] pusharglist 1 ........................... <aProps[#blend]>
+  [240] extcall 105 ............................. <voidp(aProps[#blend])>
+  [242] jmpifz [260] ............................ if voidp(aProps[#blend]) then / else
+  [245] getlocal 0 .............................. <iSprite>
+  [247] pusharglist 1 ........................... <iSprite>
+  [249] extcall 451 ............................. <sprite(iSprite)>
+  [252] pushint8 100 ............................ <100>
+  [254] setobjprop 463 .......................... sprite(iSprite).blend = 100
+  [257] jmp [275]
+  [260] getlocal 0 .............................. <iSprite>
+  [262] pusharglist 1 ........................... <iSprite>
+  [264] extcall 451 ............................. <sprite(iSprite)>
+  [267] getparam 1 .............................. <aProps>
+  [269] getobjprop 463 .......................... <aProps.blend>
+  [272] setobjprop 463 .......................... sprite(iSprite).blend = aProps.blend
+  [275] getparam 1 .............................. <aProps>
+  [277] pushsymb 456 ............................ <#width>
+  [280] pusharglist 2 ........................... <aProps, #width>
+  [282] objcall 196 ............................. <aProps[#width]>
+  [284] pusharglist 1 ........................... <aProps[#width]>
+  [286] extcall 105 ............................. <voidp(aProps[#width])>
+  [288] jmpifz [309] ............................ if voidp(aProps[#width]) then / else
+  [291] getlocal 0 .............................. <iSprite>
+  [293] pusharglist 1 ........................... <iSprite>
+  [295] extcall 451 ............................. <sprite(iSprite)>
+  [298] getlocal 1 .............................. <oMember>
+  [300] getobjprop 456 .......................... <oMember.width>
+  [303] setobjprop 456 .......................... sprite(iSprite).width = oMember.width
+  [306] jmp [324]
+  [309] getlocal 0 .............................. <iSprite>
+  [311] pusharglist 1 ........................... <iSprite>
+  [313] extcall 451 ............................. <sprite(iSprite)>
+  [316] getparam 1 .............................. <aProps>
+  [318] getobjprop 456 .......................... <aProps.width>
+  [321] setobjprop 456 .......................... sprite(iSprite).width = aProps.width
+  [324] getparam 1 .............................. <aProps>
+  [326] pushsymb 457 ............................ <#height>
+  [329] pusharglist 2 ........................... <aProps, #height>
+  [331] objcall 196 ............................. <aProps[#height]>
+  [333] pusharglist 1 ........................... <aProps[#height]>
+  [335] extcall 105 ............................. <voidp(aProps[#height])>
+  [337] jmpifz [358] ............................ if voidp(aProps[#height]) then / else
+  [340] getlocal 0 .............................. <iSprite>
+  [342] pusharglist 1 ........................... <iSprite>
+  [344] extcall 451 ............................. <sprite(iSprite)>
+  [347] getlocal 1 .............................. <oMember>
+  [349] getobjprop 457 .......................... <oMember.height>
+  [352] setobjprop 457 .......................... sprite(iSprite).height = oMember.height
+  [355] jmp [373]
+  [358] getlocal 0 .............................. <iSprite>
+  [360] pusharglist 1 ........................... <iSprite>
+  [362] extcall 451 ............................. <sprite(iSprite)>
+  [365] getparam 1 .............................. <aProps>
+  [367] getobjprop 457 .......................... <aProps.height>
+  [370] setobjprop 457 .......................... sprite(iSprite).height = aProps.height
+  [373] getparam 1 .............................. <aProps>
+  [375] pushsymb 607 ............................ <#palette>
+  [378] pusharglist 2 ........................... <aProps, #palette>
+  [380] objcall 196 ............................. <aProps[#palette]>
+  [382] pusharglist 1 ........................... <aProps[#palette]>
+  [384] extcall 105 ............................. <voidp(aProps[#palette])>
+  [386] jmpifz [392] ............................ if voidp(aProps[#palette]) then / else
+  [389] jmp [423]
+  [392] getparam 1 .............................. <aProps>
+  [394] getobjprop 607 .......................... <aProps.palette>
+  [397] pusharglist 1 ........................... <aProps.palette>
+  [399] extcall 454 ............................. <member(aProps.palette)>
+  [402] setlocal 2 .............................. oPaletteMember = member(aProps.palette)
+  [404] getlocal 2 .............................. <oPaletteMember>
+  [406] getobjprop 606 .......................... <oPaletteMember.memberNum>
+  [409] pushint8 1 .............................. <1>
+  [411] inv ..................................... <-1>
+  [412] nteq .................................... <oPaletteMember.memberNum <> -1>
+  [413] jmpifz [423] ............................ if oPaletteMember.memberNum <> -1 then
+  [416] getlocal 1 .............................. <oMember>
+  [418] getlocal 2 .............................. <oPaletteMember>
+  [420] setobjprop 607 .......................... oMember.palette = oPaletteMember
+  [423] getparam 1 .............................. <aProps>
+  [425] pushsymb 608 ............................ <#skew>
+  [428] pusharglist 2 ........................... <aProps, #skew>
+  [430] objcall 196 ............................. <aProps[#skew]>
+  [432] pusharglist 1 ........................... <aProps[#skew]>
+  [434] extcall 105 ............................. <voidp(aProps[#skew])>
+  [436] jmpifz [453] ............................ if voidp(aProps[#skew]) then / else
+  [439] getlocal 0 .............................. <iSprite>
+  [441] pusharglist 1 ........................... <iSprite>
+  [443] extcall 451 ............................. <sprite(iSprite)>
+  [446] pushzero ................................ <0>
+  [447] setobjprop 608 .......................... sprite(iSprite).skew = 0
+  [450] jmp [468]
+  [453] getlocal 0 .............................. <iSprite>
+  [455] pusharglist 1 ........................... <iSprite>
+  [457] extcall 451 ............................. <sprite(iSprite)>
+  [460] getparam 1 .............................. <aProps>
+  [462] getobjprop 608 .......................... <aProps.skew>
+  [465] setobjprop 608 .......................... sprite(iSprite).skew = aProps.skew
+  [468] getparam 1 .............................. <aProps>
+  [470] pushsymb 609 ............................ <#flipH>
+  [473] pusharglist 2 ........................... <aProps, #flipH>
+  [475] objcall 196 ............................. <aProps[#flipH]>
+  [477] pusharglist 1 ........................... <aProps[#flipH]>
+  [479] extcall 105 ............................. <voidp(aProps[#flipH])>
+  [481] jmpifz [498] ............................ if voidp(aProps[#flipH]) then / else
+  [484] getlocal 0 .............................. <iSprite>
+  [486] pusharglist 1 ........................... <iSprite>
+  [488] extcall 451 ............................. <sprite(iSprite)>
+  [491] pushzero ................................ <0>
+  [492] setobjprop 609 .......................... sprite(iSprite).flipH = 0
+  [495] jmp [513]
+  [498] getlocal 0 .............................. <iSprite>
+  [500] pusharglist 1 ........................... <iSprite>
+  [502] extcall 451 ............................. <sprite(iSprite)>
+  [505] getparam 1 .............................. <aProps>
+  [507] getobjprop 609 .......................... <aProps.flipH>
+  [510] setobjprop 609 .......................... sprite(iSprite).flipH = aProps.flipH
+  [513] getparam 1 .............................. <aProps>
+  [515] pushsymb 610 ............................ <#flipV>
+  [518] pusharglist 2 ........................... <aProps, #flipV>
+  [520] objcall 196 ............................. <aProps[#flipV]>
+  [522] pusharglist 1 ........................... <aProps[#flipV]>
+  [524] extcall 105 ............................. <voidp(aProps[#flipV])>
+  [526] jmpifz [543] ............................ if voidp(aProps[#flipV]) then / else
+  [529] getlocal 0 .............................. <iSprite>
+  [531] pusharglist 1 ........................... <iSprite>
+  [533] extcall 451 ............................. <sprite(iSprite)>
+  [536] pushzero ................................ <0>
+  [537] setobjprop 610 .......................... sprite(iSprite).flipV = 0
+  [540] jmp [558]
+  [543] getlocal 0 .............................. <iSprite>
+  [545] pusharglist 1 ........................... <iSprite>
+  [547] extcall 451 ............................. <sprite(iSprite)>
+  [550] getparam 1 .............................. <aProps>
+  [552] getobjprop 610 .......................... <aProps.flipV>
+  [555] setobjprop 610 .......................... sprite(iSprite).flipV = aProps.flipV
+  [558] getparam 1 .............................. <aProps>
+  [560] pushsymb 611 ............................ <#rotation>
+  [563] pusharglist 2 ........................... <aProps, #rotation>
+  [565] objcall 196 ............................. <aProps[#rotation]>
+  [567] pusharglist 1 ........................... <aProps[#rotation]>
+  [569] extcall 105 ............................. <voidp(aProps[#rotation])>
+  [571] jmpifz [588] ............................ if voidp(aProps[#rotation]) then / else
+  [574] getlocal 0 .............................. <iSprite>
+  [576] pusharglist 1 ........................... <iSprite>
+  [578] extcall 451 ............................. <sprite(iSprite)>
+  [581] pushzero ................................ <0>
+  [582] setobjprop 611 .......................... sprite(iSprite).rotation = 0
+  [585] jmp [603]
+  [588] getlocal 0 .............................. <iSprite>
+  [590] pusharglist 1 ........................... <iSprite>
+  [592] extcall 451 ............................. <sprite(iSprite)>
+  [595] getparam 1 .............................. <aProps>
+  [597] getobjprop 611 .......................... <aProps.rotation>
+  [600] setobjprop 611 .......................... sprite(iSprite).rotation = aProps.rotation
+  [603] pusharglist 0 ........................... <>
+  [605] extcall 130 ............................. <VOID>
+  [607] setlocal 3 .............................. iRow = VOID
+  [609] getparam 1 .............................. <aProps>
+  [611] pushsymb 612 ............................ <#row>
+  [614] pusharglist 2 ........................... <aProps, #row>
+  [616] objcall 196 ............................. <aProps[#row]>
+  [618] pusharglist 1 ........................... <aProps[#row]>
+  [620] extcall 105 ............................. <voidp(aProps[#row])>
+  [622] not ..................................... <not voidp(aProps[#row])>
+  [623] jmpifz [637] ............................ if not voidp(aProps[#row]) then
+  [626] getparam 1 .............................. <aProps>
+  [628] getobjprop 612 .......................... <aProps.row>
+  [631] pusharglist 1 ........................... <aProps.row>
+  [633] extcall 107 ............................. <integer(aProps.row)>
+  [635] setlocal 3 .............................. iRow = integer(aProps.row)
+  [637] pusharglist 0 ........................... <>
+  [639] extcall 130 ............................. <VOID>
+  [641] setlocal 4 .............................. iCol = VOID
+  [643] getparam 1 .............................. <aProps>
+  [645] pushsymb 613 ............................ <#col>
+  [648] pusharglist 2 ........................... <aProps, #col>
+  [650] objcall 196 ............................. <aProps[#col]>
+  [652] pusharglist 1 ........................... <aProps[#col]>
+  [654] extcall 105 ............................. <voidp(aProps[#col])>
+  [656] not ..................................... <not voidp(aProps[#col])>
+  [657] jmpifz [671] ............................ if not voidp(aProps[#col]) then
+  [660] getparam 1 .............................. <aProps>
+  [662] getobjprop 613 .......................... <aProps.col>
+  [665] pusharglist 1 ........................... <aProps.col>
+  [667] extcall 107 ............................. <integer(aProps.col)>
+  [669] setlocal 4 .............................. iCol = integer(aProps.col)
+  [671] pusharglist 0 ........................... <>
+  [673] extcall 130 ............................. <VOID>
+  [675] setlocal 5 .............................. iLayer = VOID
+  [677] getparam 1 .............................. <aProps>
+  [679] pushsymb 614 ............................ <#layer>
+  [682] pusharglist 2 ........................... <aProps, #layer>
+  [684] objcall 196 ............................. <aProps[#layer]>
+  [686] pusharglist 1 ........................... <aProps[#layer]>
+  [688] extcall 105 ............................. <voidp(aProps[#layer])>
+  [690] not ..................................... <not voidp(aProps[#layer])>
+  [691] jmpifz [701] ............................ if not voidp(aProps[#layer]) then
+  [694] getparam 1 .............................. <aProps>
+  [696] getobjprop 614 .......................... <aProps.layer>
+  [699] setlocal 5 .............................. iLayer = aProps.layer
+  [701] pusharglist 0 ........................... <>
+  [703] extcall 130 ............................. <VOID>
+  [705] setlocal 6 .............................. iDepth = VOID
+  [707] pusharglist 0 ........................... <>
+  [709] extcall 130 ............................. <VOID>
+  [711] setlocal 7 .............................. oSquare = VOID
+  [713] getlocal 3 .............................. <iRow>
+  [715] pusharglist 1 ........................... <iRow>
+  [717] extcall 105 ............................. <voidp(iRow)>
+  [719] not ..................................... <not voidp(iRow)>
+  [720] getlocal 4 .............................. <iCol>
+  [722] pusharglist 1 ........................... <iCol>
+  [724] extcall 105 ............................. <voidp(iCol)>
+  [726] not ..................................... <not voidp(iCol)>
+  [727] and ..................................... <not voidp(iRow) and not voidp(iCol)>
+  [728] getlocal 5 .............................. <iLayer>
+  [730] pusharglist 1 ........................... <iLayer>
+  [732] extcall 105 ............................. <voidp(iLayer)>
+  [734] not ..................................... <not voidp(iLayer)>
+  [735] and ..................................... <not voidp(iRow) and not voidp(iCol) and not voidp(iLayer)>
+  [736] jmpifz [799] ............................ if not voidp(iRow) and not voidp(iCol) and not voidp(iLayer) then
+  [739] getglobal 88 ............................ <oIsoScene>
+  [741] getchainedprop 114 ...................... <oIsoScene.oGrid>
+  [743] getlocal 3 .............................. <iRow>
+  [745] getlocal 4 .............................. <iCol>
+  [747] pusharglist 3 ........................... <oIsoScene.oGrid, iRow, iCol>
+  [749] objcall 283 ............................. <oIsoScene.oGrid.getSquareByRowCol(iRow, iCol)>
+  [752] setlocal 7 .............................. oSquare = oIsoScene.oGrid.getSquareByRowCol(iRow, iCol)
+  [754] getlocal 7 .............................. <oSquare>
+  [756] pusharglist 1 ........................... <oSquare>
+  [758] extcall 105 ............................. <voidp(oSquare)>
+  [760] not ..................................... <not voidp(oSquare)>
+  [761] jmpifz [799] ............................ if not voidp(oSquare) then
+  [764] getlocal 7 .............................. <oSquare>
+  [766] getlocal 5 .............................. <iLayer>
+  [768] pushzero ................................ <0>
+  [769] pusharglist 3 ........................... <oSquare, iLayer, 0>
+  [771] objcall 550 ............................. <oSquare.getHeightLayer(iLayer, 0)>
+  [774] setlocal 8 .............................. iHeightLayer = oSquare.getHeightLayer(iLayer, 0)
+  [776] getlocal 7 .............................. <oSquare>
+  [778] getlocal 8 .............................. <iHeightLayer>
+  [780] pusharglist 2 ........................... <oSquare, iHeightLayer>
+  [782] objcall 552 ............................. <oSquare.getDepthByLayer(iHeightLayer)>
+  [785] setlocal 6 .............................. iDepth = oSquare.getDepthByLayer(iHeightLayer)
+  [787] getlocal 0 .............................. <iSprite>
+  [789] pusharglist 1 ........................... <iSprite>
+  [791] extcall 451 ............................. <sprite(iSprite)>
+  [794] getlocal 6 .............................. <iDepth>
+  [796] setobjprop 482 .......................... sprite(iSprite).locZ = iDepth
+  [799] getlocal 0 .............................. <iSprite>
+  [801] pusharglist 1 ........................... <iSprite>
+  [803] extcall 451 ............................. <sprite(iSprite)>
+  [806] pushint8 1 .............................. <1>
+  [808] setobjprop 464 .......................... sprite(iSprite).visible = 1
+  [811] getlocal 0 .............................. <iSprite>
+  [813] pusharglistnoret 1 ...................... <iSprite>
+  [815] extcall 92 .............................. return iSprite
+  [817] ret
+end
+
+on buildSpriteProps me, oXml
+  [  0] getmovieprop 617 ........................ <the itemDelimiter>
+  [  3] setlocal 0 .............................. iOldDelimiter = the itemDelimiter
+  [  5] pushcons 5 .............................. <">">
+  [  7] setmovieprop 617 ........................ the itemDelimiter = ">"
+  [ 10] getparam 1 .............................. <oXml>
+  [ 12] pusharglist 1 ........................... <oXml>
+  [ 14] objcall 405 ............................. <oXml.toString()>
+  [ 17] setlocal 1 .............................. sXmlString = oXml.toString()
+  [ 19] getlocal 1 .............................. <sXmlString>
+  [ 21] pushsymb 618 ............................ <#item>
+  [ 24] pushint8 1 .............................. <1>
+  [ 26] pusharglist 3 ........................... <sXmlString, #item, 1>
+  [ 28] objcall 577 ............................. <sXmlString.item[1]>
+  [ 31] setlocal 1 .............................. sXmlString = sXmlString.item[1]
+  [ 33] getlocal 0 .............................. <iOldDelimiter>
+  [ 35] setmovieprop 617 ........................ the itemDelimiter = iOldDelimiter
+  [ 38] pusharglist 0 ........................... <[:]>
+  [ 40] pushproplist ............................ <[:]>
+  [ 41] setlocal 2 .............................. aProps = [:]
+  [ 43] getlocal 1 .............................. <sXmlString>
+  [ 45] pushcons 6 .............................. <"member=">
+  [ 47] containsstr ............................. <sXmlString contains "member=">
+  [ 48] jmpifz [ 68] ............................ if sXmlString contains "member=" then
+  [ 51] getlocal 2 .............................. <aProps>
+  [ 53] pushsymb 454 ............................ <#member>
+  [ 56] getparam 1 .............................. <oXml>
+  [ 58] getchainedprop 108 ...................... <oXml.attributes>
+  [ 60] getobjprop 454 .......................... <oXml.attributes.member>
+  [ 63] pusharglistnoret 3 ...................... <aProps, #member, oXml.attributes.member>
+  [ 65] objcall 357 ............................. aProps.addProp(#member, oXml.attributes.member)
+  [ 68] getlocal 1 .............................. <sXmlString>
+  [ 70] pushcons 7 .............................. <"media=">
+  [ 72] containsstr ............................. <sXmlString contains "media=">
+  [ 73] jmpifz [ 98] ............................ if sXmlString contains "media=" then
+  [ 76] getlocal 2 .............................. <aProps>
+  [ 78] pushsymb 454 ............................ <#member>
+  [ 81] getparam 1 .............................. <oXml>
+  [ 83] getchainedprop 108 ...................... <oXml.attributes>
+  [ 85] getobjprop 620 .......................... <oXml.attributes.media>
+  [ 88] pusharglist 1 ........................... <oXml.attributes.media>
+  [ 90] extcall 619 ............................. <symbol(oXml.attributes.media)>
+  [ 93] pusharglistnoret 3 ...................... <aProps, #member, symbol(oXml.attributes.media)>
+  [ 95] objcall 357 ............................. aProps.addProp(#member, symbol(oXml.attributes.media))
+  [ 98] getlocal 1 .............................. <sXmlString>
+  [100] pushcons 8 .............................. <"x=">
+  [102] containsstr ............................. <sXmlString contains "x=">
+  [103] jmpifz [125] ............................ if sXmlString contains "x=" then
+  [106] getlocal 2 .............................. <aProps>
+  [108] pushsymb 144 ............................ <#x>
+  [110] getparam 1 .............................. <oXml>
+  [112] getchainedprop 108 ...................... <oXml.attributes>
+  [114] getobjprop 144 .......................... <oXml.attributes.x>
+  [116] pusharglist 1 ........................... <oXml.attributes.x>
+  [118] extcall 107 ............................. <integer(oXml.attributes.x)>
+  [120] pusharglistnoret 3 ...................... <aProps, #x, integer(oXml.attributes.x)>
+  [122] objcall 357 ............................. aProps.addProp(#x, integer(oXml.attributes.x))
+  [125] getlocal 1 .............................. <sXmlString>
+  [127] pushcons 9 .............................. <"y=">
+  [129] containsstr ............................. <sXmlString contains "y=">
+  [130] jmpifz [154] ............................ if sXmlString contains "y=" then
+  [133] getlocal 2 .............................. <aProps>
+  [135] pushsymb 315 ............................ <#y>
+  [138] getparam 1 .............................. <oXml>
+  [140] getchainedprop 108 ...................... <oXml.attributes>
+  [142] getobjprop 315 .......................... <oXml.attributes.y>
+  [145] pusharglist 1 ........................... <oXml.attributes.y>
+  [147] extcall 107 ............................. <integer(oXml.attributes.y)>
+  [149] pusharglistnoret 3 ...................... <aProps, #y, integer(oXml.attributes.y)>
+  [151] objcall 357 ............................. aProps.addProp(#y, integer(oXml.attributes.y))
+  [154] getlocal 1 .............................. <sXmlString>
+  [156] pushcons 10 ............................. <"ink=">
+  [158] containsstr ............................. <sXmlString contains "ink=">
+  [159] jmpifz [183] ............................ if sXmlString contains "ink=" then
+  [162] getlocal 2 .............................. <aProps>
+  [164] pushsymb 462 ............................ <#ink>
+  [167] getparam 1 .............................. <oXml>
+  [169] getchainedprop 108 ...................... <oXml.attributes>
+  [171] getobjprop 462 .......................... <oXml.attributes.ink>
+  [174] pusharglist 1 ........................... <oXml.attributes.ink>
+  [176] extcall 107 ............................. <integer(oXml.attributes.ink)>
+  [178] pusharglistnoret 3 ...................... <aProps, #ink, integer(oXml.attributes.ink)>
+  [180] objcall 357 ............................. aProps.addProp(#ink, integer(oXml.attributes.ink))
+  [183] getlocal 1 .............................. <sXmlString>
+  [185] pushcons 11 ............................. <"blend=">
+  [187] containsstr ............................. <sXmlString contains "blend=">
+  [188] jmpifz [212] ............................ if sXmlString contains "blend=" then
+  [191] getlocal 2 .............................. <aProps>
+  [193] pushsymb 463 ............................ <#blend>
+  [196] getparam 1 .............................. <oXml>
+  [198] getchainedprop 108 ...................... <oXml.attributes>
+  [200] getobjprop 463 .......................... <oXml.attributes.blend>
+  [203] pusharglist 1 ........................... <oXml.attributes.blend>
+  [205] extcall 107 ............................. <integer(oXml.attributes.blend)>
+  [207] pusharglistnoret 3 ...................... <aProps, #blend, integer(oXml.attributes.blend)>
+  [209] objcall 357 ............................. aProps.addProp(#blend, integer(oXml.attributes.blend))
+  [212] getlocal 1 .............................. <sXmlString>
+  [214] pushcons 12 ............................. <"width=">
+  [216] containsstr ............................. <sXmlString contains "width=">
+  [217] jmpifz [241] ............................ if sXmlString contains "width=" then
+  [220] getlocal 2 .............................. <aProps>
+  [222] pushsymb 456 ............................ <#width>
+  [225] getparam 1 .............................. <oXml>
+  [227] getchainedprop 108 ...................... <oXml.attributes>
+  [229] getobjprop 456 .......................... <oXml.attributes.width>
+  [232] pusharglist 1 ........................... <oXml.attributes.width>
+  [234] extcall 107 ............................. <integer(oXml.attributes.width)>
+  [236] pusharglistnoret 3 ...................... <aProps, #width, integer(oXml.attributes.width)>
+  [238] objcall 357 ............................. aProps.addProp(#width, integer(oXml.attributes.width))
+  [241] getlocal 1 .............................. <sXmlString>
+  [243] pushcons 13 ............................. <"height=">
+  [245] containsstr ............................. <sXmlString contains "height=">
+  [246] jmpifz [270] ............................ if sXmlString contains "height=" then
+  [249] getlocal 2 .............................. <aProps>
+  [251] pushsymb 457 ............................ <#height>
+  [254] getparam 1 .............................. <oXml>
+  [256] getchainedprop 108 ...................... <oXml.attributes>
+  [258] getobjprop 457 .......................... <oXml.attributes.height>
+  [261] pusharglist 1 ........................... <oXml.attributes.height>
+  [263] extcall 107 ............................. <integer(oXml.attributes.height)>
+  [265] pusharglistnoret 3 ...................... <aProps, #height, integer(oXml.attributes.height)>
+  [267] objcall 357 ............................. aProps.addProp(#height, integer(oXml.attributes.height))
+  [270] getlocal 1 .............................. <sXmlString>
+  [272] pushcons 14 ............................. <"palette=">
+  [274] containsstr ............................. <sXmlString contains "palette=">
+  [275] jmpifz [295] ............................ if sXmlString contains "palette=" then
+  [278] getlocal 2 .............................. <aProps>
+  [280] pushsymb 607 ............................ <#palette>
+  [283] getparam 1 .............................. <oXml>
+  [285] getchainedprop 108 ...................... <oXml.attributes>
+  [287] getobjprop 607 .......................... <oXml.attributes.palette>
+  [290] pusharglistnoret 3 ...................... <aProps, #palette, oXml.attributes.palette>
+  [292] objcall 357 ............................. aProps.addProp(#palette, oXml.attributes.palette)
+  [295] getlocal 1 .............................. <sXmlString>
+  [297] pushcons 15 ............................. <"skew=">
+  [299] containsstr ............................. <sXmlString contains "skew=">
+  [300] jmpifz [324] ............................ if sXmlString contains "skew=" then
+  [303] getlocal 2 .............................. <aProps>
+  [305] pushsymb 608 ............................ <#skew>
+  [308] getparam 1 .............................. <oXml>
+  [310] getchainedprop 108 ...................... <oXml.attributes>
+  [312] getobjprop 608 .......................... <oXml.attributes.skew>
+  [315] pusharglist 1 ........................... <oXml.attributes.skew>
+  [317] extcall 107 ............................. <integer(oXml.attributes.skew)>
+  [319] pusharglistnoret 3 ...................... <aProps, #skew, integer(oXml.attributes.skew)>
+  [321] objcall 357 ............................. aProps.addProp(#skew, integer(oXml.attributes.skew))
+  [324] getlocal 1 .............................. <sXmlString>
+  [326] pushcons 16 ............................. <"flipH=">
+  [328] containsstr ............................. <sXmlString contains "flipH=">
+  [329] jmpifz [353] ............................ if sXmlString contains "flipH=" then
+  [332] getlocal 2 .............................. <aProps>
+  [334] pushsymb 609 ............................ <#flipH>
+  [337] getparam 1 .............................. <oXml>
+  [339] getchainedprop 108 ...................... <oXml.attributes>
+  [341] getobjprop 609 .......................... <oXml.attributes.flipH>
+  [344] pusharglist 1 ........................... <oXml.attributes.flipH>
+  [346] extcall 107 ............................. <integer(oXml.attributes.flipH)>
+  [348] pusharglistnoret 3 ...................... <aProps, #flipH, integer(oXml.attributes.flipH)>
+  [350] objcall 357 ............................. aProps.addProp(#flipH, integer(oXml.attributes.flipH))
+  [353] getlocal 1 .............................. <sXmlString>
+  [355] pushcons 17 ............................. <"flipV=">
+  [357] containsstr ............................. <sXmlString contains "flipV=">
+  [358] jmpifz [382] ............................ if sXmlString contains "flipV=" then
+  [361] getlocal 2 .............................. <aProps>
+  [363] pushsymb 610 ............................ <#flipV>
+  [366] getparam 1 .............................. <oXml>
+  [368] getchainedprop 108 ...................... <oXml.attributes>
+  [370] getobjprop 610 .......................... <oXml.attributes.flipV>
+  [373] pusharglist 1 ........................... <oXml.attributes.flipV>
+  [375] extcall 107 ............................. <integer(oXml.attributes.flipV)>
+  [377] pusharglistnoret 3 ...................... <aProps, #flipV, integer(oXml.attributes.flipV)>
+  [379] objcall 357 ............................. aProps.addProp(#flipV, integer(oXml.attributes.flipV))
+  [382] getlocal 1 .............................. <sXmlString>
+  [384] pushcons 18 ............................. <"rotation=">
+  [386] containsstr ............................. <sXmlString contains "rotation=">
+  [387] jmpifz [411] ............................ if sXmlString contains "rotation=" then
+  [390] getlocal 2 .............................. <aProps>
+  [392] pushsymb 611 ............................ <#rotation>
+  [395] getparam 1 .............................. <oXml>
+  [397] getchainedprop 108 ...................... <oXml.attributes>
+  [399] getobjprop 611 .......................... <oXml.attributes.rotation>
+  [402] pusharglist 1 ........................... <oXml.attributes.rotation>
+  [404] extcall 107 ............................. <integer(oXml.attributes.rotation)>
+  [406] pusharglistnoret 3 ...................... <aProps, #rotation, integer(oXml.attributes.rotation)>
+  [408] objcall 357 ............................. aProps.addProp(#rotation, integer(oXml.attributes.rotation))
+  [411] getlocal 1 .............................. <sXmlString>
+  [413] pushcons 19 ............................. <"row=">
+  [415] containsstr ............................. <sXmlString contains "row=">
+  [416] jmpifz [440] ............................ if sXmlString contains "row=" then
+  [419] getlocal 2 .............................. <aProps>
+  [421] pushsymb 612 ............................ <#row>
+  [424] getparam 1 .............................. <oXml>
+  [426] getchainedprop 108 ...................... <oXml.attributes>
+  [428] getobjprop 612 .......................... <oXml.attributes.row>
+  [431] pusharglist 1 ........................... <oXml.attributes.row>
+  [433] extcall 107 ............................. <integer(oXml.attributes.row)>
+  [435] pusharglistnoret 3 ...................... <aProps, #row, integer(oXml.attributes.row)>
+  [437] objcall 357 ............................. aProps.addProp(#row, integer(oXml.attributes.row))
+  [440] getlocal 1 .............................. <sXmlString>
+  [442] pushcons 20 ............................. <"col=">
+  [444] containsstr ............................. <sXmlString contains "col=">
+  [445] jmpifz [469] ............................ if sXmlString contains "col=" then
+  [448] getlocal 2 .............................. <aProps>
+  [450] pushsymb 613 ............................ <#col>
+  [453] getparam 1 .............................. <oXml>
+  [455] getchainedprop 108 ...................... <oXml.attributes>
+  [457] getobjprop 613 .......................... <oXml.attributes.col>
+  [460] pusharglist 1 ........................... <oXml.attributes.col>
+  [462] extcall 107 ............................. <integer(oXml.attributes.col)>
+  [464] pusharglistnoret 3 ...................... <aProps, #col, integer(oXml.attributes.col)>
+  [466] objcall 357 ............................. aProps.addProp(#col, integer(oXml.attributes.col))
+  [469] getlocal 1 .............................. <sXmlString>
+  [471] pushcons 21 ............................. <"layer=">
+  [473] containsstr ............................. <sXmlString contains "layer=">
+  [474] jmpifz [498] ............................ if sXmlString contains "layer=" then
+  [477] getlocal 2 .............................. <aProps>
+  [479] pushsymb 614 ............................ <#layer>
+  [482] getparam 1 .............................. <oXml>
+  [484] getchainedprop 108 ...................... <oXml.attributes>
+  [486] getobjprop 614 .......................... <oXml.attributes.layer>
+  [489] pusharglist 1 ........................... <oXml.attributes.layer>
+  [491] extcall 107 ............................. <integer(oXml.attributes.layer)>
+  [493] pusharglistnoret 3 ...................... <aProps, #layer, integer(oXml.attributes.layer)>
+  [495] objcall 357 ............................. aProps.addProp(#layer, integer(oXml.attributes.layer))
+  [498] getlocal 1 .............................. <sXmlString>
+  [500] pushcons 22 ............................. <"Action=">
+  [502] containsstr ............................. <sXmlString contains "Action=">
+  [503] jmpifz [523] ............................ if sXmlString contains "Action=" then
+  [506] getlocal 2 .............................. <aProps>
+  [508] pushsymb 621 ............................ <#Action>
+  [511] getparam 1 .............................. <oXml>
+  [513] getchainedprop 108 ...................... <oXml.attributes>
+  [515] getobjprop 621 .......................... <oXml.attributes.Action>
+  [518] pusharglistnoret 3 ...................... <aProps, #Action, oXml.attributes.Action>
+  [520] objcall 357 ............................. aProps.addProp(#Action, oXml.attributes.Action)
+  [523] getlocal 1 .............................. <sXmlString>
+  [525] pushcons 23 ............................. <"backcolor=">
+  [527] containsstr ............................. <sXmlString contains "backcolor=">
+  [528] jmpifz [552] ............................ if sXmlString contains "backcolor=" then
+  [531] getlocal 2 .............................. <aProps>
+  [533] pushsymb 622 ............................ <#backColor>
+  [536] getparam 1 .............................. <oXml>
+  [538] getchainedprop 108 ...................... <oXml.attributes>
+  [540] getobjprop 622 .......................... <oXml.attributes.backColor>
+  [543] pusharglist 1 ........................... <oXml.attributes.backColor>
+  [545] extcall 107 ............................. <integer(oXml.attributes.backColor)>
+  [547] pusharglistnoret 3 ...................... <aProps, #backColor, integer(oXml.attributes.backColor)>
+  [549] objcall 357 ............................. aProps.addProp(#backColor, integer(oXml.attributes.backColor))
+  [552] getlocal 2 .............................. <aProps>
+  [554] pusharglistnoret 1 ...................... <aProps>
+  [556] extcall 92 .............................. return aProps
+  [558] ret
+end
+
+on destroy me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] objcall 587 ............................. me.clearSpritePool()
+  [  7] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 56 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 20] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 24 ............................. <"IsoSpriteManager.">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"IsoSpriteManager." & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"IsoSpriteManager." & sMessage>
+  [ 17] extcall 332 ............................. put "IsoSpriteManager." & sMessage
+  [ 20] ret
+end
+
+on printSpritePool me
+  [  0] pushcons 25 ............................. <"********** BEGIN SPRITE POOL ******************">
+  [  2] pushcons 26 ............................. <RETURN>
+  [  4] joinstr ................................. <"********** BEGIN SPRITE POOL ******************" & RETURN>
+  [  5] pusharglistnoret 1 ...................... <"********** BEGIN SPRITE POOL ******************" & RETURN>
+  [  7] extcall 332 ............................. put "********** BEGIN SPRITE POOL ******************" & RETURN
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 592 .......................... <me.aSpritePool>
+  [ 15] peek 0
+  [ 17] pusharglist 1
+  [ 19] extcall 169
+  [ 21] pushint8 1
+  [ 23] peek 0
+  [ 25] peek 2
+  [ 27] lteq
+  [ 28] jmpifz [ 95] ............................ repeat with i in me.aSpritePool
+  [ 31] peek 2
+  [ 33] peek 1
+  [ 35] pusharglist 2
+  [ 37] extcall 196
+  [ 39] setlocal 0
+  [ 41] getlocal 0 .............................. <i>
+  [ 43] pusharglist 1 ........................... <i>
+  [ 45] extcall 451 ............................. <sprite(i)>
+  [ 48] getobjprop 454 .......................... <sprite(i).member>
+  [ 51] setlocal 1 .............................. oMember = sprite(i).member
+  [ 53] pushcons 27 ............................. <EMPTY>
+  [ 55] setlocal 2 .............................. sName = EMPTY
+  [ 57] getlocal 1 .............................. <oMember>
+  [ 59] getobjprop 606 .......................... <oMember.memberNum>
+  [ 62] pushzero ................................ <0>
+  [ 63] gt ...................................... <oMember.memberNum > 0>
+  [ 64] jmpifz [ 74] ............................ if oMember.memberNum > 0 then
+  [ 67] getlocal 1 .............................. <oMember>
+  [ 69] getobjprop 625 .......................... <oMember.name>
+  [ 72] setlocal 2 .............................. sName = oMember.name
+  [ 74] pushcons 28 ............................. <"SPRITE: ">
+  [ 76] getlocal 0 .............................. <i>
+  [ 78] joinstr ................................. <"SPRITE: " & i>
+  [ 79] pushcons 29 ............................. <": MEMBER: ">
+  [ 81] joinstr ................................. <"SPRITE: " & i & ": MEMBER: ">
+  [ 82] getlocal 2 .............................. <sName>
+  [ 84] joinstr ................................. <"SPRITE: " & i & ": MEMBER: " & sName>
+  [ 85] pusharglistnoret 1 ...................... <"SPRITE: " & i & ": MEMBER: " & sName>
+  [ 87] extcall 332 ............................. put "SPRITE: " & i & ": MEMBER: " & sName
+  [ 90] pushint8 1
+  [ 92] add
+  [ 93] endrepeat [ 23]
+  [ 95] pop 3
+  [ 97] pushcons 30 ............................. <"******** END SPRITE POOL ******************">
+  [ 99] pusharglistnoret 1 ...................... <"******** END SPRITE POOL ******************">
+  [101] extcall 332 ............................. put "******** END SPRITE POOL ******************"
+  [104] ret
+end

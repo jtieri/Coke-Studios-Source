@@ -1,0 +1,291 @@
+property pParentWindow, pStatus
+global ElementMgr
+
+on new me, whichparent
+  [  0] getparam 1 .............................. <whichparent>
+  [  2] setprop 590 ............................. pParentWindow = whichparent
+  [  5] pushsymb 573 ............................ <#idle>
+  [  8] setprop 225 ............................. pStatus = #idle
+  [ 10] getparam 0 .............................. <me>
+  [ 12] pusharglistnoret 1 ...................... <me>
+  [ 14] extcall 23 .............................. return me
+  [ 16] ret
+end
+
+on mouseUp me
+  [  0] pushsymb 573 ............................ <#idle>
+  [  3] setprop 225 ............................. pStatus = #idle
+  [  5] pushcons 0 .............................. <"nav_modify_studio_name">
+  [  7] pusharglist 1 ........................... <"nav_modify_studio_name">
+  [  9] extcall 34 .............................. <member("nav_modify_studio_name")>
+  [ 11] getobjprop 78 ........................... <member("nav_modify_studio_name").text>
+  [ 13] pushcons 1 .............................. <EMPTY>
+  [ 15] eq ...................................... <member("nav_modify_studio_name").text = EMPTY>
+  [ 16] jmpifz [ 30] ............................ if member("nav_modify_studio_name").text = EMPTY then / else
+  [ 19] getglobal 30 ............................ <ElementMgr>
+  [ 21] pushcons 2 .............................. <"ALERT_ST_NAME">
+  [ 23] pusharglistnoret 2 ...................... <ElementMgr, "ALERT_ST_NAME">
+  [ 25] objcall 245 ............................. ElementMgr.alert("ALERT_ST_NAME")
+  [ 27] jmp [292]
+  [ 30] getglobal 79 ............................ <oDenizenManager>
+  [ 32] pusharglist 1 ........................... <oDenizenManager>
+  [ 34] objcall 80 .............................. <oDenizenManager.getScreenName()>
+  [ 36] setlocal 0 .............................. sScreenName = oDenizenManager.getScreenName()
+  [ 38] pushcons 0 .............................. <"nav_modify_studio_name">
+  [ 40] pusharglist 1 ........................... <"nav_modify_studio_name">
+  [ 42] extcall 34 .............................. <member("nav_modify_studio_name")>
+  [ 44] getobjprop 78 ........................... <member("nav_modify_studio_name").text>
+  [ 46] setlocal 1 .............................. sStudioName = member("nav_modify_studio_name").text
+  [ 48] pushcons 3 .............................. <"nav_modify_studio_desc">
+  [ 50] pusharglist 1 ........................... <"nav_modify_studio_desc">
+  [ 52] extcall 34 .............................. <member("nav_modify_studio_desc")>
+  [ 54] getobjprop 78 ........................... <member("nav_modify_studio_desc").text>
+  [ 56] setlocal 2 .............................. sDescription = member("nav_modify_studio_desc").text
+  [ 58] getprop 590 ............................. <pParentWindow>
+  [ 61] getobjprop 11 ........................... <pParentWindow.pSpritelist>
+  [ 63] peek 0
+  [ 65] pusharglist 1
+  [ 67] extcall 29
+  [ 69] pushint8 1
+  [ 71] peek 0
+  [ 73] peek 2
+  [ 75] lteq
+  [ 76] jmpifz [214] ............................ repeat with n in pParentWindow.pSpritelist
+  [ 79] peek 2
+  [ 81] peek 1
+  [ 83] pusharglist 2
+  [ 85] extcall 44
+  [ 87] setlocal 3
+  [ 89] getlocal 3 .............................. <n>
+  [ 91] pusharglist 1 ........................... <n>
+  [ 93] extcall 36 .............................. <sprite(n)>
+  [ 95] getobjprop 34 ........................... <sprite(n).member>
+  [ 97] pushcons 4 .............................. <"cc.radiobutton.active.on">
+  [ 99] pusharglist 1 ........................... <"cc.radiobutton.active.on">
+  [101] extcall 34 .............................. <member("cc.radiobutton.active.on")>
+  [103] eq ...................................... <sprite(n).member = member("cc.radiobutton.active.on")>
+  [104] jmpifz [186] ............................ if sprite(n).member = member("cc.radiobutton.active.on") then
+  [107] getlocal 3 .............................. <n>
+  [109] pusharglist 1 ........................... <n>
+  [111] extcall 36 .............................. <sprite(n)>
+  [113] getobjprop 238 .......................... <sprite(n).pID>
+  [115] setlocal 4 .............................. myID = sprite(n).pID
+  [117] pushcons 5 .............................. <"_">
+  [119] setmovieprop 157 ........................ the itemDelimiter = "_"
+  [121] getlocal 4 .............................. <myID>
+  [123] pushcons 6 .............................. <"nav_studiolocation_radio_">
+  [125] containsstr ............................. <myID contains "nav_studiolocation_radio_">
+  [126] jmpifz [155] ............................ if myID contains "nav_studiolocation_radio_" then / else
+  [129] getlocal 4 .............................. <myID>
+  [131] pushsymb 158 ............................ <#item>
+  [133] getlocal 4 .............................. <myID>
+  [135] pushsymb 223 ............................ <#items>
+  [137] pusharglist 2 ........................... <myID, #items>
+  [139] objcall 29 .............................. <myID.items.count>
+  [141] pusharglist 3 ........................... <myID, #item, myID.items.count>
+  [143] objcall 149 ............................. <myID.item[myID.items.count]>
+  [145] pusharglist 1 ........................... <myID.item[myID.items.count]>
+  [147] extcall 613 ............................. <integer(myID.item[myID.items.count])>
+  [150] setlocal 5 .............................. iLocationID = integer(myID.item[myID.items.count])
+  [152] jmp [186]
+  [155] getlocal 4 .............................. <myID>
+  [157] pushcons 7 .............................. <"nav_createstudio_radio_">
+  [159] containsstr ............................. <myID contains "nav_createstudio_radio_">
+  [160] jmpifz [186] ............................ if myID contains "nav_createstudio_radio_" then
+  [163] getlocal 4 .............................. <myID>
+  [165] pushsymb 158 ............................ <#item>
+  [167] getlocal 4 .............................. <myID>
+  [169] pushsymb 223 ............................ <#items>
+  [171] pusharglist 2 ........................... <myID, #items>
+  [173] objcall 29 .............................. <myID.items.count>
+  [175] pusharglist 3 ........................... <myID, #item, myID.items.count>
+  [177] objcall 149 ............................. <myID.item[myID.items.count]>
+  [179] pusharglist 1 ........................... <myID.item[myID.items.count]>
+  [181] extcall 613 ............................. <integer(myID.item[myID.items.count])>
+  [184] setlocal 6 .............................. iLayoutID = integer(myID.item[myID.items.count])
+  [186] getlocal 6 .............................. <iLayoutID>
+  [188] pusharglist 1 ........................... <iLayoutID>
+  [190] extcall 12 .............................. <voidp(iLayoutID)>
+  [192] pushzero ................................ <0>
+  [193] eq ...................................... <voidp(iLayoutID) = 0>
+  [194] getlocal 5 .............................. <iLocationID>
+  [196] pusharglist 1 ........................... <iLocationID>
+  [198] extcall 12 .............................. <voidp(iLocationID)>
+  [200] pushzero ................................ <0>
+  [201] eq ...................................... <voidp(iLocationID) = 0>
+  [202] and ..................................... <(voidp(iLayoutID) = 0) and (voidp(iLocationID) = 0)>
+  [203] jmpifz [209] ............................ if (voidp(iLayoutID) = 0) and (voidp(iLocationID) = 0) then
+  [206] jmp [214] ............................... exit repeat
+  [209] pushint8 1
+  [211] add
+  [212] endrepeat [ 71]
+  [214] pop 3
+  [216] getprop 590 ............................. <pParentWindow>
+  [219] getobjprop 14 ........................... <pParentWindow.prect>
+  [221] setlocal 7 .............................. myRect = pParentWindow.prect
+  [223] getprop 590 ............................. <pParentWindow>
+  [226] pusharglistnoret 1 ...................... <pParentWindow>
+  [228] objcall 5 ............................... pParentWindow.closeWindow()
+  [230] getglobal 30 ............................ <ElementMgr>
+  [232] pushcons 8 .............................. <"nav_loadnewroom.window">
+  [234] getlocal 7 .............................. <myRect>
+  [236] pusharglistnoret 3 ...................... <ElementMgr, "nav_loadnewroom.window", myRect>
+  [238] objcall 239 ............................. ElementMgr.newwindow("nav_loadnewroom.window", myRect)
+  [240] pushcons 9 .............................. <"Calling oStudioManager.createStudio(">
+  [242] getlocal 0 .............................. <sScreenName>
+  [244] joinpadstr .............................. <"Calling oStudioManager.createStudio(" && sScreenName>
+  [245] pushcons 10 ............................. <",">
+  [247] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & ",">
+  [248] getlocal 1 .............................. <sStudioName>
+  [250] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName>
+  [251] pushcons 10 ............................. <",">
+  [253] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & ",">
+  [254] getlocal 2 .............................. <sDescription>
+  [256] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription>
+  [257] pushcons 10 ............................. <",">
+  [259] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription & ",">
+  [260] getlocal 6 .............................. <iLayoutID>
+  [262] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription & "," & iLayoutID>
+  [263] pushcons 10 ............................. <",">
+  [265] joinstr ................................. <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription & "," & iLayoutID & ",">
+  [266] getlocal 5 .............................. <iLocationID>
+  [268] pushcons 11 ............................. <")">
+  [270] joinpadstr .............................. <iLocationID && ")">
+  [271] pusharglistnoret 2 ...................... <"Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription & "," & iLayoutID & ",", iLocationID && ")">
+  [273] extcall 26 .............................. put "Calling oStudioManager.createStudio(" && sScreenName & "," & sStudioName & "," & sDescription & "," & iLayoutID & ",", iLocationID && ")"
+  [275] getglobal 207 ........................... <oStudioManager>
+  [277] getlocal 0 .............................. <sScreenName>
+  [279] getlocal 1 .............................. <sStudioName>
+  [281] getlocal 2 .............................. <sDescription>
+  [283] getlocal 6 .............................. <iLayoutID>
+  [285] getlocal 5 .............................. <iLocationID>
+  [287] pusharglistnoret 6 ...................... <oStudioManager, sScreenName, sStudioName, sDescription, iLayoutID, iLocationID>
+  [289] objcall 717 ............................. oStudioManager.createStudio(sScreenName, sStudioName, sDescription, iLayoutID, iLocationID)
+  [292] ret
+end
+
+on mouseDown me
+  [  0] pushsymb 707 ............................ <#clicked>
+  [  3] setprop 225 ............................. pStatus = #clicked
+  [  5] pusharglistnoret 0 ...................... <>
+  [  7] extcall 229 ............................. stopEvent()
+  [  9] ret
+end
+
+on mouseUpOutSide me
+  [  0] pushsymb 573 ............................ <#idle>
+  [  3] setprop 225 ............................. pStatus = #idle
+  [  5] ret
+end
+
+on mouseWithin me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 228 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 36 .............................. <sprite(me.spriteNum)>
+  [  8] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 10] getobjprop 21 ........................... <sprite(me.spriteNum).member.name>
+  [ 12] setlocal 0 .............................. myName = sprite(me.spriteNum).member.name
+  [ 14] getprop 225 ............................. <pStatus>
+  [ 16] pushsymb 707 ............................ <#clicked>
+  [ 19] eq ...................................... <pStatus = #clicked>
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] thebuiltin 217 .......................... <the mouseDown>
+  [ 24] and ..................................... <(pStatus = #clicked) and the mouseDown>
+  [ 25] jmpifz [ 86] ............................ if (pStatus = #clicked) and the mouseDown then / else
+  [ 28] pushcons 12 ............................. <".">
+  [ 30] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 32] getlocal 0 .............................. <myName>
+  [ 34] pushsymb 158 ............................ <#item>
+  [ 36] pushint8 1 .............................. <1>
+  [ 38] getlocal 0 .............................. <myName>
+  [ 40] pushsymb 223 ............................ <#items>
+  [ 42] pusharglist 2 ........................... <myName, #items>
+  [ 44] objcall 29 .............................. <myName.items.count>
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] sub ..................................... <myName.items.count - 1>
+  [ 49] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [ 51] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [ 53] pushcons 13 ............................. <".pressed">
+  [ 55] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".pressed">
+  [ 56] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".pressed"
+  [ 58] pushcons 10 ............................. <",">
+  [ 60] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 62] getparam 0 .............................. <me>
+  [ 64] getobjprop 228 .......................... <me.spriteNum>
+  [ 66] pusharglist 1 ........................... <me.spriteNum>
+  [ 68] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 70] getlocal 0 .............................. <myName>
+  [ 72] pusharglist 1 ........................... <myName>
+  [ 74] extcall 34 .............................. <member(myName)>
+  [ 76] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [ 78] pusharglistnoret 0 ...................... <>
+  [ 80] extcall 374 ............................. updateStage()
+  [ 83] jmp [141]
+  [ 86] pushcons 12 ............................. <".">
+  [ 88] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 90] getlocal 0 .............................. <myName>
+  [ 92] pushsymb 158 ............................ <#item>
+  [ 94] pushint8 1 .............................. <1>
+  [ 96] getlocal 0 .............................. <myName>
+  [ 98] pushsymb 223 ............................ <#items>
+  [100] pusharglist 2 ........................... <myName, #items>
+  [102] objcall 29 .............................. <myName.items.count>
+  [104] pushint8 1 .............................. <1>
+  [106] sub ..................................... <myName.items.count - 1>
+  [107] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [109] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [111] pushcons 14 ............................. <".active">
+  [113] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".active">
+  [114] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".active"
+  [116] pushcons 10 ............................. <",">
+  [118] setmovieprop 157 ........................ the itemDelimiter = ","
+  [120] getparam 0 .............................. <me>
+  [122] getobjprop 228 .......................... <me.spriteNum>
+  [124] pusharglist 1 ........................... <me.spriteNum>
+  [126] extcall 36 .............................. <sprite(me.spriteNum)>
+  [128] getlocal 0 .............................. <myName>
+  [130] pusharglist 1 ........................... <myName>
+  [132] extcall 34 .............................. <member(myName)>
+  [134] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [136] pusharglistnoret 0 ...................... <>
+  [138] extcall 374 ............................. updateStage()
+  [141] ret
+end
+
+on mouseLeave me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 228 .......................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 36 .............................. <sprite(me.spriteNum)>
+  [  8] getchainedprop 34 ....................... <sprite(me.spriteNum).member>
+  [ 10] getobjprop 21 ........................... <sprite(me.spriteNum).member.name>
+  [ 12] setlocal 0 .............................. myName = sprite(me.spriteNum).member.name
+  [ 14] pushcons 12 ............................. <".">
+  [ 16] setmovieprop 157 ........................ the itemDelimiter = "."
+  [ 18] getlocal 0 .............................. <myName>
+  [ 20] pushsymb 158 ............................ <#item>
+  [ 22] pushint8 1 .............................. <1>
+  [ 24] getlocal 0 .............................. <myName>
+  [ 26] pushsymb 223 ............................ <#items>
+  [ 28] pusharglist 2 ........................... <myName, #items>
+  [ 30] objcall 29 .............................. <myName.items.count>
+  [ 32] pushint8 1 .............................. <1>
+  [ 34] sub ..................................... <myName.items.count - 1>
+  [ 35] pusharglist 4 ........................... <myName, #item, 1, myName.items.count - 1>
+  [ 37] objcall 149 ............................. <myName.item[1..myName.items.count - 1]>
+  [ 39] pushcons 14 ............................. <".active">
+  [ 41] joinstr ................................. <myName.item[1..myName.items.count - 1] & ".active">
+  [ 42] setlocal 0 .............................. myName = myName.item[1..myName.items.count - 1] & ".active"
+  [ 44] pushcons 10 ............................. <",">
+  [ 46] setmovieprop 157 ........................ the itemDelimiter = ","
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 228 .......................... <me.spriteNum>
+  [ 52] pusharglist 1 ........................... <me.spriteNum>
+  [ 54] extcall 36 .............................. <sprite(me.spriteNum)>
+  [ 56] getlocal 0 .............................. <myName>
+  [ 58] pusharglist 1 ........................... <myName>
+  [ 60] extcall 34 .............................. <member(myName)>
+  [ 62] setobjprop 34 ........................... sprite(me.spriteNum).member = member(myName)
+  [ 64] ret
+end

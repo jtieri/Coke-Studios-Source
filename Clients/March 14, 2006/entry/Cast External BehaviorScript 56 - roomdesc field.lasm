@@ -1,0 +1,119 @@
+property myMember, myMemberType, iMaxLength
+global TextMgr
+
+on new me
+  [  0] pushcons 0 .............................. <"nav_modify_studio_desc">
+  [  2] pusharglist 1 ........................... <"nav_modify_studio_desc">
+  [  4] extcall 34 .............................. <member("nav_modify_studio_desc")>
+  [  6] setprop 143 ............................. myMember = member("nav_modify_studio_desc")
+  [  8] pushsymb 78 ............................. <#text>
+  [ 10] setprop 750 ............................. myMemberType = #text
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushint16 168 ........................... <168>
+  [ 18] setobjprop 777 .......................... me.iMaxLength = 168
+  [ 21] getparam 0 .............................. <me>
+  [ 23] pusharglistnoret 1 ...................... <me>
+  [ 25] extcall 23 .............................. return me
+  [ 27] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 229 ............................. stopEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 229 ............................. stopEvent()
+  [  4] ret
+end
+
+on keyDown me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] localcall 4 ............................. Filter(me)
+  [  6] ret
+end
+
+on Filter me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 778 .......................... <the controlDown>
+  [  5] pusharglist 0 ........................... <>
+  [  7] thebuiltin 744 .......................... <the keyCode>
+  [ 10] pushint8 9 .............................. <9>
+  [ 12] eq ...................................... <the keyCode = 9>
+  [ 13] and ..................................... <the controlDown and (the keyCode = 9)>
+  [ 14] pusharglist 0 ........................... <>
+  [ 16] thebuiltin 779 .......................... <the commandDown>
+  [ 19] pusharglist 0 ........................... <>
+  [ 21] thebuiltin 744 .......................... <the keyCode>
+  [ 24] pushint8 9 .............................. <9>
+  [ 26] eq ...................................... <the keyCode = 9>
+  [ 27] and ..................................... <the commandDown and (the keyCode = 9)>
+  [ 28] or ...................................... <(the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9))>
+  [ 29] jmpifz [ 40] ............................ if (the controlDown and (the keyCode = 9)) or (the commandDown and (the keyCode = 9)) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 229 ............................. stopEvent()
+  [ 36] pusharglistnoret 0 ...................... <>
+  [ 38] extcall 23 .............................. return 
+  [ 40] pusharglist 0 ........................... <>
+  [ 42] thebuiltin 92 ........................... <the key>
+  [ 44] pushcons 1 .............................. <TAB>
+  [ 46] eq ...................................... <the key = TAB>
+  [ 47] jmpifz [ 68] ............................ if the key = TAB then / else
+  [ 50] pushsymb 776 ............................ <#getroomname>
+  [ 53] pusharglist 1 ........................... <#getroomname>
+  [ 55] extcall 375 ............................. <sendAllSprites(#getroomname)>
+  [ 58] setlocal 0 .............................. roomname = sendAllSprites(#getroomname)
+  [ 60] getlocal 0 .............................. <roomname>
+  [ 62] setmovieprop 780 ........................ the keyboardFocusSprite = roomname
+  [ 65] jmp [169]
+  [ 68] getparam 0 .............................. <me>
+  [ 70] getobjprop 143 .......................... <me.myMember>
+  [ 72] getchainedprop 78 ....................... <me.myMember.text>
+  [ 74] getobjprop 96 ........................... <me.myMember.text.length>
+  [ 76] setlocal 1 .............................. iLength = me.myMember.text.length
+  [ 78] getglobal 91 ............................ <TextMgr>
+  [ 80] pusharglist 0 ........................... <>
+  [ 82] thebuiltin 744 .......................... <the keyCode>
+  [ 85] pusharglist 2 ........................... <TextMgr, the keyCode>
+  [ 87] objcall 782 ............................. <TextMgr.isValidKeyCode(the keyCode)>
+  [ 90] setlocal 2 .............................. bIsValidKeyCode = TextMgr.isValidKeyCode(the keyCode)
+  [ 92] getglobal 91 ............................ <TextMgr>
+  [ 94] pusharglist 0 ........................... <>
+  [ 96] thebuiltin 92 ........................... <the key>
+  [ 98] pusharglist 2 ........................... <TextMgr, the key>
+  [100] objcall 783 ............................. <TextMgr.isValidStudioKey(the key)>
+  [103] setlocal 3 .............................. bIsValidKey = TextMgr.isValidStudioKey(the key)
+  [105] getlocal 1 .............................. <iLength>
+  [107] getparam 0 .............................. <me>
+  [109] getobjprop 777 .......................... <me.iMaxLength>
+  [112] gteq .................................... <iLength >= me.iMaxLength>
+  [113] jmpifz [141] ............................ if iLength >= me.iMaxLength then
+  [116] getlocal 2 .............................. <bIsValidKeyCode>
+  [118] jmpifz [133] ............................ if bIsValidKeyCode then / else
+  [121] pusharglistnoret 0 ...................... <>
+  [123] extcall 745 ............................. pass()
+  [126] pusharglistnoret 0 ...................... <>
+  [128] extcall 23 .............................. return 
+  [130] jmp [141]
+  [133] pusharglistnoret 0 ...................... <>
+  [135] extcall 229 ............................. stopEvent()
+  [137] pusharglistnoret 0 ...................... <>
+  [139] extcall 23 .............................. return 
+  [141] getlocal 3 .............................. <bIsValidKey>
+  [143] getlocal 2 .............................. <bIsValidKeyCode>
+  [145] or ...................................... <bIsValidKey or bIsValidKeyCode>
+  [146] jmpifz [161] ............................ if bIsValidKey or bIsValidKeyCode then / else
+  [149] pusharglistnoret 0 ...................... <>
+  [151] extcall 745 ............................. pass()
+  [154] pusharglistnoret 0 ...................... <>
+  [156] extcall 23 .............................. return 
+  [158] jmp [169]
+  [161] pusharglistnoret 0 ...................... <>
+  [163] extcall 229 ............................. stopEvent()
+  [165] pusharglistnoret 0 ...................... <>
+  [167] extcall 23 .............................. return 
+  [169] ret
+end

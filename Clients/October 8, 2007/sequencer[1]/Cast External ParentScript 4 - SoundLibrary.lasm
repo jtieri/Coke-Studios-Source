@@ -1,0 +1,402 @@
+property sCastLib, sAssetCastLib, sDataAsset, oXml, aSounds, aCategories
+
+on new me, _sCastLib, _sAssetCastLib
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <_sCastLib>
+  [  4] setobjprop 38 ........................... me.sCastLib = _sCastLib
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 2 .............................. <_sAssetCastLib>
+  [ 10] setobjprop 39 ........................... me.sAssetCastLib = _sAssetCastLib
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushcons 0 .............................. <"SoundLibraryData">
+  [ 16] setobjprop 191 .......................... me.sDataAsset = "SoundLibraryData"
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglist 0 ........................... <[]>
+  [ 22] pushlist ................................ <[]>
+  [ 23] setobjprop 192 .......................... me.aSounds = []
+  [ 25] getparam 0 .............................. <me>
+  [ 27] pusharglist 0 ........................... <[]>
+  [ 29] pushlist ................................ <[]>
+  [ 30] setobjprop 193 .......................... me.aCategories = []
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getobjprop 191 .......................... <me.sDataAsset>
+  [ 38] getparam 0 .............................. <me>
+  [ 40] getobjprop 39 ........................... <me.sAssetCastLib>
+  [ 42] pusharglist 2 ........................... <me.sDataAsset, me.sAssetCastLib>
+  [ 44] extcall 53 .............................. <member(me.sDataAsset, me.sAssetCastLib)>
+  [ 46] getobjprop 106 .......................... <member(me.sDataAsset, me.sAssetCastLib).text>
+  [ 48] pusharglistnoret 2 ...................... <me, member(me.sDataAsset, me.sAssetCastLib).text>
+  [ 50] objcall 186 ............................. me.parseData(member(me.sDataAsset, me.sAssetCastLib).text)
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] extcall 46 .............................. return me
+  [ 58] ret
+end
+
+on parseData me, sData
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[:]>
+  [  4] pushproplist ............................ <[:]>
+  [  5] setobjprop 192 .......................... me.aSounds = [:]
+  [  7] getparam 0 .............................. <me>
+  [  9] pusharglist 0 ........................... <[]>
+  [ 11] pushlist ................................ <[]>
+  [ 12] setobjprop 193 .......................... me.aCategories = []
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushcons 1 .............................. <"XML">
+  [ 18] pusharglist 1 ........................... <"XML">
+  [ 20] extcall 112 ............................. <newObject("XML")>
+  [ 22] setobjprop 127 .......................... me.oXml = newObject("XML")
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 127 ...................... <me.oXml>
+  [ 28] pushint8 1 .............................. <1>
+  [ 30] setobjprop 113 .......................... me.oXml.ignoreWhite = 1
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getchainedprop 127 ...................... <me.oXml>
+  [ 36] getparam 1 .............................. <sData>
+  [ 38] pusharglistnoret 2 ...................... <me.oXml, sData>
+  [ 40] objcall 114 ............................. me.oXml.parseXML(sData)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] getchainedprop 127 ...................... <me.oXml>
+  [ 46] getobjprop 115 .......................... <me.oXml.firstChild>
+  [ 48] setlocal 0 .............................. oRoot = me.oXml.firstChild
+  [ 50] getparam 0 .............................. <me>
+  [ 52] getlocal 0 .............................. <oRoot>
+  [ 54] pushcons 2 .............................. <"Sound">
+  [ 56] pusharglist 3 ........................... <me, oRoot, "Sound">
+  [ 58] objcall 24 .............................. <me.getNodes(oRoot, "Sound")>
+  [ 60] setlocal 1 .............................. aSoundNodes = me.getNodes(oRoot, "Sound")
+  [ 62] getlocal 1 .............................. <aSoundNodes>
+  [ 64] getobjprop 65 ........................... <aSoundNodes.count>
+  [ 66] setlocal 2 .............................. iLength = aSoundNodes.count
+  [ 68] pushint8 1 .............................. <1>
+  [ 70] setlocal 3
+  [ 72] getlocal 3
+  [ 74] getlocal 2 .............................. <iLength>
+  [ 76] lteq
+  [ 77] jmpifz [191] ............................ repeat with i = 1 to iLength
+  [ 80] getlocal 1 .............................. <aSoundNodes>
+  [ 82] getlocal 3 .............................. <i>
+  [ 84] pusharglist 2 ........................... <aSoundNodes, i>
+  [ 86] objcall 74 .............................. <aSoundNodes[i]>
+  [ 88] setlocal 4 .............................. oSoundNode = aSoundNodes[i]
+  [ 90] getlocal 4 .............................. <oSoundNode>
+  [ 92] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [ 94] getobjprop 109 .......................... <oSoundNode.attributes.name>
+  [ 96] setlocal 5 .............................. sName = oSoundNode.attributes.name
+  [ 98] getlocal 4 .............................. <oSoundNode>
+  [100] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [102] getobjprop 196 .......................... <oSoundNode.attributes.beats>
+  [104] pusharglist 1 ........................... <oSoundNode.attributes.beats>
+  [106] extcall 118 ............................. <integer(oSoundNode.attributes.beats)>
+  [108] setlocal 6 .............................. iBeats = integer(oSoundNode.attributes.beats)
+  [110] getlocal 4 .............................. <oSoundNode>
+  [112] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [114] getobjprop 119 .......................... <oSoundNode.attributes.asset>
+  [116] setlocal 7 .............................. sAsset = oSoundNode.attributes.asset
+  [118] getlocal 7 .............................. <sAsset>
+  [120] pusharglist 1 ........................... <sAsset>
+  [122] extcall 101 ............................. <voidp(sAsset)>
+  [124] jmpifz [130] ............................ if voidp(sAsset) then
+  [127] jmp [182] ............................... next repeat
+  [130] pushcons 3 .............................. <"none">
+  [132] setlocal 8 .............................. sIcon = "none"
+  [134] pushcons 3 .............................. <"none">
+  [136] setlocal 9 .............................. sCategoryName = "none"
+  [138] getlocal 7 .............................. <sAsset>
+  [140] getparam 0 .............................. <me>
+  [142] getobjprop 39 ........................... <me.sAssetCastLib>
+  [144] pusharglist 2 ........................... <sAsset, me.sAssetCastLib>
+  [146] extcall 53 .............................. <member(sAsset, me.sAssetCastLib)>
+  [148] setlocal 10 ............................. oMember = member(sAsset, me.sAssetCastLib)
+  [150] getparam 0 .............................. <me>
+  [152] getchainedprop 192 ...................... <me.aSounds>
+  [154] getlocal 7 .............................. <sAsset>
+  [156] pushcons 2 .............................. <"Sound">
+  [158] pusharglist 1 ........................... <"Sound">
+  [160] extcall 40 .............................. <script("Sound")>
+  [162] getlocal 5 .............................. <sName>
+  [164] getlocal 6 .............................. <iBeats>
+  [166] getlocal 7 .............................. <sAsset>
+  [168] getlocal 8 .............................. <sIcon>
+  [170] getlocal 9 .............................. <sCategoryName>
+  [172] getlocal 10 ............................. <oMember>
+  [174] pusharglist 7 ........................... <script("Sound"), sName, iBeats, sAsset, sIcon, sCategoryName, oMember>
+  [176] objcall 0 ............................... <script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember)>
+  [178] pusharglistnoret 3 ...................... <me.aSounds, sAsset, script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember)>
+  [180] objcall 165 ............................. me.aSounds.addProp(sAsset, script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember))
+  [182] pushint8 1
+  [184] getlocal 3
+  [186] add
+  [187] setlocal 3
+  [189] endrepeat [ 72]
+  [191] getparam 0 .............................. <me>
+  [193] getlocal 0 .............................. <oRoot>
+  [195] pushcons 4 .............................. <"Category">
+  [197] pusharglist 3 ........................... <me, oRoot, "Category">
+  [199] objcall 24 .............................. <me.getNodes(oRoot, "Category")>
+  [201] setlocal 11 ............................. aCategoryNodes = me.getNodes(oRoot, "Category")
+  [203] getlocal 11 ............................. <aCategoryNodes>
+  [205] getobjprop 65 ........................... <aCategoryNodes.count>
+  [207] setlocal 2 .............................. iLength = aCategoryNodes.count
+  [209] pushint8 1 .............................. <1>
+  [211] setlocal 3
+  [213] getlocal 3
+  [215] getlocal 2 .............................. <iLength>
+  [217] lteq
+  [218] jmpifz [399] ............................ repeat with i = 1 to iLength
+  [221] getlocal 11 ............................. <aCategoryNodes>
+  [223] getlocal 3 .............................. <i>
+  [225] pusharglist 2 ........................... <aCategoryNodes, i>
+  [227] objcall 74 .............................. <aCategoryNodes[i]>
+  [229] setlocal 12 ............................. oCategory = aCategoryNodes[i]
+  [231] getlocal 12 ............................. <oCategory>
+  [233] getchainedprop 116 ...................... <oCategory.attributes>
+  [235] getobjprop 109 .......................... <oCategory.attributes.name>
+  [237] setlocal 9 .............................. sCategoryName = oCategory.attributes.name
+  [239] getparam 0 .............................. <me>
+  [241] getchainedprop 193 ...................... <me.aCategories>
+  [243] getlocal 9 .............................. <sCategoryName>
+  [245] pusharglistnoret 2 ...................... <me.aCategories, sCategoryName>
+  [247] objcall 57 .............................. me.aCategories.add(sCategoryName)
+  [249] getparam 0 .............................. <me>
+  [251] getlocal 12 ............................. <oCategory>
+  [253] pushcons 2 .............................. <"Sound">
+  [255] pusharglist 3 ........................... <me, oCategory, "Sound">
+  [257] objcall 24 .............................. <me.getNodes(oCategory, "Sound")>
+  [259] setlocal 1 .............................. aSoundNodes = me.getNodes(oCategory, "Sound")
+  [261] getlocal 1 .............................. <aSoundNodes>
+  [263] getobjprop 65 ........................... <aSoundNodes.count>
+  [265] setlocal 13 ............................. iSoundsNodeLength = aSoundNodes.count
+  [267] pushint8 1 .............................. <1>
+  [269] setlocal 14
+  [271] getlocal 14
+  [273] getlocal 13 ............................. <iSoundsNodeLength>
+  [275] lteq
+  [276] jmpifz [390] ............................ repeat with ii = 1 to iSoundsNodeLength
+  [279] getlocal 1 .............................. <aSoundNodes>
+  [281] getlocal 14 ............................. <ii>
+  [283] pusharglist 2 ........................... <aSoundNodes, ii>
+  [285] objcall 74 .............................. <aSoundNodes[ii]>
+  [287] setlocal 4 .............................. oSoundNode = aSoundNodes[ii]
+  [289] getlocal 4 .............................. <oSoundNode>
+  [291] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [293] getobjprop 109 .......................... <oSoundNode.attributes.name>
+  [295] setlocal 5 .............................. sName = oSoundNode.attributes.name
+  [297] getlocal 4 .............................. <oSoundNode>
+  [299] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [301] getobjprop 196 .......................... <oSoundNode.attributes.beats>
+  [303] pusharglist 1 ........................... <oSoundNode.attributes.beats>
+  [305] extcall 118 ............................. <integer(oSoundNode.attributes.beats)>
+  [307] setlocal 6 .............................. iBeats = integer(oSoundNode.attributes.beats)
+  [309] getlocal 4 .............................. <oSoundNode>
+  [311] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [313] getobjprop 119 .......................... <oSoundNode.attributes.asset>
+  [315] setlocal 7 .............................. sAsset = oSoundNode.attributes.asset
+  [317] getlocal 7 .............................. <sAsset>
+  [319] pusharglist 1 ........................... <sAsset>
+  [321] extcall 101 ............................. <voidp(sAsset)>
+  [323] jmpifz [329] ............................ if voidp(sAsset) then
+  [326] jmp [381] ............................... next repeat
+  [329] getlocal 4 .............................. <oSoundNode>
+  [331] getchainedprop 116 ...................... <oSoundNode.attributes>
+  [333] getobjprop 197 .......................... <oSoundNode.attributes.icon>
+  [335] setlocal 8 .............................. sIcon = oSoundNode.attributes.icon
+  [337] getlocal 7 .............................. <sAsset>
+  [339] getparam 0 .............................. <me>
+  [341] getobjprop 39 ........................... <me.sAssetCastLib>
+  [343] pusharglist 2 ........................... <sAsset, me.sAssetCastLib>
+  [345] extcall 53 .............................. <member(sAsset, me.sAssetCastLib)>
+  [347] setlocal 10 ............................. oMember = member(sAsset, me.sAssetCastLib)
+  [349] getparam 0 .............................. <me>
+  [351] getchainedprop 192 ...................... <me.aSounds>
+  [353] getlocal 7 .............................. <sAsset>
+  [355] pushcons 2 .............................. <"Sound">
+  [357] pusharglist 1 ........................... <"Sound">
+  [359] extcall 40 .............................. <script("Sound")>
+  [361] getlocal 5 .............................. <sName>
+  [363] getlocal 6 .............................. <iBeats>
+  [365] getlocal 7 .............................. <sAsset>
+  [367] getlocal 8 .............................. <sIcon>
+  [369] getlocal 9 .............................. <sCategoryName>
+  [371] getlocal 10 ............................. <oMember>
+  [373] pusharglist 7 ........................... <script("Sound"), sName, iBeats, sAsset, sIcon, sCategoryName, oMember>
+  [375] objcall 0 ............................... <script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember)>
+  [377] pusharglistnoret 3 ...................... <me.aSounds, sAsset, script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember)>
+  [379] objcall 165 ............................. me.aSounds.addProp(sAsset, script("Sound").new(sName, iBeats, sAsset, sIcon, sCategoryName, oMember))
+  [381] pushint8 1
+  [383] getlocal 14
+  [385] add
+  [386] setlocal 14
+  [388] endrepeat [271]
+  [390] pushint8 1
+  [392] getlocal 3
+  [394] add
+  [395] setlocal 3
+  [397] endrepeat [213]
+  [399] ret
+end
+
+on getXml me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 127 .......................... <me.oXml>
+  [  4] pusharglistnoret 1 ...................... <me.oXml>
+  [  6] extcall 46 .............................. return me.oXml
+  [  8] ret
+end
+
+on getCategories me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 193 .......................... <me.aCategories>
+  [  4] pusharglistnoret 1 ...................... <me.aCategories>
+  [  6] extcall 46 .............................. return me.aCategories
+  [  8] ret
+end
+
+on getSoundsByCategory me, sCategory
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aSoundsByCategory = []
+  [  5] getparam 0 .............................. <me>
+  [  7] pushsymb 192 ............................ <#aSounds>
+  [  9] pusharglist 2 ........................... <me, #aSounds>
+  [ 11] objcall 65 .............................. <me.aSounds.count>
+  [ 13] setlocal 1 .............................. iLength = me.aSounds.count
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] setlocal 2
+  [ 19] getlocal 2
+  [ 21] getlocal 1 .............................. <iLength>
+  [ 23] lteq
+  [ 24] jmpifz [ 66] ............................ repeat with i = 1 to iLength
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pushsymb 192 ............................ <#aSounds>
+  [ 31] getlocal 2 .............................. <i>
+  [ 33] pusharglist 3 ........................... <me, #aSounds, i>
+  [ 35] objcall 66 .............................. <me.aSounds[i]>
+  [ 37] setlocal 3 .............................. oSound = me.aSounds[i]
+  [ 39] getlocal 3 .............................. <oSound>
+  [ 41] getobjprop 207 .......................... <oSound.sCategory>
+  [ 43] getparam 1 .............................. <sCategory>
+  [ 45] eq ...................................... <oSound.sCategory = sCategory>
+  [ 46] jmpifz [ 57] ............................ if oSound.sCategory = sCategory then
+  [ 49] getlocal 0 .............................. <aSoundsByCategory>
+  [ 51] getlocal 3 .............................. <oSound>
+  [ 53] pusharglistnoret 2 ...................... <aSoundsByCategory, oSound>
+  [ 55] objcall 57 .............................. aSoundsByCategory.add(oSound)
+  [ 57] pushint8 1
+  [ 59] getlocal 2
+  [ 61] add
+  [ 62] setlocal 2
+  [ 64] endrepeat [ 19]
+  [ 66] getlocal 0 .............................. <aSoundsByCategory>
+  [ 68] pusharglistnoret 1 ...................... <aSoundsByCategory>
+  [ 70] extcall 46 .............................. return aSoundsByCategory
+  [ 72] ret
+end
+
+on getSilence me, iBeats
+  [  0] pushcons 5 .............................. <"Silence">
+  [  2] getparam 1 .............................. <iBeats>
+  [  4] joinstr ................................. <"Silence" & iBeats>
+  [  5] pushcons 6 .............................. <"Beats">
+  [  7] joinstr ................................. <"Silence" & iBeats & "Beats">
+  [  8] setlocal 0 .............................. sAsset = "Silence" & iBeats & "Beats"
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getlocal 0 .............................. <sAsset>
+  [ 14] pusharglist 2 ........................... <me, sAsset>
+  [ 16] objcall 190 ............................. <me.getSoundByAsset(sAsset)>
+  [ 18] setlocal 1 .............................. oSound = me.getSoundByAsset(sAsset)
+  [ 20] getlocal 1 .............................. <oSound>
+  [ 22] pusharglistnoret 1 ...................... <oSound>
+  [ 24] extcall 46 .............................. return oSound
+  [ 26] ret
+end
+
+on getSoundByAsset me, sAsset
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 192 ............................ <#aSounds>
+  [  4] getparam 1 .............................. <sAsset>
+  [  6] pusharglist 3 ........................... <me, #aSounds, sAsset>
+  [  8] objcall 66 .............................. <me.aSounds[sAsset]>
+  [ 10] setlocal 0 .............................. oSound = me.aSounds[sAsset]
+  [ 12] getlocal 0 .............................. <oSound>
+  [ 14] pusharglistnoret 1 ...................... <oSound>
+  [ 16] extcall 46 .............................. return oSound
+  [ 18] ret
+end
+
+on getNode me, _oXml, sNodeName
+  [  0] getparam 1 .............................. <_oXml>
+  [  2] getobjprop 138 .......................... <_oXml.childNodes>
+  [  4] setlocal 0 .............................. aChildren = _oXml.childNodes
+  [  6] pushzero ................................ <0>
+  [  7] setlocal 1
+  [  9] getlocal 1
+  [ 11] getlocal 0 .............................. <aChildren>
+  [ 13] getobjprop 139 .......................... <aChildren.length>
+  [ 15] pushint8 1 .............................. <1>
+  [ 17] sub ..................................... <aChildren.length - 1>
+  [ 18] lteq
+  [ 19] jmpifz [ 57] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 22] getlocal 0 .............................. <aChildren>
+  [ 24] getlocal 1 .............................. <i>
+  [ 26] pusharglist 2 ........................... <aChildren, i>
+  [ 28] objcall 74 .............................. <aChildren[i]>
+  [ 30] setlocal 2 .............................. oNode = aChildren[i]
+  [ 32] getlocal 2 .............................. <oNode>
+  [ 34] getobjprop 140 .......................... <oNode.nodeName>
+  [ 36] getparam 2 .............................. <sNodeName>
+  [ 38] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 39] jmpifz [ 48] ............................ if oNode.nodeName = sNodeName then
+  [ 42] getlocal 2 .............................. <oNode>
+  [ 44] pusharglistnoret 1 ...................... <oNode>
+  [ 46] extcall 46 .............................. return oNode
+  [ 48] pushint8 1
+  [ 50] getlocal 1
+  [ 52] add
+  [ 53] setlocal 1
+  [ 55] endrepeat [  9]
+  [ 57] ret
+end
+
+on getNodes me, _oXml, sNodeName
+  [  0] pusharglist 0 ........................... <[]>
+  [  2] pushlist ................................ <[]>
+  [  3] setlocal 0 .............................. aNodes = []
+  [  5] getparam 1 .............................. <_oXml>
+  [  7] getobjprop 138 .......................... <_oXml.childNodes>
+  [  9] setlocal 1 .............................. aChildren = _oXml.childNodes
+  [ 11] pushzero ................................ <0>
+  [ 12] setlocal 2
+  [ 14] getlocal 2
+  [ 16] getlocal 1 .............................. <aChildren>
+  [ 18] getobjprop 139 .......................... <aChildren.length>
+  [ 20] pushint8 1 .............................. <1>
+  [ 22] sub ..................................... <aChildren.length - 1>
+  [ 23] lteq
+  [ 24] jmpifz [ 64] ............................ repeat with i = 0 to aChildren.length - 1
+  [ 27] getlocal 1 .............................. <aChildren>
+  [ 29] getlocal 2 .............................. <i>
+  [ 31] pusharglist 2 ........................... <aChildren, i>
+  [ 33] objcall 74 .............................. <aChildren[i]>
+  [ 35] setlocal 3 .............................. oNode = aChildren[i]
+  [ 37] getlocal 3 .............................. <oNode>
+  [ 39] getobjprop 140 .......................... <oNode.nodeName>
+  [ 41] getparam 2 .............................. <sNodeName>
+  [ 43] eq ...................................... <oNode.nodeName = sNodeName>
+  [ 44] jmpifz [ 55] ............................ if oNode.nodeName = sNodeName then
+  [ 47] getlocal 0 .............................. <aNodes>
+  [ 49] getlocal 3 .............................. <oNode>
+  [ 51] pusharglistnoret 2 ...................... <aNodes, oNode>
+  [ 53] objcall 57 .............................. aNodes.add(oNode)
+  [ 55] pushint8 1
+  [ 57] getlocal 2
+  [ 59] add
+  [ 60] setlocal 2
+  [ 62] endrepeat [ 14]
+  [ 64] getlocal 0 .............................. <aNodes>
+  [ 66] pusharglistnoret 1 ...................... <aNodes>
+  [ 68] extcall 46 .............................. return aNodes
+  [ 70] ret
+end

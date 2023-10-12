@@ -1,0 +1,275 @@
+property oTimeInput, iMsOffset, oTimeMyStart, aTimeInput, aTimeOffset, iCurMonthDays, iPrevMonthDays
+global sInputString, sAvatarString, sScreenName, sTimeString, iLatestScore
+
+on new me, sTimeStringFromServer
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <sTimeStringFromServer>
+  [  4] pusharglistnoret 2 ...................... <me, sTimeStringFromServer>
+  [  6] objcall 748 ............................. me.setTimeOffset(sTimeStringFromServer)
+  [  9] getparam 0 .............................. <me>
+  [ 11] pusharglistnoret 1 ...................... <me>
+  [ 13] extcall 63 .............................. return me
+  [ 15] ret
+end
+
+on setTimeOffset me, sInput
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"Date">
+  [  4] pusharglist 1 ........................... <"Date">
+  [  6] extcall 389 ............................. <newObject("Date")>
+  [  9] setobjprop 756 .......................... me.oTimeMyStart = newObject("Date")
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getparam 1 .............................. <sInput>
+  [ 18] pusharglist 2 ........................... <me, sInput>
+  [ 20] objcall 749 ............................. <me.convertStringToDateObject(sInput)>
+  [ 23] setobjprop 757 .......................... me.oTimeInput = me.convertStringToDateObject(sInput)
+  [ 26] getparam 0 .............................. <me>
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getchainedprop 757 ...................... <me.oTimeInput>
+  [ 33] pusharglist 1 ........................... <me.oTimeInput>
+  [ 35] objcall 136 ............................. <me.oTimeInput.getTime()>
+  [ 37] getparam 0 .............................. <me>
+  [ 39] getchainedprop 756 ...................... <me.oTimeMyStart>
+  [ 42] pusharglist 1 ........................... <me.oTimeMyStart>
+  [ 44] objcall 136 ............................. <me.oTimeMyStart.getTime()>
+  [ 46] sub ..................................... <me.oTimeInput.getTime() - me.oTimeMyStart.getTime()>
+  [ 47] setobjprop 758 .......................... me.iMsOffset = me.oTimeInput.getTime() - me.oTimeMyStart.getTime()
+  [ 50] ret
+end
+
+on convertStringToDateObject me, sInput
+  [  0] pushcons 1 .............................. <"=">
+  [  2] setmovieprop 404 ........................ the itemDelimiter = "="
+  [  5] getparam 1 .............................. <sInput>
+  [  7] pushsymb 406 ............................ <#item>
+  [ 10] pushint8 2 .............................. <2>
+  [ 12] pusharglist 3 ........................... <sInput, #item, 2>
+  [ 14] objcall 54 .............................. <sInput.item[2]>
+  [ 16] setparam 1 .............................. sInput = sInput.item[2]
+  [ 18] pushcons 2 .............................. <":">
+  [ 20] setmovieprop 404 ........................ the itemDelimiter = ":"
+  [ 23] pushcons 0 .............................. <"Date">
+  [ 25] pusharglist 1 ........................... <"Date">
+  [ 27] extcall 389 ............................. <newObject("Date")>
+  [ 30] setlocal 0 .............................. oDateOut = newObject("Date")
+  [ 32] getlocal 0 .............................. <oDateOut>
+  [ 34] getparam 1 .............................. <sInput>
+  [ 36] pushsymb 406 ............................ <#item>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] pusharglist 3 ........................... <sInput, #item, 1>
+  [ 43] objcall 54 .............................. <sInput.item[1]>
+  [ 45] pusharglist 1 ........................... <sInput.item[1]>
+  [ 47] extcall 123 ............................. <integer(sInput.item[1])>
+  [ 49] pusharglistnoret 2 ...................... <oDateOut, integer(sInput.item[1])>
+  [ 51] objcall 760 ............................. oDateOut.setFullYear(integer(sInput.item[1]))
+  [ 54] getlocal 0 .............................. <oDateOut>
+  [ 56] getparam 1 .............................. <sInput>
+  [ 58] pushsymb 406 ............................ <#item>
+  [ 61] pushint8 2 .............................. <2>
+  [ 63] pusharglist 3 ........................... <sInput, #item, 2>
+  [ 65] objcall 54 .............................. <sInput.item[2]>
+  [ 67] pusharglist 1 ........................... <sInput.item[2]>
+  [ 69] extcall 123 ............................. <integer(sInput.item[2])>
+  [ 71] pushint8 1 .............................. <1>
+  [ 73] sub ..................................... <integer(sInput.item[2]) - 1>
+  [ 74] pusharglistnoret 2 ...................... <oDateOut, integer(sInput.item[2]) - 1>
+  [ 76] objcall 761 ............................. oDateOut.setMonth(integer(sInput.item[2]) - 1)
+  [ 79] getlocal 0 .............................. <oDateOut>
+  [ 81] getparam 1 .............................. <sInput>
+  [ 83] pushsymb 406 ............................ <#item>
+  [ 86] pushint8 3 .............................. <3>
+  [ 88] pusharglist 3 ........................... <sInput, #item, 3>
+  [ 90] objcall 54 .............................. <sInput.item[3]>
+  [ 92] pusharglist 1 ........................... <sInput.item[3]>
+  [ 94] extcall 123 ............................. <integer(sInput.item[3])>
+  [ 96] pusharglistnoret 2 ...................... <oDateOut, integer(sInput.item[3])>
+  [ 98] objcall 762 ............................. oDateOut.setDate(integer(sInput.item[3]))
+  [101] getlocal 0 .............................. <oDateOut>
+  [103] getparam 1 .............................. <sInput>
+  [105] pushsymb 406 ............................ <#item>
+  [108] pushint8 4 .............................. <4>
+  [110] pusharglist 3 ........................... <sInput, #item, 4>
+  [112] objcall 54 .............................. <sInput.item[4]>
+  [114] pusharglist 1 ........................... <sInput.item[4]>
+  [116] extcall 123 ............................. <integer(sInput.item[4])>
+  [118] pusharglistnoret 2 ...................... <oDateOut, integer(sInput.item[4])>
+  [120] objcall 763 ............................. oDateOut.setHours(integer(sInput.item[4]))
+  [123] getlocal 0 .............................. <oDateOut>
+  [125] getparam 1 .............................. <sInput>
+  [127] pushsymb 406 ............................ <#item>
+  [130] pushint8 5 .............................. <5>
+  [132] pusharglist 3 ........................... <sInput, #item, 5>
+  [134] objcall 54 .............................. <sInput.item[5]>
+  [136] pusharglist 1 ........................... <sInput.item[5]>
+  [138] extcall 123 ............................. <integer(sInput.item[5])>
+  [140] pusharglistnoret 2 ...................... <oDateOut, integer(sInput.item[5])>
+  [142] objcall 764 ............................. oDateOut.setMinutes(integer(sInput.item[5]))
+  [145] getlocal 0 .............................. <oDateOut>
+  [147] pushzero ................................ <0>
+  [148] pusharglistnoret 2 ...................... <oDateOut, 0>
+  [150] objcall 765 ............................. oDateOut.setSeconds(0)
+  [153] getlocal 0 .............................. <oDateOut>
+  [155] pusharglistnoret 1 ...................... <oDateOut>
+  [157] extcall 63 .............................. return oDateOut
+  [159] ret
+end
+
+on convertDateObjectToString me, oInput
+  [  0] pushcons 3 .............................. <EMPTY>
+  [  2] setlocal 0 .............................. sOut = EMPTY
+  [  4] pushcons 4 .............................. <"st=">
+  [  6] getparam 0 .............................. <me>
+  [  8] getparam 1 .............................. <oInput>
+  [ 10] pusharglist 1 ........................... <oInput>
+  [ 12] objcall 767 ............................. <oInput.getFullYear()>
+  [ 15] pusharglist 1 ........................... <oInput.getFullYear()>
+  [ 17] extcall 123 ............................. <integer(oInput.getFullYear())>
+  [ 19] pushint8 4 .............................. <4>
+  [ 21] pusharglist 3 ........................... <me, integer(oInput.getFullYear()), 4>
+  [ 23] objcall 751 ............................. <me.addLeadingZeroes(integer(oInput.getFullYear()), 4)>
+  [ 26] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4)>
+  [ 27] pushcons 2 .............................. <":">
+  [ 29] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":">
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getparam 1 .............................. <oInput>
+  [ 34] pusharglist 1 ........................... <oInput>
+  [ 36] objcall 768 ............................. <oInput.getMonth()>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] add ..................................... <oInput.getMonth() + 1>
+  [ 42] pusharglist 1 ........................... <oInput.getMonth() + 1>
+  [ 44] extcall 123 ............................. <integer(oInput.getMonth() + 1)>
+  [ 46] pushint8 2 .............................. <2>
+  [ 48] pusharglist 3 ........................... <me, integer(oInput.getMonth() + 1), 2>
+  [ 50] objcall 751 ............................. <me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2)>
+  [ 53] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2)>
+  [ 54] pushcons 2 .............................. <":">
+  [ 56] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":">
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getparam 1 .............................. <oInput>
+  [ 61] pusharglist 1 ........................... <oInput>
+  [ 63] objcall 769 ............................. <oInput.getDate()>
+  [ 66] pusharglist 1 ........................... <oInput.getDate()>
+  [ 68] extcall 123 ............................. <integer(oInput.getDate())>
+  [ 70] pushint8 2 .............................. <2>
+  [ 72] pusharglist 3 ........................... <me, integer(oInput.getDate()), 2>
+  [ 74] objcall 751 ............................. <me.addLeadingZeroes(integer(oInput.getDate()), 2)>
+  [ 77] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2)>
+  [ 78] pushcons 2 .............................. <":">
+  [ 80] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2) & ":">
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getparam 1 .............................. <oInput>
+  [ 85] pusharglist 1 ........................... <oInput>
+  [ 87] objcall 770 ............................. <oInput.getHours()>
+  [ 90] pusharglist 1 ........................... <oInput.getHours()>
+  [ 92] extcall 123 ............................. <integer(oInput.getHours())>
+  [ 94] pushint8 2 .............................. <2>
+  [ 96] pusharglist 3 ........................... <me, integer(oInput.getHours()), 2>
+  [ 98] objcall 751 ............................. <me.addLeadingZeroes(integer(oInput.getHours()), 2)>
+  [101] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getHours()), 2)>
+  [102] pushcons 2 .............................. <":">
+  [104] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getHours()), 2) & ":">
+  [105] getparam 0 .............................. <me>
+  [107] getparam 1 .............................. <oInput>
+  [109] pusharglist 1 ........................... <oInput>
+  [111] objcall 771 ............................. <oInput.getMinutes()>
+  [114] pusharglist 1 ........................... <oInput.getMinutes()>
+  [116] extcall 123 ............................. <integer(oInput.getMinutes())>
+  [118] pushint8 2 .............................. <2>
+  [120] pusharglist 3 ........................... <me, integer(oInput.getMinutes()), 2>
+  [122] objcall 751 ............................. <me.addLeadingZeroes(integer(oInput.getMinutes()), 2)>
+  [125] joinstr ................................. <"st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getHours()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getMinutes()), 2)>
+  [126] setlocal 0 .............................. sOut = "st=" & me.addLeadingZeroes(integer(oInput.getFullYear()), 4) & ":" & me.addLeadingZeroes(integer(oInput.getMonth() + 1), 2) & ":" & me.addLeadingZeroes(integer(oInput.getDate()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getHours()), 2) & ":" & me.addLeadingZeroes(integer(oInput.getMinutes()), 2)
+  [128] getlocal 0 .............................. <sOut>
+  [130] pusharglistnoret 1 ...................... <sOut>
+  [132] extcall 63 .............................. return sOut
+  [134] ret
+end
+
+on addLeadingZeroes me, iIn, iLength
+  [  0] pushcons 3 .............................. <EMPTY>
+  [  2] getparam 1 .............................. <iIn>
+  [  4] joinstr ................................. <EMPTY & iIn>
+  [  5] setlocal 0 .............................. sOut = EMPTY & iIn
+  [  7] getparam 2 .............................. <iLength>
+  [  9] getlocal 0 .............................. <sOut>
+  [ 11] pushsymb 774 ............................ <#chars>
+  [ 14] pusharglist 2 ........................... <sOut, #chars>
+  [ 16] objcall 88 .............................. <sOut.chars.count>
+  [ 18] sub ..................................... <iLength - sOut.chars.count>
+  [ 19] setlocal 1 .............................. n = iLength - sOut.chars.count
+  [ 21] pushcons 3 .............................. <EMPTY>
+  [ 23] setlocal 2 .............................. adder = EMPTY
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] setlocal 3
+  [ 29] getlocal 3
+  [ 31] getlocal 1 .............................. <n>
+  [ 33] lteq
+  [ 34] jmpifz [ 53] ............................ repeat with i = 1 to n
+  [ 37] getlocal 2 .............................. <adder>
+  [ 39] pushcons 5 .............................. <"0">
+  [ 41] joinstr ................................. <adder & "0">
+  [ 42] setlocal 2 .............................. adder = adder & "0"
+  [ 44] pushint8 1
+  [ 46] getlocal 3
+  [ 48] add
+  [ 49] setlocal 3
+  [ 51] endrepeat [ 29]
+  [ 53] getlocal 2 .............................. <adder>
+  [ 55] getlocal 0 .............................. <sOut>
+  [ 57] joinstr ................................. <adder & sOut>
+  [ 58] setlocal 0 .............................. sOut = adder & sOut
+  [ 60] getlocal 0 .............................. <sOut>
+  [ 62] pusharglistnoret 1 ...................... <sOut>
+  [ 64] extcall 63 .............................. return sOut
+  [ 66] ret
+end
+
+on getDateStringForServerCall me
+  [  0] pushcons 0 .............................. <"Date">
+  [  2] pusharglist 1 ........................... <"Date">
+  [  4] extcall 389 ............................. <newObject("Date")>
+  [  7] setlocal 0 .............................. od = newObject("Date")
+  [  9] getlocal 0 .............................. <od>
+  [ 11] getlocal 0 .............................. <od>
+  [ 13] pusharglist 1 ........................... <od>
+  [ 15] objcall 136 ............................. <od.getTime()>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 758 .......................... <me.iMsOffset>
+  [ 22] add ..................................... <od.getTime() + me.iMsOffset>
+  [ 23] pusharglistnoret 2 ...................... <od, od.getTime() + me.iMsOffset>
+  [ 25] objcall 713 ............................. od.setTime(od.getTime() + me.iMsOffset)
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getlocal 0 .............................. <od>
+  [ 32] pusharglist 2 ........................... <me, od>
+  [ 34] objcall 750 ............................. <me.convertDateObjectToString(od)>
+  [ 37] pusharglistnoret 1 ...................... <me.convertDateObjectToString(od)>
+  [ 39] extcall 63 .............................. return me.convertDateObjectToString(od)
+  [ 41] ret
+end
+
+on getScreenNameStringForServerCall me
+  [  0] pushcons 6 .............................. <"theScreenName=">
+  [  2] getglobal 162 ........................... <sScreenName>
+  [  4] joinstr ................................. <"theScreenName=" & sScreenName>
+  [  5] pusharglistnoret 1 ...................... <"theScreenName=" & sScreenName>
+  [  7] extcall 63 .............................. return "theScreenName=" & sScreenName
+  [  9] ret
+end
+
+on getScoreStringForServerCall me
+  [  0] pushcons 7 .............................. <"theScore=">
+  [  2] pushcons 8 .............................. <"hotdog">
+  [  4] pusharglist 1 ........................... <"hotdog">
+  [  6] extcall 64 .............................. <script("hotdog")>
+  [  8] getchainedprop 805 ...................... <script("hotdog").pickle>
+  [ 11] getglobal 104 ........................... <iLatestScore>
+  [ 13] pusharglist 2 ........................... <script("hotdog").pickle, iLatestScore>
+  [ 15] objcall 102 ............................. <script("hotdog").pickle.Decrypt(iLatestScore)>
+  [ 17] pusharglist 1 ........................... <script("hotdog").pickle.Decrypt(iLatestScore)>
+  [ 19] extcall 123 ............................. <integer(script("hotdog").pickle.Decrypt(iLatestScore))>
+  [ 21] joinstr ................................. <"theScore=" & integer(script("hotdog").pickle.Decrypt(iLatestScore))>
+  [ 22] pusharglistnoret 1 ...................... <"theScore=" & integer(script("hotdog").pickle.Decrypt(iLatestScore))>
+  [ 24] extcall 63 .............................. return "theScore=" & integer(script("hotdog").pickle.Decrypt(iLatestScore))
+  [ 26] ret
+end

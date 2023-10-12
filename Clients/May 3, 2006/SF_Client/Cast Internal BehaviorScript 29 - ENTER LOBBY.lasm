@@ -1,0 +1,342 @@
+property sID, iPercentage, sStudioID
+global oDenizenManager, oSession, oRoom, oStudio, oPossessionStudio, oStudioMap, ElementMgr, oStudioManager, gFeatureSet, gCLOSING
+
+on exitFrame me
+  [  0] getglobal 40 ............................ <gCLOSING>
+  [  2] not ..................................... <not gCLOSING>
+  [  3] jmpifz [ 12] ............................ if not gCLOSING then
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 120 ............................. me.updateLoader()
+  [ 12] pusharglist 0 ........................... <>
+  [ 14] thebuiltin 20 ........................... <the frame>
+  [ 16] pusharglistnoret 1 ...................... <the frame>
+  [ 18] extcall 21 .............................. go(the frame)
+  [ 20] ret
+end
+
+on beginSprite me
+  [  0] pushcons 0 .............................. <RETURN>
+  [  2] pushcons 0 .............................. <RETURN>
+  [  4] joinstr ................................. <RETURN & RETURN>
+  [  5] pushcons 1 .............................. <"*****************">
+  [  7] pusharglistnoret 2 ...................... <RETURN & RETURN, "*****************">
+  [  9] extcall 17 .............................. put RETURN & RETURN, "*****************"
+  [ 11] pushcons 2 .............................. <"** ENTERING LOBBY **">
+  [ 13] pusharglistnoret 1 ...................... <"** ENTERING LOBBY **">
+  [ 15] extcall 17 .............................. put "** ENTERING LOBBY **"
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushcons 3 .............................. <"$LOBBY$">
+  [ 21] setobjprop 73 ........................... me.sStudioID = "$LOBBY$"
+  [ 23] getparam 0 .............................. <me>
+  [ 25] pushcons 4 .............................. <"Entering Lobby">
+  [ 27] setobjprop 122 .......................... me.sID = "Entering Lobby"
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglistnoret 1 ...................... <me>
+  [ 33] objcall 118 ............................. me.openLoader()
+  [ 35] getparam 0 .............................. <me>
+  [ 37] pushint8 100 ............................ <100>
+  [ 39] setobjprop 87 ........................... me.iPercentage = 100
+  [ 41] getglobal 67 ............................ <ElementMgr>
+  [ 43] pusharglistnoret 1 ...................... <ElementMgr>
+  [ 45] objcall 68 .............................. ElementMgr.closeAllWindows()
+  [ 47] getglobal 40 ............................ <gCLOSING>
+  [ 49] jmpifz [ 62] ............................ if gCLOSING then
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] objcall 119 ............................. me.closeLoader()
+  [ 58] pusharglistnoret 0 ...................... <>
+  [ 60] extcall 59 .............................. return 
+  [ 62] getglobal 46 ............................ <oSession>
+  [ 64] getobjprop 250 .......................... <oSession.bTestMode>
+  [ 66] jmpifz [ 87] ............................ if oSession.bTestMode then
+  [ 69] pushcons 5 .............................. <"_TIMER_">
+  [ 71] pusharglist 1 ........................... <"_TIMER_">
+  [ 73] extcall 12 .............................. <script("_TIMER_")>
+  [ 75] pushint16 1000 .......................... <1000>
+  [ 78] pushsymb 249 ............................ <#initRoomEntered>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] pusharglistnoret 4 ...................... <script("_TIMER_"), 1000, #initRoomEntered, me>
+  [ 84] objcall 13 .............................. script("_TIMER_").new(1000, #initRoomEntered, me)
+  [ 86] ret ..................................... exit
+  [ 87] getglobal 26 ............................ <oRoom>
+  [ 89] pusharglist 1 ........................... <oRoom>
+  [ 91] objcall 251 ............................. <oRoom.getInARoom()>
+  [ 93] jmpifz [105] ............................ if oRoom.getInARoom() then / else
+  [ 96] getparam 0 .............................. <me>
+  [ 98] pusharglistnoret 1 ...................... <me>
+  [100] objcall 197 ............................. me.initExitRoom()
+  [102] jmp [111]
+  [105] getparam 0 .............................. <me>
+  [107] pusharglistnoret 1 ...................... <me>
+  [109] objcall 244 ............................. me.initGetGameServer()
+  [111] ret
+end
+
+on initExitRoom me
+  [  0] pushcons 6 .............................. <"--> initExitRoom()">
+  [  2] pusharglistnoret 1 ...................... <"--> initExitRoom()">
+  [  4] extcall 17 .............................. put "--> initExitRoom()"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 7 .............................. <"Exiting Studio">
+  [ 10] setobjprop 122 .......................... me.sID = "Exiting Studio"
+  [ 12] getglobal 26 ............................ <oRoom>
+  [ 14] pusharglistnoret 1 ...................... <oRoom>
+  [ 16] objcall 238 ............................. oRoom.sendExitRoom()
+  [ 18] ret
+end
+
+on initRoomExited me, sStudioID
+  [  0] pushcons 8 .............................. <"--> initRoomExited() ">
+  [  2] getprop 73 .............................. <sStudioID>
+  [  4] joinstr ................................. <"--> initRoomExited() " & sStudioID>
+  [  5] pusharglistnoret 1 ...................... <"--> initRoomExited() " & sStudioID>
+  [  7] extcall 17 .............................. put "--> initRoomExited() " & sStudioID
+  [  9] getparam 0 .............................. <me>
+  [ 11] pusharglistnoret 1 ...................... <me>
+  [ 13] objcall 244 ............................. me.initGetGameServer()
+  [ 15] ret
+end
+
+on initGetGameServer me
+  [  0] pushcons 9 .............................. <"--> REQUESTING GAME SERVER FOR ">
+  [  2] getglobal 8 ............................. <oStudioMap>
+  [  4] pusharglist 1 ........................... <oStudioMap>
+  [  6] objcall 252 ............................. <oStudioMap.getStudioID()>
+  [  8] joinstr ................................. <"--> REQUESTING GAME SERVER FOR " & oStudioMap.getStudioID()>
+  [  9] pusharglistnoret 1 ...................... <"--> REQUESTING GAME SERVER FOR " & oStudioMap.getStudioID()>
+  [ 11] extcall 17 .............................. put "--> REQUESTING GAME SERVER FOR " & oStudioMap.getStudioID()
+  [ 13] getglobal 25 ............................ <oStudioManager>
+  [ 15] getglobal 8 ............................. <oStudioMap>
+  [ 17] pusharglist 1 ........................... <oStudioMap>
+  [ 19] objcall 252 ............................. <oStudioMap.getStudioID()>
+  [ 21] pusharglistnoret 2 ...................... <oStudioManager, oStudioMap.getStudioID()>
+  [ 23] objcall 253 ............................. oStudioManager.getGameServerByStudioID(oStudioMap.getStudioID())
+  [ 25] ret
+end
+
+on initGetGameServerResult me, oGameServer
+  [  0] pushcons 10 ............................. <"--> RECEIVED GAME SERVER: ">
+  [  2] getparam 1 .............................. <oGameServer>
+  [  4] pusharglist 1 ........................... <oGameServer>
+  [  6] objcall 254 ............................. <oGameServer.getDNS()>
+  [  8] joinstr ................................. <"--> RECEIVED GAME SERVER: " & oGameServer.getDNS()>
+  [  9] pusharglistnoret 1 ...................... <"--> RECEIVED GAME SERVER: " & oGameServer.getDNS()>
+  [ 11] extcall 17 .............................. put "--> RECEIVED GAME SERVER: " & oGameServer.getDNS()
+  [ 13] pushcons 11 ............................. <"--> CURRENT SERVER: ">
+  [ 15] getglobal 46 ............................ <oSession>
+  [ 17] pusharglist 1 ........................... <oSession>
+  [ 19] objcall 255 ............................. <oSession.getServer()>
+  [ 21] joinstr ................................. <"--> CURRENT SERVER: " & oSession.getServer()>
+  [ 22] pusharglistnoret 1 ...................... <"--> CURRENT SERVER: " & oSession.getServer()>
+  [ 24] extcall 17 .............................. put "--> CURRENT SERVER: " & oSession.getServer()
+  [ 26] pushcons 12 ............................. <"--> NEW SERVER: ">
+  [ 28] getparam 1 .............................. <oGameServer>
+  [ 30] pusharglist 1 ........................... <oGameServer>
+  [ 32] objcall 254 ............................. <oGameServer.getDNS()>
+  [ 34] joinstr ................................. <"--> NEW SERVER: " & oGameServer.getDNS()>
+  [ 35] pusharglistnoret 1 ...................... <"--> NEW SERVER: " & oGameServer.getDNS()>
+  [ 37] extcall 17 .............................. put "--> NEW SERVER: " & oGameServer.getDNS()
+  [ 39] getglobal 8 ............................. <oStudioMap>
+  [ 41] getparam 1 .............................. <oGameServer>
+  [ 43] pusharglistnoret 2 ...................... <oStudioMap, oGameServer>
+  [ 45] objcall 256 ............................. oStudioMap.setGameServer(oGameServer)
+  [ 48] getglobal 46 ............................ <oSession>
+  [ 50] pusharglist 1 ........................... <oSession>
+  [ 52] objcall 47 .............................. <oSession.getConnected()>
+  [ 54] jmpifz [ 91] ............................ if oSession.getConnected() then / else
+  [ 57] getglobal 46 ............................ <oSession>
+  [ 59] pusharglist 1 ........................... <oSession>
+  [ 61] objcall 255 ............................. <oSession.getServer()>
+  [ 63] getparam 1 .............................. <oGameServer>
+  [ 65] pusharglist 1 ........................... <oGameServer>
+  [ 67] objcall 254 ............................. <oGameServer.getDNS()>
+  [ 69] eq ...................................... <oSession.getServer() = oGameServer.getDNS()>
+  [ 70] jmpifz [ 82] ............................ if oSession.getServer() = oGameServer.getDNS() then / else
+  [ 73] getparam 0 .............................. <me>
+  [ 75] pusharglistnoret 1 ...................... <me>
+  [ 77] objcall 248 ............................. me.initEnterRoom()
+  [ 79] jmp [ 88]
+  [ 82] getparam 0 .............................. <me>
+  [ 84] pusharglistnoret 1 ...................... <me>
+  [ 86] objcall 199 ............................. me.initDisconnect()
+  [ 88] jmp [ 97]
+  [ 91] getparam 0 .............................. <me>
+  [ 93] pusharglistnoret 1 ...................... <me>
+  [ 95] objcall 199 ............................. me.initDisconnect()
+  [ 97] ret
+end
+
+on initDisconnect me
+  [  0] pushcons 13 ............................. <"--> initDisconnect()">
+  [  2] pusharglistnoret 1 ...................... <"--> initDisconnect()">
+  [  4] extcall 17 .............................. put "--> initDisconnect()"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 14 ............................. <"Disconnecting.">
+  [ 10] setobjprop 122 .......................... me.sID = "Disconnecting."
+  [ 12] getglobal 46 ............................ <oSession>
+  [ 14] pusharglistnoret 1 ...................... <oSession>
+  [ 16] objcall 48 .............................. oSession.disconnect()
+  [ 18] ret
+end
+
+on initLoggedOut me
+  [  0] pushcons 15 ............................. <"--> initLoggedOut()">
+  [  2] pusharglistnoret 1 ...................... <"--> initLoggedOut()">
+  [  4] extcall 17 .............................. put "--> initLoggedOut()"
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 246 ............................. me.initConnect()
+  [ 12] ret
+end
+
+on initConnect me
+  [  0] pushcons 16 ............................. <"--> initConnect()">
+  [  2] pusharglistnoret 1 ...................... <"--> initConnect()">
+  [  4] extcall 17 .............................. put "--> initConnect()"
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 17 ............................. <"Connecting..">
+  [ 10] setobjprop 122 .......................... me.sID = "Connecting.."
+  [ 12] getglobal 46 ............................ <oSession>
+  [ 14] getglobal 8 ............................. <oStudioMap>
+  [ 16] pusharglist 1 ........................... <oStudioMap>
+  [ 18] objcall 258 ............................. <oStudioMap.getGameServer()>
+  [ 21] pusharglist 1 ........................... <oStudioMap.getGameServer()>
+  [ 23] objcall 254 ............................. <oStudioMap.getGameServer().getDNS()>
+  [ 25] getglobal 8 ............................. <oStudioMap>
+  [ 27] pusharglist 1 ........................... <oStudioMap>
+  [ 29] objcall 258 ............................. <oStudioMap.getGameServer()>
+  [ 32] pusharglist 1 ........................... <oStudioMap.getGameServer()>
+  [ 34] objcall 259 ............................. <oStudioMap.getGameServer().getPort()>
+  [ 37] pusharglistnoret 3 ...................... <oSession, oStudioMap.getGameServer().getDNS(), oStudioMap.getGameServer().getPort()>
+  [ 39] objcall 260 ............................. oSession.setConnectionProps(oStudioMap.getGameServer().getDNS(), oStudioMap.getGameServer().getPort())
+  [ 42] getglobal 46 ............................ <oSession>
+  [ 44] getglobal 43 ............................ <oDenizenManager>
+  [ 46] pusharglist 1 ........................... <oDenizenManager>
+  [ 48] objcall 44 .............................. <oDenizenManager.getScreenName()>
+  [ 50] pusharglistnoret 2 ...................... <oSession, oDenizenManager.getScreenName()>
+  [ 52] objcall 261 ............................. oSession.connect(oDenizenManager.getScreenName())
+  [ 55] pushcons 18 ............................. <"--> LEAVING initConnect()">
+  [ 57] pusharglistnoret 1 ...................... <"--> LEAVING initConnect()">
+  [ 59] extcall 17 .............................. put "--> LEAVING initConnect()"
+  [ 61] ret
+end
+
+on initConnected me
+  [  0] pushcons 19 ............................. <"--> initConnected()">
+  [  2] pusharglistnoret 1 ...................... <"--> initConnected()">
+  [  4] extcall 17 .............................. put "--> initConnected()"
+  [  6] pushcons 20 ............................. <"--> logging in">
+  [  8] pusharglistnoret 1 ...................... <"--> logging in">
+  [ 10] extcall 17 .............................. put "--> logging in"
+  [ 12] getglobal 46 ............................ <oSession>
+  [ 14] pusharglistnoret 1 ...................... <oSession>
+  [ 16] objcall 262 ............................. oSession.logIn()
+  [ 19] ret
+end
+
+on initLoggedIn me
+  [  0] pushcons 21 ............................. <"--> initLoggedIn()">
+  [  2] pusharglistnoret 1 ...................... <"--> initLoggedIn()">
+  [  4] extcall 17 .............................. put "--> initLoggedIn()"
+  [  6] getparam 0 .............................. <me>
+  [  8] pusharglistnoret 1 ...................... <me>
+  [ 10] objcall 248 ............................. me.initEnterRoom()
+  [ 12] ret
+end
+
+on initEnterRoom me
+  [  0] pushcons 22 ............................. <"--> initEnterRoom(): ">
+  [  2] getglobal 8 ............................. <oStudioMap>
+  [  4] pusharglist 1 ........................... <oStudioMap>
+  [  6] objcall 252 ............................. <oStudioMap.getStudioID()>
+  [  8] joinstr ................................. <"--> initEnterRoom(): " & oStudioMap.getStudioID()>
+  [  9] pusharglistnoret 1 ...................... <"--> initEnterRoom(): " & oStudioMap.getStudioID()>
+  [ 11] extcall 17 .............................. put "--> initEnterRoom(): " & oStudioMap.getStudioID()
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushcons 23 ............................. <"Entering:">
+  [ 17] getglobal 8 ............................. <oStudioMap>
+  [ 19] pusharglist 1 ........................... <oStudioMap>
+  [ 21] objcall 11 .............................. <oStudioMap.getStudioName()>
+  [ 23] joinpadstr .............................. <"Entering:" && oStudioMap.getStudioName()>
+  [ 24] setobjprop 122 .......................... me.sID = "Entering:" && oStudioMap.getStudioName()
+  [ 26] getglobal 26 ............................ <oRoom>
+  [ 28] getglobal 8 ............................. <oStudioMap>
+  [ 30] pusharglist 1 ........................... <oStudioMap>
+  [ 32] objcall 252 ............................. <oStudioMap.getStudioID()>
+  [ 34] pusharglistnoret 2 ...................... <oRoom, oStudioMap.getStudioID()>
+  [ 36] objcall 263 ............................. oRoom.sendEnterRoom(oStudioMap.getStudioID())
+  [ 39] ret
+end
+
+on initRoomEntered me, sStudioID
+  [  0] pushcons 24 ............................. <"--> initRoomEntered(): ">
+  [  2] getprop 73 .............................. <sStudioID>
+  [  4] joinstr ................................. <"--> initRoomEntered(): " & sStudioID>
+  [  5] pusharglistnoret 1 ...................... <"--> initRoomEntered(): " & sStudioID>
+  [  7] extcall 17 .............................. put "--> initRoomEntered(): " & sStudioID
+  [  9] pushcons 25 ............................. <"** LOBBY ENTERED **">
+  [ 11] pusharglistnoret 1 ...................... <"** LOBBY ENTERED **">
+  [ 13] extcall 17 .............................. put "** LOBBY ENTERED **"
+  [ 15] pushcons 26 ............................. <"********************">
+  [ 17] pushcons 0 .............................. <RETURN>
+  [ 19] joinstr ................................. <"********************" & RETURN>
+  [ 20] pusharglistnoret 1 ...................... <"********************" & RETURN>
+  [ 22] extcall 17 .............................. put "********************" & RETURN
+  [ 24] getparam 0 .............................. <me>
+  [ 26] pusharglistnoret 1 ...................... <me>
+  [ 28] objcall 119 ............................. me.closeLoader()
+  [ 30] getglobal 155 ........................... <gFeatureSet>
+  [ 32] pushsymb 349 ............................ <#BETA>
+  [ 35] pusharglist 2 ........................... <gFeatureSet, #BETA>
+  [ 37] objcall 350 ............................. <gFeatureSet.isEnabled(#BETA)>
+  [ 40] jmpifz [ 55] ............................ if gFeatureSet.isEnabled(#BETA) then / else
+  [ 43] getglobal 67 ............................ <ElementMgr>
+  [ 45] pushcons 27 ............................. <"BETA_cc_entry.window">
+  [ 47] pusharglistnoret 2 ...................... <ElementMgr, "BETA_cc_entry.window">
+  [ 49] objcall 351 ............................. ElementMgr.newwindow("BETA_cc_entry.window")
+  [ 52] jmp [ 71]
+  [ 55] getglobal 67 ............................ <ElementMgr>
+  [ 57] pushcons 28 ............................. <"cc_entry.window">
+  [ 59] pusharglistnoret 2 ...................... <ElementMgr, "cc_entry.window">
+  [ 61] objcall 351 ............................. ElementMgr.newwindow("cc_entry.window")
+  [ 64] getglobal 67 ............................ <ElementMgr>
+  [ 66] pusharglistnoret 1 ...................... <ElementMgr>
+  [ 68] objcall 352 ............................. ElementMgr.getMessengerObject()
+  [ 71] getglobal 67 ............................ <ElementMgr>
+  [ 73] pushcons 29 ............................. <"nav_public_start.window">
+  [ 75] pusharglistnoret 2 ...................... <ElementMgr, "nav_public_start.window">
+  [ 77] objcall 351 ............................. ElementMgr.newwindow("nav_public_start.window")
+  [ 80] ret
+end
+
+on openLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 130 ............................. getLoader().openWindow()
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] objcall 120 ............................. me.updateLoader()
+  [ 14] ret
+end
+
+on closeLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] pusharglistnoret 1 ...................... <getLoader()>
+  [  6] objcall 77 .............................. getLoader().closeWindow()
+  [  8] ret
+end
+
+on updateLoader me
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 32 .............................. <getLoader()>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 122 .......................... <me.sID>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 87 ........................... <me.iPercentage>
+  [ 12] pusharglistnoret 3 ...................... <getLoader(), me.sID, me.iPercentage>
+  [ 14] objcall 131 ............................. getLoader().displayStatus(me.sID, me.iPercentage)
+  [ 16] ret
+end

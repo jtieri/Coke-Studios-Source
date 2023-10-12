@@ -1,0 +1,180 @@
+property bInit, bDebug
+global bPreloadCasts, oStudioManager, oStudioMap, oStudio, oRoom
+
+on beginSprite me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 5 ............................... bDebug = 1
+  [  4] getparam 0 .............................. <me>
+  [  6] pushcons 0 .............................. <"** LOAD CASTS 3 **">
+  [  8] pusharglistnoret 2 ...................... <me, "** LOAD CASTS 3 **">
+  [ 10] objcall 4 ............................... me.debug("** LOAD CASTS 3 **")
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushzero ................................ <0>
+  [ 15] setobjprop 6 ............................ me.bInit = 0
+  [ 17] ret
+end
+
+on init me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 1 .............................. <"init()">
+  [  4] pusharglistnoret 2 ...................... <me, "init()">
+  [  6] objcall 4 ............................... me.debug("init()")
+  [  8] getglobal 8 ............................. <oStudioMap>
+  [ 10] pusharglist 1 ........................... <oStudioMap>
+  [ 12] objcall 9 ............................... <oStudioMap.getAsset()>
+  [ 14] setlocal 0 .............................. sStudioAsset = oStudioMap.getAsset()
+  [ 16] getparam 0 .............................. <me>
+  [ 18] pushcons 2 .............................. <"sStudioAsset: ">
+  [ 20] getlocal 0 .............................. <sStudioAsset>
+  [ 22] joinstr ................................. <"sStudioAsset: " & sStudioAsset>
+  [ 23] pusharglistnoret 2 ...................... <me, "sStudioAsset: " & sStudioAsset>
+  [ 25] objcall 4 ............................... me.debug("sStudioAsset: " & sStudioAsset)
+  [ 27] getglobal 10 ............................ <bPreloadCasts>
+  [ 29] jmpifz [221] ............................ if bPreloadCasts then / else
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushcons 3 .............................. <"oStudioMap.getStudioName(): ">
+  [ 36] getglobal 8 ............................. <oStudioMap>
+  [ 38] pusharglist 1 ........................... <oStudioMap>
+  [ 40] objcall 11 .............................. <oStudioMap.getStudioName()>
+  [ 42] joinstr ................................. <"oStudioMap.getStudioName(): " & oStudioMap.getStudioName()>
+  [ 43] pusharglistnoret 2 ...................... <me, "oStudioMap.getStudioName(): " & oStudioMap.getStudioName()>
+  [ 45] objcall 4 ............................... me.debug("oStudioMap.getStudioName(): " & oStudioMap.getStudioName())
+  [ 47] pushcons 4 .............................. <"PreloadCasts">
+  [ 49] pusharglist 1 ........................... <"PreloadCasts">
+  [ 51] extcall 12 .............................. <script("PreloadCasts")>
+  [ 53] pushcons 5 .............................. <"Loading">
+  [ 55] getglobal 8 ............................. <oStudioMap>
+  [ 57] pusharglist 1 ........................... <oStudioMap>
+  [ 59] objcall 11 .............................. <oStudioMap.getStudioName()>
+  [ 61] joinpadstr .............................. <"Loading" && oStudioMap.getStudioName()>
+  [ 62] pusharglist 2 ........................... <script("PreloadCasts"), "Loading" && oStudioMap.getStudioName()>
+  [ 64] objcall 13 .............................. <script("PreloadCasts").new("Loading" && oStudioMap.getStudioName())>
+  [ 66] setlocal 1 .............................. p = script("PreloadCasts").new("Loading" && oStudioMap.getStudioName())
+  [ 68] getlocal 1 .............................. <p>
+  [ 70] pushcons 6 .............................. <"Studio">
+  [ 72] getlocal 0 .............................. <sStudioAsset>
+  [ 74] pusharglistnoret 3 ...................... <p, "Studio", sStudioAsset>
+  [ 76] objcall 14 .............................. p.addItem("Studio", sStudioAsset)
+  [ 78] getlocal 1 .............................. <p>
+  [ 80] pushcons 7 .............................. <"ChatEngine">
+  [ 82] getmovieprop 15 ......................... <the moviePath>
+  [ 84] pushcons 8 .............................. <"chatengine">
+  [ 86] joinstr ................................. <the moviePath & "chatengine">
+  [ 87] pusharglistnoret 3 ...................... <p, "ChatEngine", the moviePath & "chatengine">
+  [ 89] objcall 14 .............................. p.addItem("ChatEngine", the moviePath & "chatengine")
+  [ 91] getlocal 1 .............................. <p>
+  [ 93] pushcons 9 .............................. <"Room">
+  [ 95] getmovieprop 15 ......................... <the moviePath>
+  [ 97] pushcons 10 ............................. <"cc_room">
+  [ 99] joinstr ................................. <the moviePath & "cc_room">
+  [100] pusharglistnoret 3 ...................... <p, "Room", the moviePath & "cc_room">
+  [102] objcall 14 .............................. p.addItem("Room", the moviePath & "cc_room")
+  [104] getlocal 1 .............................. <p>
+  [106] pushcons 11 ............................. <"Furniture">
+  [108] getmovieprop 15 ......................... <the moviePath>
+  [110] pushcons 12 ............................. <"cc_furniture[1]">
+  [112] joinstr ................................. <the moviePath & "cc_furniture[1]">
+  [113] pusharglistnoret 3 ...................... <p, "Furniture", the moviePath & "cc_furniture[1]">
+  [115] objcall 14 .............................. p.addItem("Furniture", the moviePath & "cc_furniture[1]")
+  [117] getlocal 1 .............................. <p>
+  [119] pushcons 13 ............................. <"FurnitureSmall">
+  [121] getmovieprop 15 ......................... <the moviePath>
+  [123] pushcons 14 ............................. <"cc_furniture_small">
+  [125] joinstr ................................. <the moviePath & "cc_furniture_small">
+  [126] pusharglistnoret 3 ...................... <p, "FurnitureSmall", the moviePath & "cc_furniture_small">
+  [128] objcall 14 .............................. p.addItem("FurnitureSmall", the moviePath & "cc_furniture_small")
+  [130] getlocal 1 .............................. <p>
+  [132] pushcons 15 ............................. <"Catalogue">
+  [134] getmovieprop 15 ......................... <the moviePath>
+  [136] pushcons 16 ............................. <"cc_catalogue[1]">
+  [138] joinstr ................................. <the moviePath & "cc_catalogue[1]">
+  [139] pusharglistnoret 3 ...................... <p, "Catalogue", the moviePath & "cc_catalogue[1]">
+  [141] objcall 14 .............................. p.addItem("Catalogue", the moviePath & "cc_catalogue[1]")
+  [143] getlocal 1 .............................. <p>
+  [145] pushcons 17 ............................. <"Items">
+  [147] getmovieprop 15 ......................... <the moviePath>
+  [149] pushcons 18 ............................. <"cc_items[1]">
+  [151] joinstr ................................. <the moviePath & "cc_items[1]">
+  [152] pusharglistnoret 3 ...................... <p, "Items", the moviePath & "cc_items[1]">
+  [154] objcall 14 .............................. p.addItem("Items", the moviePath & "cc_items[1]")
+  [156] getlocal 1 .............................. <p>
+  [158] pushcons 19 ............................. <"IsoEngine">
+  [160] getmovieprop 15 ......................... <the moviePath>
+  [162] pushcons 20 ............................. <"isoengine">
+  [164] joinstr ................................. <the moviePath & "isoengine">
+  [165] pusharglistnoret 3 ...................... <p, "IsoEngine", the moviePath & "isoengine">
+  [167] objcall 14 .............................. p.addItem("IsoEngine", the moviePath & "isoengine")
+  [169] getlocal 1 .............................. <p>
+  [171] pushcons 21 ............................. <"Sequencer">
+  [173] getmovieprop 15 ......................... <the moviePath>
+  [175] pushcons 22 ............................. <"sequencer">
+  [177] joinstr ................................. <the moviePath & "sequencer">
+  [178] pusharglistnoret 3 ...................... <p, "Sequencer", the moviePath & "sequencer">
+  [180] objcall 14 .............................. p.addItem("Sequencer", the moviePath & "sequencer")
+  [182] getlocal 1 .............................. <p>
+  [184] pushcons 23 ............................. <"Mixer">
+  [186] getmovieprop 15 ......................... <the moviePath>
+  [188] pushcons 24 ............................. <"mixer">
+  [190] joinstr ................................. <the moviePath & "mixer">
+  [191] pusharglistnoret 3 ...................... <p, "Mixer", the moviePath & "mixer">
+  [193] objcall 14 .............................. p.addItem("Mixer", the moviePath & "mixer")
+  [195] getlocal 1 .............................. <p>
+  [197] pushcons 25 ............................. <"SoundLibrary">
+  [199] getmovieprop 15 ......................... <the moviePath>
+  [201] pushcons 26 ............................. <"soundlibrary">
+  [203] joinstr ................................. <the moviePath & "soundlibrary">
+  [204] pusharglistnoret 3 ...................... <p, "SoundLibrary", the moviePath & "soundlibrary">
+  [206] objcall 14 .............................. p.addItem("SoundLibrary", the moviePath & "soundlibrary")
+  [208] getlocal 1 .............................. <p>
+  [210] getparam 0 .............................. <me>
+  [212] pushsymb 3 .............................. <#finished>
+  [214] pusharglistnoret 3 ...................... <p, me, #finished>
+  [216] objcall 16 .............................. p.start(me, #finished)
+  [218] jmp [233]
+  [221] pushcons 27 ............................. <"load casts 3 done">
+  [223] pusharglistnoret 1 ...................... <"load casts 3 done">
+  [225] extcall 17 .............................. put "load casts 3 done"
+  [227] getparam 0 .............................. <me>
+  [229] pusharglistnoret 1 ...................... <me>
+  [231] objcall 3 ............................... me.finished()
+  [233] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 6 ............................ <me.bInit>
+  [  4] not ..................................... <not me.bInit>
+  [  5] jmpifz [ 20] ............................ if not me.bInit then
+  [  8] getparam 0 .............................. <me>
+  [ 10] pushint8 1 .............................. <1>
+  [ 12] setobjprop 6 ............................ me.bInit = 1
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglistnoret 1 ...................... <me>
+  [ 18] objcall 1 ............................... me.init()
+  [ 20] pusharglist 0 ........................... <>
+  [ 22] thebuiltin 20 ........................... <the frame>
+  [ 24] pusharglistnoret 1 ...................... <the frame>
+  [ 26] extcall 21 .............................. go(the frame)
+  [ 28] ret
+end
+
+on finished me
+  [  0] pushsymb 22 ............................. <#next>
+  [  2] pusharglistnoret 1 ...................... <#next>
+  [  4] extcall 21 .............................. go(#next)
+  [  6] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 5 ............................ <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 28 ............................. <"LoadCast3: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"LoadCast3: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"LoadCast3: " & sMessage>
+  [ 17] extcall 17 .............................. put "LoadCast3: " & sMessage
+  [ 19] ret
+end

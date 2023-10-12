@@ -1,0 +1,90 @@
+property pID, pParentWindow
+
+on new me, id, parentwindow
+  [  0] getparam 1 .............................. <id>
+  [  2] setprop 178 ............................. pID = id
+  [  4] getparam 2 .............................. <parentwindow>
+  [  6] setprop 179 ............................. pParentWindow = parentwindow
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] extcall 2 ............................... return me
+  [ 14] ret
+end
+
+on mouseDown me
+  [  0] pusharglistnoret 0 ...................... <>
+  [  2] extcall 18 .............................. dontPassEvent()
+  [  4] ret
+end
+
+on mouseUp me
+  [  0] getglobal 4 ............................. <gFeatureSet>
+  [  2] pushsymb 5 .............................. <#PURCHASING>
+  [  4] pusharglist 2 ........................... <gFeatureSet, #PURCHASING>
+  [  6] objcall 6 ............................... <gFeatureSet.isEnabled(#PURCHASING)>
+  [  8] not ..................................... <not gFeatureSet.isEnabled(#PURCHASING)>
+  [  9] jmpifz [ 24] ............................ if not gFeatureSet.isEnabled(#PURCHASING) then
+  [ 12] getglobal 7 ............................. <ElementMgr>
+  [ 14] pushcons 0 .............................. <"FEATURE_DISABLED">
+  [ 16] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 18] objcall 8 ............................... ElementMgr.alert("FEATURE_DISABLED")
+  [ 20] pusharglistnoret 0 ...................... <>
+  [ 22] extcall 2 ............................... return 
+  [ 24] getprop 179 ............................. <pParentWindow>
+  [ 26] getchainedprop 182 ...................... <pParentWindow.pScrollingLists>
+  [ 28] getobjprop 183 .......................... <pParentWindow.pScrollingLists.itemslist>
+  [ 30] setlocal 0 .............................. oItemsList = pParentWindow.pScrollingLists.itemslist
+  [ 32] getlocal 0 .............................. <oItemsList>
+  [ 34] pushsymb 116 ............................ <#pItemsList>
+  [ 36] getprop 178 ............................. <pID>
+  [ 38] pusharglist 3 ........................... <oItemsList, #pItemsList, pID>
+  [ 40] objcall 57 .............................. <oItemsList.pItemsList[pID]>
+  [ 42] setlocal 1 .............................. aItem = oItemsList.pItemsList[pID]
+  [ 44] getlocal 1 .............................. <aItem>
+  [ 46] getobjprop 153 .......................... <aItem.prodID>
+  [ 48] setlocal 2 .............................. myProdID = aItem.prodID
+  [ 50] getglobal 184 ........................... <gCatalog>
+  [ 52] getlocal 2 .............................. <myProdID>
+  [ 54] pusharglist 2 ........................... <gCatalog, myProdID>
+  [ 56] objcall 185 ............................. <gCatalog.getItemByProdId(myProdID)>
+  [ 58] setlocal 3 .............................. catitem = gCatalog.getItemByProdId(myProdID)
+  [ 60] getlocal 3 .............................. <catitem>
+  [ 62] getobjprop 159 .......................... <catitem.attributes>
+  [ 64] setlocal 4 .............................. myAttributes = catitem.attributes
+  [ 66] getglobal 14 ............................ <oDenizenManager>
+  [ 68] pusharglist 1 ........................... <oDenizenManager>
+  [ 70] objcall 15 .............................. <oDenizenManager.getScreenName()>
+  [ 72] setlocal 5 .............................. myscreenname = oDenizenManager.getScreenName()
+  [ 74] getglobal 16 ............................ <oPossessionManager>
+  [ 76] getlocal 5 .............................. <myscreenname>
+  [ 78] getlocal 2 .............................. <myProdID>
+  [ 80] getlocal 4 .............................. <myAttributes>
+  [ 82] pusharglistnoret 4 ...................... <oPossessionManager, myscreenname, myProdID, myAttributes>
+  [ 84] objcall 17 .............................. oPossessionManager.prePurchaseItem(myscreenname, myProdID, myAttributes)
+  [ 86] pusharglistnoret 0 ...................... <>
+  [ 88] extcall 18 .............................. dontPassEvent()
+  [ 90] ret
+end
+
+on showBuyButton me, iID, bVisible
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 178 .......................... <me.pID>
+  [  4] getparam 1 .............................. <iID>
+  [  6] eq ...................................... <me.pID = iID>
+  [  7] jmpifz [ 37] ............................ if me.pID = iID then
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 25 ........................... <me.spriteNum>
+  [ 14] pusharglist 1 ........................... <me.spriteNum>
+  [ 16] extcall 84 .............................. <sprite(me.spriteNum)>
+  [ 18] getparam 2 .............................. <bVisible>
+  [ 20] setobjprop 189 .......................... sprite(me.spriteNum).visible = bVisible
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getobjprop 25 ........................... <me.spriteNum>
+  [ 26] pushint8 1 .............................. <1>
+  [ 28] add ..................................... <me.spriteNum + 1>
+  [ 29] pusharglist 1 ........................... <me.spriteNum + 1>
+  [ 31] extcall 84 .............................. <sprite(me.spriteNum + 1)>
+  [ 33] getparam 2 .............................. <bVisible>
+  [ 35] setobjprop 189 .......................... sprite(me.spriteNum + 1).visible = bVisible
+  [ 37] ret
+end

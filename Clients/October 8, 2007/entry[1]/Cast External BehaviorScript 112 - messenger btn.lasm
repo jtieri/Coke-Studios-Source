@@ -1,0 +1,61 @@
+global gFeatureSet, ElementMgr
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 78 .............................. return me
+  [  6] ret
+end
+
+on mouseUp me
+  [  0] getglobal 86 ............................ <ElementMgr>
+  [  2] pusharglist 1 ........................... <ElementMgr>
+  [  4] objcall 35 .............................. <ElementMgr.getMessengerObject()>
+  [  6] setlocal 0 .............................. oMessenger = ElementMgr.getMessengerObject()
+  [  8] getlocal 0 .............................. <oMessenger>
+  [ 10] pusharglist 1 ........................... <oMessenger>
+  [ 12] objcall 316 ............................. <oMessenger.getOpenWindow()>
+  [ 15] pusharglist 1 ........................... <oMessenger.getOpenWindow()>
+  [ 17] extcall 87 .............................. <voidp(oMessenger.getOpenWindow())>
+  [ 19] not ..................................... <not voidp(oMessenger.getOpenWindow())>
+  [ 20] jmpifz [ 32] ............................ if not voidp(oMessenger.getOpenWindow()) then / else
+  [ 23] getlocal 0 .............................. <oMessenger>
+  [ 25] pusharglistnoret 1 ...................... <oMessenger>
+  [ 27] objcall 180 ............................. oMessenger.closeWindow()
+  [ 29] jmp [ 62]
+  [ 32] getglobal 83 ............................ <gFeatureSet>
+  [ 34] pushsymb 962 ............................ <#MESSENGER>
+  [ 37] pusharglist 2 ........................... <gFeatureSet, #MESSENGER>
+  [ 39] objcall 85 .............................. <gFeatureSet.isEnabled(#MESSENGER)>
+  [ 41] jmpifz [ 54] ............................ if gFeatureSet.isEnabled(#MESSENGER) then / else
+  [ 44] getlocal 0 .............................. <oMessenger>
+  [ 46] pusharglistnoret 1 ...................... <oMessenger>
+  [ 48] objcall 963 ............................. oMessenger.openMyInfo()
+  [ 51] jmp [ 62]
+  [ 54] getglobal 86 ............................ <ElementMgr>
+  [ 56] pushcons 0 .............................. <"FEATURE_DISABLED">
+  [ 58] pusharglistnoret 2 ...................... <ElementMgr, "FEATURE_DISABLED">
+  [ 60] objcall 10 .............................. ElementMgr.alert("FEATURE_DISABLED")
+  [ 62] ret
+end
+
+on setMessengerBlink me, bState
+  [  0] getparam 1 .............................. <bState>
+  [  2] jmpifz [ 25] ............................ if bState then / else
+  [  5] getparam 0 .............................. <me>
+  [  7] getobjprop 429 .......................... <me.spriteNum>
+  [ 10] pusharglist 1 ........................... <me.spriteNum>
+  [ 12] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 14] pushsymb 431 ............................ <#blink>
+  [ 17] pusharglistnoret 2 ...................... <sprite(me.spriteNum), #blink>
+  [ 19] objcall 423 ............................. sprite(me.spriteNum).setStatus(#blink)
+  [ 22] jmp [ 42]
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 429 .......................... <me.spriteNum>
+  [ 30] pusharglist 1 ........................... <me.spriteNum>
+  [ 32] extcall 177 ............................. <sprite(me.spriteNum)>
+  [ 34] pushsymb 427 ............................ <#idel>
+  [ 37] pusharglistnoret 2 ...................... <sprite(me.spriteNum), #idel>
+  [ 39] objcall 423 ............................. sprite(me.spriteNum).setStatus(#idel)
+  [ 42] ret
+end

@@ -1,0 +1,201 @@
+property ancestor, iRollRandomFrame, iMaxRoll
+global oPossessionStudio, oIsoScene
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] pushint8 4 .............................. <4>
+  [ 21] setprop 1635 ............................ iRollRandomFrame = 4
+  [ 24] pushint8 10 ............................. <10>
+  [ 26] setprop 1636 ............................ iMaxRoll = 10
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pusharglistnoret 1 ...................... <me>
+  [ 33] objcall 1426 ............................ me.displayState()
+  [ 36] getparam 0 .............................. <me>
+  [ 38] pusharglistnoret 1 ...................... <me>
+  [ 40] extcall 52 .............................. return me
+  [ 42] ret
+end
+
+on mouseDownEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 950 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 295 ............................. me.ancestor.mouseDownEvent()
+  [ 10] pusharglist 0 ........................... <>
+  [ 12] thebuiltin 1142 ......................... <the doubleClick>
+  [ 15] jmpifz [ 25] ............................ if the doubleClick then
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] objcall 1626 ............................ me.triggerRoll()
+  [ 25] ret
+end
+
+on displayState me
+  [  0] pushcons 1 .............................. <"v-ball displaystate">
+  [  2] pusharglistnoret 1 ...................... <"v-ball displaystate">
+  [  4] extcall 168 ............................. put "v-ball displaystate"
+  [  6] getparam 0 .............................. <me>
+  [  8] getchainedprop 58 ....................... <me.oItem>
+  [ 10] pusharglist 1 ........................... <me.oItem>
+  [ 12] objcall 1336 ............................ <me.oItem.getState()>
+  [ 15] peek 0 .................................. case me.oItem.getState() of
+  [ 17] pushzero ................................ <0>
+  [ 18] eq
+  [ 19] jmpifz [ 35] ............................ (case) 0:
+  [ 22] getparam 0 .............................. <me>
+  [ 24] getchainedprop 58 ....................... <me.oItem>
+  [ 26] pushzero ................................ <0>
+  [ 27] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 29] objcall 1394 ............................ me.oItem.setAnimate(0)
+  [ 32] jmp [ 54]
+  [ 35] peek 0
+  [ 37] pushint8 1 .............................. <1>
+  [ 39] eq
+  [ 40] jmpifz [ 54] ............................ (case) 1:
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getchainedprop 58 ....................... <me.oItem>
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 51] objcall 1394 ............................ me.oItem.setAnimate(1)
+  [ 54] pop 1 ................................... end case
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getchainedprop 58 ....................... <me.oItem>
+  [ 60] pushzero ................................ <0>
+  [ 61] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 63] objcall 1392 ............................ me.oItem.setFrame(0)
+  [ 66] getparam 0 .............................. <me>
+  [ 68] getchainedprop 58 ....................... <me.oItem>
+  [ 70] getprop 1635 ............................ <iRollRandomFrame>
+  [ 73] pusharglistnoret 2 ...................... <me.oItem, iRollRandomFrame>
+  [ 75] objcall 1392 ............................ me.oItem.setFrame(iRollRandomFrame)
+  [ 78] ret
+end
+
+on triggerRoll me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 1573 ............................ <me.getItem()>
+  [  7] pusharglist 1 ........................... <me.getItem()>
+  [  9] objcall 249 ............................. <me.getItem().getPosId()>
+  [ 11] pusharglist 1 ........................... <me.getItem().getPosId()>
+  [ 13] extcall 69 .............................. <integer(me.getItem().getPosId())>
+  [ 15] setlocal 0 .............................. posId = integer(me.getItem().getPosId())
+  [ 17] getglobal 258 ........................... <oPossessionStudio>
+  [ 20] pusharglist 1 ........................... <oPossessionStudio>
+  [ 22] extcall 59 .............................. <voidp(oPossessionStudio)>
+  [ 24] not ..................................... <not voidp(oPossessionStudio)>
+  [ 25] jmpifz [ 43] ............................ if not voidp(oPossessionStudio) then
+  [ 28] getglobal 258 ........................... <oPossessionStudio>
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 1636 ......................... <me.iMaxRoll>
+  [ 36] getlocal 0 .............................. <posId>
+  [ 38] pusharglistnoret 3 ...................... <oPossessionStudio, me.iMaxRoll, posId>
+  [ 40] objcall 1637 ............................ oPossessionStudio.sendRollRequest(me.iMaxRoll, posId)
+  [ 43] ret
+end
+
+on receiveRollResult me, _iRndInteger
+  [  0] pushcons 2 .............................. <"ACTION_ANIMATED_DICE receiveRollResult: ">
+  [  2] getparam 1 .............................. <_iRndInteger>
+  [  4] joinstr ................................. <"ACTION_ANIMATED_DICE receiveRollResult: " & _iRndInteger>
+  [  5] pusharglistnoret 1 ...................... <"ACTION_ANIMATED_DICE receiveRollResult: " & _iRndInteger>
+  [  7] extcall 168 ............................. put "ACTION_ANIMATED_DICE receiveRollResult: " & _iRndInteger
+  [  9] getparam 0 .............................. <me>
+  [ 11] getparam 1 .............................. <_iRndInteger>
+  [ 13] pushint8 4 .............................. <4>
+  [ 15] add ..................................... <_iRndInteger + 4>
+  [ 16] setobjprop 1635 ......................... me.iRollRandomFrame = _iRndInteger + 4
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] localcall 5 ............................. toggleState(me)
+  [ 25] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 1 ........................... <me>
+  [  4] objcall 1573 ............................ <me.getItem()>
+  [  7] pusharglist 1 ........................... <me.getItem()>
+  [  9] objcall 1377 ............................ <me.getItem().duplicate()>
+  [ 12] setlocal 0 .............................. oTmpItem = me.getItem().duplicate()
+  [ 14] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [ 16] jmpifz [ 25] ............................ if the debugPlaybackEnabled then
+  [ 19] pushcons 3 .............................. <"Furniture item object duplication">
+  [ 21] pusharglistnoret 1 ...................... <"Furniture item object duplication">
+  [ 23] extcall 168 ............................. put "Furniture item object duplication"
+  [ 25] getlocal 0 .............................. <oTmpItem>
+  [ 27] pusharglist 1 ........................... <oTmpItem>
+  [ 29] extcall 1623 ............................ <objectp(oTmpItem)>
+  [ 32] jmpifz [162] ............................ if objectp(oTmpItem) then / else
+  [ 35] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [ 37] jmpifz [ 46] ............................ if the debugPlaybackEnabled then
+  [ 40] pushcons 4 .............................. <"oTmpItem is an object">
+  [ 42] pusharglistnoret 1 ...................... <"oTmpItem is an object">
+  [ 44] extcall 168 ............................. put "oTmpItem is an object"
+  [ 46] getparam 0 .............................. <me>
+  [ 48] pusharglist 1 ........................... <me>
+  [ 50] objcall 1573 ............................ <me.getItem()>
+  [ 53] pusharglist 1 ........................... <me.getItem()>
+  [ 55] objcall 1336 ............................ <me.getItem().getState()>
+  [ 58] peek 0 .................................. case me.getItem().getState() of
+  [ 60] pushzero ................................ <0>
+  [ 61] eq
+  [ 62] jmpifz [ 86] ............................ (case) 0:
+  [ 65] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [ 67] jmpifz [ 76] ............................ if the debugPlaybackEnabled then
+  [ 70] pushcons 5 .............................. <"Changing state from 0 to 1">
+  [ 72] pusharglistnoret 1 ...................... <"Changing state from 0 to 1">
+  [ 74] extcall 168 ............................. put "Changing state from 0 to 1"
+  [ 76] getlocal 0 .............................. <oTmpItem>
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] setobjprop 505 .......................... oTmpItem.iState = 1
+  [ 83] jmp [111]
+  [ 86] peek 0
+  [ 88] pushint8 1 .............................. <1>
+  [ 90] eq
+  [ 91] jmpifz [111] ............................ (case) 1:
+  [ 94] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [ 96] jmpifz [105] ............................ if the debugPlaybackEnabled then
+  [ 99] pushcons 6 .............................. <"Changing state from 1 to 0">
+  [101] pusharglistnoret 1 ...................... <"Changing state from 1 to 0">
+  [103] extcall 168 ............................. put "Changing state from 1 to 0"
+  [105] getlocal 0 .............................. <oTmpItem>
+  [107] pushzero ................................ <0>
+  [108] setobjprop 505 .......................... oTmpItem.iState = 0
+  [111] pop 1 ................................... end case
+  [113] getglobal 258 ........................... <oPossessionStudio>
+  [116] pusharglist 1 ........................... <oPossessionStudio>
+  [118] extcall 59 .............................. <voidp(oPossessionStudio)>
+  [120] not ..................................... <not voidp(oPossessionStudio)>
+  [121] jmpifz [148] ............................ if not voidp(oPossessionStudio) then / else
+  [124] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [126] jmpifz [135] ............................ if the debugPlaybackEnabled then
+  [129] pushcons 7 .............................. <"Calling oPossessionStudio.sendUpdatePossession(oTmpItem)">
+  [131] pusharglistnoret 1 ...................... <"Calling oPossessionStudio.sendUpdatePossession(oTmpItem)">
+  [133] extcall 168 ............................. put "Calling oPossessionStudio.sendUpdatePossession(oTmpItem)"
+  [135] getglobal 258 ........................... <oPossessionStudio>
+  [138] getlocal 0 .............................. <oTmpItem>
+  [140] pusharglistnoret 2 ...................... <oPossessionStudio, oTmpItem>
+  [142] objcall 517 ............................. oPossessionStudio.sendUpdatePossession(oTmpItem)
+  [145] jmp [159]
+  [148] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [150] jmpifz [159] ............................ if the debugPlaybackEnabled then
+  [153] pushcons 8 .............................. <"oPossessionStudio is void">
+  [155] pusharglistnoret 1 ...................... <"oPossessionStudio is void">
+  [157] extcall 168 ............................. put "oPossessionStudio is void"
+  [159] jmp [173]
+  [162] getmovieprop 252 ........................ <the debugPlaybackEnabled>
+  [164] jmpifz [173] ............................ if the debugPlaybackEnabled then
+  [167] pushcons 9 .............................. <"Error">
+  [169] pusharglistnoret 1 ...................... <"Error">
+  [171] extcall 168 ............................. put "Error"
+  [173] ret
+end

@@ -1,0 +1,71 @@
+property iBGSprite
+global oIsoScene
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglistnoret 1 ...................... <me>
+  [  4] extcall 92 .............................. return me
+  [  6] ret
+end
+
+on init me, oXml
+  [  0] getparam 1 .............................. <oXml>
+  [  2] pusharglist 1 ........................... <oXml>
+  [  4] extcall 105 ............................. <voidp(oXml)>
+  [  6] jmpifz [ 13] ............................ if voidp(oXml) then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 92 .............................. return 
+  [ 13] getglobal 88 ............................ <oIsoScene>
+  [ 15] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [ 17] getparam 1 .............................. <oXml>
+  [ 19] pusharglist 2 ........................... <oIsoScene.oSpriteManager, oXml>
+  [ 21] objcall 589 ............................. <oIsoScene.oSpriteManager.buildSpriteProps(oXml)>
+  [ 24] setlocal 0 .............................. aProps = oIsoScene.oSpriteManager.buildSpriteProps(oXml)
+  [ 26] getparam 0 .............................. <me>
+  [ 28] getlocal 0 .............................. <aProps>
+  [ 30] pusharglistnoret 2 ...................... <me, aProps>
+  [ 32] objcall 984 ............................. me.drawBackground(aProps)
+  [ 35] ret
+end
+
+on drawBackground me, aProps
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [  4] getparam 1 .............................. <aProps>
+  [  6] pusharglist 2 ........................... <oIsoScene.oSpriteManager, aProps>
+  [  8] objcall 588 ............................. <oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)>
+  [ 11] setlocal 0 .............................. iSprite = oIsoScene.oSpriteManager.drawStaticSceneSprite(aProps)
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getlocal 0 .............................. <iSprite>
+  [ 17] setobjprop 985 .......................... me.iBGSprite = iSprite
+  [ 20] ret
+end
+
+on destroy me
+  [  0] getglobal 88 ............................ <oIsoScene>
+  [  2] getchainedprop 113 ...................... <oIsoScene.oSpriteManager>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 985 .......................... <me.iBGSprite>
+  [  9] pusharglistnoret 2 ...................... <oIsoScene.oSpriteManager, me.iBGSprite>
+  [ 11] objcall 506 ............................. oIsoScene.oSpriteManager.returnPooledSprite(me.iBGSprite)
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pusharglist 0 ........................... <>
+  [ 18] extcall 130 ............................. <VOID>
+  [ 20] setobjprop 985 .......................... me.iBGSprite = VOID
+  [ 23] ret
+end
+
+on toggleDisplay me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 985 .......................... <me.iBGSprite>
+  [  5] pusharglist 1 ........................... <me.iBGSprite>
+  [  7] extcall 451 ............................. <sprite(me.iBGSprite)>
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 985 .......................... <me.iBGSprite>
+  [ 15] pusharglist 1 ........................... <me.iBGSprite>
+  [ 17] extcall 451 ............................. <sprite(me.iBGSprite)>
+  [ 20] getobjprop 464 .......................... <sprite(me.iBGSprite).visible>
+  [ 23] not ..................................... <not sprite(me.iBGSprite).visible>
+  [ 24] setobjprop 464 .......................... sprite(me.iBGSprite).visible = not sprite(me.iBGSprite).visible
+  [ 27] ret
+end

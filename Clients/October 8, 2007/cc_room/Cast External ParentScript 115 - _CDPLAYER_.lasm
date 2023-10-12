@@ -1,0 +1,169 @@
+property pSelectedSong, bDebug
+global ElementMgr, oPossessionManager, oDenizenManager, oStudio
+
+on new me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 33 .............................. bDebug = 0
+  [  3] getparam 0 .............................. <me>
+  [  5] pushcons 0 .............................. <"cc_cdplayer.window">
+  [  7] pusharglistnoret 2 ...................... <me, "cc_cdplayer.window">
+  [  9] objcall 30 .............................. me.openWindow("cc_cdplayer.window")
+  [ 11] getparam 0 .............................. <me>
+  [ 13] pusharglistnoret 1 ...................... <me>
+  [ 15] extcall 5 ............................... return me
+  [ 17] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 33 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 1 .............................. <"_CDPLAYER_: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"_CDPLAYER_: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"_CDPLAYER_: " & sMessage>
+  [ 17] extcall 34 .............................. put "_CDPLAYER_: " & sMessage
+  [ 19] ret
+end
+
+on openWindow me, sID, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 2 .............................. <"openWindow()">
+  [  4] pushcons 3 .............................. <"sId:">
+  [  6] joinpadstr .............................. <"openWindow()" && "sId:">
+  [  7] getparam 1 .............................. <sID>
+  [  9] joinpadstr .............................. <"openWindow()" && "sId:" && sID>
+  [ 10] pushcons 4 .............................. <"oArg:">
+  [ 12] joinpadstr .............................. <"openWindow()" && "sId:" && sID && "oArg:">
+  [ 13] getparam 2 .............................. <oArg>
+  [ 15] joinpadstr .............................. <"openWindow()" && "sId:" && sID && "oArg:" && oArg>
+  [ 16] pusharglistnoret 2 ...................... <me, "openWindow()" && "sId:" && sID && "oArg:" && oArg>
+  [ 18] objcall 29 .............................. me.debug("openWindow()" && "sId:" && sID && "oArg:" && oArg)
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 1 ........................... <me>
+  [ 24] objcall 27 .............................. <me.closeWindow()>
+  [ 26] setlocal 0 .............................. myRect = me.closeWindow()
+  [ 28] getglobal 37 ............................ <ElementMgr>
+  [ 30] getparam 1 .............................. <sID>
+  [ 32] getlocal 0 .............................. <myRect>
+  [ 34] pusharglist 3 ........................... <ElementMgr, sID, myRect>
+  [ 36] objcall 38 .............................. <ElementMgr.newwindow(sID, myRect)>
+  [ 38] setlocal 1 .............................. MyWindow = ElementMgr.newwindow(sID, myRect)
+  [ 40] getparam 0 .............................. <me>
+  [ 42] getlocal 1 .............................. <MyWindow>
+  [ 44] getparam 2 .............................. <oArg>
+  [ 46] pusharglistnoret 3 ...................... <me, MyWindow, oArg>
+  [ 48] objcall 32 .............................. me.displayWindow(MyWindow, oArg)
+  [ 50] ret
+end
+
+on closeWindow me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 5 .............................. <"closeWindow()">
+  [  4] pusharglistnoret 2 ...................... <me, "closeWindow()">
+  [  6] objcall 29 .............................. me.debug("closeWindow()")
+  [  8] pushcons 6 .............................. <"CDplayer">
+  [ 10] pusharglist 1 ........................... <"CDplayer">
+  [ 12] extcall 22 .............................. <timeout("CDplayer")>
+  [ 14] pusharglistnoret 1 ...................... <timeout("CDplayer")>
+  [ 16] objcall 28 .............................. timeout("CDplayer").forget()
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] setlocal 0
+  [ 22] getlocal 0
+  [ 24] getglobal 37 ............................ <ElementMgr>
+  [ 26] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 28] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 30] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 32] lteq
+  [ 33] jmpifz [ 76] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 36] getglobal 37 ............................ <ElementMgr>
+  [ 38] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 40] getlocal 0 .............................. <n>
+  [ 42] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 44] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 46] pushcons 7 .............................. <"cdplayer">
+  [ 48] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "cdplayer">
+  [ 49] jmpifz [ 67] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "cdplayer" then
+  [ 52] getglobal 37 ............................ <ElementMgr>
+  [ 54] pushsymb 44 ............................. <#pOpenWindows>
+  [ 56] getlocal 0 .............................. <n>
+  [ 58] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 60] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 62] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 64] jmp [ 76] ............................... exit repeat
+  [ 67] pushint8 1
+  [ 69] getlocal 0
+  [ 71] add
+  [ 72] setlocal 0
+  [ 74] endrepeat [ 22]
+  [ 76] pushsymb 19 ............................. <#cancelCdTimer>
+  [ 78] pusharglistnoret 1 ...................... <#cancelCdTimer>
+  [ 80] extcall 47 .............................. sendAllSprites(#cancelCdTimer)
+  [ 82] getlocal 1 .............................. <MyWindow>
+  [ 84] pusharglist 1 ........................... <MyWindow>
+  [ 86] extcall 8 ............................... <voidp(MyWindow)>
+  [ 88] jmpifz [ 95] ............................ if voidp(MyWindow) then
+  [ 91] pusharglistnoret 0 ...................... <>
+  [ 93] extcall 5 ............................... return 
+  [ 95] getlocal 1 .............................. <MyWindow>
+  [ 97] pusharglist 1 ........................... <MyWindow>
+  [ 99] objcall 27 .............................. <MyWindow.closeWindow()>
+  [101] setlocal 2 .............................. iLastRect = MyWindow.closeWindow()
+  [103] getglobal 37 ............................ <ElementMgr>
+  [105] pusharglist 0 ........................... <>
+  [107] extcall 48 .............................. <VOID>
+  [109] setobjprop 49 ........................... ElementMgr.oCdplayer = VOID
+  [111] pusharglist 0 ........................... <>
+  [113] extcall 48 .............................. <VOID>
+  [115] setparam 0 .............................. me = VOID
+  [117] getlocal 2 .............................. <iLastRect>
+  [119] pusharglistnoret 1 ...................... <iLastRect>
+  [121] extcall 5 ............................... return iLastRect
+  [123] ret
+end
+
+on getOpenWindow me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setlocal 0
+  [  4] getlocal 0
+  [  6] getglobal 37 ............................ <ElementMgr>
+  [  8] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 10] pusharglist 1 ........................... <ElementMgr.pOpenWindows>
+  [ 12] extcall 43 .............................. <count(ElementMgr.pOpenWindows)>
+  [ 14] lteq
+  [ 15] jmpifz [ 64] ............................ repeat with n = 1 to count(ElementMgr.pOpenWindows)
+  [ 18] getglobal 37 ............................ <ElementMgr>
+  [ 20] getobjprop 44 ........................... <ElementMgr.pOpenWindows>
+  [ 22] getlocal 0 .............................. <n>
+  [ 24] pusharglist 2 ........................... <ElementMgr.pOpenWindows, n>
+  [ 26] extcall 45 .............................. <getPropAt(ElementMgr.pOpenWindows, n)>
+  [ 28] pushcons 7 .............................. <"cdplayer">
+  [ 30] containsstr ............................. <getPropAt(ElementMgr.pOpenWindows, n) contains "cdplayer">
+  [ 31] jmpifz [ 55] ............................ if getPropAt(ElementMgr.pOpenWindows, n) contains "cdplayer" then
+  [ 34] getglobal 37 ............................ <ElementMgr>
+  [ 36] pushsymb 44 ............................. <#pOpenWindows>
+  [ 38] getlocal 0 .............................. <n>
+  [ 40] pusharglist 3 ........................... <ElementMgr, #pOpenWindows, n>
+  [ 42] objcall 46 .............................. <ElementMgr.pOpenWindows[n]>
+  [ 44] setlocal 1 .............................. MyWindow = ElementMgr.pOpenWindows[n]
+  [ 46] getlocal 1 .............................. <MyWindow>
+  [ 48] pusharglistnoret 1 ...................... <MyWindow>
+  [ 50] extcall 5 ............................... return MyWindow
+  [ 52] jmp [ 64] ............................... exit repeat
+  [ 55] pushint8 1
+  [ 57] getlocal 0
+  [ 59] add
+  [ 60] setlocal 0
+  [ 62] endrepeat [  4]
+  [ 64] ret
+end
+
+on displayWindow me, MyWindow, oArg
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 8 .............................. <"displayWindow()">
+  [  4] pusharglistnoret 2 ...................... <me, "displayWindow()">
+  [  6] objcall 29 .............................. me.debug("displayWindow()")
+  [  8] ret
+end

@@ -1,0 +1,71 @@
+property pSprite, pChatLogDisplaySprite, pDataType, pStudioID
+global aChatLogDisplaySprites, oPublicDisplayManager, oPrivateDisplayManager, ElementMgr
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 13] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 16] getobjprop 32 ........................... <aChatLogDisplaySprites.count>
+  [ 18] pusharglist 2 ........................... <aChatLogDisplaySprites, aChatLogDisplaySprites.count>
+  [ 20] objcall 33 .............................. <aChatLogDisplaySprites[aChatLogDisplaySprites.count]>
+  [ 22] pusharglist 1 ........................... <aChatLogDisplaySprites[aChatLogDisplaySprites.count]>
+  [ 24] extcall 12 .............................. <sprite(aChatLogDisplaySprites[aChatLogDisplaySprites.count])>
+  [ 26] setprop 321 ............................. pChatLogDisplaySprite = sprite(aChatLogDisplaySprites[aChatLogDisplaySprites.count])
+  [ 29] getprop 11 .............................. <pSprite>
+  [ 31] getchainedprop 14 ....................... <pSprite.member>
+  [ 33] pushcons 0 .............................. <"[studioOwner]">
+  [ 35] setobjprop 15 ........................... pSprite.member.text = "[studioOwner]"
+  [ 37] pushcons 1 .............................. <EMPTY>
+  [ 39] setprop 344 ............................. pDataType = EMPTY
+  [ 42] pushcons 1 .............................. <EMPTY>
+  [ 44] setprop 79 .............................. pStudioID = EMPTY
+  [ 46] ret
+end
+
+on displayOwner me, aSprite, sDataType
+  [  0] getparam 1 .............................. <aSprite>
+  [  2] getprop 321 ............................. <pChatLogDisplaySprite>
+  [  5] nteq .................................... <aSprite <> pChatLogDisplaySprite>
+  [  6] jmpifz [ 13] ............................ if aSprite <> pChatLogDisplaySprite then / else
+  [  9] ret ..................................... exit
+  [ 10] jmp [ 86]
+  [ 13] getparam 2 .............................. <sDataType>
+  [ 15] setprop 344 ............................. pDataType = sDataType
+  [ 18] getprop 344 ............................. <pDataType>
+  [ 21] pushcons 1 .............................. <EMPTY>
+  [ 23] eq ...................................... <pDataType = EMPTY>
+  [ 24] jmpifz [ 38] ............................ if pDataType = EMPTY then / else
+  [ 27] pushcons 2 .............................. <"studioOwner">
+  [ 29] setlocal 0 .............................. sOwner = "studioOwner"
+  [ 31] pushcons 1 .............................. <EMPTY>
+  [ 33] setprop 79 .............................. pStudioID = EMPTY
+  [ 35] jmp [ 68]
+  [ 38] getprop 344 ............................. <pDataType>
+  [ 41] pushcons 3 .............................. <"private">
+  [ 43] eq ...................................... <pDataType = "private">
+  [ 44] jmpifz [ 57] ............................ if pDataType = "private" then / else
+  [ 47] getprop 321 ............................. <pChatLogDisplaySprite>
+  [ 50] getobjprop 229 .......................... <pChatLogDisplaySprite.pStudioOwner>
+  [ 52] setlocal 0 .............................. sOwner = pChatLogDisplaySprite.pStudioOwner
+  [ 54] jmp [ 61]
+  [ 57] pushcons 4 .............................. <"public">
+  [ 59] setlocal 0 .............................. sOwner = "public"
+  [ 61] getprop 321 ............................. <pChatLogDisplaySprite>
+  [ 64] getobjprop 79 ........................... <pChatLogDisplaySprite.pStudioID>
+  [ 66] setprop 79 .............................. pStudioID = pChatLogDisplaySprite.pStudioID
+  [ 68] pushcons 5 .............................. <"[">
+  [ 70] getlocal 0 .............................. <sOwner>
+  [ 72] joinstr ................................. <"[" & sOwner>
+  [ 73] pushcons 6 .............................. <"]">
+  [ 75] joinstr ................................. <"[" & sOwner & "]">
+  [ 76] setlocal 0 .............................. sOwner = "[" & sOwner & "]"
+  [ 78] getprop 11 .............................. <pSprite>
+  [ 80] getchainedprop 14 ....................... <pSprite.member>
+  [ 82] getlocal 0 .............................. <sOwner>
+  [ 84] setobjprop 15 ........................... pSprite.member.text = sOwner
+  [ 86] ret
+end

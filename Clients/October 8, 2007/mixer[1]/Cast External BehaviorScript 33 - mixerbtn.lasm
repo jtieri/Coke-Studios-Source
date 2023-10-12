@@ -1,0 +1,179 @@
+property pStatus, pType, pClicked
+
+on new me, type
+  [  0] pushsymb 73 ............................. <#up>
+  [  2] setprop 72 .............................. pStatus = #up
+  [  4] getparam 1 .............................. <type>
+  [  6] setprop 74 .............................. pType = type
+  [  8] getparam 0 .............................. <me>
+  [ 10] pusharglistnoret 1 ...................... <me>
+  [ 12] extcall 13 .............................. return me
+  [ 14] ret
+end
+
+on mouseDown me
+  [  0] pushint8 1 .............................. <1>
+  [  2] setprop 76 .............................. pClicked = 1
+  [  4] pusharglistnoret 0 ...................... <>
+  [  6] extcall 77 .............................. dontPassEvent()
+  [  8] ret
+end
+
+on mouseUp me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 76 .............................. pClicked = 0
+  [  3] getprop 72 .............................. <pStatus>
+  [  5] pushsymb 73 ............................. <#up>
+  [  7] eq ...................................... <pStatus = #up>
+  [  8] jmpifz [ 50] ............................ if pStatus = #up then / else
+  [ 11] pushsymb 71 ............................. <#setStatus>
+  [ 13] getprop 74 .............................. <pType>
+  [ 15] pushsymb 73 ............................. <#up>
+  [ 17] pusharglistnoret 3 ...................... <#setStatus, pType, #up>
+  [ 19] extcall 78 .............................. sendAllSprites(#setStatus, pType, #up)
+  [ 21] pushsymb 79 ............................. <#down>
+  [ 23] setprop 72 .............................. pStatus = #down
+  [ 25] getparam 0 .............................. <me>
+  [ 27] getobjprop 81 ........................... <me.spriteNum>
+  [ 29] pusharglist 1 ........................... <me.spriteNum>
+  [ 31] extcall 80 .............................. <sprite(me.spriteNum)>
+  [ 33] pushcons 0 .............................. <"cc.mixer.">
+  [ 35] getprop 74 .............................. <pType>
+  [ 37] joinstr ................................. <"cc.mixer." & pType>
+  [ 38] pushcons 1 .............................. <"button.on">
+  [ 40] joinstr ................................. <"cc.mixer." & pType & "button.on">
+  [ 41] pusharglist 1 ........................... <"cc.mixer." & pType & "button.on">
+  [ 43] extcall 21 .............................. <member("cc.mixer." & pType & "button.on")>
+  [ 45] setobjprop 21 ........................... sprite(me.spriteNum).member = member("cc.mixer." & pType & "button.on")
+  [ 47] jmp [ 76]
+  [ 50] pushsymb 73 ............................. <#up>
+  [ 52] setprop 72 .............................. pStatus = #up
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getobjprop 81 ........................... <me.spriteNum>
+  [ 58] pusharglist 1 ........................... <me.spriteNum>
+  [ 60] extcall 80 .............................. <sprite(me.spriteNum)>
+  [ 62] pushcons 0 .............................. <"cc.mixer.">
+  [ 64] getprop 74 .............................. <pType>
+  [ 66] joinstr ................................. <"cc.mixer." & pType>
+  [ 67] pushcons 2 .............................. <"button.active">
+  [ 69] joinstr ................................. <"cc.mixer." & pType & "button.active">
+  [ 70] pusharglist 1 ........................... <"cc.mixer." & pType & "button.active">
+  [ 72] extcall 21 .............................. <member("cc.mixer." & pType & "button.active")>
+  [ 74] setobjprop 21 ........................... sprite(me.spriteNum).member = member("cc.mixer." & pType & "button.active")
+  [ 76] ret
+end
+
+on mouseWithin me
+  [  0] getprop 72 .............................. <pStatus>
+  [  2] pushsymb 73 ............................. <#up>
+  [  4] eq ...................................... <pStatus = #up>
+  [  5] getprop 74 .............................. <pType>
+  [  7] pushcons 3 .............................. <"BURN">
+  [  9] eq ...................................... <pType = "BURN">
+  [ 10] or ...................................... <(pStatus = #up) or (pType = "BURN")>
+  [ 11] jmpifz [ 43] ............................ if (pStatus = #up) or (pType = "BURN") then / else
+  [ 14] getglobal 17 ............................ <TextMgr>
+  [ 16] pushcons 4 .............................. <"MIXER_">
+  [ 18] getprop 74 .............................. <pType>
+  [ 20] joinstr ................................. <"MIXER_" & pType>
+  [ 21] pushcons 5 .............................. <"_ROLLOVER">
+  [ 23] joinstr ................................. <"MIXER_" & pType & "_ROLLOVER">
+  [ 24] pusharglist 2 ........................... <TextMgr, "MIXER_" & pType & "_ROLLOVER">
+  [ 26] objcall 18 .............................. <TextMgr.GetRefText("MIXER_" & pType & "_ROLLOVER")>
+  [ 28] setlocal 0 .............................. mytext = TextMgr.GetRefText("MIXER_" & pType & "_ROLLOVER")
+  [ 30] pushcons 6 .............................. <"cc.mixer.infofield.text">
+  [ 32] pusharglist 1 ........................... <"cc.mixer.infofield.text">
+  [ 34] extcall 21 .............................. <member("cc.mixer.infofield.text")>
+  [ 36] getlocal 0 .............................. <mytext>
+  [ 38] setobjprop 22 ........................... member("cc.mixer.infofield.text").text = mytext
+  [ 40] jmp [ 69]
+  [ 43] getglobal 17 ............................ <TextMgr>
+  [ 45] pushcons 7 .............................. <"MIXER_NOW_">
+  [ 47] getprop 74 .............................. <pType>
+  [ 49] joinstr ................................. <"MIXER_NOW_" & pType>
+  [ 50] pushcons 8 .............................. <"ING">
+  [ 52] joinstr ................................. <"MIXER_NOW_" & pType & "ING">
+  [ 53] pusharglist 2 ........................... <TextMgr, "MIXER_NOW_" & pType & "ING">
+  [ 55] objcall 18 .............................. <TextMgr.GetRefText("MIXER_NOW_" & pType & "ING")>
+  [ 57] setlocal 0 .............................. mytext = TextMgr.GetRefText("MIXER_NOW_" & pType & "ING")
+  [ 59] pushcons 6 .............................. <"cc.mixer.infofield.text">
+  [ 61] pusharglist 1 ........................... <"cc.mixer.infofield.text">
+  [ 63] extcall 21 .............................. <member("cc.mixer.infofield.text")>
+  [ 65] getlocal 0 .............................. <mytext>
+  [ 67] setobjprop 22 ........................... member("cc.mixer.infofield.text").text = mytext
+  [ 69] ret
+end
+
+on mouseLeave me
+  [  0] getglobal 17 ............................ <TextMgr>
+  [  2] pushcons 9 .............................. <"MIXER_DESC">
+  [  4] pusharglist 2 ........................... <TextMgr, "MIXER_DESC">
+  [  6] objcall 18 .............................. <TextMgr.GetRefText("MIXER_DESC")>
+  [  8] setlocal 0 .............................. mytext = TextMgr.GetRefText("MIXER_DESC")
+  [ 10] pushcons 6 .............................. <"cc.mixer.infofield.text">
+  [ 12] pusharglist 1 ........................... <"cc.mixer.infofield.text">
+  [ 14] extcall 21 .............................. <member("cc.mixer.infofield.text")>
+  [ 16] getlocal 0 .............................. <mytext>
+  [ 18] setobjprop 22 ........................... member("cc.mixer.infofield.text").text = mytext
+  [ 20] ret
+end
+
+on exitFrame me
+  [  0] pusharglist 0 ........................... <>
+  [  2] thebuiltin 66 ........................... <the mouseDown>
+  [  4] getprop 76 .............................. <pClicked>
+  [  6] and ..................................... <the mouseDown and pClicked>
+  [  7] jmpifz [ 32] ............................ if the mouseDown and pClicked then
+  [ 10] getparam 0 .............................. <me>
+  [ 12] getobjprop 81 ........................... <me.spriteNum>
+  [ 14] pusharglist 1 ........................... <me.spriteNum>
+  [ 16] extcall 80 .............................. <sprite(me.spriteNum)>
+  [ 18] pushcons 0 .............................. <"cc.mixer.">
+  [ 20] getprop 74 .............................. <pType>
+  [ 22] joinstr ................................. <"cc.mixer." & pType>
+  [ 23] pushcons 10 ............................. <"button.pressed">
+  [ 25] joinstr ................................. <"cc.mixer." & pType & "button.pressed">
+  [ 26] pusharglist 1 ........................... <"cc.mixer." & pType & "button.pressed">
+  [ 28] extcall 21 .............................. <member("cc.mixer." & pType & "button.pressed")>
+  [ 30] setobjprop 21 ........................... sprite(me.spriteNum).member = member("cc.mixer." & pType & "button.pressed")
+  [ 32] ret
+end
+
+on setStatus me, whattype, whatstatus
+  [  0] getparam 1 .............................. <whattype>
+  [  2] getprop 74 .............................. <pType>
+  [  4] eq ...................................... <whattype = pType>
+  [  5] jmpifz [ 67] ............................ if whattype = pType then
+  [  8] getparam 2 .............................. <whatstatus>
+  [ 10] setprop 72 .............................. pStatus = whatstatus
+  [ 12] getprop 72 .............................. <pStatus>
+  [ 14] pushsymb 73 ............................. <#up>
+  [ 16] eq ...................................... <pStatus = #up>
+  [ 17] jmpifz [ 45] ............................ if pStatus = #up then / else
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getobjprop 81 ........................... <me.spriteNum>
+  [ 24] pusharglist 1 ........................... <me.spriteNum>
+  [ 26] extcall 80 .............................. <sprite(me.spriteNum)>
+  [ 28] pushcons 0 .............................. <"cc.mixer.">
+  [ 30] getprop 74 .............................. <pType>
+  [ 32] joinstr ................................. <"cc.mixer." & pType>
+  [ 33] pushcons 2 .............................. <"button.active">
+  [ 35] joinstr ................................. <"cc.mixer." & pType & "button.active">
+  [ 36] pusharglist 1 ........................... <"cc.mixer." & pType & "button.active">
+  [ 38] extcall 21 .............................. <member("cc.mixer." & pType & "button.active")>
+  [ 40] setobjprop 21 ........................... sprite(me.spriteNum).member = member("cc.mixer." & pType & "button.active")
+  [ 42] jmp [ 67]
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getobjprop 81 ........................... <me.spriteNum>
+  [ 49] pusharglist 1 ........................... <me.spriteNum>
+  [ 51] extcall 80 .............................. <sprite(me.spriteNum)>
+  [ 53] pushcons 0 .............................. <"cc.mixer.">
+  [ 55] getprop 74 .............................. <pType>
+  [ 57] joinstr ................................. <"cc.mixer." & pType>
+  [ 58] pushcons 1 .............................. <"button.on">
+  [ 60] joinstr ................................. <"cc.mixer." & pType & "button.on">
+  [ 61] pusharglist 1 ........................... <"cc.mixer." & pType & "button.on">
+  [ 63] extcall 21 .............................. <member("cc.mixer." & pType & "button.on")>
+  [ 65] setobjprop 21 ........................... sprite(me.spriteNum).member = member("cc.mixer." & pType & "button.on")
+  [ 67] ret
+end

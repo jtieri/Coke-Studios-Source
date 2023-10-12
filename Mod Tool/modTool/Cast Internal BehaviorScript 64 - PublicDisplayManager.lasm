@@ -1,0 +1,335 @@
+property pSprite, pPublicStudioData, pTime, pInterval, pSelected, pItemNum, pFrame, pScrolltop, pStudioID, bDebug, pStudioName, pStudioOwner
+global oPublicDisplayManager, oStudioManager, sModScreenName
+
+on getPropertyDescriptionList me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. mylist = [:]
+  [  5] getlocal 0 .............................. <mylist>
+  [  7] pushsymb 22 ............................. <#pInterval>
+  [  9] pushsymb 88 ............................. <#comment>
+  [ 11] pushcons 0 .............................. <"Server query interval (in sec):">
+  [ 13] pushsymb 89 ............................. <#format>
+  [ 15] pushsymb 99 ............................. <#integer>
+  [ 17] pushsymb 91 ............................. <#default>
+  [ 19] pushint8 15 ............................. <15>
+  [ 21] pusharglist 6 ........................... <[#comment: "Server query interval (in sec):", #format: #integer, #default: 15]>
+  [ 23] pushproplist ............................ <[#comment: "Server query interval (in sec):", #format: #integer, #default: 15]>
+  [ 24] pusharglistnoret 3 ...................... <mylist, #pInterval, [#comment: "Server query interval (in sec):", #format: #integer, #default: 15]>
+  [ 26] objcall 68 .............................. mylist[#pInterval] = [#comment: "Server query interval (in sec):", #format: #integer, #default: 15]
+  [ 28] getlocal 0 .............................. <mylist>
+  [ 30] pusharglistnoret 1 ...................... <mylist>
+  [ 32] extcall 31 .............................. return mylist
+  [ 34] ret
+end
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 13 ........................... <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 12 .............................. <sprite(me.spriteNum)>
+  [  8] setprop 11 .............................. pSprite = sprite(me.spriteNum)
+  [ 10] getprop 11 .............................. <pSprite>
+  [ 12] getchainedprop 14 ....................... <pSprite.member>
+  [ 14] pushcons 1 .............................. <"Loading...">
+  [ 16] setobjprop 15 ........................... pSprite.member.text = "Loading..."
+  [ 18] getparam 0 .............................. <me>
+  [ 20] setglobal 206 ........................... oPublicDisplayManager = me
+  [ 22] pushint8 34 ............................. <34>
+  [ 24] get 7 ................................... <the timer>
+  [ 26] setprop 21 .............................. pTime = the timer
+  [ 28] getprop 22 .............................. <pInterval>
+  [ 30] pushint8 60 ............................. <60>
+  [ 32] mul ..................................... <pInterval * 60>
+  [ 33] setprop 22 .............................. pInterval = pInterval * 60
+  [ 35] pushzero ................................ <0>
+  [ 36] setprop 207 ............................. pSelected = 0
+  [ 38] pusharglist 0 ........................... <>
+  [ 40] thebuiltin 82 ........................... <the frame>
+  [ 42] setprop 208 ............................. pFrame = the frame
+  [ 44] pushint8 1 .............................. <1>
+  [ 46] setprop 209 ............................. pItemNum = 1
+  [ 48] getprop 11 .............................. <pSprite>
+  [ 50] getchainedprop 14 ....................... <pSprite.member>
+  [ 52] getobjprop 113 .......................... <pSprite.member.scrollTop>
+  [ 54] setprop 210 ............................. pScrolltop = pSprite.member.scrollTop
+  [ 56] getparam 0 .............................. <me>
+  [ 58] pushzero ................................ <0>
+  [ 59] setobjprop 10 ........................... me.bDebug = 0
+  [ 61] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 2 .............................. <"oPublicDisplayManager: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"oPublicDisplayManager: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"oPublicDisplayManager: " & sMessage>
+  [ 17] extcall 38 .............................. put "oPublicDisplayManager: " & sMessage
+  [ 19] ret
+end
+
+on displayPublic_Mod me, aStudioData
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 3 .............................. <"displayPublic_Mod:aStudioData">
+  [  4] getparam 1 .............................. <aStudioData>
+  [  6] joinpadstr .............................. <"displayPublic_Mod:aStudioData" && aStudioData>
+  [  7] pusharglistnoret 2 ...................... <me, "displayPublic_Mod:aStudioData" && aStudioData>
+  [  9] objcall 4 ............................... me.debug("displayPublic_Mod:aStudioData" && aStudioData)
+  [ 11] getparam 1 .............................. <aStudioData>
+  [ 13] pusharglist 1 ........................... <aStudioData>
+  [ 15] objcall 211 ............................. <aStudioData.duplicate()>
+  [ 17] setprop 78 .............................. pPublicStudioData = aStudioData.duplicate()
+  [ 19] pushcons 4 .............................. <EMPTY>
+  [ 21] setlocal 0 .............................. sDisplayString = EMPTY
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setlocal 1
+  [ 27] getlocal 1
+  [ 29] getprop 78 .............................. <pPublicStudioData>
+  [ 31] getobjprop 32 ........................... <pPublicStudioData.count>
+  [ 33] lteq
+  [ 34] jmpifz [223] ............................ repeat with i = 1 to pPublicStudioData.count
+  [ 37] getprop 78 .............................. <pPublicStudioData>
+  [ 39] getlocal 1 .............................. <i>
+  [ 41] pusharglist 2 ........................... <pPublicStudioData, i>
+  [ 43] objcall 33 .............................. <pPublicStudioData[i]>
+  [ 45] getobjprop 138 .......................... <pPublicStudioData[i].name>
+  [ 47] setlocal 2 .............................. sName = pPublicStudioData[i].name
+  [ 49] getprop 78 .............................. <pPublicStudioData>
+  [ 51] getlocal 1 .............................. <i>
+  [ 53] pusharglist 2 ........................... <pPublicStudioData, i>
+  [ 55] objcall 33 .............................. <pPublicStudioData[i]>
+  [ 57] getobjprop 212 .......................... <pPublicStudioData[i].userCount>
+  [ 59] setlocal 3 .............................. iUserCount = pPublicStudioData[i].userCount
+  [ 61] getprop 78 .............................. <pPublicStudioData>
+  [ 63] getlocal 1 .............................. <i>
+  [ 65] pusharglist 2 ........................... <pPublicStudioData, i>
+  [ 67] objcall 33 .............................. <pPublicStudioData[i]>
+  [ 69] getobjprop 213 .......................... <pPublicStudioData[i].mods>
+  [ 71] setlocal 4 .............................. aModList = pPublicStudioData[i].mods
+  [ 73] pushcons 4 .............................. <EMPTY>
+  [ 75] setlocal 5 .............................. sModList = EMPTY
+  [ 77] getlocal 4 .............................. <aModList>
+  [ 79] getobjprop 32 ........................... <aModList.count>
+  [ 81] pushzero ................................ <0>
+  [ 82] nteq .................................... <aModList.count <> 0>
+  [ 83] jmpifz [155] ............................ if aModList.count <> 0 then
+  [ 86] pushint8 1 .............................. <1>
+  [ 88] setlocal 6
+  [ 90] getlocal 6
+  [ 92] getlocal 4 .............................. <aModList>
+  [ 94] getobjprop 32 ........................... <aModList.count>
+  [ 96] lteq
+  [ 97] jmpifz [155] ............................ repeat with m = 1 to aModList.count
+  [100] getlocal 6 .............................. <m>
+  [102] pushint8 1 .............................. <1>
+  [104] eq ...................................... <m = 1>
+  [105] jmpifz [127] ............................ if m = 1 then
+  [108] getlocal 4 .............................. <aModList>
+  [110] getlocal 6 .............................. <m>
+  [112] pusharglist 2 ........................... <aModList, m>
+  [114] objcall 33 .............................. <aModList[m]>
+  [116] pusharglist 1 ........................... <aModList[m]>
+  [118] extcall 44 .............................. <modLookUp(aModList[m])>
+  [120] pushint8 5 .............................. <5>
+  [122] put 37 .................................. put modLookUp(aModList[m]) after sModList
+  [124] jmp [146] ............................... next repeat
+  [127] pushcons 5 .............................. <",">
+  [129] getlocal 4 .............................. <aModList>
+  [131] getlocal 6 .............................. <m>
+  [133] pusharglist 2 ........................... <aModList, m>
+  [135] objcall 33 .............................. <aModList[m]>
+  [137] pusharglist 1 ........................... <aModList[m]>
+  [139] extcall 44 .............................. <modLookUp(aModList[m])>
+  [141] joinstr ................................. <"," & modLookUp(aModList[m])>
+  [142] pushint8 5 .............................. <5>
+  [144] put 37 .................................. put "," & modLookUp(aModList[m]) after sModList
+  [146] pushint8 1
+  [148] getlocal 6
+  [150] add
+  [151] setlocal 6
+  [153] endrepeat [ 90]
+  [155] getlocal 1 .............................. <i>
+  [157] getprop 78 .............................. <pPublicStudioData>
+  [159] getobjprop 32 ........................... <pPublicStudioData.count>
+  [161] eq ...................................... <i = pPublicStudioData.count>
+  [162] jmpifz [187] ............................ if i = pPublicStudioData.count then / else
+  [165] getlocal 2 .............................. <sName>
+  [167] pushcons 6 .............................. <TAB>
+  [169] joinstr ................................. <sName & TAB>
+  [170] pushcons 7 .............................. <"(">
+  [172] joinstr ................................. <sName & TAB & "(">
+  [173] getlocal 3 .............................. <iUserCount>
+  [175] joinstr ................................. <sName & TAB & "(" & iUserCount>
+  [176] pushcons 8 .............................. <")">
+  [178] joinstr ................................. <sName & TAB & "(" & iUserCount & ")">
+  [179] getlocal 5 .............................. <sModList>
+  [181] joinstr ................................. <sName & TAB & "(" & iUserCount & ")" & sModList>
+  [182] setlocal 7 .............................. sLine = sName & TAB & "(" & iUserCount & ")" & sModList
+  [184] jmp [209]
+  [187] getlocal 2 .............................. <sName>
+  [189] pushcons 6 .............................. <TAB>
+  [191] joinstr ................................. <sName & TAB>
+  [192] pushcons 7 .............................. <"(">
+  [194] joinstr ................................. <sName & TAB & "(">
+  [195] getlocal 3 .............................. <iUserCount>
+  [197] joinstr ................................. <sName & TAB & "(" & iUserCount>
+  [198] pushcons 8 .............................. <")">
+  [200] joinstr ................................. <sName & TAB & "(" & iUserCount & ")">
+  [201] getlocal 5 .............................. <sModList>
+  [203] joinstr ................................. <sName & TAB & "(" & iUserCount & ")" & sModList>
+  [204] pushcons 9 .............................. <RETURN>
+  [206] joinstr ................................. <sName & TAB & "(" & iUserCount & ")" & sModList & RETURN>
+  [207] setlocal 7 .............................. sLine = sName & TAB & "(" & iUserCount & ")" & sModList & RETURN
+  [209] getlocal 7 .............................. <sLine>
+  [211] pushzero ................................ <0>
+  [212] put 37 .................................. put sLine after sDisplayString
+  [214] pushint8 1
+  [216] getlocal 1
+  [218] add
+  [219] setlocal 1
+  [221] endrepeat [ 27]
+  [223] getprop 11 .............................. <pSprite>
+  [225] getchainedprop 14 ....................... <pSprite.member>
+  [227] getlocal 0 .............................. <sDisplayString>
+  [229] setobjprop 15 ........................... pSprite.member.text = sDisplayString
+  [231] getprop 207 ............................. <pSelected>
+  [233] jmpifz [269] ............................ if pSelected then / else
+  [236] getprop 11 .............................. <pSprite>
+  [238] getchainedprop 14 ....................... <pSprite.member>
+  [240] pushsymb 106 ............................ <#plain>
+  [242] pusharglist 1 ........................... <[#plain]>
+  [244] pushlist ................................ <[#plain]>
+  [245] setobjprop 104 .......................... pSprite.member.fontStyle = [#plain]
+  [247] getprop 11 .............................. <pSprite>
+  [249] getchainedprop 14 ....................... <pSprite.member>
+  [251] pushsymb 214 ............................ <#line>
+  [253] getprop 209 ............................. <pItemNum>
+  [255] pusharglist 3 ........................... <pSprite.member, #line, pItemNum>
+  [257] objcall 61 .............................. <pSprite.member.line[pItemNum]>
+  [259] pushsymb 215 ............................ <#underline>
+  [261] pusharglist 1 ........................... <[#underline]>
+  [263] pushlist ................................ <[#underline]>
+  [264] setobjprop 104 .......................... pSprite.member.line[pItemNum].fontStyle = [#underline]
+  [266] jmp [280]
+  [269] getprop 11 .............................. <pSprite>
+  [271] getchainedprop 14 ....................... <pSprite.member>
+  [273] pushsymb 106 ............................ <#plain>
+  [275] pusharglist 1 ........................... <[#plain]>
+  [277] pushlist ................................ <[#plain]>
+  [278] setobjprop 104 .......................... pSprite.member.fontStyle = [#plain]
+  [280] getprop 11 .............................. <pSprite>
+  [282] getchainedprop 14 ....................... <pSprite.member>
+  [284] getprop 210 ............................. <pScrolltop>
+  [286] setobjprop 113 .......................... pSprite.member.scrollTop = pScrolltop
+  [288] ret
+end
+
+on deSelectLines me
+  [  0] pushzero ................................ <0>
+  [  1] setprop 207 ............................. pSelected = 0
+  [  3] getprop 11 .............................. <pSprite>
+  [  5] getchainedprop 14 ....................... <pSprite.member>
+  [  7] pushsymb 106 ............................ <#plain>
+  [  9] pusharglist 1 ........................... <[#plain]>
+  [ 11] pushlist ................................ <[#plain]>
+  [ 12] setobjprop 104 .......................... pSprite.member.fontStyle = [#plain]
+  [ 14] getprop 11 .............................. <pSprite>
+  [ 16] getchainedprop 14 ....................... <pSprite.member>
+  [ 18] getprop 210 ............................. <pScrolltop>
+  [ 20] setobjprop 113 .......................... pSprite.member.scrollTop = pScrolltop
+  [ 22] ret
+end
+
+on mouseDown me
+  [  0] getmovieprop 224 ........................ <the mouseLoc>
+  [  2] setlocal 0 .............................. pointClicked = the mouseLoc
+  [  4] getprop 11 .............................. <pSprite>
+  [  6] getlocal 0 .............................. <pointClicked>
+  [  8] pusharglist 2 ........................... <pSprite, pointClicked>
+  [ 10] objcall 225 ............................. <pSprite.pointToItem(pointClicked)>
+  [ 12] pushint8 1 .............................. <1>
+  [ 14] lt ...................................... <pSprite.pointToItem(pointClicked) < 1>
+  [ 15] jmpifz [ 19] ............................ if pSprite.pointToItem(pointClicked) < 1 then
+  [ 18] ret ..................................... exit
+  [ 19] getmovieprop 226 ........................ <the itemDelimiter>
+  [ 21] setlocal 1 .............................. sDefaultItemDelimiter = the itemDelimiter
+  [ 23] pushcons 9 .............................. <RETURN>
+  [ 25] setmovieprop 226 ........................ the itemDelimiter = RETURN
+  [ 27] getprop 11 .............................. <pSprite>
+  [ 29] getlocal 0 .............................. <pointClicked>
+  [ 31] pusharglist 2 ........................... <pSprite, pointClicked>
+  [ 33] objcall 225 ............................. <pSprite.pointToItem(pointClicked)>
+  [ 35] setprop 209 ............................. pItemNum = pSprite.pointToItem(pointClicked)
+  [ 37] getprop 11 .............................. <pSprite>
+  [ 39] getchainedprop 14 ....................... <pSprite.member>
+  [ 41] pushsymb 227 ............................ <#item>
+  [ 43] getprop 209 ............................. <pItemNum>
+  [ 45] pusharglist 3 ........................... <pSprite.member, #item, pItemNum>
+  [ 47] objcall 66 .............................. <pSprite.member.item[pItemNum]>
+  [ 49] setlocal 2 .............................. itemText = pSprite.member.item[pItemNum]
+  [ 51] getlocal 1 .............................. <sDefaultItemDelimiter>
+  [ 53] setmovieprop 226 ........................ the itemDelimiter = sDefaultItemDelimiter
+  [ 55] getprop 11 .............................. <pSprite>
+  [ 57] getchainedprop 14 ....................... <pSprite.member>
+  [ 59] pushsymb 106 ............................ <#plain>
+  [ 61] pusharglist 1 ........................... <[#plain]>
+  [ 63] pushlist ................................ <[#plain]>
+  [ 64] setobjprop 104 .......................... pSprite.member.fontStyle = [#plain]
+  [ 66] getprop 11 .............................. <pSprite>
+  [ 68] getchainedprop 14 ....................... <pSprite.member>
+  [ 70] pushsymb 214 ............................ <#line>
+  [ 72] getprop 209 ............................. <pItemNum>
+  [ 74] pusharglist 3 ........................... <pSprite.member, #line, pItemNum>
+  [ 76] objcall 61 .............................. <pSprite.member.line[pItemNum]>
+  [ 78] pushsymb 215 ............................ <#underline>
+  [ 80] pusharglist 1 ........................... <[#underline]>
+  [ 82] pushlist ................................ <[#underline]>
+  [ 83] setobjprop 104 .......................... pSprite.member.line[pItemNum].fontStyle = [#underline]
+  [ 85] pushint8 1 .............................. <1>
+  [ 87] setprop 207 ............................. pSelected = 1
+  [ 89] getprop 78 .............................. <pPublicStudioData>
+  [ 91] getprop 209 ............................. <pItemNum>
+  [ 93] pusharglist 2 ........................... <pPublicStudioData, pItemNum>
+  [ 95] objcall 33 .............................. <pPublicStudioData[pItemNum]>
+  [ 97] getobjprop 67 ........................... <pPublicStudioData[pItemNum].studioId>
+  [ 99] setprop 79 .............................. pStudioID = pPublicStudioData[pItemNum].studioId
+  [101] getprop 78 .............................. <pPublicStudioData>
+  [103] getprop 209 ............................. <pItemNum>
+  [105] pusharglist 2 ........................... <pPublicStudioData, pItemNum>
+  [107] objcall 33 .............................. <pPublicStudioData[pItemNum]>
+  [109] getobjprop 138 .......................... <pPublicStudioData[pItemNum].name>
+  [111] setprop 228 ............................. pStudioName = pPublicStudioData[pItemNum].name
+  [113] getprop 78 .............................. <pPublicStudioData>
+  [115] getprop 209 ............................. <pItemNum>
+  [117] pusharglist 2 ........................... <pPublicStudioData, pItemNum>
+  [119] objcall 33 .............................. <pPublicStudioData[pItemNum]>
+  [121] getobjprop 230 .......................... <pPublicStudioData[pItemNum].owner>
+  [123] setprop 229 ............................. pStudioOwner = pPublicStudioData[pItemNum].owner
+  [125] ret
+end
+
+on exitFrame me
+  [  0] pushint8 34 ............................. <34>
+  [  2] get 7 ................................... <the timer>
+  [  4] getprop 21 .............................. <pTime>
+  [  6] getprop 22 .............................. <pInterval>
+  [  8] add ..................................... <pTime + pInterval>
+  [  9] gt ...................................... <the timer > (pTime + pInterval)>
+  [ 10] jmpifz [ 33] ............................ if the timer > (pTime + pInterval) then
+  [ 13] pushint8 34 ............................. <34>
+  [ 15] get 7 ................................... <the timer>
+  [ 17] setprop 21 .............................. pTime = the timer
+  [ 19] getprop 11 .............................. <pSprite>
+  [ 21] getchainedprop 14 ....................... <pSprite.member>
+  [ 23] getobjprop 113 .......................... <pSprite.member.scrollTop>
+  [ 25] setprop 210 ............................. pScrolltop = pSprite.member.scrollTop
+  [ 27] getglobal 80 ............................ <oStudioManager>
+  [ 29] pusharglistnoret 1 ...................... <oStudioManager>
+  [ 31] objcall 234 ............................. oStudioManager.getAllPublicStudios()
+  [ 33] ret
+end

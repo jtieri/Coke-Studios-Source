@@ -1,0 +1,1253 @@
+property bOpeningLog, oSession, sModScreenName, bDebug, iSlot, sStudioID, sChatLog, sColor_speak, sColor_foul, sColor_mute
+global oStudioManager, oCallAlertDisplayManager, TextMgr, oChatDisplayManager, aChatLogDisplaySprites, gbTestMode, oModSessionManager
+
+on new me, _iSlot
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 10 ........................... me.bDebug = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushcons 0 .............................. <"new()">
+  [ 10] pusharglistnoret 2 ...................... <me, "new()">
+  [ 12] objcall 4 ............................... me.debug("new()")
+  [ 14] getparam 0 .............................. <me>
+  [ 16] pushzero ................................ <0>
+  [ 17] setobjprop 407 .......................... me.bOpeningLog = 0
+  [ 20] getparam 0 .............................. <me>
+  [ 22] getparam 1 .............................. <_iSlot>
+  [ 24] setobjprop 408 .......................... me.iSlot = _iSlot
+  [ 27] getparam 0 .............................. <me>
+  [ 29] pushcons 1 .............................. <"000000">
+  [ 31] setobjprop 409 .......................... me.sColor_speak = "000000"
+  [ 34] getparam 0 .............................. <me>
+  [ 36] pushcons 2 .............................. <"FF0000">
+  [ 38] setobjprop 410 .......................... me.sColor_foul = "FF0000"
+  [ 41] getparam 0 .............................. <me>
+  [ 43] pushcons 3 .............................. <"0000FF">
+  [ 45] setobjprop 411 .......................... me.sColor_mute = "0000FF"
+  [ 48] getparam 0 .............................. <me>
+  [ 50] pusharglistnoret 1 ...................... <me>
+  [ 52] extcall 31 .............................. return me
+  [ 54] ret
+end
+
+on exitFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 307 .......................... <me.oSession>
+  [  5] pusharglist 1 ........................... <me.oSession>
+  [  7] extcall 26 .............................. <voidp(me.oSession)>
+  [  9] not ..................................... <not voidp(me.oSession)>
+  [ 10] jmpifz [ 22] ............................ if not voidp(me.oSession) then
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getchainedprop 307 ...................... <me.oSession>
+  [ 18] pusharglistnoret 1 ...................... <me.oSession>
+  [ 20] objcall 81 .............................. me.oSession.exitFrame()
+  [ 22] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 10 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 28] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 4 .............................. <"ModStudioController: ">
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getobjprop 408 .......................... <me.iSlot>
+  [ 17] joinstr ................................. <"ModStudioController: " & me.iSlot>
+  [ 18] pushcons 5 .............................. <": ">
+  [ 20] joinstr ................................. <"ModStudioController: " & me.iSlot & ": ">
+  [ 21] getparam 1 .............................. <sMessage>
+  [ 23] joinstr ................................. <"ModStudioController: " & me.iSlot & ": " & sMessage>
+  [ 24] pusharglistnoret 1 ...................... <"ModStudioController: " & me.iSlot & ": " & sMessage>
+  [ 26] extcall 38 .............................. put "ModStudioController: " & me.iSlot & ": " & sMessage
+  [ 28] ret
+end
+
+on receiveGameServerNotification me, foGameServer
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 407 .......................... <me.bOpeningLog>
+  [  5] not ..................................... <not me.bOpeningLog>
+  [  6] jmpifz [ 13] ............................ if not me.bOpeningLog then
+  [  9] pusharglistnoret 0 ...................... <>
+  [ 11] extcall 31 .............................. return 
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pushzero ................................ <0>
+  [ 16] setobjprop 407 .......................... me.bOpeningLog = 0
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pushcons 6 .............................. <"receiveGameServerNotification() ">
+  [ 23] getparam 0 .............................. <me>
+  [ 25] getobjprop 408 .......................... <me.iSlot>
+  [ 28] joinstr ................................. <"receiveGameServerNotification() " & me.iSlot>
+  [ 29] getparam 1 .............................. <foGameServer>
+  [ 31] pusharglist 1 ........................... <foGameServer>
+  [ 33] objcall 198 ............................. <foGameServer.toString()>
+  [ 35] joinpadstr .............................. <"receiveGameServerNotification() " & me.iSlot && foGameServer.toString()>
+  [ 36] pusharglistnoret 2 ...................... <me, "receiveGameServerNotification() " & me.iSlot && foGameServer.toString()>
+  [ 38] objcall 4 ............................... me.debug("receiveGameServerNotification() " & me.iSlot && foGameServer.toString())
+  [ 40] getparam 1 .............................. <foGameServer>
+  [ 42] pusharglist 1 ........................... <foGameServer>
+  [ 44] objcall 201 ............................. <foGameServer.getDNS()>
+  [ 46] setlocal 0 .............................. sDNS = foGameServer.getDNS()
+  [ 48] pushint16 9000 .......................... <9000>
+  [ 51] setlocal 1 .............................. iPort = 9000
+  [ 53] getparam 0 .............................. <me>
+  [ 55] getglobal 413 ........................... <oModSessionManager>
+  [ 58] getlocal 0 .............................. <sDNS>
+  [ 60] getlocal 1 .............................. <iPort>
+  [ 62] pusharglist 3 ........................... <oModSessionManager, sDNS, iPort>
+  [ 64] objcall 414 ............................. <oModSessionManager.getSession(sDNS, iPort)>
+  [ 67] setobjprop 307 .......................... me.oSession = oModSessionManager.getSession(sDNS, iPort)
+  [ 70] getparam 0 .............................. <me>
+  [ 72] getchainedprop 307 ...................... <me.oSession>
+  [ 75] getparam 0 .............................. <me>
+  [ 77] pusharglistnoret 2 ...................... <me.oSession, me>
+  [ 79] objcall 415 ............................. me.oSession.addController(me)
+  [ 82] getprop 307 ............................. <oSession>
+  [ 85] pusharglist 1 ........................... <oSession>
+  [ 87] objcall 416 ............................. <oSession.getConnected()>
+  [ 90] jmpifz [112] ............................ if oSession.getConnected() then / else
+  [ 93] getparam 0 .............................. <me>
+  [ 95] getchainedprop 307 ...................... <me.oSession>
+  [ 98] getparam 0 .............................. <me>
+  [100] getobjprop 72 ........................... <me.sStudioID>
+  [102] getparam 0 .............................. <me>
+  [104] pusharglistnoret 3 ...................... <me.oSession, me.sStudioID, me>
+  [106] objcall 417 ............................. me.oSession.enterRoom(me.sStudioID, me)
+  [109] jmp [150]
+  [112] getprop 307 ............................. <oSession>
+  [115] pusharglist 1 ........................... <oSession>
+  [117] objcall 418 ............................. <oSession.getConnecting()>
+  [120] jmpifz [136] ............................ if oSession.getConnecting() then / else
+  [123] pushcons 7 .............................. <"Session is currently connecting...">
+  [125] pusharglistnoret 1 ...................... <"Session is currently connecting...">
+  [127] extcall 171 ............................. alert("Session is currently connecting...")
+  [129] pusharglistnoret 0 ...................... <>
+  [131] extcall 31 .............................. return 
+  [133] jmp [150]
+  [136] getparam 0 .............................. <me>
+  [138] getchainedprop 307 ...................... <me.oSession>
+  [141] getparam 0 .............................. <me>
+  [143] getobjprop 235 .......................... <me.sModScreenName>
+  [145] pusharglistnoret 2 ...................... <me.oSession, me.sModScreenName>
+  [147] objcall 419 ............................. me.oSession.connect(me.sModScreenName)
+  [150] ret
+end
+
+on openLog me, _sModScreenName, _sStudioId, aModRoomList
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 8 .............................. <"openLog() ">
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 408 .......................... <me.iSlot>
+  [  9] joinstr ................................. <"openLog() " & me.iSlot>
+  [ 10] pushcons 9 .............................. <", ">
+  [ 12] joinstr ................................. <"openLog() " & me.iSlot & ", ">
+  [ 13] getparam 1 .............................. <_sModScreenName>
+  [ 15] joinstr ................................. <"openLog() " & me.iSlot & ", " & _sModScreenName>
+  [ 16] pushcons 9 .............................. <", ">
+  [ 18] joinstr ................................. <"openLog() " & me.iSlot & ", " & _sModScreenName & ", ">
+  [ 19] getparam 2 .............................. <_sStudioId>
+  [ 21] joinstr ................................. <"openLog() " & me.iSlot & ", " & _sModScreenName & ", " & _sStudioId>
+  [ 22] pusharglistnoret 2 ...................... <me, "openLog() " & me.iSlot & ", " & _sModScreenName & ", " & _sStudioId>
+  [ 24] objcall 4 ............................... me.debug("openLog() " & me.iSlot & ", " & _sModScreenName & ", " & _sStudioId)
+  [ 26] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 29] getprop 408 ............................. <iSlot>
+  [ 32] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [ 34] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [ 36] setlocal 0 .............................. iSprite = aChatLogDisplaySprites[iSlot]
+  [ 38] getlocal 0 .............................. <iSprite>
+  [ 40] pusharglist 1 ........................... <iSprite>
+  [ 42] extcall 12 .............................. <sprite(iSprite)>
+  [ 44] getparam 0 .............................. <me>
+  [ 46] pusharglistnoret 2 ...................... <sprite(iSprite), me>
+  [ 48] objcall 376 ............................. sprite(iSprite).setController(me)
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getparam 1 .............................. <_sModScreenName>
+  [ 55] setobjprop 235 .......................... me.sModScreenName = _sModScreenName
+  [ 57] getparam 0 .............................. <me>
+  [ 59] getparam 2 .............................. <_sStudioId>
+  [ 61] setobjprop 72 ........................... me.sStudioID = _sStudioId
+  [ 63] getparam 0 .............................. <me>
+  [ 65] pushint8 1 .............................. <1>
+  [ 67] setobjprop 407 .......................... me.bOpeningLog = 1
+  [ 70] getglobal 80 ............................ <oStudioManager>
+  [ 72] getparam 0 .............................. <me>
+  [ 74] getobjprop 72 ........................... <me.sStudioID>
+  [ 76] pusharglistnoret 2 ...................... <oStudioManager, me.sStudioID>
+  [ 78] objcall 422 ............................. oStudioManager.getGameServerByStudioID(me.sStudioID)
+  [ 81] ret
+end
+
+on closeLog me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"closeLog() ">
+  [  4] pusharglistnoret 2 ...................... <me, "closeLog() ">
+  [  6] objcall 4 ............................... me.debug("closeLog() ")
+  [  8] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 11] getprop 408 ............................. <iSlot>
+  [ 14] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [ 16] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [ 18] setlocal 0 .............................. iSprite = aChatLogDisplaySprites[iSlot]
+  [ 20] getlocal 0 .............................. <iSprite>
+  [ 22] pusharglist 1 ........................... <iSprite>
+  [ 24] extcall 12 .............................. <sprite(iSprite)>
+  [ 26] pusharglist 0 ........................... <>
+  [ 28] extcall 263 ............................. <VOID>
+  [ 31] pusharglistnoret 2 ...................... <sprite(iSprite), VOID>
+  [ 33] objcall 376 ............................. sprite(iSprite).setController(VOID)
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getchainedprop 307 ...................... <me.oSession>
+  [ 41] getparam 0 .............................. <me>
+  [ 43] getobjprop 72 ........................... <me.sStudioID>
+  [ 45] pusharglistnoret 2 ...................... <me.oSession, me.sStudioID>
+  [ 47] objcall 426 ............................. me.oSession.exitRoom(me.sStudioID)
+  [ 50] ret
+end
+
+on loggedIn me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 11 ............................. <"loggedIn()">
+  [  4] pusharglistnoret 2 ...................... <me, "loggedIn()">
+  [  6] objcall 4 ............................... me.debug("loggedIn()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 307 ...................... <me.oSession>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] getobjprop 72 ........................... <me.sStudioID>
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pusharglistnoret 3 ...................... <me.oSession, me.sStudioID, me>
+  [ 21] objcall 417 ............................. me.oSession.enterRoom(me.sStudioID, me)
+  [ 24] ret
+end
+
+on loggedOut me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 12 ............................. <"loggedOut()">
+  [  4] pusharglistnoret 2 ...................... <me, "loggedOut()">
+  [  6] objcall 4 ............................... me.debug("loggedOut()")
+  [  8] ret
+end
+
+on connectionFailed me, iReasonId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 13 ............................. <"connectionFailed() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"connectionFailed() " & iReasonId>
+  [  7] pusharglistnoret 2 ...................... <me, "connectionFailed() " & iReasonId>
+  [  9] objcall 4 ............................... me.debug("connectionFailed() " & iReasonId)
+  [ 11] ret
+end
+
+on loginFailed me, iReasonId, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"loginFailed() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"loginFailed() " & iReasonId>
+  [  7] getparam 2 .............................. <sMessage>
+  [  9] joinpadstr .............................. <"loginFailed() " & iReasonId && sMessage>
+  [ 10] pusharglistnoret 2 ...................... <me, "loginFailed() " & iReasonId && sMessage>
+  [ 12] objcall 4 ............................... me.debug("loginFailed() " & iReasonId && sMessage)
+  [ 14] pushcons 14 ............................. <"loginFailed() ">
+  [ 16] getparam 1 .............................. <iReasonId>
+  [ 18] joinpadstr .............................. <"loginFailed() " && iReasonId>
+  [ 19] getparam 2 .............................. <sMessage>
+  [ 21] joinpadstr .............................. <"loginFailed() " && iReasonId && sMessage>
+  [ 22] pusharglistnoret 1 ...................... <"loginFailed() " && iReasonId && sMessage>
+  [ 24] extcall 171 ............................. alert("loginFailed() " && iReasonId && sMessage)
+  [ 26] ret
+end
+
+on lostConnection me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 15 ............................. <"lostConnection()">
+  [  4] pusharglistnoret 2 ...................... <me, "lostConnection()">
+  [  6] objcall 4 ............................... me.debug("lostConnection()")
+  [  8] pushcons 15 ............................. <"lostConnection()">
+  [ 10] pusharglistnoret 1 ...................... <"lostConnection()">
+  [ 12] extcall 171 ............................. alert("lostConnection()")
+  [ 14] ret
+end
+
+on exception me, iReasonId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 16 ............................. <"exception() ">
+  [  4] getparam 1 .............................. <iReasonId>
+  [  6] joinstr ................................. <"exception() " & iReasonId>
+  [  7] pusharglistnoret 2 ...................... <me, "exception() " & iReasonId>
+  [  9] objcall 4 ............................... me.debug("exception() " & iReasonId)
+  [ 11] ret
+end
+
+on notify me, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 17 ............................. <"notify() ">
+  [  4] getparam 1 .............................. <sMessage>
+  [  6] joinstr ................................. <"notify() " & sMessage>
+  [  7] pusharglistnoret 2 ...................... <me, "notify() " & sMessage>
+  [  9] objcall 4 ............................... me.debug("notify() " & sMessage)
+  [ 11] ret
+end
+
+on roomEntered me, sRoomId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 18 ............................. <"roomEntered()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomEntered()">
+  [  6] objcall 4 ............................... me.debug("roomEntered()")
+  [  8] pushcons 19 ............................. <"Date">
+  [ 10] pusharglist 1 ........................... <"Date">
+  [ 12] extcall 354 ............................. <newObject("Date")>
+  [ 15] setlocal 0 .............................. oDateObj = newObject("Date")
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushcons 20 ............................. <"<-------------------OPENED">
+  [ 21] pushcons 21 ............................. <"(">
+  [ 23] joinpadstr .............................. <"<-------------------OPENED" && "(">
+  [ 24] getlocal 0 .............................. <oDateObj>
+  [ 26] pusharglist 1 ........................... <oDateObj>
+  [ 28] objcall 198 ............................. <oDateObj.toString()>
+  [ 30] joinstr ................................. <"<-------------------OPENED" && "(" & oDateObj.toString()>
+  [ 31] pushcons 22 ............................. <")">
+  [ 33] joinstr ................................. <"<-------------------OPENED" && "(" & oDateObj.toString() & ")">
+  [ 34] pushcons 23 ............................. <"------------------->">
+  [ 36] joinstr ................................. <"<-------------------OPENED" && "(" & oDateObj.toString() & ")" & "------------------->">
+  [ 37] setobjprop 428 .......................... me.sChatLog = "<-------------------OPENED" && "(" & oDateObj.toString() & ")" & "------------------->"
+  [ 40] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 43] getparam 0 .............................. <me>
+  [ 45] getobjprop 408 .......................... <me.iSlot>
+  [ 48] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [ 50] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [ 52] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [ 54] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [ 56] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 428 .......................... <me.sChatLog>
+  [ 63] setobjprop 15 ........................... sprite(aChatLogDisplaySprites[me.iSlot]).member.text = me.sChatLog
+  [ 65] ret
+end
+
+on roomEnterFailed me, sRoomId, iReasonId, sMessage
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 24 ............................. <"roomEnterFailed()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomEnterFailed()">
+  [  6] objcall 4 ............................... me.debug("roomEnterFailed()")
+  [  8] pushcons 24 ............................. <"roomEnterFailed()">
+  [ 10] getparam 1 .............................. <sRoomId>
+  [ 12] joinpadstr .............................. <"roomEnterFailed()" && sRoomId>
+  [ 13] getparam 2 .............................. <iReasonId>
+  [ 15] joinpadstr .............................. <"roomEnterFailed()" && sRoomId && iReasonId>
+  [ 16] getparam 3 .............................. <sMessage>
+  [ 18] joinpadstr .............................. <"roomEnterFailed()" && sRoomId && iReasonId && sMessage>
+  [ 19] pusharglistnoret 1 ...................... <"roomEnterFailed()" && sRoomId && iReasonId && sMessage>
+  [ 21] extcall 171 ............................. alert("roomEnterFailed()" && sRoomId && iReasonId && sMessage)
+  [ 23] ret
+end
+
+on roomExited me, sRoomId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 25 ............................. <"roomExited()">
+  [  4] pusharglistnoret 2 ...................... <me, "roomExited()">
+  [  6] objcall 4 ............................... me.debug("roomExited()")
+  [  8] getparam 0 .............................. <me>
+  [ 10] getchainedprop 307 ...................... <me.oSession>
+  [ 13] getparam 0 .............................. <me>
+  [ 15] pusharglistnoret 2 ...................... <me.oSession, me>
+  [ 17] objcall 431 ............................. me.oSession.removeController(me)
+  [ 20] pushcons 19 ............................. <"Date">
+  [ 22] pusharglist 1 ........................... <"Date">
+  [ 24] extcall 354 ............................. <newObject("Date")>
+  [ 27] setlocal 0 .............................. oDateObj = newObject("Date")
+  [ 29] pushcons 26 ............................. <RETURN>
+  [ 31] pushcons 27 ............................. <"<-------------------CLOSED">
+  [ 33] joinstr ................................. <RETURN & "<-------------------CLOSED">
+  [ 34] pushcons 21 ............................. <"(">
+  [ 36] joinpadstr .............................. <RETURN & "<-------------------CLOSED" && "(">
+  [ 37] getlocal 0 .............................. <oDateObj>
+  [ 39] pusharglist 1 ........................... <oDateObj>
+  [ 41] objcall 198 ............................. <oDateObj.toString()>
+  [ 43] joinstr ................................. <RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString()>
+  [ 44] pushcons 22 ............................. <")">
+  [ 46] joinstr ................................. <RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString() & ")">
+  [ 47] pushcons 23 ............................. <"------------------->">
+  [ 49] joinstr ................................. <RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString() & ")" & "------------------->">
+  [ 50] pushcons 26 ............................. <RETURN>
+  [ 52] joinstr ................................. <RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString() & ")" & "------------------->" & RETURN>
+  [ 53] pushcons 28 ............................. <"inactive log">
+  [ 55] joinstr ................................. <RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString() & ")" & "------------------->" & RETURN & "inactive log">
+  [ 56] setlocal 1 .............................. sCloseString = RETURN & "<-------------------CLOSED" && "(" & oDateObj.toString() & ")" & "------------------->" & RETURN & "inactive log"
+  [ 58] getparam 0 .............................. <me>
+  [ 60] getobjprop 428 .......................... <me.sChatLog>
+  [ 63] setlocal 2 .............................. sCurrentChatString = me.sChatLog
+  [ 65] getlocal 1 .............................. <sCloseString>
+  [ 67] pushint8 2 .............................. <2>
+  [ 69] put 37 .................................. put sCloseString after sCurrentChatString
+  [ 71] getparam 0 .............................. <me>
+  [ 73] getlocal 2 .............................. <sCurrentChatString>
+  [ 75] setobjprop 428 .......................... me.sChatLog = sCurrentChatString
+  [ 78] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 81] getparam 0 .............................. <me>
+  [ 83] getobjprop 408 .......................... <me.iSlot>
+  [ 86] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [ 88] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [ 90] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [ 92] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [ 94] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [ 96] getparam 0 .............................. <me>
+  [ 98] getobjprop 428 .......................... <me.sChatLog>
+  [101] setobjprop 15 ........................... sprite(aChatLogDisplaySprites[me.iSlot]).member.text = me.sChatLog
+  [103] ret
+end
+
+on receiveStudioChat me, sAvatarName, sMessage, iSpeechMode
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 29 ............................. <"receiveStudioChat()">
+  [  4] getparam 1 .............................. <sAvatarName>
+  [  6] joinpadstr .............................. <"receiveStudioChat()" && sAvatarName>
+  [  7] getparam 2 .............................. <sMessage>
+  [  9] joinpadstr .............................. <"receiveStudioChat()" && sAvatarName && sMessage>
+  [ 10] getparam 3 .............................. <iSpeechMode>
+  [ 12] joinpadstr .............................. <"receiveStudioChat()" && sAvatarName && sMessage && iSpeechMode>
+  [ 13] pusharglistnoret 2 ...................... <me, "receiveStudioChat()" && sAvatarName && sMessage && iSpeechMode>
+  [ 15] objcall 4 ............................... me.debug("receiveStudioChat()" && sAvatarName && sMessage && iSpeechMode)
+  [ 17] getparam 0 .............................. <me>
+  [ 19] getobjprop 428 .......................... <me.sChatLog>
+  [ 22] setlocal 0 .............................. sCurrentChatString = me.sChatLog
+  [ 24] getparam 3 .............................. <iSpeechMode>
+  [ 26] peek 0 .................................. case iSpeechMode of
+  [ 28] pushzero ................................ <0>
+  [ 29] eq
+  [ 30] jmpifz [ 58] ............................ (case) 0:
+  [ 33] pushcons 30 ............................. <EMPTY>
+  [ 35] setlocal 1 .............................. sSpeechModeChar = EMPTY
+  [ 37] pushsymb 106 ............................ <#plain>
+  [ 39] pusharglist 1 ........................... <[#plain]>
+  [ 41] pushlist ................................ <[#plain]>
+  [ 42] setlocal 2 .............................. oStyle = [#plain]
+  [ 44] getparam 0 .............................. <me>
+  [ 46] getobjprop 409 .......................... <me.sColor_speak>
+  [ 49] pusharglist 1 ........................... <me.sColor_speak>
+  [ 51] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [ 53] setlocal 3 .............................. oColor = rgb(me.sColor_speak)
+  [ 55] jmp [222]
+  [ 58] peek 0
+  [ 60] pushint8 1 .............................. <1>
+  [ 62] eq
+  [ 63] jmpifz [ 91] ............................ (case) 1:
+  [ 66] pushcons 30 ............................. <EMPTY>
+  [ 68] setlocal 1 .............................. sSpeechModeChar = EMPTY
+  [ 70] pushsymb 106 ............................ <#plain>
+  [ 72] pusharglist 1 ........................... <[#plain]>
+  [ 74] pushlist ................................ <[#plain]>
+  [ 75] setlocal 2 .............................. oStyle = [#plain]
+  [ 77] getparam 0 .............................. <me>
+  [ 79] getobjprop 409 .......................... <me.sColor_speak>
+  [ 82] pusharglist 1 ........................... <me.sColor_speak>
+  [ 84] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [ 86] setlocal 3 .............................. oColor = rgb(me.sColor_speak)
+  [ 88] jmp [222]
+  [ 91] peek 0
+  [ 93] pushint8 2 .............................. <2>
+  [ 95] eq
+  [ 96] jmpifz [125] ............................ (case) 2:
+  [ 99] pushcons 31 ............................. <"*">
+  [101] setlocal 1 .............................. sSpeechModeChar = "*"
+  [103] pushsymb 434 ............................ <#bold>
+  [106] pusharglist 1 ........................... <[#bold]>
+  [108] pushlist ................................ <[#bold]>
+  [109] setlocal 2 .............................. oStyle = [#bold]
+  [111] getparam 0 .............................. <me>
+  [113] getobjprop 409 .......................... <me.sColor_speak>
+  [116] pusharglist 1 ........................... <me.sColor_speak>
+  [118] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [120] setlocal 3 .............................. oColor = rgb(me.sColor_speak)
+  [122] jmp [222]
+  [125] peek 0
+  [127] pushint8 3 .............................. <3>
+  [129] eq
+  [130] jmpifz [159] ............................ (case) 3:
+  [133] pushcons 32 ............................. <"$">
+  [135] setlocal 1 .............................. sSpeechModeChar = "$"
+  [137] pushsymb 435 ............................ <#italic>
+  [140] pusharglist 1 ........................... <[#italic]>
+  [142] pushlist ................................ <[#italic]>
+  [143] setlocal 2 .............................. oStyle = [#italic]
+  [145] getparam 0 .............................. <me>
+  [147] getobjprop 409 .......................... <me.sColor_speak>
+  [150] pusharglist 1 ........................... <me.sColor_speak>
+  [152] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [154] setlocal 3 .............................. oColor = rgb(me.sColor_speak)
+  [156] jmp [222]
+  [159] peek 0
+  [161] pushint8 4 .............................. <4>
+  [163] eq
+  [164] jmpifz [192] ............................ (case) 4:
+  [167] pushcons 33 ............................. <"%">
+  [169] setlocal 1 .............................. sSpeechModeChar = "%"
+  [171] pushsymb 106 ............................ <#plain>
+  [173] pusharglist 1 ........................... <[#plain]>
+  [175] pushlist ................................ <[#plain]>
+  [176] setlocal 2 .............................. oStyle = [#plain]
+  [178] getparam 0 .............................. <me>
+  [180] getobjprop 410 .......................... <me.sColor_foul>
+  [183] pusharglist 1 ........................... <me.sColor_foul>
+  [185] extcall 111 ............................. <rgb(me.sColor_foul)>
+  [187] setlocal 3 .............................. oColor = rgb(me.sColor_foul)
+  [189] jmp [222]
+  [192] peek 0
+  [194] pushint8 5 .............................. <5>
+  [196] eq
+  [197] jmpifz [222] ............................ (case) 5:
+  [200] pushcons 34 ............................. <"^">
+  [202] setlocal 1 .............................. sSpeechModeChar = "^"
+  [204] pushsymb 106 ............................ <#plain>
+  [206] pusharglist 1 ........................... <[#plain]>
+  [208] pushlist ................................ <[#plain]>
+  [209] setlocal 2 .............................. oStyle = [#plain]
+  [211] getparam 0 .............................. <me>
+  [213] getobjprop 411 .......................... <me.sColor_mute>
+  [216] pusharglist 1 ........................... <me.sColor_mute>
+  [218] extcall 111 ............................. <rgb(me.sColor_mute)>
+  [220] setlocal 3 .............................. oColor = rgb(me.sColor_mute)
+  [222] pop 1 ................................... end case
+  [224] getparam 1 .............................. <sAvatarName>
+  [226] pushcons 35 ............................. <":">
+  [228] joinstr ................................. <sAvatarName & ":">
+  [229] getlocal 1 .............................. <sSpeechModeChar>
+  [231] joinpadstr .............................. <sAvatarName & ":" && sSpeechModeChar>
+  [232] getparam 2 .............................. <sMessage>
+  [234] joinpadstr .............................. <sAvatarName & ":" && sSpeechModeChar && sMessage>
+  [235] setlocal 4 .............................. sNewChatString = sAvatarName & ":" && sSpeechModeChar && sMessage
+  [237] pushcons 26 ............................. <RETURN>
+  [239] getlocal 4 .............................. <sNewChatString>
+  [241] joinstr ................................. <RETURN & sNewChatString>
+  [242] pushzero ................................ <0>
+  [243] put 37 .................................. put RETURN & sNewChatString after sCurrentChatString
+  [245] getparam 0 .............................. <me>
+  [247] getlocal 0 .............................. <sCurrentChatString>
+  [249] setobjprop 428 .......................... me.sChatLog = sCurrentChatString
+  [252] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [255] getparam 0 .............................. <me>
+  [257] getobjprop 408 .......................... <me.iSlot>
+  [260] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [262] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [264] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [266] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [268] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [270] getparam 0 .............................. <me>
+  [272] getobjprop 428 .......................... <me.sChatLog>
+  [275] setobjprop 15 ........................... sprite(aChatLogDisplaySprites[me.iSlot]).member.text = me.sChatLog
+  [277] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [280] getparam 0 .............................. <me>
+  [282] getobjprop 408 .......................... <me.iSlot>
+  [285] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [287] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [289] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [291] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [293] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [295] pushsymb 214 ............................ <#line>
+  [297] pusharglist 2 ........................... <sprite(aChatLogDisplaySprites[me.iSlot]).member, #line>
+  [299] objcall 32 .............................. <sprite(aChatLogDisplaySprites[me.iSlot]).member.line.count>
+  [301] setlocal 5 .............................. iLineCount = sprite(aChatLogDisplaySprites[me.iSlot]).member.line.count
+  [303] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [306] getparam 0 .............................. <me>
+  [308] getobjprop 408 .......................... <me.iSlot>
+  [311] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [313] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [315] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [317] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [319] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [321] pushsymb 214 ............................ <#line>
+  [323] getlocal 5 .............................. <iLineCount>
+  [325] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[me.iSlot]).member, #line, iLineCount>
+  [327] objcall 61 .............................. <sprite(aChatLogDisplaySprites[me.iSlot]).member.line[iLineCount]>
+  [329] getlocal 2 .............................. <oStyle>
+  [331] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[me.iSlot]).member.line[iLineCount].fontStyle = oStyle
+  [333] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [336] getparam 0 .............................. <me>
+  [338] getobjprop 408 .......................... <me.iSlot>
+  [341] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [343] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [345] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [347] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [349] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[me.iSlot]).member>
+  [351] pushsymb 214 ............................ <#line>
+  [353] getlocal 5 .............................. <iLineCount>
+  [355] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[me.iSlot]).member, #line, iLineCount>
+  [357] objcall 61 .............................. <sprite(aChatLogDisplaySprites[me.iSlot]).member.line[iLineCount]>
+  [359] getlocal 3 .............................. <oColor>
+  [361] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[me.iSlot]).member.line[iLineCount].color = oColor
+  [363] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [366] getparam 0 .............................. <me>
+  [368] getobjprop 408 .......................... <me.iSlot>
+  [371] pusharglist 2 ........................... <aChatLogDisplaySprites, me.iSlot>
+  [373] objcall 33 .............................. <aChatLogDisplaySprites[me.iSlot]>
+  [375] pusharglist 1 ........................... <aChatLogDisplaySprites[me.iSlot]>
+  [377] extcall 12 .............................. <sprite(aChatLogDisplaySprites[me.iSlot])>
+  [379] pushsymb 324 ............................ <#scriptInstanceList>
+  [382] pushint8 2 .............................. <2>
+  [384] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[me.iSlot]), #scriptInstanceList, 2>
+  [386] objcall 61 .............................. <sprite(aChatLogDisplaySprites[me.iSlot]).scriptInstanceList[2]>
+  [388] pusharglistnoret 1 ...................... <sprite(aChatLogDisplaySprites[me.iSlot]).scriptInstanceList[2]>
+  [390] objcall 375 ............................. sprite(aChatLogDisplaySprites[me.iSlot]).scriptInstanceList[2].scrollDisplay()
+  [393] ret
+end
+
+on receiveStudioTestChat me, iLineMax, iChatType
+  [  0] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [  3] getprop 408 ............................. <iSlot>
+  [  6] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [  8] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [ 10] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [ 12] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [ 14] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [ 16] getobjprop 15 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member.text>
+  [ 18] pushcons 36 ............................. <"active log">
+  [ 20] eq ...................................... <sprite(aChatLogDisplaySprites[iSlot]).member.text = "active log">
+  [ 21] jmpifz [ 44] ............................ if sprite(aChatLogDisplaySprites[iSlot]).member.text = "active log" then
+  [ 24] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 27] getprop 408 ............................. <iSlot>
+  [ 30] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [ 32] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [ 34] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [ 36] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [ 38] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [ 40] pushcons 30 ............................. <EMPTY>
+  [ 42] setobjprop 15 ........................... sprite(aChatLogDisplaySprites[iSlot]).member.text = EMPTY
+  [ 44] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 47] getprop 408 ............................. <iSlot>
+  [ 50] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [ 52] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [ 54] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [ 56] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [ 58] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [ 60] pushsymb 214 ............................ <#line>
+  [ 62] pusharglist 2 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line>
+  [ 64] objcall 32 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line.count>
+  [ 66] setlocal 0 .............................. iLineCount = sprite(aChatLogDisplaySprites[iSlot]).member.line.count
+  [ 68] getparam 2 .............................. <iChatType>
+  [ 70] peek 0 .................................. case iChatType of
+  [ 72] pushint8 1 .............................. <1>
+  [ 74] eq
+  [ 75] jmpifz [208] ............................ (case) 1:
+  [ 78] pushint8 1 .............................. <1>
+  [ 80] setlocal 1
+  [ 82] getlocal 1
+  [ 84] getparam 1 .............................. <iLineMax>
+  [ 86] lteq
+  [ 87] jmpifz [205] ............................ repeat with i = 1 to iLineMax
+  [ 90] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [ 93] getprop 408 ............................. <iSlot>
+  [ 96] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [ 98] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [100] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [102] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [104] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [106] pushsymb 214 ............................ <#line>
+  [108] getlocal 1 .............................. <i>
+  [110] getlocal 0 .............................. <iLineCount>
+  [112] add ..................................... <i + iLineCount>
+  [113] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [115] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [117] pushsymb 106 ............................ <#plain>
+  [119] pusharglist 1 ........................... <[#plain]>
+  [121] pushlist ................................ <[#plain]>
+  [122] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#plain]
+  [124] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [127] getprop 408 ............................. <iSlot>
+  [130] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [132] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [134] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [136] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [138] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [140] pushsymb 214 ............................ <#line>
+  [142] getlocal 1 .............................. <i>
+  [144] getlocal 0 .............................. <iLineCount>
+  [146] add ..................................... <i + iLineCount>
+  [147] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [149] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [151] getparam 0 .............................. <me>
+  [153] getobjprop 409 .......................... <me.sColor_speak>
+  [156] pusharglist 1 ........................... <me.sColor_speak>
+  [158] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [160] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [162] pushcons 26 ............................. <RETURN>
+  [164] pushcons 37 ............................. <"aslan: This is regular chat">
+  [166] joinstr ................................. <RETURN & "aslan: This is regular chat">
+  [167] getlocal 1 .............................. <i>
+  [169] joinstr ................................. <RETURN & "aslan: This is regular chat" & i>
+  [170] setlocal 2 .............................. sNewString = RETURN & "aslan: This is regular chat" & i
+  [172] getlocal 2 .............................. <sNewString>
+  [174] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [177] getprop 408 ............................. <iSlot>
+  [180] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [182] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [184] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [186] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [188] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [190] swap
+  [191] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [193] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [196] pushint8 1
+  [198] getlocal 1
+  [200] add
+  [201] setlocal 1
+  [203] endrepeat [ 82]
+  [205] jmp [1355]
+  [208] peek 0
+  [210] pushint8 2 .............................. <2>
+  [212] eq
+  [213] jmpifz [344] ............................ (case) 2:
+  [216] pushint8 1 .............................. <1>
+  [218] setlocal 1
+  [220] getlocal 1
+  [222] getparam 1 .............................. <iLineMax>
+  [224] lteq
+  [225] jmpifz [341] ............................ repeat with i = 1 to iLineMax
+  [228] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [231] getprop 408 ............................. <iSlot>
+  [234] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [236] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [238] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [240] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [242] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [244] pushsymb 214 ............................ <#line>
+  [246] getlocal 1 .............................. <i>
+  [248] getlocal 0 .............................. <iLineCount>
+  [250] add ..................................... <i + iLineCount>
+  [251] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [253] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [255] pushsymb 434 ............................ <#bold>
+  [258] pusharglist 1 ........................... <[#bold]>
+  [260] pushlist ................................ <[#bold]>
+  [261] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#bold]
+  [263] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [266] getprop 408 ............................. <iSlot>
+  [269] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [271] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [273] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [275] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [277] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [279] pushsymb 214 ............................ <#line>
+  [281] getlocal 1 .............................. <i>
+  [283] getlocal 0 .............................. <iLineCount>
+  [285] add ..................................... <i + iLineCount>
+  [286] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [288] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [290] getparam 0 .............................. <me>
+  [292] getobjprop 409 .......................... <me.sColor_speak>
+  [295] pusharglist 1 ........................... <me.sColor_speak>
+  [297] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [299] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [301] pushcons 26 ............................. <RETURN>
+  [303] pushcons 38 ............................. <"bubba: HEY PPL, WHASSUP?!">
+  [305] joinstr ................................. <RETURN & "bubba: HEY PPL, WHASSUP?!">
+  [306] setlocal 2 .............................. sNewString = RETURN & "bubba: HEY PPL, WHASSUP?!"
+  [308] getlocal 2 .............................. <sNewString>
+  [310] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [313] getprop 408 ............................. <iSlot>
+  [316] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [318] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [320] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [322] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [324] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [326] swap
+  [327] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [329] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [332] pushint8 1
+  [334] getlocal 1
+  [336] add
+  [337] setlocal 1
+  [339] endrepeat [220]
+  [341] jmp [1355]
+  [344] peek 0
+  [346] pushint8 3 .............................. <3>
+  [348] eq
+  [349] jmpifz [480] ............................ (case) 3:
+  [352] pushint8 1 .............................. <1>
+  [354] setlocal 1
+  [356] getlocal 1
+  [358] getparam 1 .............................. <iLineMax>
+  [360] lteq
+  [361] jmpifz [477] ............................ repeat with i = 1 to iLineMax
+  [364] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [367] getprop 408 ............................. <iSlot>
+  [370] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [372] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [374] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [376] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [378] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [380] pushsymb 214 ............................ <#line>
+  [382] getlocal 1 .............................. <i>
+  [384] getlocal 0 .............................. <iLineCount>
+  [386] add ..................................... <i + iLineCount>
+  [387] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [389] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [391] pushsymb 435 ............................ <#italic>
+  [394] pusharglist 1 ........................... <[#italic]>
+  [396] pushlist ................................ <[#italic]>
+  [397] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#italic]
+  [399] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [402] getprop 408 ............................. <iSlot>
+  [405] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [407] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [409] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [411] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [413] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [415] pushsymb 214 ............................ <#line>
+  [417] getlocal 1 .............................. <i>
+  [419] getlocal 0 .............................. <iLineCount>
+  [421] add ..................................... <i + iLineCount>
+  [422] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [424] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [426] getparam 0 .............................. <me>
+  [428] getobjprop 409 .......................... <me.sColor_speak>
+  [431] pusharglist 1 ........................... <me.sColor_speak>
+  [433] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [435] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [437] pushcons 26 ............................. <RETURN>
+  [439] pushcons 39 ............................. <"freeble: Singing in the rain...">
+  [441] joinstr ................................. <RETURN & "freeble: Singing in the rain...">
+  [442] setlocal 2 .............................. sNewString = RETURN & "freeble: Singing in the rain..."
+  [444] getlocal 2 .............................. <sNewString>
+  [446] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [449] getprop 408 ............................. <iSlot>
+  [452] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [454] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [456] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [458] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [460] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [462] swap
+  [463] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [465] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [468] pushint8 1
+  [470] getlocal 1
+  [472] add
+  [473] setlocal 1
+  [475] endrepeat [356]
+  [477] jmp [1355]
+  [480] peek 0
+  [482] pushint8 4 .............................. <4>
+  [484] eq
+  [485] jmpifz [615] ............................ (case) 4:
+  [488] pushint8 1 .............................. <1>
+  [490] setlocal 1
+  [492] getlocal 1
+  [494] getparam 1 .............................. <iLineMax>
+  [496] lteq
+  [497] jmpifz [612] ............................ repeat with i = 1 to iLineMax
+  [500] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [503] getprop 408 ............................. <iSlot>
+  [506] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [508] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [510] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [512] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [514] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [516] pushsymb 214 ............................ <#line>
+  [518] getlocal 1 .............................. <i>
+  [520] getlocal 0 .............................. <iLineCount>
+  [522] add ..................................... <i + iLineCount>
+  [523] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [525] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [527] pushsymb 106 ............................ <#plain>
+  [529] pusharglist 1 ........................... <[#plain]>
+  [531] pushlist ................................ <[#plain]>
+  [532] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#plain]
+  [534] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [537] getprop 408 ............................. <iSlot>
+  [540] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [542] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [544] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [546] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [548] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [550] pushsymb 214 ............................ <#line>
+  [552] getlocal 1 .............................. <i>
+  [554] getlocal 0 .............................. <iLineCount>
+  [556] add ..................................... <i + iLineCount>
+  [557] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [559] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [561] getparam 0 .............................. <me>
+  [563] getobjprop 410 .......................... <me.sColor_foul>
+  [566] pusharglist 1 ........................... <me.sColor_foul>
+  [568] extcall 111 ............................. <rgb(me.sColor_foul)>
+  [570] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_foul)
+  [572] pushcons 26 ............................. <RETURN>
+  [574] pushcons 40 ............................. <"deBaser: Gimme green you shitheads...">
+  [576] joinstr ................................. <RETURN & "deBaser: Gimme green you shitheads...">
+  [577] setlocal 2 .............................. sNewString = RETURN & "deBaser: Gimme green you shitheads..."
+  [579] getlocal 2 .............................. <sNewString>
+  [581] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [584] getprop 408 ............................. <iSlot>
+  [587] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [589] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [591] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [593] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [595] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [597] swap
+  [598] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [600] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [603] pushint8 1
+  [605] getlocal 1
+  [607] add
+  [608] setlocal 1
+  [610] endrepeat [492]
+  [612] jmp [1355]
+  [615] peek 0
+  [617] pushint8 5 .............................. <5>
+  [619] eq
+  [620] jmpifz [751] ............................ (case) 5:
+  [623] pushint8 1 .............................. <1>
+  [625] setlocal 1
+  [627] getlocal 1
+  [629] getparam 1 .............................. <iLineMax>
+  [631] lteq
+  [632] jmpifz [748] ............................ repeat with i = 1 to iLineMax
+  [635] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [638] getprop 408 ............................. <iSlot>
+  [641] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [643] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [645] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [647] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [649] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [651] pushsymb 214 ............................ <#line>
+  [653] getlocal 1 .............................. <i>
+  [655] getlocal 0 .............................. <iLineCount>
+  [657] add ..................................... <i + iLineCount>
+  [658] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [660] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [662] pushsymb 434 ............................ <#bold>
+  [665] pusharglist 1 ........................... <[#bold]>
+  [667] pushlist ................................ <[#bold]>
+  [668] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#bold]
+  [670] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [673] getprop 408 ............................. <iSlot>
+  [676] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [678] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [680] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [682] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [684] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [686] pushsymb 214 ............................ <#line>
+  [688] getlocal 1 .............................. <i>
+  [690] getlocal 0 .............................. <iLineCount>
+  [692] add ..................................... <i + iLineCount>
+  [693] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [695] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [697] getparam 0 .............................. <me>
+  [699] getobjprop 410 .......................... <me.sColor_foul>
+  [702] pusharglist 1 ........................... <me.sColor_foul>
+  [704] extcall 111 ............................. <rgb(me.sColor_foul)>
+  [706] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_foul)
+  [708] pushcons 26 ............................. <RETURN>
+  [710] pushcons 41 ............................. <"bubba: HEY PPL WHO IS DA SHIZNIT MOFO?!!!...">
+  [712] joinstr ................................. <RETURN & "bubba: HEY PPL WHO IS DA SHIZNIT MOFO?!!!...">
+  [713] setlocal 2 .............................. sNewString = RETURN & "bubba: HEY PPL WHO IS DA SHIZNIT MOFO?!!!..."
+  [715] getlocal 2 .............................. <sNewString>
+  [717] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [720] getprop 408 ............................. <iSlot>
+  [723] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [725] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [727] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [729] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [731] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [733] swap
+  [734] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [736] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [739] pushint8 1
+  [741] getlocal 1
+  [743] add
+  [744] setlocal 1
+  [746] endrepeat [627]
+  [748] jmp [1355]
+  [751] peek 0
+  [753] pushint8 6 .............................. <6>
+  [755] eq
+  [756] jmpifz [887] ............................ (case) 6:
+  [759] pushint8 1 .............................. <1>
+  [761] setlocal 1
+  [763] getlocal 1
+  [765] getparam 1 .............................. <iLineMax>
+  [767] lteq
+  [768] jmpifz [884] ............................ repeat with i = 1 to iLineMax
+  [771] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [774] getprop 408 ............................. <iSlot>
+  [777] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [779] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [781] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [783] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [785] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [787] pushsymb 214 ............................ <#line>
+  [789] getlocal 1 .............................. <i>
+  [791] getlocal 0 .............................. <iLineCount>
+  [793] add ..................................... <i + iLineCount>
+  [794] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [796] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [798] pushsymb 435 ............................ <#italic>
+  [801] pusharglist 1 ........................... <[#italic]>
+  [803] pushlist ................................ <[#italic]>
+  [804] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#italic]
+  [806] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [809] getprop 408 ............................. <iSlot>
+  [812] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [814] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [816] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [818] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [820] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [822] pushsymb 214 ............................ <#line>
+  [824] getlocal 1 .............................. <i>
+  [826] getlocal 0 .............................. <iLineCount>
+  [828] add ..................................... <i + iLineCount>
+  [829] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [831] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [833] getparam 0 .............................. <me>
+  [835] getobjprop 410 .......................... <me.sColor_foul>
+  [838] pusharglist 1 ........................... <me.sColor_foul>
+  [840] extcall 111 ............................. <rgb(me.sColor_foul)>
+  [842] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_foul)
+  [844] pushcons 26 ............................. <RETURN>
+  [846] pushcons 42 ............................. <"freeble: Fuckin' singing in the goddamn rain...">
+  [848] joinstr ................................. <RETURN & "freeble: Fuckin' singing in the goddamn rain...">
+  [849] setlocal 2 .............................. sNewString = RETURN & "freeble: Fuckin' singing in the goddamn rain..."
+  [851] getlocal 2 .............................. <sNewString>
+  [853] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [856] getprop 408 ............................. <iSlot>
+  [859] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [861] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [863] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [865] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [867] getobjprop 14 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [869] swap
+  [870] pusharglistnoret 2 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [872] objcall 443 ............................. put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [875] pushint8 1
+  [877] getlocal 1
+  [879] add
+  [880] setlocal 1
+  [882] endrepeat [763]
+  [884] jmp [1355]
+  [887] peek 0
+  [889] pushint8 7 .............................. <7>
+  [891] eq
+  [892] jmpifz [1355] ........................... (case) 7:
+  [895] pushint8 1 .............................. <1>
+  [897] setlocal 1
+  [899] getlocal 1
+  [901] getparam 1 .............................. <iLineMax>
+  [903] lteq
+  [904] jmpifz [1355] ........................... repeat with i = 1 to iLineMax
+  [907] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [910] getprop 408 ............................. <iSlot>
+  [913] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [915] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [917] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [919] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [921] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [923] pushsymb 214 ............................ <#line>
+  [925] getlocal 1 .............................. <i>
+  [927] getlocal 0 .............................. <iLineCount>
+  [929] add ..................................... <i + iLineCount>
+  [930] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [932] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [934] pushsymb 106 ............................ <#plain>
+  [936] pusharglist 1 ........................... <[#plain]>
+  [938] pushlist ................................ <[#plain]>
+  [939] setobjprop 104 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#plain]
+  [941] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [944] getprop 408 ............................. <iSlot>
+  [947] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [949] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [951] pusharglist 1 ........................... <aChatLogDisplaySprites[iSlot]>
+  [953] extcall 12 .............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [955] getchainedprop 14 ....................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [957] pushsymb 214 ............................ <#line>
+  [959] getlocal 1 .............................. <i>
+  [961] getlocal 0 .............................. <iLineCount>
+  [963] add ..................................... <i + iLineCount>
+  [964] pusharglist 3 ........................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [966] objcall 61 .............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [968] getparam 0 .............................. <me>
+  [970] getobjprop 409 .......................... <me.sColor_speak>
+  [973] pusharglist 1 ........................... <me.sColor_speak>
+  [975] extcall 111 ............................. <rgb(me.sColor_speak)>
+  [977] setobjprop 112 .......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [979] pushcons 26 ............................. <RETURN>
+  [981] pushcons 37 ............................. <"aslan: This is regular chat">
+  [983] joinstr ................................. <RETURN & "aslan: This is regular chat">
+  [984] getlocal 1 .............................. <i>
+  [986] joinstr ................................. <RETURN & "aslan: This is regular chat" & i>
+  [987] setlocal 2 .............................. sNewString = RETURN & "aslan: This is regular chat" & i
+  [989] getlocal 2 .............................. <sNewString>
+  [991] getglobal 316 ........................... <aChatLogDisplaySprites>
+  [994] getprop 408 ............................. <iSlot>
+  [997] pusharglist 2 ........................... <aChatLogDisplaySprites, iSlot>
+  [999] objcall 33 .............................. <aChatLogDisplaySprites[iSlot]>
+  [1001] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1003] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1005] getobjprop 14 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1007] swap
+  [1008] pusharglistnoret 2 ..................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [1010] objcall 443 ............................ put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [1013] getlocal 1 ............................. <i>
+  [1015] pushint8 1 ............................. <1>
+  [1017] add .................................... <i + 1>
+  [1018] setlocal 1 ............................. i = i + 1
+  [1020] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1023] getprop 408 ............................ <iSlot>
+  [1026] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1028] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1030] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1032] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1034] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1036] pushsymb 214 ........................... <#line>
+  [1038] getlocal 1 ............................. <i>
+  [1040] getlocal 0 ............................. <iLineCount>
+  [1042] add .................................... <i + iLineCount>
+  [1043] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1045] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1047] pushsymb 434 ........................... <#bold>
+  [1050] pusharglist 1 .......................... <[#bold]>
+  [1052] pushlist ............................... <[#bold]>
+  [1053] setobjprop 104 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#bold]
+  [1055] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1058] getprop 408 ............................ <iSlot>
+  [1061] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1063] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1065] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1067] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1069] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1071] pushsymb 214 ........................... <#line>
+  [1073] getlocal 1 ............................. <i>
+  [1075] getlocal 0 ............................. <iLineCount>
+  [1077] add .................................... <i + iLineCount>
+  [1078] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1080] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1082] getparam 0 ............................. <me>
+  [1084] getobjprop 409 ......................... <me.sColor_speak>
+  [1087] pusharglist 1 .......................... <me.sColor_speak>
+  [1089] extcall 111 ............................ <rgb(me.sColor_speak)>
+  [1091] setobjprop 112 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [1093] pushcons 26 ............................ <RETURN>
+  [1095] pushcons 43 ............................ <"bubba: BRING DA NOIZE!">
+  [1097] joinstr ................................ <RETURN & "bubba: BRING DA NOIZE!">
+  [1098] setlocal 2 ............................. sNewString = RETURN & "bubba: BRING DA NOIZE!"
+  [1100] getlocal 2 ............................. <sNewString>
+  [1102] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1105] getprop 408 ............................ <iSlot>
+  [1108] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1110] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1112] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1114] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1116] getobjprop 14 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1118] swap
+  [1119] pusharglistnoret 2 ..................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [1121] objcall 443 ............................ put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [1124] getlocal 1 ............................. <i>
+  [1126] pushint8 1 ............................. <1>
+  [1128] add .................................... <i + 1>
+  [1129] setlocal 1 ............................. i = i + 1
+  [1131] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1134] getprop 408 ............................ <iSlot>
+  [1137] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1139] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1141] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1143] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1145] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1147] pushsymb 214 ........................... <#line>
+  [1149] getlocal 1 ............................. <i>
+  [1151] getlocal 0 ............................. <iLineCount>
+  [1153] add .................................... <i + iLineCount>
+  [1154] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1156] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1158] pushsymb 435 ........................... <#italic>
+  [1161] pusharglist 1 .......................... <[#italic]>
+  [1163] pushlist ............................... <[#italic]>
+  [1164] setobjprop 104 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#italic]
+  [1166] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1169] getprop 408 ............................ <iSlot>
+  [1172] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1174] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1176] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1178] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1180] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1182] pushsymb 214 ........................... <#line>
+  [1184] getlocal 1 ............................. <i>
+  [1186] getlocal 0 ............................. <iLineCount>
+  [1188] add .................................... <i + iLineCount>
+  [1189] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1191] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1193] getparam 0 ............................. <me>
+  [1195] getobjprop 409 ......................... <me.sColor_speak>
+  [1198] pusharglist 1 .......................... <me.sColor_speak>
+  [1200] extcall 111 ............................ <rgb(me.sColor_speak)>
+  [1202] setobjprop 112 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_speak)
+  [1204] pushcons 26 ............................ <RETURN>
+  [1206] pushcons 39 ............................ <"freeble: Singing in the rain...">
+  [1208] joinstr ................................ <RETURN & "freeble: Singing in the rain...">
+  [1209] setlocal 2 ............................. sNewString = RETURN & "freeble: Singing in the rain..."
+  [1211] getlocal 2 ............................. <sNewString>
+  [1213] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1216] getprop 408 ............................ <iSlot>
+  [1219] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1221] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1223] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1225] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1227] getobjprop 14 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1229] swap
+  [1230] pusharglistnoret 2 ..................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [1232] objcall 443 ............................ put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [1235] getlocal 1 ............................. <i>
+  [1237] pushint8 1 ............................. <1>
+  [1239] add .................................... <i + 1>
+  [1240] setlocal 1 ............................. i = i + 1
+  [1242] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1245] getprop 408 ............................ <iSlot>
+  [1248] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1250] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1252] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1254] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1256] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1258] pushsymb 214 ........................... <#line>
+  [1260] getlocal 1 ............................. <i>
+  [1262] getlocal 0 ............................. <iLineCount>
+  [1264] add .................................... <i + iLineCount>
+  [1265] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1267] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1269] pushsymb 106 ........................... <#plain>
+  [1271] pusharglist 1 .......................... <[#plain]>
+  [1273] pushlist ............................... <[#plain]>
+  [1274] setobjprop 104 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].fontStyle = [#plain]
+  [1276] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1279] getprop 408 ............................ <iSlot>
+  [1282] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1284] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1286] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1288] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1290] getchainedprop 14 ...................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1292] pushsymb 214 ........................... <#line>
+  [1294] getlocal 1 ............................. <i>
+  [1296] getlocal 0 ............................. <iLineCount>
+  [1298] add .................................... <i + iLineCount>
+  [1299] pusharglist 3 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member, #line, i + iLineCount>
+  [1301] objcall 61 ............................. <sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount]>
+  [1303] getparam 0 ............................. <me>
+  [1305] getobjprop 410 ......................... <me.sColor_foul>
+  [1308] pusharglist 1 .......................... <me.sColor_foul>
+  [1310] extcall 111 ............................ <rgb(me.sColor_foul)>
+  [1312] setobjprop 112 ......................... sprite(aChatLogDisplaySprites[iSlot]).member.line[i + iLineCount].color = rgb(me.sColor_foul)
+  [1314] pushcons 26 ............................ <RETURN>
+  [1316] pushcons 40 ............................ <"deBaser: Gimme green you shitheads...">
+  [1318] joinstr ................................ <RETURN & "deBaser: Gimme green you shitheads...">
+  [1319] setlocal 2 ............................. sNewString = RETURN & "deBaser: Gimme green you shitheads..."
+  [1321] getlocal 2 ............................. <sNewString>
+  [1323] getglobal 316 .......................... <aChatLogDisplaySprites>
+  [1326] getprop 408 ............................ <iSlot>
+  [1329] pusharglist 2 .......................... <aChatLogDisplaySprites, iSlot>
+  [1331] objcall 33 ............................. <aChatLogDisplaySprites[iSlot]>
+  [1333] pusharglist 1 .......................... <aChatLogDisplaySprites[iSlot]>
+  [1335] extcall 12 ............................. <sprite(aChatLogDisplaySprites[iSlot])>
+  [1337] getobjprop 14 .......................... <sprite(aChatLogDisplaySprites[iSlot]).member>
+  [1339] swap
+  [1340] pusharglistnoret 2 ..................... <sprite(aChatLogDisplaySprites[iSlot]).member, sNewString>
+  [1342] objcall 443 ............................ put sNewString after the member of sprite(aChatLogDisplaySprites[iSlot])
+  [1345] pushint8 1
+  [1347] getlocal 1
+  [1349] add
+  [1350] setlocal 1
+  [1352] endrepeat [899]
+  [1355] pop 1 .................................. end case
+  [1357] ret
+end

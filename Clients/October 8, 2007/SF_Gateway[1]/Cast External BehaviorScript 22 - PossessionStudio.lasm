@@ -1,0 +1,1336 @@
+property bDebug, foRoom
+global oSession, oStudio, oPossessionStudio, ElementMgr, oIsoScene, oStudioMap, gCatalog, oPossessionManager, oDenizenManager, gFeatureSet
+
+on beginSprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushzero ................................ <0>
+  [  3] setobjprop 28 ........................... me.bDebug = 0
+  [  5] getparam 0 .............................. <me>
+  [  7] setglobal 736 ........................... oPossessionStudio = me
+  [ 10] ret
+end
+
+on setRoomObject me, _foRoom
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"setRoomObject() ">
+  [  4] getparam 1 .............................. <_foRoom>
+  [  6] joinstr ................................. <"setRoomObject() " & _foRoom>
+  [  7] pusharglistnoret 2 ...................... <me, "setRoomObject() " & _foRoom>
+  [  9] objcall 20 .............................. me.debug("setRoomObject() " & _foRoom)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getparam 1 .............................. <_foRoom>
+  [ 15] setobjprop 737 .......................... me.foRoom = _foRoom
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] objcall 89 .............................. me.setCallbacks()
+  [ 24] ret
+end
+
+on setCallbacks me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] getparam 0 .............................. <me>
+  [ 10] getobjprop 737 .......................... <me.foRoom>
+  [ 13] pushcons 1 .............................. <"receivePossessionUpdate">
+  [ 15] pushsymb 1033 ........................... <#receivePossessionUpdate>
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foRoom, "receivePossessionUpdate", #receivePossessionUpdate, me>
+  [ 22] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foRoom, "receivePossessionUpdate", #receivePossessionUpdate, me)
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getobjprop 3 ............................ <me.spriteNum>
+  [ 28] pusharglist 1 ........................... <me.spriteNum>
+  [ 30] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 32] getparam 0 .............................. <me>
+  [ 34] getobjprop 737 .......................... <me.foRoom>
+  [ 37] pushcons 2 .............................. <"receiveRemovePossession">
+  [ 39] pushsymb 1035 ........................... <#receiveRemovePossession>
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foRoom, "receiveRemovePossession", #receiveRemovePossession, me>
+  [ 46] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foRoom, "receiveRemovePossession", #receiveRemovePossession, me)
+  [ 48] getparam 0 .............................. <me>
+  [ 50] getobjprop 3 ............................ <me.spriteNum>
+  [ 52] pusharglist 1 ........................... <me.spriteNum>
+  [ 54] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 56] getparam 0 .............................. <me>
+  [ 58] getobjprop 737 .......................... <me.foRoom>
+  [ 61] pushcons 3 .............................. <"receiveTeleport">
+  [ 63] pushsymb 1036 ........................... <#receiveTeleport>
+  [ 66] getparam 0 .............................. <me>
+  [ 68] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foRoom, "receiveTeleport", #receiveTeleport, me>
+  [ 70] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foRoom, "receiveTeleport", #receiveTeleport, me)
+  [ 72] getparam 0 .............................. <me>
+  [ 74] getobjprop 3 ............................ <me.spriteNum>
+  [ 76] pusharglist 1 ........................... <me.spriteNum>
+  [ 78] extcall 2 ............................... <sprite(me.spriteNum)>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 737 .......................... <me.foRoom>
+  [ 85] pushcons 4 .............................. <"receiveRollResult">
+  [ 87] pushsymb 1032 ........................... <#receiveRollResult>
+  [ 90] getparam 0 .............................. <me>
+  [ 92] pusharglistnoret 5 ...................... <sprite(me.spriteNum), me.foRoom, "receiveRollResult", #receiveRollResult, me>
+  [ 94] objcall 159 ............................. sprite(me.spriteNum).setCallback(me.foRoom, "receiveRollResult", #receiveRollResult, me)
+  [ 96] ret
+end
+
+on debug me, sMessage, bForce
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 28 ........................... <me.bDebug>
+  [  4] getparam 2 .............................. <bForce>
+  [  6] or ...................................... <me.bDebug or bForce>
+  [  7] jmpifz [ 19] ............................ if me.bDebug or bForce then
+  [ 10] pushcons 5 .............................. <"PossessionStudio: ">
+  [ 12] getparam 1 .............................. <sMessage>
+  [ 14] joinstr ................................. <"PossessionStudio: " & sMessage>
+  [ 15] pusharglistnoret 1 ...................... <"PossessionStudio: " & sMessage>
+  [ 17] extcall 33 .............................. put "PossessionStudio: " & sMessage
+  [ 19] ret
+end
+
+on sendRollRequest me, iMaxRoll, posId
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 737 ...................... <me.foRoom>
+  [  5] getparam 1 .............................. <iMaxRoll>
+  [  7] getparam 2 .............................. <posId>
+  [  9] pusharglistnoret 3 ...................... <me.foRoom, iMaxRoll, posId>
+  [ 11] objcall 1020 ............................ me.foRoom.sendRollRequest(iMaxRoll, posId)
+  [ 14] ret
+end
+
+on triggerPossessionAction me, iActionID, posId
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 737 ...................... <me.foRoom>
+  [  5] getparam 1 .............................. <iActionID>
+  [  7] getparam 2 .............................. <posId>
+  [  9] pusharglistnoret 3 ...................... <me.foRoom, iActionID, posId>
+  [ 11] objcall 1021 ............................ me.foRoom.triggerPossessionAction(iActionID, posId)
+  [ 14] ret
+end
+
+on sendEnterStudioViaTeleporter me, iTeleporterId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 6 .............................. <"sendEnterStudioViaTeleporter() ">
+  [  4] getparam 1 .............................. <iTeleporterId>
+  [  6] joinstr ................................. <"sendEnterStudioViaTeleporter() " & iTeleporterId>
+  [  7] pusharglistnoret 2 ...................... <me, "sendEnterStudioViaTeleporter() " & iTeleporterId>
+  [  9] objcall 20 .............................. me.debug("sendEnterStudioViaTeleporter() " & iTeleporterId)
+  [ 11] getglobal 180 ........................... <oSession>
+  [ 13] getobjprop 162 .......................... <oSession.bTestMode>
+  [ 15] jmpifz [ 22] ............................ if oSession.bTestMode then
+  [ 18] pusharglistnoret 0 ...................... <>
+  [ 20] extcall 71 .............................. return 
+  [ 22] getglobal 76 ............................ <oStudio>
+  [ 24] pusharglist 1 ........................... <oStudio>
+  [ 26] objcall 759 ............................. <oStudio.getcdplayer()>
+  [ 29] pusharglistnoret 1 ...................... <oStudio.getcdplayer()>
+  [ 31] objcall 760 ............................. oStudio.getcdplayer().reset()
+  [ 34] getparam 0 .............................. <me>
+  [ 36] getchainedprop 737 ...................... <me.foRoom>
+  [ 39] getparam 1 .............................. <iTeleporterId>
+  [ 41] pusharglistnoret 2 ...................... <me.foRoom, iTeleporterId>
+  [ 43] objcall 1022 ............................ me.foRoom.sendEnterStudioViaTeleporter(iTeleporterId)
+  [ 46] ret
+end
+
+on sendUpdatePossession me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 7 .............................. <"sendUpdatePossession() ">
+  [  4] getparam 1 .............................. <oItem>
+  [  6] pusharglist 1 ........................... <oItem>
+  [  8] objcall 208 ............................. <oItem.toString()>
+  [ 10] joinstr ................................. <"sendUpdatePossession() " & oItem.toString()>
+  [ 11] pusharglistnoret 2 ...................... <me, "sendUpdatePossession() " & oItem.toString()>
+  [ 13] objcall 20 .............................. me.debug("sendUpdatePossession() " & oItem.toString())
+  [ 15] getglobal 180 ........................... <oSession>
+  [ 17] getobjprop 162 .......................... <oSession.bTestMode>
+  [ 19] jmpifz [ 26] ............................ if oSession.bTestMode then
+  [ 22] pusharglistnoret 0 ...................... <>
+  [ 24] extcall 71 .............................. return 
+  [ 26] getparam 1 .............................. <oItem>
+  [ 28] pusharglist 1 ........................... <oItem>
+  [ 30] objcall 1040 ............................ <oItem.getPosId()>
+  [ 33] setlocal 0 .............................. iID = oItem.getPosId()
+  [ 35] getparam 1 .............................. <oItem>
+  [ 37] pusharglist 1 ........................... <oItem>
+  [ 39] objcall 1041 ............................ <oItem.getGridX()>
+  [ 42] setlocal 1 .............................. iXPos = oItem.getGridX()
+  [ 44] getparam 1 .............................. <oItem>
+  [ 46] pusharglist 1 ........................... <oItem>
+  [ 48] objcall 1042 ............................ <oItem.getGridY()>
+  [ 51] setlocal 2 .............................. iYPos = oItem.getGridY()
+  [ 53] getparam 1 .............................. <oItem>
+  [ 55] pusharglist 1 ........................... <oItem>
+  [ 57] objcall 1043 ............................ <oItem.getGridZ()>
+  [ 60] setlocal 3 .............................. iZPos = oItem.getGridZ()
+  [ 62] getparam 1 .............................. <oItem>
+  [ 64] pusharglist 1 ........................... <oItem>
+  [ 66] objcall 1044 ............................ <oItem.getHeightOffset()>
+  [ 69] setlocal 4 .............................. iHeightOffset = oItem.getHeightOffset()
+  [ 71] getparam 1 .............................. <oItem>
+  [ 73] pusharglist 1 ........................... <oItem>
+  [ 75] objcall 1045 ............................ <oItem.getDirection()>
+  [ 78] setlocal 5 .............................. iDirection = oItem.getDirection()
+  [ 80] getparam 1 .............................. <oItem>
+  [ 82] pusharglist 1 ........................... <oItem>
+  [ 84] objcall 602 ............................. <oItem.getState()>
+  [ 87] setlocal 6 .............................. iState = oItem.getState()
+  [ 89] getparam 1 .............................. <oItem>
+  [ 91] pusharglist 1 ........................... <oItem>
+  [ 93] objcall 1046 ............................ <oItem.getAttributes()>
+  [ 96] setlocal 7 .............................. sAttributes = oItem.getAttributes()
+  [ 98] getparam 0 .............................. <me>
+  [100] getchainedprop 737 ...................... <me.foRoom>
+  [103] getlocal 0 .............................. <iID>
+  [105] getlocal 1 .............................. <iXPos>
+  [107] getlocal 2 .............................. <iYPos>
+  [109] getlocal 3 .............................. <iZPos>
+  [111] getlocal 4 .............................. <iHeightOffset>
+  [113] getlocal 5 .............................. <iDirection>
+  [115] getlocal 6 .............................. <iState>
+  [117] getlocal 7 .............................. <sAttributes>
+  [119] pusharglistnoret 9 ...................... <me.foRoom, iID, iXPos, iYPos, iZPos, iHeightOffset, iDirection, iState, sAttributes>
+  [121] objcall 1023 ............................ me.foRoom.sendUpdatePossession(iID, iXPos, iYPos, iZPos, iHeightOffset, iDirection, iState, sAttributes)
+  [124] ret
+end
+
+on sendPutInStudio me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 8 .............................. <"sendPutInStudio() ">
+  [  4] getparam 1 .............................. <oItem>
+  [  6] pusharglist 1 ........................... <oItem>
+  [  8] objcall 208 ............................. <oItem.toString()>
+  [ 10] joinstr ................................. <"sendPutInStudio() " & oItem.toString()>
+  [ 11] pusharglistnoret 2 ...................... <me, "sendPutInStudio() " & oItem.toString()>
+  [ 13] objcall 20 .............................. me.debug("sendPutInStudio() " & oItem.toString())
+  [ 15] getglobal 256 ........................... <gFeatureSet>
+  [ 18] pushsymb 1049 ........................... <#FURNITURE_PUTDOWN>
+  [ 21] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_PUTDOWN>
+  [ 23] objcall 384 ............................. <gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 26] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 27] jmpifz [ 34] ............................ if not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN) then
+  [ 30] pusharglistnoret 0 ...................... <>
+  [ 32] extcall 71 .............................. return 
+  [ 34] getglobal 180 ........................... <oSession>
+  [ 36] getobjprop 162 .......................... <oSession.bTestMode>
+  [ 38] jmpifz [ 45] ............................ if oSession.bTestMode then
+  [ 41] pusharglistnoret 0 ...................... <>
+  [ 43] extcall 71 .............................. return 
+  [ 45] getparam 1 .............................. <oItem>
+  [ 47] pusharglist 1 ........................... <oItem>
+  [ 49] objcall 1040 ............................ <oItem.getPosId()>
+  [ 52] setlocal 0 .............................. iID = oItem.getPosId()
+  [ 54] getparam 1 .............................. <oItem>
+  [ 56] pusharglist 1 ........................... <oItem>
+  [ 58] objcall 1041 ............................ <oItem.getGridX()>
+  [ 61] setlocal 1 .............................. iXPos = oItem.getGridX()
+  [ 63] getparam 1 .............................. <oItem>
+  [ 65] pusharglist 1 ........................... <oItem>
+  [ 67] objcall 1042 ............................ <oItem.getGridY()>
+  [ 70] setlocal 2 .............................. iYPos = oItem.getGridY()
+  [ 72] getparam 1 .............................. <oItem>
+  [ 74] pusharglist 1 ........................... <oItem>
+  [ 76] objcall 1043 ............................ <oItem.getGridZ()>
+  [ 79] setlocal 3 .............................. iZPos = oItem.getGridZ()
+  [ 81] getparam 1 .............................. <oItem>
+  [ 83] pusharglist 1 ........................... <oItem>
+  [ 85] objcall 1044 ............................ <oItem.getHeightOffset()>
+  [ 88] setlocal 4 .............................. iHeightOffset = oItem.getHeightOffset()
+  [ 90] getparam 1 .............................. <oItem>
+  [ 92] pusharglist 1 ........................... <oItem>
+  [ 94] objcall 1045 ............................ <oItem.getDirection()>
+  [ 97] setlocal 5 .............................. iDirection = oItem.getDirection()
+  [ 99] getparam 1 .............................. <oItem>
+  [101] pusharglist 1 ........................... <oItem>
+  [103] objcall 602 ............................. <oItem.getState()>
+  [106] setlocal 6 .............................. iState = oItem.getState()
+  [108] getparam 1 .............................. <oItem>
+  [110] pusharglist 1 ........................... <oItem>
+  [112] objcall 1046 ............................ <oItem.getAttributes()>
+  [115] setlocal 7 .............................. sAttributes = oItem.getAttributes()
+  [117] getparam 0 .............................. <me>
+  [119] getchainedprop 737 ...................... <me.foRoom>
+  [122] getlocal 0 .............................. <iID>
+  [124] getlocal 1 .............................. <iXPos>
+  [126] getlocal 2 .............................. <iYPos>
+  [128] getlocal 3 .............................. <iZPos>
+  [130] getlocal 4 .............................. <iHeightOffset>
+  [132] getlocal 5 .............................. <iDirection>
+  [134] getlocal 6 .............................. <iState>
+  [136] getlocal 7 .............................. <sAttributes>
+  [138] pusharglistnoret 9 ...................... <me.foRoom, iID, iXPos, iYPos, iZPos, iHeightOffset, iDirection, iState, sAttributes>
+  [140] objcall 1024 ............................ me.foRoom.sendPutInStudio(iID, iXPos, iYPos, iZPos, iHeightOffset, iDirection, iState, sAttributes)
+  [143] ret
+end
+
+on sendPutInBackpack me, oItem
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 9 .............................. <"sendPutInBackpack() ">
+  [  4] getparam 1 .............................. <oItem>
+  [  6] pusharglist 1 ........................... <oItem>
+  [  8] objcall 208 ............................. <oItem.toString()>
+  [ 10] joinstr ................................. <"sendPutInBackpack() " & oItem.toString()>
+  [ 11] pusharglistnoret 2 ...................... <me, "sendPutInBackpack() " & oItem.toString()>
+  [ 13] objcall 20 .............................. me.debug("sendPutInBackpack() " & oItem.toString())
+  [ 15] getglobal 256 ........................... <gFeatureSet>
+  [ 18] pushsymb 1050 ........................... <#FURNITURE_PICKUP>
+  [ 21] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_PICKUP>
+  [ 23] objcall 384 ............................. <gFeatureSet.isEnabled(#FURNITURE_PICKUP)>
+  [ 26] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_PICKUP)>
+  [ 27] jmpifz [ 34] ............................ if not gFeatureSet.isEnabled(#FURNITURE_PICKUP) then
+  [ 30] pusharglistnoret 0 ...................... <>
+  [ 32] extcall 71 .............................. return 
+  [ 34] getglobal 180 ........................... <oSession>
+  [ 36] getobjprop 162 .......................... <oSession.bTestMode>
+  [ 38] jmpifz [ 45] ............................ if oSession.bTestMode then
+  [ 41] pusharglistnoret 0 ...................... <>
+  [ 43] extcall 71 .............................. return 
+  [ 45] getparam 1 .............................. <oItem>
+  [ 47] pusharglist 1 ........................... <oItem>
+  [ 49] objcall 1040 ............................ <oItem.getPosId()>
+  [ 52] setlocal 0 .............................. iID = oItem.getPosId()
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getchainedprop 737 ...................... <me.foRoom>
+  [ 59] getlocal 0 .............................. <iID>
+  [ 61] pusharglistnoret 2 ...................... <me.foRoom, iID>
+  [ 63] objcall 1025 ............................ me.foRoom.sendPutInBackpack(iID)
+  [ 66] ret
+end
+
+on deleteItem me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 10 ............................. <"deleteItem() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"deleteItem() " & iPosId>
+  [  7] pusharglistnoret 2 ...................... <me, "deleteItem() " & iPosId>
+  [  9] objcall 20 .............................. me.debug("deleteItem() " & iPosId)
+  [ 11] getglobal 256 ........................... <gFeatureSet>
+  [ 14] pushsymb 1051 ........................... <#FURNITURE_DELETE>
+  [ 17] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_DELETE>
+  [ 19] objcall 384 ............................. <gFeatureSet.isEnabled(#FURNITURE_DELETE)>
+  [ 22] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_DELETE)>
+  [ 23] jmpifz [ 30] ............................ if not gFeatureSet.isEnabled(#FURNITURE_DELETE) then
+  [ 26] pusharglistnoret 0 ...................... <>
+  [ 28] extcall 71 .............................. return 
+  [ 30] getglobal 180 ........................... <oSession>
+  [ 32] getobjprop 162 .......................... <oSession.bTestMode>
+  [ 34] jmpifz [ 41] ............................ if oSession.bTestMode then
+  [ 37] pusharglistnoret 0 ...................... <>
+  [ 39] extcall 71 .............................. return 
+  [ 41] getparam 0 .............................. <me>
+  [ 43] getchainedprop 737 ...................... <me.foRoom>
+  [ 46] getparam 1 .............................. <iPosId>
+  [ 48] pusharglistnoret 2 ...................... <me.foRoom, iPosId>
+  [ 50] objcall 1052 ............................ me.foRoom.sendRemovePossession(iPosId)
+  [ 53] ret
+end
+
+on replaceWall me, iPosId, iWallTexture, iWallColor
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 11 ............................. <"replaceWall() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"replaceWall() " & iPosId>
+  [  7] getparam 2 .............................. <iWallTexture>
+  [  9] joinpadstr .............................. <"replaceWall() " & iPosId && iWallTexture>
+  [ 10] getparam 3 .............................. <iWallColor>
+  [ 12] joinpadstr .............................. <"replaceWall() " & iPosId && iWallTexture && iWallColor>
+  [ 13] pusharglistnoret 2 ...................... <me, "replaceWall() " & iPosId && iWallTexture && iWallColor>
+  [ 15] objcall 20 .............................. me.debug("replaceWall() " & iPosId && iWallTexture && iWallColor)
+  [ 17] getglobal 256 ........................... <gFeatureSet>
+  [ 20] pushsymb 1049 ........................... <#FURNITURE_PUTDOWN>
+  [ 23] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_PUTDOWN>
+  [ 25] objcall 384 ............................. <gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 28] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 29] jmpifz [ 36] ............................ if not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 71 .............................. return 
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getchainedprop 737 ...................... <me.foRoom>
+  [ 41] getparam 1 .............................. <iPosId>
+  [ 43] pushint8 1 .............................. <1>
+  [ 45] pushzero ................................ <0>
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] pushzero ................................ <0>
+  [ 49] pushint8 2 .............................. <2>
+  [ 51] pushzero ................................ <0>
+  [ 52] pushsymb 1053 ........................... <#texture>
+  [ 55] getparam 2 .............................. <iWallTexture>
+  [ 57] pushsymb 1054 ........................... <#color>
+  [ 60] getparam 3 .............................. <iWallColor>
+  [ 62] pusharglist 4 ........................... <[#texture: iWallTexture, #color: iWallColor]>
+  [ 64] pushproplist ............................ <[#texture: iWallTexture, #color: iWallColor]>
+  [ 65] pusharglistnoret 9 ...................... <me.foRoom, iPosId, 1, 0, 1, 0, 2, 0, [#texture: iWallTexture, #color: iWallColor]>
+  [ 67] objcall 1024 ............................ me.foRoom.sendPutInStudio(iPosId, 1, 0, 1, 0, 2, 0, [#texture: iWallTexture, #color: iWallColor])
+  [ 70] ret
+end
+
+on replaceFloor me, iPosId, iFloorTexture, iFloorColor
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 12 ............................. <"replaceFloor() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"replaceFloor() " & iPosId>
+  [  7] getparam 2 .............................. <iFloorTexture>
+  [  9] joinpadstr .............................. <"replaceFloor() " & iPosId && iFloorTexture>
+  [ 10] getparam 3 .............................. <iFloorColor>
+  [ 12] joinpadstr .............................. <"replaceFloor() " & iPosId && iFloorTexture && iFloorColor>
+  [ 13] pusharglistnoret 2 ...................... <me, "replaceFloor() " & iPosId && iFloorTexture && iFloorColor>
+  [ 15] objcall 20 .............................. me.debug("replaceFloor() " & iPosId && iFloorTexture && iFloorColor)
+  [ 17] getglobal 256 ........................... <gFeatureSet>
+  [ 20] pushsymb 1049 ........................... <#FURNITURE_PUTDOWN>
+  [ 23] pusharglist 2 ........................... <gFeatureSet, #FURNITURE_PUTDOWN>
+  [ 25] objcall 384 ............................. <gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 28] not ..................................... <not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN)>
+  [ 29] jmpifz [ 36] ............................ if not gFeatureSet.isEnabled(#FURNITURE_PUTDOWN) then
+  [ 32] pusharglistnoret 0 ...................... <>
+  [ 34] extcall 71 .............................. return 
+  [ 36] getparam 0 .............................. <me>
+  [ 38] getchainedprop 737 ...................... <me.foRoom>
+  [ 41] getparam 1 .............................. <iPosId>
+  [ 43] pushint8 1 .............................. <1>
+  [ 45] pushzero ................................ <0>
+  [ 46] pushint8 1 .............................. <1>
+  [ 48] pushzero ................................ <0>
+  [ 49] pushint8 2 .............................. <2>
+  [ 51] pushzero ................................ <0>
+  [ 52] pushsymb 1053 ........................... <#texture>
+  [ 55] getparam 2 .............................. <iFloorTexture>
+  [ 57] pushsymb 1054 ........................... <#color>
+  [ 60] getparam 3 .............................. <iFloorColor>
+  [ 62] pusharglist 4 ........................... <[#texture: iFloorTexture, #color: iFloorColor]>
+  [ 64] pushproplist ............................ <[#texture: iFloorTexture, #color: iFloorColor]>
+  [ 65] pusharglistnoret 9 ...................... <me.foRoom, iPosId, 1, 0, 1, 0, 2, 0, [#texture: iFloorTexture, #color: iFloorColor]>
+  [ 67] objcall 1024 ............................ me.foRoom.sendPutInStudio(iPosId, 1, 0, 1, 0, 2, 0, [#texture: iFloorTexture, #color: iFloorColor])
+  [ 70] ret
+end
+
+on sendTeleport me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 13 ............................. <"sendTeleport() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"sendTeleport() " & iPosId>
+  [  7] pusharglistnoret 2 ...................... <me, "sendTeleport() " & iPosId>
+  [  9] objcall 20 .............................. me.debug("sendTeleport() " & iPosId)
+  [ 11] getglobal 256 ........................... <gFeatureSet>
+  [ 14] pushsymb 1059 ........................... <#TELEPORTING>
+  [ 17] pusharglist 2 ........................... <gFeatureSet, #TELEPORTING>
+  [ 19] objcall 384 ............................. <gFeatureSet.isEnabled(#TELEPORTING)>
+  [ 22] not ..................................... <not gFeatureSet.isEnabled(#TELEPORTING)>
+  [ 23] jmpifz [ 30] ............................ if not gFeatureSet.isEnabled(#TELEPORTING) then
+  [ 26] pusharglistnoret 0 ...................... <>
+  [ 28] extcall 71 .............................. return 
+  [ 30] getparam 0 .............................. <me>
+  [ 32] getchainedprop 737 ...................... <me.foRoom>
+  [ 35] getparam 1 .............................. <iPosId>
+  [ 37] pusharglistnoret 2 ...................... <me.foRoom, iPosId>
+  [ 39] objcall 1029 ............................ me.foRoom.sendTeleport(iPosId)
+  [ 42] ret
+end
+
+on sendMoveToTeleporter me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 14 ............................. <"sendMoveToTeleporter() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"sendMoveToTeleporter() " & iPosId>
+  [  7] pusharglistnoret 2 ...................... <me, "sendMoveToTeleporter() " & iPosId>
+  [  9] objcall 20 .............................. me.debug("sendMoveToTeleporter() " & iPosId)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getchainedprop 737 ...................... <me.foRoom>
+  [ 16] getparam 1 .............................. <iPosId>
+  [ 18] pusharglistnoret 2 ...................... <me.foRoom, iPosId>
+  [ 20] objcall 1030 ............................ me.foRoom.sendMoveToTeleporter(iPosId)
+  [ 23] ret
+end
+
+on sendMoveToStandOn me, iPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 15 ............................. <"sendMoveToStandOn() ">
+  [  4] getparam 1 .............................. <iPosId>
+  [  6] joinstr ................................. <"sendMoveToStandOn() " & iPosId>
+  [  7] pusharglistnoret 2 ...................... <me, "sendMoveToStandOn() " & iPosId>
+  [  9] objcall 20 .............................. me.debug("sendMoveToStandOn() " & iPosId)
+  [ 11] getparam 0 .............................. <me>
+  [ 13] getchainedprop 737 ...................... <me.foRoom>
+  [ 16] getparam 1 .............................. <iPosId>
+  [ 18] pusharglistnoret 2 ...................... <me.foRoom, iPosId>
+  [ 20] objcall 1031 ............................ me.foRoom.sendMoveToStandOn(iPosId)
+  [ 23] ret
+end
+
+on receiveRollResult me, _flashObject, iResult, iPosId
+  [  0] getparam 3 .............................. <iPosId>
+  [  2] pusharglist 1 ........................... <iPosId>
+  [  4] extcall 48 .............................. <integer(iPosId)>
+  [  6] setparam 3 .............................. iPosId = integer(iPosId)
+  [  8] getparam 2 .............................. <iResult>
+  [ 10] pusharglist 1 ........................... <iResult>
+  [ 12] extcall 48 .............................. <integer(iResult)>
+  [ 14] setparam 2 .............................. iResult = integer(iResult)
+  [ 16] pushcons 16 ............................. <"PossessionSTudio: receiveRollResult">
+  [ 18] getparam 2 .............................. <iResult>
+  [ 20] joinstr ................................. <"PossessionSTudio: receiveRollResult" & iResult>
+  [ 21] pushcons 17 ............................. <",">
+  [ 23] joinstr ................................. <"PossessionSTudio: receiveRollResult" & iResult & ",">
+  [ 24] getparam 3 .............................. <iPosId>
+  [ 26] joinstr ................................. <"PossessionSTudio: receiveRollResult" & iResult & "," & iPosId>
+  [ 27] pusharglistnoret 1 ...................... <"PossessionSTudio: receiveRollResult" & iResult & "," & iPosId>
+  [ 29] extcall 33 .............................. put "PossessionSTudio: receiveRollResult" & iResult & "," & iPosId
+  [ 31] getglobal 16 ............................ <oIsoScene>
+  [ 33] getparam 3 .............................. <iPosId>
+  [ 35] pusharglist 2 ........................... <oIsoScene, iPosId>
+  [ 37] objcall 950 ............................. <oIsoScene.getItemByPossessionId(iPosId)>
+  [ 40] getobjprop 1060 ......................... <oIsoScene.getItemByPossessionId(iPosId).oAction>
+  [ 43] setlocal 0 .............................. oPossessionAction = oIsoScene.getItemByPossessionId(iPosId).oAction
+  [ 45] pushcons 18 ............................. <"PossessionSTudio: receiveRollResult: oPossession">
+  [ 47] getlocal 0 .............................. <oPossessionAction>
+  [ 49] joinstr ................................. <"PossessionSTudio: receiveRollResult: oPossession" & oPossessionAction>
+  [ 50] pusharglistnoret 1 ...................... <"PossessionSTudio: receiveRollResult: oPossession" & oPossessionAction>
+  [ 52] extcall 33 .............................. put "PossessionSTudio: receiveRollResult: oPossession" & oPossessionAction
+  [ 54] getlocal 0 .............................. <oPossessionAction>
+  [ 56] pusharglist 1 ........................... <oPossessionAction>
+  [ 58] extcall 15 .............................. <voidp(oPossessionAction)>
+  [ 60] not ..................................... <not voidp(oPossessionAction)>
+  [ 61] jmpifz [ 73] ............................ if not voidp(oPossessionAction) then
+  [ 64] getlocal 0 .............................. <oPossessionAction>
+  [ 66] getparam 2 .............................. <iResult>
+  [ 68] pusharglistnoret 2 ...................... <oPossessionAction, iResult>
+  [ 70] objcall 1032 ............................ oPossessionAction.receiveRollResult(iResult)
+  [ 73] ret
+end
+
+on receivePossessionUpdate me, oCaller, iPosId, iCatId, iXPos, iYPos, iZPos, iHeightOffset, iDirection, iState, sAttributes, bItemsAllowedOnTop
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 19 ............................. <"receivePossessionUpdate() ">
+  [  4] getparam 2 .............................. <iPosId>
+  [  6] joinstr ................................. <"receivePossessionUpdate() " & iPosId>
+  [  7] getparam 3 .............................. <iCatId>
+  [  9] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId>
+  [ 10] getparam 4 .............................. <iXPos>
+  [ 12] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos>
+  [ 13] getparam 5 .............................. <iYPos>
+  [ 15] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos>
+  [ 16] getparam 6 .............................. <iZPos>
+  [ 18] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos>
+  [ 19] getparam 7 .............................. <iHeightOffset>
+  [ 21] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset>
+  [ 22] getparam 8 .............................. <iDirection>
+  [ 24] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection>
+  [ 25] getparam 9 .............................. <iState>
+  [ 27] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection && iState>
+  [ 28] getparam 10 ............................. <sAttributes>
+  [ 30] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection && iState && sAttributes>
+  [ 31] getparam 11 ............................. <bItemsAllowedOnTop>
+  [ 33] joinpadstr .............................. <"receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection && iState && sAttributes && bItemsAllowedOnTop>
+  [ 34] pusharglistnoret 2 ...................... <me, "receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection && iState && sAttributes && bItemsAllowedOnTop>
+  [ 36] objcall 20 .............................. me.debug("receivePossessionUpdate() " & iPosId && iCatId && iXPos && iYPos && iZPos && iHeightOffset && iDirection && iState && sAttributes && bItemsAllowedOnTop)
+  [ 38] getparam 2 .............................. <iPosId>
+  [ 40] pusharglist 1 ........................... <iPosId>
+  [ 42] extcall 48 .............................. <integer(iPosId)>
+  [ 44] setparam 2 .............................. iPosId = integer(iPosId)
+  [ 46] getparam 3 .............................. <iCatId>
+  [ 48] pusharglist 1 ........................... <iCatId>
+  [ 50] extcall 48 .............................. <integer(iCatId)>
+  [ 52] setparam 3 .............................. iCatId = integer(iCatId)
+  [ 54] getglobal 16 ............................ <oIsoScene>
+  [ 56] pusharglist 1 ........................... <oIsoScene>
+  [ 58] extcall 15 .............................. <voidp(oIsoScene)>
+  [ 60] jmpifz [ 67] ............................ if voidp(oIsoScene) then
+  [ 63] pusharglistnoret 0 ...................... <>
+  [ 65] extcall 71 .............................. return 
+  [ 67] getglobal 1064 .......................... <gCatalog>
+  [ 70] getparam 3 .............................. <iCatId>
+  [ 72] pusharglist 2 ........................... <gCatalog, iCatId>
+  [ 74] objcall 1065 ............................ <gCatalog.getItemByProdId(iCatId)>
+  [ 77] setlocal 0 .............................. oItem = gCatalog.getItemByProdId(iCatId)
+  [ 79] getlocal 0 .............................. <oItem>
+  [ 81] pushsymb 1066 ........................... <#type>
+  [ 84] pusharglist 2 ........................... <oItem, #type>
+  [ 86] objcall 43 .............................. <oItem[#type]>
+  [ 88] pushcons 20 ............................. <"Wallpaper">
+  [ 90] eq ...................................... <oItem[#type] = "Wallpaper">
+  [ 91] jmpifz [152] ............................ if oItem[#type] = "Wallpaper" then
+  [ 94] getparam 10 ............................. <sAttributes>
+  [ 96] pusharglist 1 ........................... <sAttributes>
+  [ 98] extcall 592 ............................. <value(sAttributes)>
+  [101] setlocal 1 .............................. aAttributes = value(sAttributes)
+  [103] getlocal 1 .............................. <aAttributes>
+  [105] pushsymb 1053 ........................... <#texture>
+  [108] pusharglist 2 ........................... <aAttributes, #texture>
+  [110] objcall 43 .............................. <aAttributes[#texture]>
+  [112] setlocal 2 .............................. iTexture = aAttributes[#texture]
+  [114] getlocal 1 .............................. <aAttributes>
+  [116] pushsymb 1054 ........................... <#color>
+  [119] pusharglist 2 ........................... <aAttributes, #color>
+  [121] objcall 43 .............................. <aAttributes[#color]>
+  [123] setlocal 3 .............................. iColor = aAttributes[#color]
+  [125] getglobal 16 ............................ <oIsoScene>
+  [127] getchainedprop 1067 ..................... <oIsoScene.oWall>
+  [130] getlocal 2 .............................. <iTexture>
+  [132] getlocal 3 .............................. <iColor>
+  [134] pusharglistnoret 3 ...................... <oIsoScene.oWall, iTexture, iColor>
+  [136] objcall 1068 ............................ oIsoScene.oWall.setPattern(iTexture, iColor)
+  [139] getglobal 76 ............................ <oStudio>
+  [141] getparam 2 .............................. <iPosId>
+  [143] pusharglistnoret 2 ...................... <oStudio, iPosId>
+  [145] objcall 824 ............................. oStudio.removePossessionFromBackpack(iPosId)
+  [148] pusharglistnoret 0 ...................... <>
+  [150] extcall 71 .............................. return 
+  [152] getlocal 0 .............................. <oItem>
+  [154] pushsymb 1066 ........................... <#type>
+  [157] pusharglist 2 ........................... <oItem, #type>
+  [159] objcall 43 .............................. <oItem[#type]>
+  [161] pushcons 21 ............................. <"Floor">
+  [163] eq ...................................... <oItem[#type] = "Floor">
+  [164] jmpifz [225] ............................ if oItem[#type] = "Floor" then
+  [167] getparam 10 ............................. <sAttributes>
+  [169] pusharglist 1 ........................... <sAttributes>
+  [171] extcall 592 ............................. <value(sAttributes)>
+  [174] setlocal 1 .............................. aAttributes = value(sAttributes)
+  [176] getlocal 1 .............................. <aAttributes>
+  [178] pushsymb 1053 ........................... <#texture>
+  [181] pusharglist 2 ........................... <aAttributes, #texture>
+  [183] objcall 43 .............................. <aAttributes[#texture]>
+  [185] setlocal 2 .............................. iTexture = aAttributes[#texture]
+  [187] getlocal 1 .............................. <aAttributes>
+  [189] pushsymb 1054 ........................... <#color>
+  [192] pusharglist 2 ........................... <aAttributes, #color>
+  [194] objcall 43 .............................. <aAttributes[#color]>
+  [196] setlocal 3 .............................. iColor = aAttributes[#color]
+  [198] getglobal 16 ............................ <oIsoScene>
+  [200] getchainedprop 1069 ..................... <oIsoScene.oFloor>
+  [203] getlocal 2 .............................. <iTexture>
+  [205] getlocal 3 .............................. <iColor>
+  [207] pusharglistnoret 3 ...................... <oIsoScene.oFloor, iTexture, iColor>
+  [209] objcall 1068 ............................ oIsoScene.oFloor.setPattern(iTexture, iColor)
+  [212] getglobal 76 ............................ <oStudio>
+  [214] getparam 2 .............................. <iPosId>
+  [216] pusharglistnoret 2 ...................... <oStudio, iPosId>
+  [218] objcall 824 ............................. oStudio.removePossessionFromBackpack(iPosId)
+  [221] pusharglistnoret 0 ...................... <>
+  [223] extcall 71 .............................. return 
+  [225] getparam 5 .............................. <iYPos>
+  [227] pusharglist 1 ........................... <iYPos>
+  [229] extcall 15 .............................. <voidp(iYPos)>
+  [231] jmpifz [237] ............................ if voidp(iYPos) then
+  [234] pushzero ................................ <0>
+  [235] setparam 5 .............................. iYPos = 0
+  [237] getparam 9 .............................. <iState>
+  [239] pusharglist 1 ........................... <iState>
+  [241] extcall 15 .............................. <voidp(iState)>
+  [243] jmpifz [249] ............................ if voidp(iState) then
+  [246] pushzero ................................ <0>
+  [247] setparam 9 .............................. iState = 0
+  [249] getparam 4 .............................. <iXPos>
+  [251] pusharglist 1 ........................... <iXPos>
+  [253] extcall 48 .............................. <integer(iXPos)>
+  [255] setparam 4 .............................. iXPos = integer(iXPos)
+  [257] getparam 5 .............................. <iYPos>
+  [259] pusharglist 1 ........................... <iYPos>
+  [261] extcall 48 .............................. <integer(iYPos)>
+  [263] setparam 5 .............................. iYPos = integer(iYPos)
+  [265] getparam 6 .............................. <iZPos>
+  [267] pusharglist 1 ........................... <iZPos>
+  [269] extcall 48 .............................. <integer(iZPos)>
+  [271] setparam 6 .............................. iZPos = integer(iZPos)
+  [273] getparam 7 .............................. <iHeightOffset>
+  [275] pusharglist 1 ........................... <iHeightOffset>
+  [277] extcall 48 .............................. <integer(iHeightOffset)>
+  [279] setparam 7 .............................. iHeightOffset = integer(iHeightOffset)
+  [281] getparam 8 .............................. <iDirection>
+  [283] pusharglist 1 ........................... <iDirection>
+  [285] extcall 48 .............................. <integer(iDirection)>
+  [287] setparam 8 .............................. iDirection = integer(iDirection)
+  [289] getparam 9 .............................. <iState>
+  [291] pusharglist 1 ........................... <iState>
+  [293] extcall 48 .............................. <integer(iState)>
+  [295] setparam 9 .............................. iState = integer(iState)
+  [297] getglobal 16 ............................ <oIsoScene>
+  [299] getparam 2 .............................. <iPosId>
+  [301] pusharglist 2 ........................... <oIsoScene, iPosId>
+  [303] objcall 950 ............................. <oIsoScene.getItemByPossessionId(iPosId)>
+  [306] setlocal 4 .............................. oPossession = oIsoScene.getItemByPossessionId(iPosId)
+  [308] getlocal 4 .............................. <oPossession>
+  [310] pusharglist 1 ........................... <oPossession>
+  [312] extcall 15 .............................. <voidp(oPossession)>
+  [314] not ..................................... <not voidp(oPossession)>
+  [315] jmpifz [575] ............................ if not voidp(oPossession) then / else
+  [318] getparam 4 .............................. <iXPos>
+  [320] pusharglist 1 ........................... <iXPos>
+  [322] extcall 15 .............................. <voidp(iXPos)>
+  [324] not ..................................... <not voidp(iXPos)>
+  [325] getparam 4 .............................. <iXPos>
+  [327] pushcons 22 ............................. <EMPTY>
+  [329] nteq .................................... <iXPos <> EMPTY>
+  [330] and ..................................... <not voidp(iXPos) and (iXPos <> EMPTY)>
+  [331] jmpifz [343] ............................ if not voidp(iXPos) and (iXPos <> EMPTY) then
+  [334] getlocal 4 .............................. <oPossession>
+  [336] getparam 4 .............................. <iXPos>
+  [338] pusharglistnoret 2 ...................... <oPossession, iXPos>
+  [340] objcall 1070 ............................ oPossession.setXPos(iXPos)
+  [343] getparam 5 .............................. <iYPos>
+  [345] pusharglist 1 ........................... <iYPos>
+  [347] extcall 15 .............................. <voidp(iYPos)>
+  [349] not ..................................... <not voidp(iYPos)>
+  [350] getparam 5 .............................. <iYPos>
+  [352] pushcons 22 ............................. <EMPTY>
+  [354] nteq .................................... <iYPos <> EMPTY>
+  [355] and ..................................... <not voidp(iYPos) and (iYPos <> EMPTY)>
+  [356] jmpifz [368] ............................ if not voidp(iYPos) and (iYPos <> EMPTY) then
+  [359] getlocal 4 .............................. <oPossession>
+  [361] getparam 5 .............................. <iYPos>
+  [363] pusharglistnoret 2 ...................... <oPossession, iYPos>
+  [365] objcall 1071 ............................ oPossession.setYPos(iYPos)
+  [368] getparam 6 .............................. <iZPos>
+  [370] pusharglist 1 ........................... <iZPos>
+  [372] extcall 15 .............................. <voidp(iZPos)>
+  [374] not ..................................... <not voidp(iZPos)>
+  [375] getparam 6 .............................. <iZPos>
+  [377] pushcons 22 ............................. <EMPTY>
+  [379] nteq .................................... <iZPos <> EMPTY>
+  [380] and ..................................... <not voidp(iZPos) and (iZPos <> EMPTY)>
+  [381] jmpifz [393] ............................ if not voidp(iZPos) and (iZPos <> EMPTY) then
+  [384] getlocal 4 .............................. <oPossession>
+  [386] getparam 6 .............................. <iZPos>
+  [388] pusharglistnoret 2 ...................... <oPossession, iZPos>
+  [390] objcall 1072 ............................ oPossession.setZPos(iZPos)
+  [393] getparam 7 .............................. <iHeightOffset>
+  [395] pusharglist 1 ........................... <iHeightOffset>
+  [397] extcall 15 .............................. <voidp(iHeightOffset)>
+  [399] not ..................................... <not voidp(iHeightOffset)>
+  [400] getparam 7 .............................. <iHeightOffset>
+  [402] pushcons 22 ............................. <EMPTY>
+  [404] nteq .................................... <iHeightOffset <> EMPTY>
+  [405] and ..................................... <not voidp(iHeightOffset) and (iHeightOffset <> EMPTY)>
+  [406] jmpifz [418] ............................ if not voidp(iHeightOffset) and (iHeightOffset <> EMPTY) then
+  [409] getlocal 4 .............................. <oPossession>
+  [411] getparam 7 .............................. <iHeightOffset>
+  [413] pusharglistnoret 2 ...................... <oPossession, iHeightOffset>
+  [415] objcall 1073 ............................ oPossession.setHeightOffset(iHeightOffset)
+  [418] getparam 8 .............................. <iDirection>
+  [420] pusharglist 1 ........................... <iDirection>
+  [422] extcall 15 .............................. <voidp(iDirection)>
+  [424] not ..................................... <not voidp(iDirection)>
+  [425] getparam 8 .............................. <iDirection>
+  [427] pushcons 22 ............................. <EMPTY>
+  [429] nteq .................................... <iDirection <> EMPTY>
+  [430] and ..................................... <not voidp(iDirection) and (iDirection <> EMPTY)>
+  [431] jmpifz [443] ............................ if not voidp(iDirection) and (iDirection <> EMPTY) then
+  [434] getlocal 4 .............................. <oPossession>
+  [436] getparam 8 .............................. <iDirection>
+  [438] pusharglistnoret 2 ...................... <oPossession, iDirection>
+  [440] objcall 1074 ............................ oPossession.setDirection(iDirection)
+  [443] getparam 9 .............................. <iState>
+  [445] pusharglist 1 ........................... <iState>
+  [447] extcall 15 .............................. <voidp(iState)>
+  [449] not ..................................... <not voidp(iState)>
+  [450] getparam 9 .............................. <iState>
+  [452] pushcons 22 ............................. <EMPTY>
+  [454] nteq .................................... <iState <> EMPTY>
+  [455] and ..................................... <not voidp(iState) and (iState <> EMPTY)>
+  [456] jmpifz [468] ............................ if not voidp(iState) and (iState <> EMPTY) then
+  [459] getlocal 4 .............................. <oPossession>
+  [461] getparam 9 .............................. <iState>
+  [463] pusharglistnoret 2 ...................... <oPossession, iState>
+  [465] objcall 1018 ............................ oPossession.setState(iState)
+  [468] getparam 10 ............................. <sAttributes>
+  [470] pusharglist 1 ........................... <sAttributes>
+  [472] extcall 15 .............................. <voidp(sAttributes)>
+  [474] not ..................................... <not voidp(sAttributes)>
+  [475] getparam 10 ............................. <sAttributes>
+  [477] pushcons 22 ............................. <EMPTY>
+  [479] nteq .................................... <sAttributes <> EMPTY>
+  [480] and ..................................... <not voidp(sAttributes) and (sAttributes <> EMPTY)>
+  [481] jmpifz [502] ............................ if not voidp(sAttributes) and (sAttributes <> EMPTY) then
+  [484] getparam 10 ............................. <sAttributes>
+  [486] pusharglist 1 ........................... <sAttributes>
+  [488] extcall 592 ............................. <value(sAttributes)>
+  [491] setlocal 1 .............................. aAttributes = value(sAttributes)
+  [493] getlocal 4 .............................. <oPossession>
+  [495] getlocal 1 .............................. <aAttributes>
+  [497] pusharglistnoret 2 ...................... <oPossession, aAttributes>
+  [499] objcall 1075 ............................ oPossession.setAttributes(aAttributes)
+  [502] getparam 11 ............................. <bItemsAllowedOnTop>
+  [504] pusharglist 1 ........................... <bItemsAllowedOnTop>
+  [506] extcall 15 .............................. <voidp(bItemsAllowedOnTop)>
+  [508] not ..................................... <not voidp(bItemsAllowedOnTop)>
+  [509] getparam 11 ............................. <bItemsAllowedOnTop>
+  [511] pushcons 22 ............................. <EMPTY>
+  [513] nteq .................................... <bItemsAllowedOnTop <> EMPTY>
+  [514] and ..................................... <not voidp(bItemsAllowedOnTop) and (bItemsAllowedOnTop <> EMPTY)>
+  [515] jmpifz [527] ............................ if not voidp(bItemsAllowedOnTop) and (bItemsAllowedOnTop <> EMPTY) then
+  [518] getlocal 4 .............................. <oPossession>
+  [520] getparam 11 ............................. <bItemsAllowedOnTop>
+  [522] pusharglistnoret 2 ...................... <oPossession, bItemsAllowedOnTop>
+  [524] objcall 1076 ............................ oPossession.setItemsAllowedOnTop(bItemsAllowedOnTop)
+  [527] getlocal 4 .............................. <oPossession>
+  [529] pushint8 1 .............................. <1>
+  [531] pusharglistnoret 2 ...................... <oPossession, 1>
+  [533] objcall 1077 ............................ oPossession.update(1)
+  [536] getglobal 16 ............................ <oIsoScene>
+  [538] getobjprop 877 .......................... <oIsoScene.oAvatars>
+  [541] pusharglist 1 ........................... <oIsoScene.oAvatars>
+  [543] extcall 15 .............................. <voidp(oIsoScene.oAvatars)>
+  [545] not ..................................... <not voidp(oIsoScene.oAvatars)>
+  [546] jmpifz [559] ............................ if not voidp(oIsoScene.oAvatars) then
+  [549] getglobal 16 ............................ <oIsoScene>
+  [551] getchainedprop 877 ...................... <oIsoScene.oAvatars>
+  [554] pusharglistnoret 1 ...................... <oIsoScene.oAvatars>
+  [556] objcall 1078 ............................ oIsoScene.oAvatars.updateAll()
+  [559] getglobal 76 ............................ <oStudio>
+  [561] getparam 2 .............................. <iPosId>
+  [563] pusharglistnoret 2 ...................... <oStudio, iPosId>
+  [565] objcall 824 ............................. oStudio.removePossessionFromBackpack(iPosId)
+  [568] pusharglistnoret 0 ...................... <>
+  [570] extcall 71 .............................. return 
+  [572] jmp [575]
+  [575] getlocal 0 .............................. <oItem>
+  [577] pusharglist 1 ........................... <oItem>
+  [579] extcall 15 .............................. <voidp(oItem)>
+  [581] not ..................................... <not voidp(oItem)>
+  [582] jmpifz [825] ............................ if not voidp(oItem) then
+  [585] getlocal 0 .............................. <oItem>
+  [587] pushsymb 1079 ........................... <#imageBase>
+  [590] pusharglist 2 ........................... <oItem, #imageBase>
+  [592] objcall 43 .............................. <oItem[#imageBase]>
+  [594] setlocal 5 .............................. sImageBase = oItem[#imageBase]
+  [596] getlocal 0 .............................. <oItem>
+  [598] pushsymb 1066 ........................... <#type>
+  [601] pusharglist 2 ........................... <oItem, #type>
+  [603] objcall 43 .............................. <oItem[#type]>
+  [605] setlocal 6 .............................. sType = oItem[#type]
+  [607] getlocal 0 .............................. <oItem>
+  [609] pushsymb 1080 ........................... <#Action>
+  [612] pusharglist 2 ........................... <oItem, #Action>
+  [614] objcall 43 .............................. <oItem[#Action]>
+  [616] setlocal 7 .............................. sAction = oItem[#Action]
+  [618] pushcons 23 ............................. <"Furniture">
+  [620] setlocal 8 .............................. sCastLib = "Furniture"
+  [622] getparam 6 .............................. <iZPos>
+  [624] setlocal 9 .............................. iRow = iZPos
+  [626] getparam 4 .............................. <iXPos>
+  [628] setlocal 10 ............................. iCol = iXPos
+  [630] getparam 5 .............................. <iYPos>
+  [632] setlocal 11 ............................. iGridY = iYPos
+  [634] getparam 9 .............................. <iState>
+  [636] pusharglist 1 ........................... <iState>
+  [638] extcall 15 .............................. <voidp(iState)>
+  [640] getparam 9 .............................. <iState>
+  [642] pushcons 22 ............................. <EMPTY>
+  [644] eq ...................................... <iState = EMPTY>
+  [645] or ...................................... <voidp(iState) or (iState = EMPTY)>
+  [646] jmpifz [660] ............................ if voidp(iState) or (iState = EMPTY) then
+  [649] getlocal 0 .............................. <oItem>
+  [651] pushsymb 601 ............................ <#state>
+  [654] pusharglist 2 ........................... <oItem, #state>
+  [656] objcall 43 .............................. <oItem[#state]>
+  [658] setparam 9 .............................. iState = oItem[#state]
+  [660] getparam 10 ............................. <sAttributes>
+  [662] pusharglist 1 ........................... <sAttributes>
+  [664] extcall 15 .............................. <voidp(sAttributes)>
+  [666] getparam 10 ............................. <sAttributes>
+  [668] pushcons 22 ............................. <EMPTY>
+  [670] eq ...................................... <sAttributes = EMPTY>
+  [671] or ...................................... <voidp(sAttributes) or (sAttributes = EMPTY)>
+  [672] jmpifz [688] ............................ if voidp(sAttributes) or (sAttributes = EMPTY) then / else
+  [675] getlocal 0 .............................. <oItem>
+  [677] pushsymb 44 ............................. <#attributes>
+  [679] pusharglist 2 ........................... <oItem, #attributes>
+  [681] objcall 43 .............................. <oItem[#attributes]>
+  [683] setlocal 1 .............................. aAttributes = oItem[#attributes]
+  [685] jmp [697]
+  [688] getparam 10 ............................. <sAttributes>
+  [690] pusharglist 1 ........................... <sAttributes>
+  [692] extcall 592 ............................. <value(sAttributes)>
+  [695] setlocal 1 .............................. aAttributes = value(sAttributes)
+  [697] getparam 8 .............................. <iDirection>
+  [699] pusharglist 1 ........................... <iDirection>
+  [701] extcall 15 .............................. <voidp(iDirection)>
+  [703] getparam 8 .............................. <iDirection>
+  [705] pushcons 22 ............................. <EMPTY>
+  [707] eq ...................................... <iDirection = EMPTY>
+  [708] or ...................................... <voidp(iDirection) or (iDirection = EMPTY)>
+  [709] jmpifz [716] ............................ if voidp(iDirection) or (iDirection = EMPTY) then
+  [712] pushint8 2 .............................. <2>
+  [714] setparam 8 .............................. iDirection = 2
+  [716] getlocal 0 .............................. <oItem>
+  [718] pushsymb 8 .............................. <#height>
+  [720] pusharglist 2 ........................... <oItem, #height>
+  [722] objcall 43 .............................. <oItem[#height]>
+  [724] setlocal 12 ............................. iHeight = oItem[#height]
+  [726] getparam 11 ............................. <bItemsAllowedOnTop>
+  [728] pusharglist 1 ........................... <bItemsAllowedOnTop>
+  [730] extcall 15 .............................. <voidp(bItemsAllowedOnTop)>
+  [732] getparam 11 ............................. <bItemsAllowedOnTop>
+  [734] pushcons 22 ............................. <EMPTY>
+  [736] eq ...................................... <bItemsAllowedOnTop = EMPTY>
+  [737] or ...................................... <voidp(bItemsAllowedOnTop) or (bItemsAllowedOnTop = EMPTY)>
+  [738] jmpifz [745] ............................ if voidp(bItemsAllowedOnTop) or (bItemsAllowedOnTop = EMPTY) then
+  [741] pushint8 1 .............................. <1>
+  [743] setparam 11 ............................. bItemsAllowedOnTop = 1
+  [745] getglobal 16 ............................ <oIsoScene>
+  [747] getparam 3 .............................. <iCatId>
+  [749] getparam 2 .............................. <iPosId>
+  [751] getlocal 5 .............................. <sImageBase>
+  [753] getlocal 6 .............................. <sType>
+  [755] getlocal 7 .............................. <sAction>
+  [757] getparam 9 .............................. <iState>
+  [759] getlocal 1 .............................. <aAttributes>
+  [761] getlocal 8 .............................. <sCastLib>
+  [763] getlocal 9 .............................. <iRow>
+  [765] getlocal 10 ............................. <iCol>
+  [767] getlocal 11 ............................. <iGridY>
+  [769] getparam 8 .............................. <iDirection>
+  [771] getlocal 12 ............................. <iHeight>
+  [773] getparam 7 .............................. <iHeightOffset>
+  [775] getparam 11 ............................. <bItemsAllowedOnTop>
+  [777] pusharglist 16 .......................... <oIsoScene, iCatId, iPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop>
+  [779] objcall 1081 ............................ <oIsoScene.createItem(iCatId, iPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop)>
+  [782] setlocal 13 ............................. oFurnitureItem = oIsoScene.createItem(iCatId, iPosId, sImageBase, sType, sAction, iState, aAttributes, sCastLib, iRow, iCol, iGridY, iDirection, iHeight, iHeightOffset, bItemsAllowedOnTop)
+  [784] getlocal 13 ............................. <oFurnitureItem>
+  [786] pushint8 1 .............................. <1>
+  [788] pusharglistnoret 2 ...................... <oFurnitureItem, 1>
+  [790] objcall 1077 ............................ oFurnitureItem.update(1)
+  [793] getglobal 16 ............................ <oIsoScene>
+  [795] getobjprop 877 .......................... <oIsoScene.oAvatars>
+  [798] pusharglist 1 ........................... <oIsoScene.oAvatars>
+  [800] extcall 15 .............................. <voidp(oIsoScene.oAvatars)>
+  [802] not ..................................... <not voidp(oIsoScene.oAvatars)>
+  [803] jmpifz [816] ............................ if not voidp(oIsoScene.oAvatars) then
+  [806] getglobal 16 ............................ <oIsoScene>
+  [808] getchainedprop 877 ...................... <oIsoScene.oAvatars>
+  [811] pusharglistnoret 1 ...................... <oIsoScene.oAvatars>
+  [813] objcall 1078 ............................ oIsoScene.oAvatars.updateAll()
+  [816] getglobal 76 ............................ <oStudio>
+  [818] getparam 2 .............................. <iPosId>
+  [820] pusharglistnoret 2 ...................... <oStudio, iPosId>
+  [822] objcall 824 ............................. oStudio.removePossessionFromBackpack(iPosId)
+  [825] ret
+end
+
+on addPossessionToBackpack me, oPossession, bPush
+  [  0] getglobal 76 ............................ <oStudio>
+  [  2] getglobal 193 ........................... <oDenizenManager>
+  [  4] pusharglist 1 ........................... <oDenizenManager>
+  [  6] objcall 198 ............................. <oDenizenManager.getScreenName()>
+  [  8] pusharglist 2 ........................... <oStudio, oDenizenManager.getScreenName()>
+  [ 10] objcall 768 ............................. <oStudio.isOwner(oDenizenManager.getScreenName())>
+  [ 13] setlocal 0 .............................. bIsOwner = oStudio.isOwner(oDenizenManager.getScreenName())
+  [ 15] getlocal 0 .............................. <bIsOwner>
+  [ 17] jmpifz [120] ............................ if bIsOwner then
+  [ 20] getglobal 193 ........................... <oDenizenManager>
+  [ 22] pusharglist 1 ........................... <oDenizenManager>
+  [ 24] objcall 214 ............................. <oDenizenManager.getBackpack()>
+  [ 26] setlocal 1 .............................. oBackPack = oDenizenManager.getBackpack()
+  [ 28] getlocal 1 .............................. <oBackPack>
+  [ 30] pusharglist 1 ........................... <oBackPack>
+  [ 32] extcall 15 .............................. <voidp(oBackPack)>
+  [ 34] not ..................................... <not voidp(oBackPack)>
+  [ 35] jmpifz [120] ............................ if not voidp(oBackPack) then
+  [ 38] getlocal 1 .............................. <oBackPack>
+  [ 40] getparam 1 .............................. <oPossession>
+  [ 42] pusharglist 1 ........................... <oPossession>
+  [ 44] objcall 1040 ............................ <oPossession.getPosId()>
+  [ 47] pusharglist 1 ........................... <oPossession.getPosId()>
+  [ 49] extcall 48 .............................. <integer(oPossession.getPosId())>
+  [ 51] getparam 1 .............................. <oPossession>
+  [ 53] pusharglist 1 ........................... <oPossession>
+  [ 55] objcall 1092 ............................ <oPossession.getProdId()>
+  [ 58] pusharglist 1 ........................... <oPossession.getProdId()>
+  [ 60] extcall 48 .............................. <integer(oPossession.getProdId())>
+  [ 62] getparam 1 .............................. <oPossession>
+  [ 64] pusharglist 1 ........................... <oPossession>
+  [ 66] objcall 1046 ............................ <oPossession.getAttributes()>
+  [ 69] pusharglist 1 ........................... <oPossession.getAttributes()>
+  [ 71] extcall 575 ............................. <string(oPossession.getAttributes())>
+  [ 74] getparam 2 .............................. <bPush>
+  [ 76] pusharglistnoret 5 ...................... <oBackPack, integer(oPossession.getPosId()), integer(oPossession.getProdId()), string(oPossession.getAttributes()), bPush>
+  [ 78] objcall 875 ............................. oBackPack.addPossessionByItem(integer(oPossession.getPosId()), integer(oPossession.getProdId()), string(oPossession.getAttributes()), bPush)
+  [ 81] pushsymb 993 ............................ <#getBackpackCurrentPage>
+  [ 84] pusharglist 1 ........................... <#getBackpackCurrentPage>
+  [ 86] extcall 177 ............................. <sendAllSprites(#getBackpackCurrentPage)>
+  [ 88] setlocal 2 .............................. iCurrentPage = sendAllSprites(#getBackpackCurrentPage)
+  [ 90] getlocal 2 .............................. <iCurrentPage>
+  [ 92] pusharglist 1 ........................... <iCurrentPage>
+  [ 94] extcall 15 .............................. <voidp(iCurrentPage)>
+  [ 96] jmpifz [103] ............................ if voidp(iCurrentPage) then
+  [ 99] pushint8 1 .............................. <1>
+  [101] setlocal 2 .............................. iCurrentPage = 1
+  [103] getglobal 213 ........................... <oPossessionManager>
+  [105] getglobal 193 ........................... <oDenizenManager>
+  [107] pusharglist 1 ........................... <oDenizenManager>
+  [109] objcall 198 ............................. <oDenizenManager.getScreenName()>
+  [111] getlocal 2 .............................. <iCurrentPage>
+  [113] pushint8 25 ............................. <25>
+  [115] pusharglistnoret 4 ...................... <oPossessionManager, oDenizenManager.getScreenName(), iCurrentPage, 25>
+  [117] objcall 543 ............................. oPossessionManager.getPossessionsInBackpack(oDenizenManager.getScreenName(), iCurrentPage, 25)
+  [120] ret
+end
+
+on receiveRemovePossession me, oCaller, iPosId, bDeleted
+  [  0] getmovieprop 184 ........................ <the debugPlaybackEnabled>
+  [  2] jmpifz [ 20] ............................ if the debugPlaybackEnabled then
+  [  5] pushcons 24 ............................. <"receiveRemovePossession(): iPosId=">
+  [  7] getparam 2 .............................. <iPosId>
+  [  9] joinstr ................................. <"receiveRemovePossession(): iPosId=" & iPosId>
+  [ 10] pushcons 25 ............................. <"bDeleted=">
+  [ 12] joinpadstr .............................. <"receiveRemovePossession(): iPosId=" & iPosId && "bDeleted=">
+  [ 13] getparam 3 .............................. <bDeleted>
+  [ 15] joinstr ................................. <"receiveRemovePossession(): iPosId=" & iPosId && "bDeleted=" & bDeleted>
+  [ 16] pusharglistnoret 1 ...................... <"receiveRemovePossession(): iPosId=" & iPosId && "bDeleted=" & bDeleted>
+  [ 18] extcall 33 .............................. put "receiveRemovePossession(): iPosId=" & iPosId && "bDeleted=" & bDeleted
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pushcons 26 ............................. <"receiveRemovePossession() ">
+  [ 24] getparam 2 .............................. <iPosId>
+  [ 26] joinstr ................................. <"receiveRemovePossession() " & iPosId>
+  [ 27] getparam 3 .............................. <bDeleted>
+  [ 29] pusharglistnoret 3 ...................... <me, "receiveRemovePossession() " & iPosId, bDeleted>
+  [ 31] objcall 20 .............................. me.debug("receiveRemovePossession() " & iPosId, bDeleted)
+  [ 33] getglobal 16 ............................ <oIsoScene>
+  [ 35] pusharglist 1 ........................... <oIsoScene>
+  [ 37] extcall 15 .............................. <voidp(oIsoScene)>
+  [ 39] jmpifz [ 46] ............................ if voidp(oIsoScene) then
+  [ 42] pusharglistnoret 0 ...................... <>
+  [ 44] extcall 71 .............................. return 
+  [ 46] pushcons 27 ............................. <"about to get oPossession">
+  [ 48] pusharglistnoret 1 ...................... <"about to get oPossession">
+  [ 50] extcall 33 .............................. put "about to get oPossession"
+  [ 52] getglobal 16 ............................ <oIsoScene>
+  [ 54] getparam 2 .............................. <iPosId>
+  [ 56] pusharglist 2 ........................... <oIsoScene, iPosId>
+  [ 58] objcall 950 ............................. <oIsoScene.getItemByPossessionId(iPosId)>
+  [ 61] setlocal 0 .............................. oPossession = oIsoScene.getItemByPossessionId(iPosId)
+  [ 63] pushcons 28 ............................. <"oPossession grabbed">
+  [ 65] pusharglistnoret 1 ...................... <"oPossession grabbed">
+  [ 67] extcall 33 .............................. put "oPossession grabbed"
+  [ 69] getlocal 0 .............................. <oPossession>
+  [ 71] pusharglist 1 ........................... <oPossession>
+  [ 73] extcall 15 .............................. <voidp(oPossession)>
+  [ 75] not ..................................... <not voidp(oPossession)>
+  [ 76] jmpifz [249] ............................ if not voidp(oPossession) then / else
+  [ 79] pushcons 29 ............................. <"oPossession not void">
+  [ 81] pusharglistnoret 1 ...................... <"oPossession not void">
+  [ 83] extcall 33 .............................. put "oPossession not void"
+  [ 85] getparam 3 .............................. <bDeleted>
+  [ 87] pushcons 30 ............................. <"false">
+  [ 89] eq ...................................... <bDeleted = "false">
+  [ 90] jmpifz [190] ............................ if bDeleted = "false" then
+  [ 93] pushcons 31 ............................. <"bDeleted is false">
+  [ 95] pusharglistnoret 1 ...................... <"bDeleted is false">
+  [ 97] extcall 33 .............................. put "bDeleted is false"
+  [ 99] getglobal 16 ............................ <oIsoScene>
+  [101] getchainedprop 965 ...................... <oIsoScene.oSelectedItem>
+  [104] pusharglist 1 ........................... <oIsoScene.oSelectedItem>
+  [106] objcall 1095 ............................ <oIsoScene.oSelectedItem.isFurniItem()>
+  [109] getglobal 16 ............................ <oIsoScene>
+  [111] getchainedprop 965 ...................... <oIsoScene.oSelectedItem>
+  [114] pusharglist 1 ........................... <oIsoScene.oSelectedItem>
+  [116] objcall 1096 ............................ <oIsoScene.oSelectedItem.isWallItem()>
+  [119] or ...................................... <oIsoScene.oSelectedItem.isFurniItem() or oIsoScene.oSelectedItem.isWallItem()>
+  [120] getglobal 76 ............................ <oStudio>
+  [122] getglobal 193 ........................... <oDenizenManager>
+  [124] pusharglist 1 ........................... <oDenizenManager>
+  [126] objcall 198 ............................. <oDenizenManager.getScreenName()>
+  [128] pusharglist 2 ........................... <oStudio, oDenizenManager.getScreenName()>
+  [130] objcall 768 ............................. <oStudio.isOwner(oDenizenManager.getScreenName())>
+  [133] and ..................................... <(oIsoScene.oSelectedItem.isFurniItem() or oIsoScene.oSelectedItem.isWallItem()) and oStudio.isOwner(oDenizenManager.getScreenName())>
+  [134] jmpifz [190] ............................ if (oIsoScene.oSelectedItem.isFurniItem() or oIsoScene.oSelectedItem.isWallItem()) and oStudio.isOwner(oDenizenManager.getScreenName()) then
+  [137] pushcons 32 ............................. <"not working:">
+  [139] getparam 0 .............................. <me>
+  [141] joinpadstr .............................. <"not working:" && me>
+  [142] getglobal 16 ............................ <oIsoScene>
+  [144] getobjprop 965 .......................... <oIsoScene.oSelectedItem>
+  [147] joinpadstr .............................. <"not working:" && me && oIsoScene.oSelectedItem>
+  [148] pusharglistnoret 1 ...................... <"not working:" && me && oIsoScene.oSelectedItem>
+  [150] extcall 33 .............................. put "not working:" && me && oIsoScene.oSelectedItem
+  [152] getparam 0 .............................. <me>
+  [154] getglobal 16 ............................ <oIsoScene>
+  [156] getobjprop 965 .......................... <oIsoScene.oSelectedItem>
+  [159] pushint8 1 .............................. <1>
+  [161] pusharglistnoret 3 ...................... <me, oIsoScene.oSelectedItem, 1>
+  [163] objcall 1034 ............................ me.addPossessionToBackpack(oIsoScene.oSelectedItem, 1)
+  [166] getglobal 16 ............................ <oIsoScene>
+  [168] pusharglist 0 ........................... <>
+  [170] extcall 190 ............................. <VOID>
+  [172] setobjprop 965 .......................... oIsoScene.oSelectedItem = VOID
+  [175] getglobal 16 ............................ <oIsoScene>
+  [177] getchainedprop 964 ...................... <oIsoScene.oInfoStand>
+  [180] getglobal 16 ............................ <oIsoScene>
+  [182] getobjprop 965 .......................... <oIsoScene.oSelectedItem>
+  [185] pusharglistnoret 2 ...................... <oIsoScene.oInfoStand, oIsoScene.oSelectedItem>
+  [187] objcall 966 ............................. oIsoScene.oInfoStand.display(oIsoScene.oSelectedItem)
+  [190] pushcons 33 ............................. <"about to remove oPossession from scene">
+  [192] pusharglistnoret 1 ...................... <"about to remove oPossession from scene">
+  [194] extcall 33 .............................. put "about to remove oPossession from scene"
+  [196] getglobal 16 ............................ <oIsoScene>
+  [198] getlocal 0 .............................. <oPossession>
+  [200] pusharglistnoret 2 ...................... <oIsoScene, oPossession>
+  [202] objcall 1026 ............................ oIsoScene.deleteItem(oPossession)
+  [205] pushcons 34 ............................. <"removed oPossession from scene">
+  [207] pusharglistnoret 1 ...................... <"removed oPossession from scene">
+  [209] extcall 33 .............................. put "removed oPossession from scene"
+  [211] getglobal 16 ............................ <oIsoScene>
+  [213] getobjprop 877 .......................... <oIsoScene.oAvatars>
+  [216] pusharglist 1 ........................... <oIsoScene.oAvatars>
+  [218] extcall 15 .............................. <voidp(oIsoScene.oAvatars)>
+  [220] not ..................................... <not voidp(oIsoScene.oAvatars)>
+  [221] jmpifz [246] ............................ if not voidp(oIsoScene.oAvatars) then
+  [224] pushcons 35 ............................. <"oIsoScene.oAvatars isn't void">
+  [226] pusharglistnoret 1 ...................... <"oIsoScene.oAvatars isn't void">
+  [228] extcall 33 .............................. put "oIsoScene.oAvatars isn't void"
+  [230] getglobal 16 ............................ <oIsoScene>
+  [232] getchainedprop 877 ...................... <oIsoScene.oAvatars>
+  [235] pusharglistnoret 1 ...................... <oIsoScene.oAvatars>
+  [237] objcall 1078 ............................ oIsoScene.oAvatars.updateAll()
+  [240] pushcons 36 ............................. <"updated all oIsoScene.oAvatars">
+  [242] pusharglistnoret 1 ...................... <"updated all oIsoScene.oAvatars">
+  [244] extcall 33 .............................. put "updated all oIsoScene.oAvatars"
+  [246] jmp [249]
+  [249] ret
+end
+
+on receiveTeleport me, oCaller, iLocation, iLayout, sStudioID, sStudioName, iDestinationPosId
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 37 ............................. <"receiveTeleport() iLocation: ">
+  [  4] getparam 2 .............................. <iLocation>
+  [  6] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation>
+  [  7] pushcons 38 ............................. <", iLayout: ">
+  [  9] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: ">
+  [ 10] getparam 3 .............................. <iLayout>
+  [ 12] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout>
+  [ 13] pushcons 39 ............................. <", sStudioId: ">
+  [ 15] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: ">
+  [ 16] getparam 4 .............................. <sStudioID>
+  [ 18] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID>
+  [ 19] pushcons 40 ............................. <", sStudioName: ">
+  [ 21] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: ">
+  [ 22] getparam 5 .............................. <sStudioName>
+  [ 24] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName>
+  [ 25] pushcons 41 ............................. <", iDestinationPosId: ">
+  [ 27] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: ">
+  [ 28] getparam 6 .............................. <iDestinationPosId>
+  [ 30] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId>
+  [ 31] pusharglistnoret 2 ...................... <me, "receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId>
+  [ 33] objcall 20 .............................. me.debug("receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId)
+  [ 35] pushcons 37 ............................. <"receiveTeleport() iLocation: ">
+  [ 37] getparam 2 .............................. <iLocation>
+  [ 39] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation>
+  [ 40] pushcons 38 ............................. <", iLayout: ">
+  [ 42] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: ">
+  [ 43] getparam 3 .............................. <iLayout>
+  [ 45] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout>
+  [ 46] pushcons 39 ............................. <", sStudioId: ">
+  [ 48] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: ">
+  [ 49] getparam 4 .............................. <sStudioID>
+  [ 51] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID>
+  [ 52] pushcons 40 ............................. <", sStudioName: ">
+  [ 54] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: ">
+  [ 55] getparam 5 .............................. <sStudioName>
+  [ 57] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName>
+  [ 58] pushcons 41 ............................. <", iDestinationPosId: ">
+  [ 60] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: ">
+  [ 61] getparam 6 .............................. <iDestinationPosId>
+  [ 63] joinstr ................................. <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId>
+  [ 64] pusharglistnoret 1 ...................... <"receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId>
+  [ 66] extcall 33 .............................. put "receiveTeleport() iLocation: " & iLocation & ", iLayout: " & iLayout & ", sStudioId: " & sStudioID & ", sStudioName: " & sStudioName & ", iDestinationPosId: " & iDestinationPosId
+  [ 68] getparam 4 .............................. <sStudioID>
+  [ 70] pusharglist 1 ........................... <sStudioID>
+  [ 72] extcall 15 .............................. <voidp(sStudioID)>
+  [ 74] getparam 4 .............................. <sStudioID>
+  [ 76] pushcons 22 ............................. <EMPTY>
+  [ 78] eq ...................................... <sStudioID = EMPTY>
+  [ 79] or ...................................... <voidp(sStudioID) or (sStudioID = EMPTY)>
+  [ 80] getparam 4 .............................. <sStudioID>
+  [ 82] pushzero ................................ <0>
+  [ 83] eq ...................................... <sStudioID = 0>
+  [ 84] or ...................................... <voidp(sStudioID) or (sStudioID = EMPTY) or (sStudioID = 0)>
+  [ 85] jmpifz [ 92] ............................ if voidp(sStudioID) or (sStudioID = EMPTY) or (sStudioID = 0) then
+  [ 88] pusharglistnoret 0 ...................... <>
+  [ 90] extcall 71 .............................. return 
+  [ 92] getparam 2 .............................. <iLocation>
+  [ 94] pusharglist 1 ........................... <iLocation>
+  [ 96] extcall 15 .............................. <voidp(iLocation)>
+  [ 98] getparam 2 .............................. <iLocation>
+  [100] pusharglist 0 ........................... <>
+  [102] extcall 190 ............................. <VOID>
+  [104] eq ...................................... <iLocation = VOID>
+  [105] or ...................................... <voidp(iLocation) or (iLocation = VOID)>
+  [106] getparam 2 .............................. <iLocation>
+  [108] pushcons 22 ............................. <EMPTY>
+  [110] eq ...................................... <iLocation = EMPTY>
+  [111] or ...................................... <voidp(iLocation) or (iLocation = VOID) or (iLocation = EMPTY)>
+  [112] getparam 2 .............................. <iLocation>
+  [114] pushzero ................................ <0>
+  [115] eq ...................................... <iLocation = 0>
+  [116] or ...................................... <voidp(iLocation) or (iLocation = VOID) or (iLocation = EMPTY) or (iLocation = 0)>
+  [117] jmpifz [124] ............................ if voidp(iLocation) or (iLocation = VOID) or (iLocation = EMPTY) or (iLocation = 0) then
+  [120] pusharglistnoret 0 ...................... <>
+  [122] extcall 71 .............................. return 
+  [124] getparam 3 .............................. <iLayout>
+  [126] pusharglist 1 ........................... <iLayout>
+  [128] extcall 15 .............................. <voidp(iLayout)>
+  [130] getparam 3 .............................. <iLayout>
+  [132] pusharglist 0 ........................... <>
+  [134] extcall 190 ............................. <VOID>
+  [136] eq ...................................... <iLayout = VOID>
+  [137] or ...................................... <voidp(iLayout) or (iLayout = VOID)>
+  [138] getparam 3 .............................. <iLayout>
+  [140] pushcons 22 ............................. <EMPTY>
+  [142] eq ...................................... <iLayout = EMPTY>
+  [143] or ...................................... <voidp(iLayout) or (iLayout = VOID) or (iLayout = EMPTY)>
+  [144] getparam 3 .............................. <iLayout>
+  [146] pushzero ................................ <0>
+  [147] eq ...................................... <iLayout = 0>
+  [148] or ...................................... <voidp(iLayout) or (iLayout = VOID) or (iLayout = EMPTY) or (iLayout = 0)>
+  [149] jmpifz [156] ............................ if voidp(iLayout) or (iLayout = VOID) or (iLayout = EMPTY) or (iLayout = 0) then
+  [152] pusharglistnoret 0 ...................... <>
+  [154] extcall 71 .............................. return 
+  [156] getparam 6 .............................. <iDestinationPosId>
+  [158] pusharglist 1 ........................... <iDestinationPosId>
+  [160] extcall 15 .............................. <voidp(iDestinationPosId)>
+  [162] getparam 6 .............................. <iDestinationPosId>
+  [164] pusharglist 0 ........................... <>
+  [166] extcall 190 ............................. <VOID>
+  [168] eq ...................................... <iDestinationPosId = VOID>
+  [169] or ...................................... <voidp(iDestinationPosId) or (iDestinationPosId = VOID)>
+  [170] getparam 6 .............................. <iDestinationPosId>
+  [172] pushcons 22 ............................. <EMPTY>
+  [174] eq ...................................... <iDestinationPosId = EMPTY>
+  [175] or ...................................... <voidp(iDestinationPosId) or (iDestinationPosId = VOID) or (iDestinationPosId = EMPTY)>
+  [176] getparam 6 .............................. <iDestinationPosId>
+  [178] pushzero ................................ <0>
+  [179] eq ...................................... <iDestinationPosId = 0>
+  [180] or ...................................... <voidp(iDestinationPosId) or (iDestinationPosId = VOID) or (iDestinationPosId = EMPTY) or (iDestinationPosId = 0)>
+  [181] jmpifz [184] ............................ if voidp(iDestinationPosId) or (iDestinationPosId = VOID) or (iDestinationPosId = EMPTY) or (iDestinationPosId = 0) then
+  [184] getglobal 76 ............................ <oStudio>
+  [186] pusharglist 1 ........................... <oStudio>
+  [188] objcall 78 .............................. <oStudio.getStudioID()>
+  [190] setlocal 0 .............................. sCurrentStudioId = oStudio.getStudioID()
+  [192] getlocal 0 .............................. <sCurrentStudioId>
+  [194] getparam 4 .............................. <sStudioID>
+  [196] eq ...................................... <sCurrentStudioId = sStudioID>
+  [197] jmpifz [284] ............................ if sCurrentStudioId = sStudioID then
+  [200] getparam 0 .............................. <me>
+  [202] pushcons 42 ............................. <"receiveTeleport() moving to teleporter in same studio">
+  [204] pushint8 1 .............................. <1>
+  [206] pusharglistnoret 3 ...................... <me, "receiveTeleport() moving to teleporter in same studio", 1>
+  [208] objcall 20 .............................. me.debug("receiveTeleport() moving to teleporter in same studio", 1)
+  [210] getparam 6 .............................. <iDestinationPosId>
+  [212] pusharglist 1 ........................... <iDestinationPosId>
+  [214] extcall 48 .............................. <integer(iDestinationPosId)>
+  [216] pushzero ................................ <0>
+  [217] nteq .................................... <integer(iDestinationPosId) <> 0>
+  [218] jmpifz [284] ............................ if integer(iDestinationPosId) <> 0 then
+  [221] getglobal 16 ............................ <oIsoScene>
+  [223] getchainedprop 1016 ..................... <oIsoScene.oFurniture>
+  [226] getparam 6 .............................. <iDestinationPosId>
+  [228] pusharglist 2 ........................... <oIsoScene.oFurniture, iDestinationPosId>
+  [230] objcall 950 ............................. <oIsoScene.oFurniture.getItemByPossessionId(iDestinationPosId)>
+  [233] setlocal 1 .............................. oTeleporter = oIsoScene.oFurniture.getItemByPossessionId(iDestinationPosId)
+  [235] getlocal 1 .............................. <oTeleporter>
+  [237] pusharglist 1 ........................... <oTeleporter>
+  [239] extcall 15 .............................. <voidp(oTeleporter)>
+  [241] jmpifz [261] ............................ if voidp(oTeleporter) then / else
+  [244] getparam 0 .............................. <me>
+  [246] pushcons 43 ............................. <"receiveTeleport() void">
+  [248] pushint8 1 .............................. <1>
+  [250] pusharglistnoret 3 ...................... <me, "receiveTeleport() void", 1>
+  [252] objcall 20 .............................. me.debug("receiveTeleport() void", 1)
+  [254] pusharglistnoret 0 ...................... <>
+  [256] extcall 71 .............................. return 
+  [258] jmp [284]
+  [261] getparam 0 .............................. <me>
+  [263] pushcons 44 ............................. <"sendingMoveToTeleport()">
+  [265] pushint8 1 .............................. <1>
+  [267] pusharglistnoret 3 ...................... <me, "sendingMoveToTeleport()", 1>
+  [269] objcall 20 .............................. me.debug("sendingMoveToTeleport()", 1)
+  [271] getparam 0 .............................. <me>
+  [273] getparam 6 .............................. <iDestinationPosId>
+  [275] pusharglistnoret 2 ...................... <me, iDestinationPosId>
+  [277] objcall 1030 ............................ me.sendMoveToTeleporter(iDestinationPosId)
+  [280] pusharglistnoret 0 ...................... <>
+  [282] extcall 71 .............................. return 
+  [284] getglobal 153 ........................... <ElementMgr>
+  [286] pusharglistnoret 1 ...................... <ElementMgr>
+  [288] objcall 1098 ............................ ElementMgr.closeAllWindows()
+  [291] getglobal 16 ............................ <oIsoScene>
+  [293] pusharglistnoret 1 ...................... <oIsoScene>
+  [295] objcall 1099 ............................ oIsoScene.destroyScene()
+  [298] pushcons 45 ............................. <"StudioMap">
+  [300] pusharglist 1 ........................... <"StudioMap">
+  [302] extcall 148 ............................. <script("StudioMap")>
+  [304] getparam 2 .............................. <iLocation>
+  [306] pusharglist 1 ........................... <iLocation>
+  [308] extcall 48 .............................. <integer(iLocation)>
+  [310] getparam 3 .............................. <iLayout>
+  [312] pusharglist 1 ........................... <iLayout>
+  [314] extcall 48 .............................. <integer(iLayout)>
+  [316] getparam 4 .............................. <sStudioID>
+  [318] getparam 5 .............................. <sStudioName>
+  [320] pusharglist 5 ........................... <script("StudioMap"), integer(iLocation), integer(iLayout), sStudioID, sStudioName>
+  [322] objcall 149 ............................. <script("StudioMap").new(integer(iLocation), integer(iLayout), sStudioID, sStudioName)>
+  [324] setglobal 905 ........................... oStudioMap = script("StudioMap").new(integer(iLocation), integer(iLayout), sStudioID, sStudioName)
+  [327] getparam 6 .............................. <iDestinationPosId>
+  [329] pusharglist 1 ........................... <iDestinationPosId>
+  [331] extcall 48 .............................. <integer(iDestinationPosId)>
+  [333] pushzero ................................ <0>
+  [334] nteq .................................... <integer(iDestinationPosId) <> 0>
+  [335] jmpifz [367] ............................ if integer(iDestinationPosId) <> 0 then / else
+  [338] getglobal 905 ........................... <oStudioMap>
+  [341] getparam 6 .............................. <iDestinationPosId>
+  [343] pusharglist 1 ........................... <iDestinationPosId>
+  [345] extcall 48 .............................. <integer(iDestinationPosId)>
+  [347] pusharglistnoret 2 ...................... <oStudioMap, integer(iDestinationPosId)>
+  [349] objcall 646 ............................. oStudioMap.setEnterStudioViaTeleport(integer(iDestinationPosId))
+  [352] pushcons 46 ............................. <"sent oStudioMap.setEnterStudioViaTeleport(">
+  [354] getparam 6 .............................. <iDestinationPosId>
+  [356] joinstr ................................. <"sent oStudioMap.setEnterStudioViaTeleport(" & iDestinationPosId>
+  [357] pushcons 47 ............................. <")">
+  [359] joinstr ................................. <"sent oStudioMap.setEnterStudioViaTeleport(" & iDestinationPosId & ")">
+  [360] pusharglistnoret 1 ...................... <"sent oStudioMap.setEnterStudioViaTeleport(" & iDestinationPosId & ")">
+  [362] extcall 33 .............................. put "sent oStudioMap.setEnterStudioViaTeleport(" & iDestinationPosId & ")"
+  [364] jmp [380]
+  [367] getglobal 76 ............................ <oStudio>
+  [369] pusharglistnoret 1 ...................... <oStudio>
+  [371] objcall 770 ............................. oStudio.sendEnterStudio()
+  [374] pushcons 48 ............................. <"sent oStudio.sendEnterStudio()">
+  [376] pusharglistnoret 1 ...................... <"sent oStudio.sendEnterStudio()">
+  [378] extcall 33 .............................. put "sent oStudio.sendEnterStudio()"
+  [380] getparam 4 .............................. <sStudioID>
+  [382] pushcons 49 ............................. <"$SYSTEM$">
+  [384] contains0str ............................ <sStudioID starts "$SYSTEM$">
+  [385] jmpifz [426] ............................ if sStudioID starts "$SYSTEM$" then
+  [388] pushcons 50 ............................. <"calling doTrackingCokeStudios(">
+  [390] getparam 5 .............................. <sStudioName>
+  [392] joinpadstr .............................. <"calling doTrackingCokeStudios(" && sStudioName>
+  [393] pushcons 51 ............................. <")in Browser">
+  [395] joinpadstr .............................. <"calling doTrackingCokeStudios(" && sStudioName && ")in Browser">
+  [396] pusharglistnoret 1 ...................... <"calling doTrackingCokeStudios(" && sStudioName && ")in Browser">
+  [398] extcall 33 .............................. put "calling doTrackingCokeStudios(" && sStudioName && ")in Browser"
+  [400] pushcons 52 ............................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '">
+  [402] getparam 5 .............................. <sStudioName>
+  [404] joinstr ................................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioName>
+  [405] pushcons 53 ............................. <"')">
+  [407] joinstr ................................. <"javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioName & "')">
+  [408] setlocal 2 .............................. sParamString = "javascript:doTrackingCokeStudios('cokestudios.room.enter', '" & sStudioName & "')"
+  [410] pushcons 54 ............................. <"sParamString: ">
+  [412] getlocal 2 .............................. <sParamString>
+  [414] joinstr ................................. <"sParamString: " & sParamString>
+  [415] pusharglistnoret 1 ...................... <"sParamString: " & sParamString>
+  [417] extcall 33 .............................. put "sParamString: " & sParamString
+  [419] getlocal 2 .............................. <sParamString>
+  [421] pusharglistnoret 1 ...................... <sParamString>
+  [423] extcall 1189 ............................ gotoNetPage(sParamString)
+  [426] pushcons 55 ............................. <"EnterStudio">
+  [428] pusharglistnoret 1 ...................... <"EnterStudio">
+  [430] extcall 427 ............................. go("EnterStudio")
+  [433] ret
+end
+
+on getGatewaySprite me
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 3 ............................ <me.spriteNum>
+  [  4] pusharglist 1 ........................... <me.spriteNum>
+  [  6] extcall 2 ............................... <sprite(me.spriteNum)>
+  [  8] pusharglistnoret 1 ...................... <sprite(me.spriteNum)>
+  [ 10] extcall 71 .............................. return sprite(me.spriteNum)
+  [ 12] ret
+end

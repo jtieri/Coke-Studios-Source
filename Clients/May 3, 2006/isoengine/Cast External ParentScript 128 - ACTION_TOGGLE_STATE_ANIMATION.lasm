@@ -1,0 +1,111 @@
+property ancestor
+global oPossessionStudio
+
+on new me, _oItem, aAttributes
+  [  0] getparam 0 .............................. <me>
+  [  2] pushcons 0 .............................. <"ACTION_DEFAULT">
+  [  4] pusharglist 1 ........................... <"ACTION_DEFAULT">
+  [  6] extcall 194 ............................. <script("ACTION_DEFAULT")>
+  [  8] getparam 1 .............................. <_oItem>
+  [ 10] getparam 2 .............................. <aAttributes>
+  [ 12] pusharglist 3 ........................... <script("ACTION_DEFAULT"), _oItem, aAttributes>
+  [ 14] objcall 0 ............................... <script("ACTION_DEFAULT").new(_oItem, aAttributes)>
+  [ 16] setobjprop 950 .......................... me.ancestor = script("ACTION_DEFAULT").new(_oItem, aAttributes)
+  [ 19] getparam 0 .............................. <me>
+  [ 21] pusharglistnoret 1 ...................... <me>
+  [ 23] extcall 52 .............................. return me
+  [ 25] ret
+end
+
+on mouseDownEvent me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 950 ...................... <me.ancestor>
+  [  5] pusharglistnoret 1 ...................... <me.ancestor>
+  [  7] objcall 295 ............................. me.ancestor.mouseDownEvent()
+  [ 10] pusharglist 0 ........................... <>
+  [ 12] thebuiltin 1142 ......................... <the doubleClick>
+  [ 15] jmpifz [ 25] ............................ if the doubleClick then
+  [ 18] getparam 0 .............................. <me>
+  [ 20] pusharglistnoret 1 ...................... <me>
+  [ 22] objcall 1572 ............................ me.toggleState()
+  [ 25] ret
+end
+
+on displayState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1336 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 35] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getchainedprop 58 ....................... <me.oItem>
+  [ 18] pushzero ................................ <0>
+  [ 19] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 21] objcall 1394 ............................ me.oItem.setAnimate(0)
+  [ 24] getparam 0 .............................. <me>
+  [ 26] getchainedprop 58 ....................... <me.oItem>
+  [ 28] pushzero ................................ <0>
+  [ 29] setobjprop 1415 ......................... me.oItem.iFrame = 0
+  [ 32] jmp [ 46]
+  [ 35] getparam 0 .............................. <me>
+  [ 37] getchainedprop 58 ....................... <me.oItem>
+  [ 39] pushint8 1 .............................. <1>
+  [ 41] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 43] objcall 1394 ............................ me.oItem.setAnimate(1)
+  [ 46] ret
+end
+
+on toggleState me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1336 ............................ <me.oItem.getState()>
+  [  9] pushzero ................................ <0>
+  [ 10] eq ...................................... <me.oItem.getState() = 0>
+  [ 11] jmpifz [ 28] ............................ if me.oItem.getState() = 0 then / else
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getchainedprop 58 ....................... <me.oItem>
+  [ 18] pushint8 1 .............................. <1>
+  [ 20] pusharglistnoret 2 ...................... <me.oItem, 1>
+  [ 22] objcall 1335 ............................ me.oItem.setState(1)
+  [ 25] jmp [ 38]
+  [ 28] getparam 0 .............................. <me>
+  [ 30] getchainedprop 58 ....................... <me.oItem>
+  [ 32] pushzero ................................ <0>
+  [ 33] pusharglistnoret 2 ...................... <me.oItem, 0>
+  [ 35] objcall 1335 ............................ me.oItem.setState(0)
+  [ 38] getglobal 258 ........................... <oPossessionStudio>
+  [ 41] pusharglist 1 ........................... <oPossessionStudio>
+  [ 43] extcall 59 .............................. <voidp(oPossessionStudio)>
+  [ 45] not ..................................... <not voidp(oPossessionStudio)>
+  [ 46] jmpifz [ 64] ............................ if not voidp(oPossessionStudio) then
+  [ 49] getglobal 258 ........................... <oPossessionStudio>
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglist 1 ........................... <me>
+  [ 56] objcall 1573 ............................ <me.getItem()>
+  [ 59] pusharglistnoret 2 ...................... <oPossessionStudio, me.getItem()>
+  [ 61] objcall 517 ............................. oPossessionStudio.sendUpdatePossession(me.getItem())
+  [ 64] ret
+end
+
+on stepFrame me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 58 ....................... <me.oItem>
+  [  4] pusharglist 1 ........................... <me.oItem>
+  [  6] objcall 1395 ............................ <me.oItem.getAnimate()>
+  [  9] jmpifz [ 35] ............................ if me.oItem.getAnimate() then
+  [ 12] getparam 0 .............................. <me>
+  [ 14] getchainedprop 58 ....................... <me.oItem>
+  [ 16] pusharglist 1 ........................... <me.oItem>
+  [ 18] objcall 1393 ............................ <me.oItem.getFrame()>
+  [ 21] pushint8 4 .............................. <4>
+  [ 23] eq ...................................... <me.oItem.getFrame() = 4>
+  [ 24] jmpifz [ 35] ............................ if me.oItem.getFrame() = 4 then
+  [ 27] getparam 0 .............................. <me>
+  [ 29] getchainedprop 58 ....................... <me.oItem>
+  [ 31] pushzero ................................ <0>
+  [ 32] setobjprop 1415 ......................... me.oItem.iFrame = 0
+  [ 35] ret
+end

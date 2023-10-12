@@ -1,0 +1,144 @@
+property aItems
+global gCatalog
+
+on new me, sText
+  [  0] getparam 0 .............................. <me>
+  [  2] getparam 1 .............................. <sText>
+  [  4] pusharglistnoret 2 ...................... <me, sText>
+  [  6] objcall 1 ............................... me.Init(sText)
+  [  8] getparam 0 .............................. <me>
+  [ 10] setglobal 154 ........................... gCatalog = me
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pusharglistnoret 1 ...................... <me>
+  [ 16] extcall 59 .............................. return me
+  [ 18] ret
+end
+
+on getItemByProdId me, iProdId
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 274 .......................... <me.aItems>
+  [  5] peek 0
+  [  7] pusharglist 1
+  [  9] extcall 51
+  [ 11] pushint8 1
+  [ 13] peek 0
+  [ 15] peek 2
+  [ 17] lteq
+  [ 18] jmpifz [ 57] ............................ repeat with i in me.aItems
+  [ 21] peek 2
+  [ 23] peek 1
+  [ 25] pusharglist 2
+  [ 27] extcall 52
+  [ 29] setlocal 0
+  [ 31] getlocal 0 .............................. <i>
+  [ 33] pushsymb 275 ............................ <#prodID>
+  [ 36] pusharglist 2 ........................... <i, #prodID>
+  [ 38] objcall 52 .............................. <i[#prodID]>
+  [ 40] getparam 1 .............................. <iProdId>
+  [ 42] eq ...................................... <i[#prodID] = iProdId>
+  [ 43] jmpifz [ 52] ............................ if i[#prodID] = iProdId then
+  [ 46] getlocal 0 .............................. <i>
+  [ 48] pusharglistnoret 1 ...................... <i>
+  [ 50] extcall 59 .............................. return i
+  [ 52] pushint8 1
+  [ 54] add
+  [ 55] endrepeat [ 13]
+  [ 57] pop 3
+  [ 59] ret
+end
+
+on Init me, sText
+  [  0] getparam 0 .............................. <me>
+  [  2] pusharglist 0 ........................... <[]>
+  [  4] pushlist ................................ <[]>
+  [  5] setobjprop 274 .......................... me.aItems = []
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setlocal 0
+  [ 12] getlocal 0
+  [ 14] getparam 1 .............................. <sText>
+  [ 16] pushsymb 277 ............................ <#lines>
+  [ 19] pusharglist 2 ........................... <sText, #lines>
+  [ 21] objcall 51 .............................. <sText.lines.count>
+  [ 23] lteq
+  [ 24] jmpifz [ 96] ............................ repeat with i = 1 to sText.lines.count
+  [ 27] getparam 1 .............................. <sText>
+  [ 29] pushsymb 278 ............................ <#line>
+  [ 32] getlocal 0 .............................. <i>
+  [ 34] pusharglist 3 ........................... <sText, #line, i>
+  [ 36] objcall 128 ............................. <sText.line[i]>
+  [ 38] setlocal 1 .............................. sLine = sText.line[i]
+  [ 40] getlocal 1 .............................. <sLine>
+  [ 42] pushcons 0 .............................. <EMPTY>
+  [ 44] eq ...................................... <sLine = EMPTY>
+  [ 45] jmpifz [ 51] ............................ if sLine = EMPTY then
+  [ 48] jmp [ 87] ............................... next repeat
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getlocal 1 .............................. <sLine>
+  [ 55] pusharglist 2 ........................... <me, sLine>
+  [ 57] objcall 273 ............................. <me.getItem(sLine)>
+  [ 60] setlocal 2 .............................. aItem = me.getItem(sLine)
+  [ 62] getlocal 2 .............................. <aItem>
+  [ 64] pusharglist 1 ........................... <aItem>
+  [ 66] extcall 279 ............................. <ilk(aItem)>
+  [ 69] pushsymb 280 ............................ <#propList>
+  [ 72] eq ...................................... <ilk(aItem) = #propList>
+  [ 73] jmpifz [ 87] ............................ if ilk(aItem) = #propList then
+  [ 76] getparam 0 .............................. <me>
+  [ 78] getchainedprop 274 ...................... <me.aItems>
+  [ 81] getlocal 2 .............................. <aItem>
+  [ 83] pusharglistnoret 2 ...................... <me.aItems, aItem>
+  [ 85] objcall 92 .............................. me.aItems.add(aItem)
+  [ 87] pushint8 1
+  [ 89] getlocal 0
+  [ 91] add
+  [ 92] setlocal 0
+  [ 94] endrepeat [ 12]
+  [ 96] ret
+end
+
+on getItem me, sLine
+  [  0] pusharglist 0 ........................... <>
+  [  2] extcall 202 ............................. <VOID>
+  [  4] setlocal 0 .............................. aItem = VOID
+  [  6] getmovieprop 283 ........................ <the itemDelimiter>
+  [  9] setlocal 1 .............................. sOldDelimiter = the itemDelimiter
+  [ 11] pushcons 1 .............................. <"=">
+  [ 13] setmovieprop 283 ........................ the itemDelimiter = "="
+  [ 16] getparam 1 .............................. <sLine>
+  [ 18] pushsymb 284 ............................ <#item>
+  [ 21] pushint8 1 .............................. <1>
+  [ 23] pusharglist 3 ........................... <sLine, #item, 1>
+  [ 25] objcall 128 ............................. <sLine.item[1]>
+  [ 27] setlocal 2 .............................. sLabel = sLine.item[1]
+  [ 29] getlocal 2 .............................. <sLabel>
+  [ 31] pushcons 2 .............................. <"ITEM">
+  [ 33] eq ...................................... <sLabel = "ITEM">
+  [ 34] jmpifz [ 84] ............................ if sLabel = "ITEM" then
+  [ 37] getparam 1 .............................. <sLine>
+  [ 39] pushsymb 284 ............................ <#item>
+  [ 42] pushint8 2 .............................. <2>
+  [ 44] pusharglist 3 ........................... <sLine, #item, 2>
+  [ 46] objcall 128 ............................. <sLine.item[2]>
+  [ 48] setlocal 3 .............................. sData = sLine.item[2]
+  [ 50] getlocal 1 .............................. <sOldDelimiter>
+  [ 52] setmovieprop 283 ........................ the itemDelimiter = sOldDelimiter
+  [ 55] getlocal 3 .............................. <sData>
+  [ 57] pusharglist 1 ........................... <sData>
+  [ 59] extcall 42 .............................. <voidp(sData)>
+  [ 61] not ..................................... <not voidp(sData)>
+  [ 62] getlocal 3 .............................. <sData>
+  [ 64] pushcons 0 .............................. <EMPTY>
+  [ 66] eq ...................................... <sData = EMPTY>
+  [ 67] not ..................................... <not (sData = EMPTY)>
+  [ 68] and ..................................... <not voidp(sData) and not (sData = EMPTY)>
+  [ 69] jmpifz [ 84] ............................ if not voidp(sData) and not (sData = EMPTY) then / else
+  [ 72] getlocal 3 .............................. <sData>
+  [ 74] pusharglist 1 ........................... <sData>
+  [ 76] extcall 285 ............................. <value(sData)>
+  [ 79] setlocal 0 .............................. aItem = value(sData)
+  [ 81] jmp [ 84]
+  [ 84] getlocal 0 .............................. <aItem>
+  [ 86] pusharglistnoret 1 ...................... <aItem>
+  [ 88] extcall 59 .............................. return aItem
+  [ 90] ret
+end

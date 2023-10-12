@@ -1,0 +1,301 @@
+property iPatternIndex, iColorIndex, aPatterns, sAssetCast, iFloorShapeSprite, iFloorTextureSprite
+
+on new me
+  [  0] getparam 0 .............................. <me>
+  [  2] pushint8 1 .............................. <1>
+  [  4] setobjprop 42 ........................... me.iPatternIndex = 1
+  [  6] getparam 0 .............................. <me>
+  [  8] pushint8 1 .............................. <1>
+  [ 10] setobjprop 43 ........................... me.iColorIndex = 1
+  [ 12] getparam 0 .............................. <me>
+  [ 14] pushcons 0 .............................. <"Catalogue">
+  [ 16] setobjprop 44 ........................... me.sAssetCast = "Catalogue"
+  [ 18] getparam 0 .............................. <me>
+  [ 20] getparam 0 .............................. <me>
+  [ 22] pusharglist 1 ........................... <me>
+  [ 24] objcall 38 .............................. <me.loadPatterns()>
+  [ 26] setobjprop 51 ........................... me.aPatterns = me.loadPatterns()
+  [ 28] pusharglistnoret 0 ...................... <>
+  [ 30] extcall 45 .............................. updateStage()
+  [ 32] getparam 0 .............................. <me>
+  [ 34] pushsymb 26 ............................. <#getFloorShapeSprite>
+  [ 36] pusharglist 1 ........................... <#getFloorShapeSprite>
+  [ 38] extcall 9 ............................... <sendAllSprites(#getFloorShapeSprite)>
+  [ 40] setobjprop 92 ........................... me.iFloorShapeSprite = sendAllSprites(#getFloorShapeSprite)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pushsymb 27 ............................. <#getFloorTextureSprite>
+  [ 46] pusharglist 1 ........................... <#getFloorTextureSprite>
+  [ 48] extcall 9 ............................... <sendAllSprites(#getFloorTextureSprite)>
+  [ 50] setobjprop 93 ........................... me.iFloorTextureSprite = sendAllSprites(#getFloorTextureSprite)
+  [ 52] getparam 0 .............................. <me>
+  [ 54] pusharglistnoret 1 ...................... <me>
+  [ 56] objcall 41 .............................. me.displayPattern()
+  [ 58] getparam 0 .............................. <me>
+  [ 60] pusharglistnoret 1 ...................... <me>
+  [ 62] extcall 2 ............................... return me
+  [ 64] ret
+end
+
+on loadPatterns me
+  [  0] pusharglist 0 ........................... <[:]>
+  [  2] pushproplist ............................ <[:]>
+  [  3] setlocal 0 .............................. aFloorPatterns = [:]
+  [  5] pushcons 1 .............................. <"cat_floorpattern_patterns_index">
+  [  7] getparam 0 .............................. <me>
+  [  9] getobjprop 44 ........................... <me.sAssetCast>
+  [ 11] pusharglist 2 ........................... <"cat_floorpattern_patterns_index", me.sAssetCast>
+  [ 13] extcall 52 .............................. <member("cat_floorpattern_patterns_index", me.sAssetCast)>
+  [ 15] setlocal 1 .............................. oPatternMember = member("cat_floorpattern_patterns_index", me.sAssetCast)
+  [ 17] getlocal 1 .............................. <oPatternMember>
+  [ 19] getobjprop 53 ........................... <oPatternMember.text>
+  [ 21] setlocal 2 .............................. sPatternText = oPatternMember.text
+  [ 23] pushint8 1 .............................. <1>
+  [ 25] setlocal 3
+  [ 27] getlocal 3
+  [ 29] getlocal 2 .............................. <sPatternText>
+  [ 31] pushsymb 54 ............................. <#lines>
+  [ 33] pusharglist 2 ........................... <sPatternText, #lines>
+  [ 35] objcall 55 .............................. <sPatternText.lines.count>
+  [ 37] lteq
+  [ 38] jmpifz [170] ............................ repeat with i = 1 to sPatternText.lines.count
+  [ 41] getlocal 2 .............................. <sPatternText>
+  [ 43] pushsymb 56 ............................. <#line>
+  [ 45] getlocal 3 .............................. <i>
+  [ 47] pusharglist 3 ........................... <sPatternText, #line, i>
+  [ 49] objcall 57 .............................. <sPatternText.line[i]>
+  [ 51] setlocal 4 .............................. sPatternLine = sPatternText.line[i]
+  [ 53] getlocal 4 .............................. <sPatternLine>
+  [ 55] pusharglist 1 ........................... <sPatternLine>
+  [ 57] extcall 58 .............................. <value(sPatternLine)>
+  [ 59] setlocal 5 .............................. aPatternList = value(sPatternLine)
+  [ 61] getlocal 5 .............................. <aPatternList>
+  [ 63] getobjprop 59 ........................... <aPatternList.name>
+  [ 65] setlocal 6 .............................. sPatternName = aPatternList.name
+  [ 67] getlocal 5 .............................. <aPatternList>
+  [ 69] getobjprop 60 ........................... <aPatternList.field>
+  [ 71] setlocal 7 .............................. sColorField = aPatternList.field
+  [ 73] pusharglist 0 ........................... <[]>
+  [ 75] pushlist ................................ <[]>
+  [ 76] setlocal 8 .............................. aColors = []
+  [ 78] getlocal 7 .............................. <sColorField>
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 44 ........................... <me.sAssetCast>
+  [ 84] pusharglist 2 ........................... <sColorField, me.sAssetCast>
+  [ 86] extcall 52 .............................. <member(sColorField, me.sAssetCast)>
+  [ 88] setlocal 9 .............................. oColorsMember = member(sColorField, me.sAssetCast)
+  [ 90] getlocal 9 .............................. <oColorsMember>
+  [ 92] getobjprop 53 ........................... <oColorsMember.text>
+  [ 94] setlocal 10 ............................. sColorsText = oColorsMember.text
+  [ 96] pushint8 1 .............................. <1>
+  [ 98] setlocal 11
+  [100] getlocal 11
+  [102] getlocal 10 ............................. <sColorsText>
+  [104] pushsymb 54 ............................. <#lines>
+  [106] pusharglist 2 ........................... <sColorsText, #lines>
+  [108] objcall 55 .............................. <sColorsText.lines.count>
+  [110] lteq
+  [111] jmpifz [151] ............................ repeat with ii = 1 to sColorsText.lines.count
+  [114] getlocal 10 ............................. <sColorsText>
+  [116] pushsymb 56 ............................. <#line>
+  [118] getlocal 11 ............................. <ii>
+  [120] pusharglist 3 ........................... <sColorsText, #line, ii>
+  [122] objcall 57 .............................. <sColorsText.line[ii]>
+  [124] setlocal 12 ............................. sColorLine = sColorsText.line[ii]
+  [126] getlocal 12 ............................. <sColorLine>
+  [128] pusharglist 1 ........................... <sColorLine>
+  [130] extcall 58 .............................. <value(sColorLine)>
+  [132] setlocal 13 ............................. aColorsList = value(sColorLine)
+  [134] getlocal 8 .............................. <aColors>
+  [136] getlocal 13 ............................. <aColorsList>
+  [138] pusharglistnoret 2 ...................... <aColors, aColorsList>
+  [140] objcall 61 .............................. aColors.add(aColorsList)
+  [142] pushint8 1
+  [144] getlocal 11
+  [146] add
+  [147] setlocal 11
+  [149] endrepeat [100]
+  [151] getlocal 0 .............................. <aFloorPatterns>
+  [153] getlocal 6 .............................. <sPatternName>
+  [155] getlocal 8 .............................. <aColors>
+  [157] pusharglistnoret 3 ...................... <aFloorPatterns, sPatternName, aColors>
+  [159] objcall 62 .............................. aFloorPatterns.addProp(sPatternName, aColors)
+  [161] pushint8 1
+  [163] getlocal 3
+  [165] add
+  [166] setlocal 3
+  [168] endrepeat [ 27]
+  [170] getlocal 0 .............................. <aFloorPatterns>
+  [172] pusharglistnoret 1 ...................... <aFloorPatterns>
+  [174] extcall 2 ............................... return aFloorPatterns
+  [176] ret
+end
+
+on scrollPattern me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] getobjprop 42 ........................... <me.iPatternIndex>
+  [  4] getparam 1 .............................. <iDir>
+  [  6] add ..................................... <me.iPatternIndex + iDir>
+  [  7] setlocal 0 .............................. iNewPatternIndex = me.iPatternIndex + iDir
+  [  9] getlocal 0 .............................. <iNewPatternIndex>
+  [ 11] pushint8 1 .............................. <1>
+  [ 13] lt ...................................... <iNewPatternIndex < 1>
+  [ 14] jmpifz [ 27] ............................ if iNewPatternIndex < 1 then
+  [ 17] getparam 0 .............................. <me>
+  [ 19] pushsymb 51 ............................. <#aPatterns>
+  [ 21] pusharglist 2 ........................... <me, #aPatterns>
+  [ 23] objcall 55 .............................. <me.aPatterns.count>
+  [ 25] setlocal 0 .............................. iNewPatternIndex = me.aPatterns.count
+  [ 27] getlocal 0 .............................. <iNewPatternIndex>
+  [ 29] getparam 0 .............................. <me>
+  [ 31] pushsymb 51 ............................. <#aPatterns>
+  [ 33] pusharglist 2 ........................... <me, #aPatterns>
+  [ 35] objcall 55 .............................. <me.aPatterns.count>
+  [ 37] gt ...................................... <iNewPatternIndex > me.aPatterns.count>
+  [ 38] jmpifz [ 45] ............................ if iNewPatternIndex > me.aPatterns.count then
+  [ 41] pushint8 1 .............................. <1>
+  [ 43] setlocal 0 .............................. iNewPatternIndex = 1
+  [ 45] getparam 0 .............................. <me>
+  [ 47] getlocal 0 .............................. <iNewPatternIndex>
+  [ 49] setobjprop 42 ........................... me.iPatternIndex = iNewPatternIndex
+  [ 51] getparam 0 .............................. <me>
+  [ 53] pushint8 1 .............................. <1>
+  [ 55] setobjprop 43 ........................... me.iColorIndex = 1
+  [ 57] getparam 0 .............................. <me>
+  [ 59] pusharglistnoret 1 ...................... <me>
+  [ 61] objcall 41 .............................. me.displayPattern()
+  [ 63] ret
+end
+
+on scrollColor me, iDir
+  [  0] getparam 0 .............................. <me>
+  [  2] pushsymb 51 ............................. <#aPatterns>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 42 ........................... <me.iPatternIndex>
+  [  8] pusharglist 3 ........................... <me, #aPatterns, me.iPatternIndex>
+  [ 10] objcall 57 .............................. <me.aPatterns[me.iPatternIndex]>
+  [ 12] setlocal 0 .............................. aColors = me.aPatterns[me.iPatternIndex]
+  [ 14] getparam 0 .............................. <me>
+  [ 16] getobjprop 43 ........................... <me.iColorIndex>
+  [ 18] getparam 1 .............................. <iDir>
+  [ 20] add ..................................... <me.iColorIndex + iDir>
+  [ 21] setlocal 1 .............................. iNewColorIndex = me.iColorIndex + iDir
+  [ 23] getlocal 1 .............................. <iNewColorIndex>
+  [ 25] pushint8 1 .............................. <1>
+  [ 27] lt ...................................... <iNewColorIndex < 1>
+  [ 28] jmpifz [ 37] ............................ if iNewColorIndex < 1 then
+  [ 31] getlocal 0 .............................. <aColors>
+  [ 33] getobjprop 55 ........................... <aColors.count>
+  [ 35] setlocal 1 .............................. iNewColorIndex = aColors.count
+  [ 37] getlocal 1 .............................. <iNewColorIndex>
+  [ 39] getlocal 0 .............................. <aColors>
+  [ 41] getobjprop 55 ........................... <aColors.count>
+  [ 43] gt ...................................... <iNewColorIndex > aColors.count>
+  [ 44] jmpifz [ 51] ............................ if iNewColorIndex > aColors.count then
+  [ 47] pushint8 1 .............................. <1>
+  [ 49] setlocal 1 .............................. iNewColorIndex = 1
+  [ 51] getparam 0 .............................. <me>
+  [ 53] getlocal 1 .............................. <iNewColorIndex>
+  [ 55] setobjprop 43 ........................... me.iColorIndex = iNewColorIndex
+  [ 57] getparam 0 .............................. <me>
+  [ 59] pusharglistnoret 1 ...................... <me>
+  [ 61] objcall 41 .............................. me.displayPattern()
+  [ 63] ret
+end
+
+on displayPattern me
+  [  0] getparam 0 .............................. <me>
+  [  2] getchainedprop 51 ....................... <me.aPatterns>
+  [  4] getparam 0 .............................. <me>
+  [  6] getobjprop 42 ........................... <me.iPatternIndex>
+  [  8] pusharglist 2 ........................... <me.aPatterns, me.iPatternIndex>
+  [ 10] objcall 80 .............................. <me.aPatterns.getPropAt(me.iPatternIndex)>
+  [ 12] setlocal 0 .............................. sPatternName = me.aPatterns.getPropAt(me.iPatternIndex)
+  [ 14] pushcons 2 .............................. <"cc.cat.floor.type">
+  [ 16] pusharglist 1 ........................... <"cc.cat.floor.type">
+  [ 18] extcall 52 .............................. <member("cc.cat.floor.type")>
+  [ 20] getglobal 91 ............................ <TextMgr>
+  [ 22] getlocal 0 .............................. <sPatternName>
+  [ 24] pusharglist 2 ........................... <TextMgr, sPatternName>
+  [ 26] objcall 95 .............................. <TextMgr.GetRefText(sPatternName)>
+  [ 28] pushcons 3 .............................. <": ">
+  [ 30] joinstr ................................. <TextMgr.GetRefText(sPatternName) & ": ">
+  [ 31] getparam 0 .............................. <me>
+  [ 33] getobjprop 43 ........................... <me.iColorIndex>
+  [ 35] pusharglist 1 ........................... <me.iColorIndex>
+  [ 37] extcall 96 .............................. <string(me.iColorIndex)>
+  [ 39] joinstr ................................. <TextMgr.GetRefText(sPatternName) & ": " & string(me.iColorIndex)>
+  [ 40] setobjprop 53 ........................... member("cc.cat.floor.type").text = TextMgr.GetRefText(sPatternName) & ": " & string(me.iColorIndex)
+  [ 42] getparam 0 .............................. <me>
+  [ 44] pushsymb 51 ............................. <#aPatterns>
+  [ 46] getparam 0 .............................. <me>
+  [ 48] getobjprop 42 ........................... <me.iPatternIndex>
+  [ 50] pusharglist 3 ........................... <me, #aPatterns, me.iPatternIndex>
+  [ 52] objcall 81 .............................. <me.aPatterns[me.iPatternIndex]>
+  [ 54] getparam 0 .............................. <me>
+  [ 56] getobjprop 43 ........................... <me.iColorIndex>
+  [ 58] pusharglist 2 ........................... <me.aPatterns[me.iPatternIndex], me.iColorIndex>
+  [ 60] objcall 82 .............................. <me.aPatterns[me.iPatternIndex][me.iColorIndex]>
+  [ 62] setlocal 1 .............................. aColorData = me.aPatterns[me.iPatternIndex][me.iColorIndex]
+  [ 64] getparam 0 .............................. <me>
+  [ 66] getobjprop 92 ........................... <me.iFloorShapeSprite>
+  [ 68] pusharglist 1 ........................... <me.iFloorShapeSprite>
+  [ 70] extcall 84 .............................. <sprite(me.iFloorShapeSprite)>
+  [ 72] getchainedprop 52 ....................... <sprite(me.iFloorShapeSprite).member>
+  [ 74] getlocal 1 .............................. <aColorData>
+  [ 76] getobjprop 97 ........................... <aColorData.startcolor>
+  [ 78] setobjprop 98 ........................... sprite(me.iFloorShapeSprite).member.fillColor = aColorData.startcolor
+  [ 80] getparam 0 .............................. <me>
+  [ 82] getobjprop 92 ........................... <me.iFloorShapeSprite>
+  [ 84] pusharglist 1 ........................... <me.iFloorShapeSprite>
+  [ 86] extcall 84 .............................. <sprite(me.iFloorShapeSprite)>
+  [ 88] getchainedprop 52 ....................... <sprite(me.iFloorShapeSprite).member>
+  [ 90] getlocal 1 .............................. <aColorData>
+  [ 92] getobjprop 99 ........................... <aColorData.endColor>
+  [ 94] setobjprop 99 ........................... sprite(me.iFloorShapeSprite).member.endColor = aColorData.endColor
+  [ 96] getparam 0 .............................. <me>
+  [ 98] getobjprop 92 ........................... <me.iFloorShapeSprite>
+  [100] pusharglist 1 ........................... <me.iFloorShapeSprite>
+  [102] extcall 84 .............................. <sprite(me.iFloorShapeSprite)>
+  [104] getlocal 1 .............................. <aColorData>
+  [106] getobjprop 100 .......................... <aColorData.shapeBlend>
+  [108] setobjprop 87 ........................... sprite(me.iFloorShapeSprite).blend = aColorData.shapeBlend
+  [110] getparam 0 .............................. <me>
+  [112] getobjprop 92 ........................... <me.iFloorShapeSprite>
+  [114] pusharglist 1 ........................... <me.iFloorShapeSprite>
+  [116] extcall 84 .............................. <sprite(me.iFloorShapeSprite)>
+  [118] getchainedprop 52 ....................... <sprite(me.iFloorShapeSprite).member>
+  [120] pushzero ................................ <0>
+  [121] pushzero ................................ <0>
+  [122] pusharglist 2 ........................... <0, 0>
+  [124] extcall 101 ............................. <point(0, 0)>
+  [126] setobjprop 102 .......................... sprite(me.iFloorShapeSprite).member.regPoint = point(0, 0)
+  [128] getparam 0 .............................. <me>
+  [130] getobjprop 93 ........................... <me.iFloorTextureSprite>
+  [132] pusharglist 1 ........................... <me.iFloorTextureSprite>
+  [134] extcall 84 .............................. <sprite(me.iFloorTextureSprite)>
+  [136] getchainedprop 52 ....................... <sprite(me.iFloorTextureSprite).member>
+  [138] pushcons 4 .............................. <"cat_floor_">
+  [140] getlocal 1 .............................. <aColorData>
+  [142] getobjprop 88 ........................... <aColorData.palette>
+  [144] joinstr ................................. <"cat_floor_" & aColorData.palette>
+  [145] getparam 0 .............................. <me>
+  [147] getobjprop 44 ........................... <me.sAssetCast>
+  [149] pusharglist 2 ........................... <"cat_floor_" & aColorData.palette, me.sAssetCast>
+  [151] extcall 52 .............................. <member("cat_floor_" & aColorData.palette, me.sAssetCast)>
+  [153] setobjprop 88 ........................... sprite(me.iFloorTextureSprite).member.palette = member("cat_floor_" & aColorData.palette, me.sAssetCast)
+  [155] getparam 0 .............................. <me>
+  [157] getobjprop 92 ........................... <me.iFloorShapeSprite>
+  [159] pusharglist 1 ........................... <me.iFloorShapeSprite>
+  [161] extcall 84 .............................. <sprite(me.iFloorShapeSprite)>
+  [163] getlocal 1 .............................. <aColorData>
+  [165] getobjprop 103 .......................... <aColorData.texturecolor>
+  [167] setobjprop 13 ........................... sprite(me.iFloorShapeSprite).color = aColorData.texturecolor
+  [169] getparam 0 .............................. <me>
+  [171] getobjprop 93 ........................... <me.iFloorTextureSprite>
+  [173] pusharglist 1 ........................... <me.iFloorTextureSprite>
+  [175] extcall 84 .............................. <sprite(me.iFloorTextureSprite)>
+  [177] getlocal 1 .............................. <aColorData>
+  [179] getobjprop 89 ........................... <aColorData.textureBlend>
+  [181] setobjprop 87 ........................... sprite(me.iFloorTextureSprite).blend = aColorData.textureBlend
+  [183] ret
+end
